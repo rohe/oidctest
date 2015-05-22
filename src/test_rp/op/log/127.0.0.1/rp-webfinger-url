@@ -1,0 +1,287 @@
+3.255383 --> PATH: .well-known/webfinger
+3.255407 --> METHOD: GET
+4.352559 ---------- WebFinger ----------
+4.352583 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+4.352620 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+26.665570 <-- {"expires": "2015-05-11T12:18:02Z", "links": [{"href": "https://localhost:8092/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000850 --> PATH: .well-known/webfinger
+0.000863 --> METHOD: GET
+0.001036 ---------- WebFinger ----------
+0.001041 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.001052 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.001216 <-- {"expires": "2015-05-13T07:13:01Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000540 --> PATH: .well-known/webfinger
+0.000546 --> METHOD: GET
+0.000703 ---------- WebFinger ----------
+0.000706 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000715 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000842 <-- {"expires": "2015-05-13T07:15:51Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000624 --> PATH: .well-known/webfinger
+0.000630 --> METHOD: GET
+0.000819 ---------- WebFinger ----------
+0.000823 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000833 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.001055 <-- {"expires": "2015-05-13T08:56:24Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000509 --> PATH: .well-known/webfinger
+0.000515 --> METHOD: GET
+0.000670 ---------- WebFinger ----------
+0.000673 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000682 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000810 <-- {"expires": "2015-05-13T09:02:57Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000812 --> PATH: .well-known/webfinger
+0.000819 --> METHOD: GET
+0.000983 ---------- WebFinger ----------
+0.000986 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000996 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.001127 <-- {"expires": "2015-05-13T09:03:45Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000502 --> PATH: .well-known/webfinger
+0.000508 --> METHOD: GET
+0.000660 ---------- WebFinger ----------
+0.000663 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000672 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000800 <-- {"expires": "2015-05-13T09:05:15Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000500 --> PATH: .well-known/webfinger
+0.000506 --> METHOD: GET
+0.000661 ---------- WebFinger ----------
+0.000664 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000674 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000800 <-- {"expires": "2015-05-13T09:06:48Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000543 --> PATH: .well-known/webfinger
+0.000549 --> METHOD: GET
+0.000705 ---------- WebFinger ----------
+0.000708 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000717 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000847 <-- {"expires": "2015-05-13T09:07:56Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000700 --> PATH: .well-known/webfinger
+0.000707 --> METHOD: GET
+0.000916 ---------- WebFinger ----------
+0.000921 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000934 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.001136 <-- {"expires": "2015-05-13T09:09:58Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000523 --> PATH: .well-known/webfinger
+0.000530 --> METHOD: GET
+0.000685 ---------- WebFinger ----------
+0.000688 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000696 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000837 <-- {"expires": "2015-05-13T09:10:51Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000575 --> PATH: .well-known/webfinger
+0.000581 --> METHOD: GET
+0.000752 ---------- WebFinger ----------
+0.000755 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000765 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000907 <-- {"expires": "2015-05-13T09:16:58Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000581 --> PATH: .well-known/webfinger
+0.000588 --> METHOD: GET
+0.000744 ---------- WebFinger ----------
+0.000747 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000756 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000883 <-- {"expires": "2015-05-13T09:17:24Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000523 --> PATH: .well-known/webfinger
+0.000529 --> METHOD: GET
+0.000685 ---------- WebFinger ----------
+0.000688 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000697 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000827 <-- {"expires": "2015-05-13T09:18:35Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000569 --> PATH: .well-known/webfinger
+0.000575 --> METHOD: GET
+0.000748 ---------- WebFinger ----------
+0.000753 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000763 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000911 <-- {"expires": "2015-05-13T09:22:54Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000916 --> PATH: .well-known/webfinger
+0.000922 --> METHOD: GET
+0.001086 ---------- WebFinger ----------
+0.001089 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.001098 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.001230 <-- {"expires": "2015-05-13T09:23:35Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000514 --> PATH: .well-known/webfinger
+0.000520 --> METHOD: GET
+0.000672 ---------- WebFinger ----------
+0.000675 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000684 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000810 <-- {"expires": "2015-05-13T09:23:57Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000827 --> PATH: .well-known/webfinger
+0.000836 --> METHOD: GET
+0.001090 ---------- WebFinger ----------
+0.001094 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.001109 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.001313 <-- {"expires": "2015-05-13T09:26:48Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000500 --> PATH: .well-known/webfinger
+0.000506 --> METHOD: GET
+0.000662 ---------- WebFinger ----------
+0.000665 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000675 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000803 <-- {"expires": "2015-05-13T09:27:22Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000605 --> PATH: .well-known/webfinger
+0.000611 --> METHOD: GET
+0.000799 ---------- WebFinger ----------
+0.000802 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000811 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000967 <-- {"expires": "2015-05-13T09:30:21Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000726 --> PATH: .well-known/webfinger
+0.000733 --> METHOD: GET
+0.000947 ---------- WebFinger ----------
+0.000953 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000963 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.001134 <-- {"expires": "2015-05-13T09:41:31Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000525 --> PATH: .well-known/webfinger
+0.000531 --> METHOD: GET
+0.000693 ---------- WebFinger ----------
+0.000696 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000710 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000845 <-- {"expires": "2015-05-13T09:53:32Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000498 --> PATH: .well-known/webfinger
+0.000504 --> METHOD: GET
+0.000663 ---------- WebFinger ----------
+0.000666 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000675 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000810 <-- {"expires": "2015-05-13T09:56:33Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000507 --> PATH: .well-known/webfinger
+0.000513 --> METHOD: GET
+0.000675 ---------- WebFinger ----------
+0.000678 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000687 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000880 <-- {"expires": "2015-05-13T09:59:52Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000501 --> PATH: .well-known/webfinger
+0.000506 --> METHOD: GET
+0.000662 ---------- WebFinger ----------
+0.000665 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000675 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000802 <-- {"expires": "2015-05-13T10:02:26Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000504 --> PATH: .well-known/webfinger
+0.000509 --> METHOD: GET
+0.000663 ---------- WebFinger ----------
+0.000667 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000676 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000804 <-- {"expires": "2015-05-13T10:06:30Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000547 --> PATH: .well-known/webfinger
+0.000552 --> METHOD: GET
+0.000707 ---------- WebFinger ----------
+0.000710 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000719 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000849 <-- {"expires": "2015-05-13T10:14:27Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000514 --> PATH: .well-known/webfinger
+0.000520 --> METHOD: GET
+0.000676 ---------- WebFinger ----------
+0.000679 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000688 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000817 <-- {"expires": "2015-05-13T10:18:02Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000497 --> PATH: .well-known/webfinger
+0.000503 --> METHOD: GET
+0.000654 ---------- WebFinger ----------
+0.000657 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000666 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000796 <-- {"expires": "2015-05-13T10:18:54Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000528 --> PATH: .well-known/webfinger
+0.000534 --> METHOD: GET
+0.000684 ---------- WebFinger ----------
+0.000687 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000696 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000824 <-- {"expires": "2015-05-13T10:22:20Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000512 --> PATH: .well-known/webfinger
+0.000518 --> METHOD: GET
+0.000675 ---------- WebFinger ----------
+0.000678 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000687 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000820 <-- {"expires": "2015-05-13T10:24:40Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000526 --> PATH: .well-known/webfinger
+0.000532 --> METHOD: GET
+0.000696 ---------- WebFinger ----------
+0.000699 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000708 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000853 <-- {"expires": "2015-05-13T10:29:23Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000689 --> PATH: .well-known/webfinger
+0.000696 --> METHOD: GET
+0.000881 ---------- WebFinger ----------
+0.000885 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000897 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.001060 <-- {"expires": "2015-05-13T10:30:42Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000532 --> PATH: .well-known/webfinger
+0.000538 --> METHOD: GET
+0.000700 ---------- WebFinger ----------
+0.000703 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000712 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000844 <-- {"expires": "2015-05-18T13:12:56Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.015838 --> PATH: .well-known/webfinger
+0.015844 --> METHOD: GET
+0.016019 ---------- WebFinger ----------
+0.016022 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.016031 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.016170 <-- {"expires": "2015-05-19T06:52:47Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000558 --> PATH: .well-known/webfinger
+0.000564 --> METHOD: GET
+0.000721 ---------- WebFinger ----------
+0.000724 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000732 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000860 <-- {"expires": "2015-05-19T06:53:53Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000532 --> PATH: .well-known/webfinger
+0.000538 --> METHOD: GET
+0.000698 ---------- WebFinger ----------
+0.000701 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000710 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000842 <-- {"expires": "2015-05-19T11:51:33Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000532 --> PATH: .well-known/webfinger
+0.000538 --> METHOD: GET
+0.000695 ---------- WebFinger ----------
+0.000698 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000708 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000840 <-- {"expires": "2015-05-19T16:26:09Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000505 --> PATH: .well-known/webfinger
+0.000511 --> METHOD: GET
+0.000668 ---------- WebFinger ----------
+0.000671 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000680 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000819 <-- {"expires": "2015-05-19T16:26:46Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.001193 --> PATH: .well-known/webfinger
+0.001200 --> METHOD: GET
+0.001408 ---------- WebFinger ----------
+0.001413 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.001426 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.001604 <-- {"expires": "2015-05-19T16:27:48Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+
+0.000504 --> PATH: .well-known/webfinger
+0.000510 --> METHOD: GET
+0.000664 ---------- WebFinger ----------
+0.000667 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-webfinger-url&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000676 QUERY: {'resource': ['https://localhost:8092/rp-webfinger-url'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000802 <-- {"expires": "2015-05-19T19:51:38Z", "links": [{"href": "https://localhost:8092/rp-webfinger-url/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-webfinger-url"}
+

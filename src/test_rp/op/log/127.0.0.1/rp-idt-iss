@@ -1,0 +1,94 @@
+2.945597 --> PATH: .well-known/webfinger
+2.945621 --> METHOD: GET
+4.840360 ---------- WebFinger ----------
+4.840384 --> resource=acct%3Arp-idt-iss%40localhost%3A8088&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+4.840412 QUERY: {'resource': ['acct:rp-idt-iss@localhost:8088'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+32.400583 <-- {"expires": "2015-03-27T11:20:24Z", "links": [{"href": "https://localhost:8088/rp-idt-iss/_/_/_/issi/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "acct:rp-idt-iss@localhost:8088"}
+
+2.083191 --> PATH: .well-known/webfinger
+2.083215 --> METHOD: GET
+3.030257 ---------- WebFinger ----------
+3.030281 --> resource=acct%3Arp-idt-iss%40localhost%3A8088&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+3.030308 QUERY: {'resource': ['acct:rp-idt-iss@localhost:8088'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+4.465098 <-- {"expires": "2015-03-27T11:21:44Z", "links": [{"href": "https://localhost:8088/rp-idt-iss/_/_/_/issi/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "acct:rp-idt-iss@localhost:8088"}
+
+2.108556 --> PATH: normal/.well-known/openid-configuration
+2.108580 --> METHOD: GET
+3.172395 ---------- ProviderConfiguration ----------
+3.172426 --> PATH: /rp-idt-iss/_/_/_/issi/normal/.well-known/openid-configuration
+3.172447 --> QUERY: 
+3.172811 --> 
+3.176574 <-- {"acr_values_supported": ["PASSWORD"], "subject_types_supported": ["public", "pairwise"], "request_parameter_supported": true, "userinfo_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "claims_supported": ["profile", "family_name", "phone_number", "email_verified", "middle_name", "name", "phone_number_verified", "picture", "locale", "gender", "zoneinfo", "preferred_username", "updated_at", "birthdate", "website", "given_name", "address", "nickname", "email", "sub"], "issuer": "https://localhost:8088/rp-idt-iss/_/_/_/issi/", "id_token_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "require_request_uri_registration": true, "grant_types_supported": ["authorization_code", "implicit", "urn:ietf:params:oauth:grant-type:jwt-bearer"], "token_endpoint": "https://localhost:8088/rp-idt-iss/_/_/_/issi/token", "request_uri_parameter_supported": true, "version": "3.0", "registration_endpoint": "https://localhost:8088/rp-idt-iss/_/_/_/issi/registration", "response_modes_supported": ["query", "fragment", "form_post"], "jwks_uri": "https://localhost:8088/export/jwk.json", "userinfo_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "scopes_supported": ["profile", "openid", "offline_access", "phone", "address", "email", "openid"], "token_endpoint_auth_methods_supported": ["client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"], "userinfo_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "id_token_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "claims_parameter_supported": true, "id_token_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "token_endpoint_auth_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "ES256", "RS384"], "userinfo_endpoint": "https://localhost:8088/rp-idt-iss/_/_/_/issi/userinfo", "request_object_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "response_types_supported": ["code", "token", "id_token", "code token", "code id_token", "id_token token", "code token id_token"], "end_session_endpoint": "https://localhost:8088/rp-idt-iss/_/_/_/issi/end_session", "authorization_endpoint": "https://localhost:8088/rp-idt-iss/_/_/_/issi/authorization", "claim_types_supported": ["normal", "aggregated", "distributed"]}
+
+1.447190 --> PATH: .well-known/webfinger
+1.447214 --> METHOD: GET
+2.713071 ---------- WebFinger ----------
+2.713096 --> resource=acct%3Arp-idt-iss%40localhost%3A8088&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+2.713124 QUERY: {'resource': ['acct:rp-idt-iss@localhost:8088'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+3.655079 <-- {"expires": "2015-03-27T11:23:06Z", "links": [{"href": "https://localhost:8088/rp-idt-iss/_/_/_/issi/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "acct:rp-idt-iss@localhost:8088"}
+
+1.339557 --> PATH: normal/.well-known/openid-configuration
+1.339579 --> METHOD: GET
+7.432790 ---------- ProviderConfiguration ----------
+8.899695 --> PATH: /rp-idt-iss/_/_/_/issi/normal/.well-known/openid-configuration
+55.752619 --> QUERY: 
+55.752847 --> 
+55.755095 <-- {"acr_values_supported": ["PASSWORD"], "subject_types_supported": ["public", "pairwise"], "request_parameter_supported": true, "userinfo_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "claims_supported": ["profile", "family_name", "phone_number", "email_verified", "middle_name", "name", "phone_number_verified", "picture", "locale", "gender", "zoneinfo", "preferred_username", "updated_at", "birthdate", "website", "given_name", "address", "nickname", "email", "sub"], "issuer": "https://localhost:8088/rp-idt-iss/_/_/_/issi/", "id_token_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "require_request_uri_registration": true, "grant_types_supported": ["authorization_code", "implicit", "urn:ietf:params:oauth:grant-type:jwt-bearer"], "token_endpoint": "https://localhost:8088/rp-idt-iss/_/_/_/issi/token", "request_uri_parameter_supported": true, "version": "3.0", "registration_endpoint": "https://localhost:8088/rp-idt-iss/_/_/_/issi/registration", "response_modes_supported": ["query", "fragment", "form_post"], "jwks_uri": "https://localhost:8088/export/jwk.json", "userinfo_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "scopes_supported": ["profile", "openid", "offline_access", "phone", "address", "email", "openid"], "token_endpoint_auth_methods_supported": ["client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"], "userinfo_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "id_token_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "claims_parameter_supported": true, "id_token_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "token_endpoint_auth_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "ES256", "RS384"], "userinfo_endpoint": "https://localhost:8088/rp-idt-iss/_/_/_/issi/userinfo", "request_object_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "response_types_supported": ["code", "token", "id_token", "code token", "code id_token", "id_token token", "code token id_token"], "end_session_endpoint": "https://localhost:8088/rp-idt-iss/_/_/_/issi/end_session", "authorization_endpoint": "https://localhost:8088/rp-idt-iss/_/_/_/issi/authorization", "claim_types_supported": ["normal", "aggregated", "distributed"]}
+
+17.778914 --> PATH: .well-known/webfinger
+17.778936 --> METHOD: GET
+19.608725 ---------- WebFinger ----------
+19.608749 --> resource=acct%3Arp-idt-iss%40localhost%3A8088&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+19.608777 QUERY: {'resource': ['acct:rp-idt-iss@localhost:8088'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+20.947031 <-- {"expires": "2015-03-27T11:24:39Z", "links": [{"href": "https://localhost:8088/rp-idt-iss/_/_/_/issi/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "acct:rp-idt-iss@localhost:8088"}
+
+10.376397 --> PATH: .well-known/webfinger
+10.376421 --> METHOD: GET
+13.053383 ---------- WebFinger ----------
+13.053406 --> resource=acct%3Arp-idt-iss%40localhost%3A8088&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+13.053434 QUERY: {'resource': ['acct:rp-idt-iss@localhost:8088'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+14.614941 <-- {"expires": "2015-03-27T11:27:21Z", "links": [{"href": "https://localhost:8088/rp-idt-iss/_/_/_/issi/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "acct:rp-idt-iss@localhost:8088"}
+
+14.144596 --> PATH: .well-known/openid-configuration
+14.144628 --> METHOD: GET
+15.249992 ---------- ProviderConfiguration ----------
+15.250010 --> PATH: /rp-idt-iss/_/_/_/issi/normal/.well-known/openid-configuration
+15.250021 --> QUERY: 
+15.250275 --> 
+15.252216 <-- {"acr_values_supported": ["PASSWORD"], "subject_types_supported": ["public", "pairwise"], "request_parameter_supported": true, "userinfo_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "claims_supported": ["profile", "family_name", "phone_number", "email_verified", "middle_name", "name", "phone_number_verified", "picture", "locale", "gender", "zoneinfo", "preferred_username", "updated_at", "birthdate", "website", "given_name", "address", "nickname", "email", "sub"], "issuer": "https://localhost:8088/rp-idt-iss/_/_/_/issi/", "id_token_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "require_request_uri_registration": true, "grant_types_supported": ["authorization_code", "implicit", "urn:ietf:params:oauth:grant-type:jwt-bearer"], "token_endpoint": "https://localhost:8088/rp-idt-iss/_/_/_/issi/token", "request_uri_parameter_supported": true, "version": "3.0", "registration_endpoint": "https://localhost:8088/rp-idt-iss/_/_/_/issi/registration", "response_modes_supported": ["query", "fragment", "form_post"], "jwks_uri": "https://localhost:8088/export/jwk.json", "userinfo_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "scopes_supported": ["profile", "openid", "offline_access", "phone", "address", "email", "openid"], "token_endpoint_auth_methods_supported": ["client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"], "userinfo_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "id_token_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "claims_parameter_supported": true, "id_token_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "token_endpoint_auth_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "ES256", "RS384"], "userinfo_endpoint": "https://localhost:8088/rp-idt-iss/_/_/_/issi/userinfo", "request_object_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "response_types_supported": ["code", "token", "id_token", "code token", "code id_token", "id_token token", "code token id_token"], "end_session_endpoint": "https://localhost:8088/rp-idt-iss/_/_/_/issi/end_session", "authorization_endpoint": "https://localhost:8088/rp-idt-iss/_/_/_/issi/authorization", "claim_types_supported": ["normal", "aggregated", "distributed"]}
+
+2.904698 --> PATH: .well-known/webfinger
+2.904724 --> METHOD: GET
+4.004280 ---------- WebFinger ----------
+4.004304 --> resource=acct%3Arp-idt-iss%40localhost%3A8088&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+4.004333 QUERY: {'resource': ['acct:rp-idt-iss@localhost:8088'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+5.320396 <-- {"expires": "2015-03-27T11:27:59Z", "links": [{"href": "https://localhost:8088/rp-idt-iss/_/_/_/issi/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "acct:rp-idt-iss@localhost:8088"}
+
+2.578691 --> PATH: .well-known/webfinger
+2.578714 --> METHOD: GET
+3.774843 ---------- WebFinger ----------
+3.774868 --> resource=acct%3Arp-idt-iss%40localhost%3A8088&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+3.774896 QUERY: {'resource': ['acct:rp-idt-iss@localhost:8088'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+5.231912 <-- {"expires": "2015-03-27T11:29:43Z", "links": [{"href": "https://localhost:8088/rp-idt-iss/_/_/_/issi/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "acct:rp-idt-iss@localhost:8088"}
+
+3.162746 --> PATH: .well-known/webfinger
+3.162784 --> METHOD: GET
+4.122555 ---------- WebFinger ----------
+4.122579 --> resource=acct%3Arp-idt-iss%40localhost%3A8088&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+4.122607 QUERY: {'resource': ['acct:rp-idt-iss@localhost:8088'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+4.953651 <-- {"expires": "2015-03-27T11:36:30Z", "links": [{"href": "https://localhost:8088/rp-idt-iss/_/_/issi/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "acct:rp-idt-iss@localhost:8088"}
+
+3.073683 --> PATH: .well-known/webfinger
+3.073706 --> METHOD: GET
+3.927572 ---------- WebFinger ----------
+3.927620 --> resource=acct%3Arp-idt-iss%40localhost%3A8088&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+3.927649 QUERY: {'resource': ['acct:rp-idt-iss@localhost:8088'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+4.882167 <-- {"expires": "2015-03-27T14:44:36Z", "links": [{"href": "https://localhost:8088/rp-idt-iss/_/_/issi/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "acct:rp-idt-iss@localhost:8088"}
+
+2.621838 --> PATH: .well-known/webfinger
+2.621861 --> METHOD: GET
+3.563730 ---------- WebFinger ----------
+3.563755 --> resource=acct%3Arp-idt-iss%40localhost%3A8088&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+3.563782 QUERY: {'resource': ['acct:rp-idt-iss@localhost:8088'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+4.529498 <-- {"expires": "2015-03-27T14:45:08Z", "links": [{"href": "https://localhost:8088/rp-idt-iss/_/_/issi/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "acct:rp-idt-iss@localhost:8088"}
+

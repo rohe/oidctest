@@ -1,0 +1,251 @@
+0.000635 --> PATH: .well-known/webfinger
+0.000642 --> METHOD: GET
+0.000824 ---------- WebFinger ----------
+0.000827 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-tok-csbasic&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000836 QUERY: {'resource': ['https://localhost:8092/rp-tok-csbasic'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000979 <-- {"expires": "2015-05-13T11:33:59Z", "links": [{"href": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-tok-csbasic"}
+
+0.000109 --> PATH: .well-known/openid-configuration
+0.000114 --> METHOD: GET
+0.000238 ---------- ProviderConfiguration ----------
+0.000241 --> PATH: /rp-tok-csbasic/_/_/_/normal/.well-known/openid-configuration
+0.000243 --> QUERY: 
+0.000280 --> 
+0.000907 <-- {"acr_values_supported": ["PASSWORD"], "subject_types_supported": ["public", "pairwise"], "request_parameter_supported": true, "userinfo_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "claims_supported": ["profile", "family_name", "phone_number", "email_verified", "middle_name", "name", "phone_number_verified", "picture", "locale", "gender", "zoneinfo", "preferred_username", "updated_at", "birthdate", "website", "given_name", "address", "nickname", "email", "sub"], "issuer": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/", "id_token_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "require_request_uri_registration": true, "grant_types_supported": ["authorization_code", "implicit", "urn:ietf:params:oauth:grant-type:jwt-bearer"], "token_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/token", "request_uri_parameter_supported": true, "version": "3.0", "registration_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/registration", "response_modes_supported": ["query", "fragment", "form_post"], "jwks_uri": "https://localhost:8092/static/jwk.json", "userinfo_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "scopes_supported": ["profile", "openid", "offline_access", "phone", "address", "email", "openid"], "token_endpoint_auth_methods_supported": ["client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"], "userinfo_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "id_token_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "claims_parameter_supported": true, "id_token_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "token_endpoint_auth_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "ES256", "RS384"], "userinfo_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/userinfo", "request_object_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "response_types_supported": ["code", "token", "id_token", "code token", "code id_token", "id_token token", "code token id_token"], "end_session_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/end_session", "authorization_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/authorization", "claim_types_supported": ["normal", "aggregated", "distributed"]}
+
+0.000126 --> PATH: registration
+0.000132 --> METHOD: POST
+0.000258 ---------- ClientRegistration ----------
+0.000302 --> {"application_type": "web", "redirect_uris": ["https://localhost:8088/authz_cb"]}
+0.063823 <-- {"client_id_issued_at": 1431513239, "redirect_uris": ["https://localhost:8088/authz_cb"], "application_type": "web", "registration_client_uri": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/registration?client_id=OhF8xGorcrzZ", "registration_access_token": "YZ8nLOIuKb59T4eiAiPGZC7C7KQSCz61", "client_id": "OhF8xGorcrzZ", "client_secret": "caebe85a632891c28be12061fb763565469361d15016e745e1b36e92", "client_secret_expires_at": 1431599639}
+
+0.000117 --> PATH: authorization
+0.000123 --> METHOD: GET
+0.000253 ---------- Authorization ----------
+0.000286 --> nonce=18AS5m3nJ8ZJdBV0&state=yVwvCkfh1OJf1TG8&redirect_uri=https%3A%2F%2Flocalhost%3A8088%2Fauthz_cb&response_type=code&client_id=OhF8xGorcrzZ&scope=openid
+0.001545 <-- https://localhost:8088/authz_cb?scope=openid&state=yVwvCkfh1OJf1TG8&code=4z0l9dh8Bxz3boDo5ebuO%2FuBvOZud72y3k6tGiGsogjPTqNynbIwzXjvVyD5PqPCDPQBzNKHgxpQPOKCS76%2BQBqY5ivmIHqhfMhihDRQqc0%3D
+
+0.000505 --> PATH: .well-known/webfinger
+0.000511 --> METHOD: GET
+0.000667 ---------- WebFinger ----------
+0.000670 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-tok-csbasic&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000679 QUERY: {'resource': ['https://localhost:8092/rp-tok-csbasic'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000807 <-- {"expires": "2015-05-13T11:34:50Z", "links": [{"href": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-tok-csbasic"}
+
+0.000155 --> PATH: .well-known/openid-configuration
+0.000165 --> METHOD: GET
+0.000332 ---------- ProviderConfiguration ----------
+0.000336 --> PATH: /rp-tok-csbasic/_/_/_/normal/.well-known/openid-configuration
+0.000338 --> QUERY: 
+0.000377 --> 
+0.001066 <-- {"acr_values_supported": ["PASSWORD"], "subject_types_supported": ["public", "pairwise"], "request_parameter_supported": true, "userinfo_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "claims_supported": ["profile", "family_name", "phone_number", "email_verified", "middle_name", "name", "phone_number_verified", "picture", "locale", "gender", "zoneinfo", "preferred_username", "updated_at", "birthdate", "website", "given_name", "address", "nickname", "email", "sub"], "issuer": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/", "id_token_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "require_request_uri_registration": true, "grant_types_supported": ["authorization_code", "implicit", "urn:ietf:params:oauth:grant-type:jwt-bearer"], "token_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/token", "request_uri_parameter_supported": true, "version": "3.0", "registration_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/registration", "response_modes_supported": ["query", "fragment", "form_post"], "jwks_uri": "https://localhost:8092/static/jwk.json", "userinfo_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "scopes_supported": ["profile", "openid", "offline_access", "phone", "address", "email", "openid"], "token_endpoint_auth_methods_supported": ["client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"], "userinfo_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "id_token_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "claims_parameter_supported": true, "id_token_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "token_endpoint_auth_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "ES256", "RS384"], "userinfo_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/userinfo", "request_object_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "response_types_supported": ["code", "token", "id_token", "code token", "code id_token", "id_token token", "code token id_token"], "end_session_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/end_session", "authorization_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/authorization", "claim_types_supported": ["normal", "aggregated", "distributed"]}
+
+0.000134 --> PATH: registration
+0.000140 --> METHOD: POST
+0.000273 ---------- ClientRegistration ----------
+0.000317 --> {"application_type": "web", "redirect_uris": ["https://localhost:8088/authz_cb"]}
+0.053961 <-- {"client_id_issued_at": 1431513290, "redirect_uris": ["https://localhost:8088/authz_cb"], "application_type": "web", "registration_client_uri": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/registration?client_id=EVqxFjkGED1t", "registration_access_token": "XgE3fdqqZqD7mu18SIJpaa1BWoozZqbd", "client_id": "EVqxFjkGED1t", "client_secret": "434274ed8d8b1088ccb10fe00d2065a432b955b2c44133d4259e5346", "client_secret_expires_at": 1431599690}
+
+0.000114 --> PATH: authorization
+0.000120 --> METHOD: GET
+0.000254 ---------- Authorization ----------
+0.000288 --> nonce=nKtKFuJvJltP6twu&state=pFycCn5YRPlqUNFU&redirect_uri=https%3A%2F%2Flocalhost%3A8088%2Fauthz_cb&response_type=code&client_id=EVqxFjkGED1t&scope=openid
+0.001575 <-- https://localhost:8088/authz_cb?scope=openid&state=pFycCn5YRPlqUNFU&code=xvcW7Bv1o8QTEabk9VG3gCCiLapCQwhkf3NBjRX22uIo4TNSLV16PjBzkwhRpHkjK%2FCFdBdm%2BYS8w4rKeEWi5cr%2FC80i143aLFDkGT3aCv4%3D
+
+0.000532 --> PATH: .well-known/webfinger
+0.000538 --> METHOD: GET
+0.000698 ---------- WebFinger ----------
+0.000702 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-tok-csbasic&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000711 QUERY: {'resource': ['https://localhost:8092/rp-tok-csbasic'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000842 <-- {"expires": "2015-05-13T11:35:12Z", "links": [{"href": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-tok-csbasic"}
+
+0.000108 --> PATH: .well-known/openid-configuration
+0.000114 --> METHOD: GET
+0.000238 ---------- ProviderConfiguration ----------
+0.000241 --> PATH: /rp-tok-csbasic/_/_/_/normal/.well-known/openid-configuration
+0.000243 --> QUERY: 
+0.000277 --> 
+0.000948 <-- {"acr_values_supported": ["PASSWORD"], "subject_types_supported": ["public", "pairwise"], "request_parameter_supported": true, "userinfo_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "claims_supported": ["profile", "family_name", "phone_number", "email_verified", "middle_name", "name", "phone_number_verified", "picture", "locale", "gender", "zoneinfo", "preferred_username", "updated_at", "birthdate", "website", "given_name", "address", "nickname", "email", "sub"], "issuer": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/", "id_token_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "require_request_uri_registration": true, "grant_types_supported": ["authorization_code", "implicit", "urn:ietf:params:oauth:grant-type:jwt-bearer"], "token_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/token", "request_uri_parameter_supported": true, "version": "3.0", "registration_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/registration", "response_modes_supported": ["query", "fragment", "form_post"], "jwks_uri": "https://localhost:8092/static/jwk.json", "userinfo_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "scopes_supported": ["profile", "openid", "offline_access", "phone", "address", "email", "openid"], "token_endpoint_auth_methods_supported": ["client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"], "userinfo_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "id_token_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "claims_parameter_supported": true, "id_token_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "token_endpoint_auth_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "ES256", "RS384"], "userinfo_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/userinfo", "request_object_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "response_types_supported": ["code", "token", "id_token", "code token", "code id_token", "id_token token", "code token id_token"], "end_session_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/end_session", "authorization_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/authorization", "claim_types_supported": ["normal", "aggregated", "distributed"]}
+
+0.000122 --> PATH: registration
+0.000129 --> METHOD: POST
+0.000391 ---------- ClientRegistration ----------
+0.000489 --> {"application_type": "web", "redirect_uris": ["https://localhost:8088/authz_cb"]}
+0.037173 <-- {"client_id_issued_at": 1431513312, "redirect_uris": ["https://localhost:8088/authz_cb"], "application_type": "web", "registration_client_uri": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/registration?client_id=Bmd88lzgzyvN", "registration_access_token": "jktWnnSsyj1rSrbyNkdBmpZjJUg3EzPe", "client_id": "Bmd88lzgzyvN", "client_secret": "9398650b1e88e8dfe2f066771336ee359189fe9f60a5d388fa7b3863", "client_secret_expires_at": 1431599712}
+
+0.000116 --> PATH: authorization
+0.000121 --> METHOD: GET
+0.000252 ---------- Authorization ----------
+0.000284 --> nonce=Po3L8XkzyNhF8MdD&state=Y4UgXq79YHtE3CKt&redirect_uri=https%3A%2F%2Flocalhost%3A8088%2Fauthz_cb&response_type=code&client_id=Bmd88lzgzyvN&scope=openid
+0.001551 <-- https://localhost:8088/authz_cb?scope=openid&state=Y4UgXq79YHtE3CKt&code=6iuWVVLtaTKAS%2B7EKt1%2FRIQ%2FL72ObIwSEofBA1rRk%2Fr4QU1le8r6NZ3U8oyWBRiqMIalgOjIhI7GIjPrtNm4jUczkN8KQ3ImEXxoE0C%2BVuQ%3D
+
+0.000513 --> PATH: .well-known/webfinger
+0.000519 --> METHOD: GET
+0.000682 ---------- WebFinger ----------
+0.000685 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-tok-csbasic&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000694 QUERY: {'resource': ['https://localhost:8092/rp-tok-csbasic'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000823 <-- {"expires": "2015-05-13T11:36:37Z", "links": [{"href": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-tok-csbasic"}
+
+0.000110 --> PATH: .well-known/openid-configuration
+0.000116 --> METHOD: GET
+0.000247 ---------- ProviderConfiguration ----------
+0.000253 --> PATH: /rp-tok-csbasic/_/_/_/normal/.well-known/openid-configuration
+0.000256 --> QUERY: 
+0.000291 --> 
+0.000965 <-- {"acr_values_supported": ["PASSWORD"], "subject_types_supported": ["public", "pairwise"], "request_parameter_supported": true, "userinfo_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "claims_supported": ["profile", "family_name", "phone_number", "email_verified", "middle_name", "name", "phone_number_verified", "picture", "locale", "gender", "zoneinfo", "preferred_username", "updated_at", "birthdate", "website", "given_name", "address", "nickname", "email", "sub"], "issuer": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/", "id_token_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "require_request_uri_registration": true, "grant_types_supported": ["authorization_code", "implicit", "urn:ietf:params:oauth:grant-type:jwt-bearer"], "token_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/token", "request_uri_parameter_supported": true, "version": "3.0", "registration_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/registration", "response_modes_supported": ["query", "fragment", "form_post"], "jwks_uri": "https://localhost:8092/static/jwk.json", "userinfo_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "scopes_supported": ["profile", "openid", "offline_access", "phone", "address", "email", "openid"], "token_endpoint_auth_methods_supported": ["client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"], "userinfo_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "id_token_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "claims_parameter_supported": true, "id_token_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "token_endpoint_auth_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "ES256", "RS384"], "userinfo_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/userinfo", "request_object_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "response_types_supported": ["code", "token", "id_token", "code token", "code id_token", "id_token token", "code token id_token"], "end_session_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/end_session", "authorization_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/authorization", "claim_types_supported": ["normal", "aggregated", "distributed"]}
+
+0.000120 --> PATH: registration
+0.000125 --> METHOD: POST
+0.000279 ---------- ClientRegistration ----------
+0.000323 --> {"application_type": "web", "redirect_uris": ["https://localhost:8088/authz_cb"]}
+0.041761 <-- {"client_id_issued_at": 1431513403, "redirect_uris": ["https://localhost:8088/authz_cb"], "application_type": "web", "registration_client_uri": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/registration?client_id=28884IbLoz11", "registration_access_token": "VKJw7iU4Sx2XzNRZYascXct5GJLMDsqh", "client_id": "28884IbLoz11", "client_secret": "b0d3ff59527d1533ea5dbc612f50a6e467bb5b0bfaa34fad145b6247", "client_secret_expires_at": 1431599803}
+
+0.000118 --> PATH: authorization
+0.000124 --> METHOD: GET
+0.000323 ---------- Authorization ----------
+0.000379 --> nonce=pgMRfUEmz6k4hTGV&state=YBECFQDfwgTsKa3s&redirect_uri=https%3A%2F%2Flocalhost%3A8088%2Fauthz_cb&response_type=code&client_id=28884IbLoz11&scope=openid
+0.002027 <-- https://localhost:8088/authz_cb?scope=openid&state=YBECFQDfwgTsKa3s&code=EIhz9PQjUdvSGV81pyHIOAcSic%2BGQlq5Sdh4%2B8QOCan2ugc8HdoXvCgZWKbgUA78YeJBIYDCjPE62zlDjZKr2UvIzAZrEYdl3Pien4g7eFU%3D
+
+0.000138 --> PATH: token
+0.000144 --> METHOD: POST
+0.000147 --> HTTP_AUTHORIZATION: Basic Mjg4ODRJYkxvejExOmIwZDNmZjU5NTI3ZDE1MzNlYTVkYmM2MTJmNTBhNmU0NjdiYjViMGJmYWEzNGZhZDE0NWI2MjQ3
+0.000290 ---------- AccessToken ----------
+0.000332 --> code=EIhz9PQjUdvSGV81pyHIOAcSic%2BGQlq5Sdh4%2B8QOCan2ugc8HdoXvCgZWKbgUA78YeJBIYDCjPE62zlDjZKr2UvIzAZrEYdl3Pien4g7eFU%3D&grant_type=authorization_code&redirect_uri=https%3A%2F%2Flocalhost%3A8088%2Fauthz_cb
+0.007893 <-- {"access_token": "EIhz9PQjUdvSGV81pyHIOAcSic+GQlq5Sdh4+8QOCan2ugc8HdoXvCgZWKbgUA78j9SPofMHsm3oeVu9QCnMx/bw20nbjMULMa4u2M5JCBM=", "id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImExIn0.eyJub25jZSI6ICJwZ01SZlVFbXo2azRoVEdWIiwgInN1YiI6ICItZmRmYjRhODQxZGNlMTY3IiwgImlzcyI6ICJodHRwczovL2xvY2FsaG9zdDo4MDkyL3JwLXRvay1jc2Jhc2ljL18vXy9fL25vcm1hbC8iLCAiYWNyIjogIlBBU1NXT1JEIiwgImV4cCI6IDE0MzE1OTYyNTYsICJhdXRoX3RpbWUiOiAxNDMxNTE3MDA3LCAiaWF0IjogMTQzMTUxNzA1NiwgImF1ZCI6IFsiMjg4ODRJYkxvejExIl19.cHCT_EXlnpbLKSLGytuPECjiieB5hjlaLrPRT6zrYPXo-aAhFqiCchxNNxc6YSRaNqX1CWkdNZMRI_R3efL7m2lT0mXO2EhaPcJ3gyzhsysyPurfsHERLRenQDv33oopzZyVlhFvYdr5KJtj3iGz2hfvhKXFpqPm_sfd_M5Cwc8", "expires_in": 3600, "token_type": "Bearer", "state": "YBECFQDfwgTsKa3s", "scope": "openid", "refresh_token": "EIhz9PQjUdvSGV81pyHIOAcSic+GQlq5Sdh4+8QOCan2ugc8HdoXvCgZWKbgUA78S6euN7IL/kgdhe/H35Bj/zusOizAXE9PDL0b82DatNw="}
+
+0.000511 --> PATH: .well-known/webfinger
+0.000517 --> METHOD: GET
+0.000676 ---------- WebFinger ----------
+0.000679 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-tok-csbasic&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000688 QUERY: {'resource': ['https://localhost:8092/rp-tok-csbasic'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000818 <-- {"expires": "2015-05-13T11:39:16Z", "links": [{"href": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-tok-csbasic"}
+
+0.000109 --> PATH: .well-known/openid-configuration
+0.000115 --> METHOD: GET
+0.000235 ---------- ProviderConfiguration ----------
+0.000238 --> PATH: /rp-tok-csbasic/_/_/_/normal/.well-known/openid-configuration
+0.000240 --> QUERY: 
+0.000276 --> 
+0.000975 <-- {"acr_values_supported": ["PASSWORD"], "subject_types_supported": ["public", "pairwise"], "request_parameter_supported": true, "userinfo_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "claims_supported": ["profile", "family_name", "phone_number", "email_verified", "middle_name", "name", "phone_number_verified", "picture", "locale", "gender", "zoneinfo", "preferred_username", "updated_at", "birthdate", "website", "given_name", "address", "nickname", "email", "sub"], "issuer": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/", "id_token_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "require_request_uri_registration": true, "grant_types_supported": ["authorization_code", "implicit", "urn:ietf:params:oauth:grant-type:jwt-bearer"], "token_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/token", "request_uri_parameter_supported": true, "version": "3.0", "registration_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/registration", "response_modes_supported": ["query", "fragment", "form_post"], "jwks_uri": "https://localhost:8092/static/jwk.json", "userinfo_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "scopes_supported": ["profile", "openid", "offline_access", "phone", "address", "email", "openid"], "token_endpoint_auth_methods_supported": ["client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"], "userinfo_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "id_token_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "claims_parameter_supported": true, "id_token_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "token_endpoint_auth_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "ES256", "RS384"], "userinfo_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/userinfo", "request_object_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "response_types_supported": ["code", "token", "id_token", "code token", "code id_token", "id_token token", "code token id_token"], "end_session_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/end_session", "authorization_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/authorization", "claim_types_supported": ["normal", "aggregated", "distributed"]}
+
+0.000560 --> PATH: registration
+0.000569 --> METHOD: POST
+0.000761 ---------- ClientRegistration ----------
+0.000837 --> {"application_type": "web", "redirect_uris": ["https://localhost:8088/authz_cb"]}
+0.063303 <-- {"client_id_issued_at": 1431513556, "redirect_uris": ["https://localhost:8088/authz_cb"], "application_type": "web", "registration_client_uri": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/registration?client_id=bgpGePMfdA0E", "registration_access_token": "vzIDzV2kFNwEQU9ZTiPOxNeI5JJ9MHva", "client_id": "bgpGePMfdA0E", "client_secret": "bae042c138411fff4332464d7eabc322b83ff8fad5116691e0a8994a", "client_secret_expires_at": 1431599956}
+
+0.000116 --> PATH: authorization
+0.000122 --> METHOD: GET
+0.000277 ---------- Authorization ----------
+0.000310 --> nonce=1DsLxZ8HgFtxrqmI&state=mXQY6eaN7N63ohNp&redirect_uri=https%3A%2F%2Flocalhost%3A8088%2Fauthz_cb&response_type=code&client_id=bgpGePMfdA0E&scope=openid
+0.001564 <-- https://localhost:8088/authz_cb?scope=openid&state=mXQY6eaN7N63ohNp&code=4U7nBbyq8nnybRNKVh3WMXF4yMTNbM3RLcO8yFuR4JV0NuIPMPCMrt44SaCdrfR1%2BlxEyXNP9A8423RNJuvtCdvkpDxxaAG7T7B0uRNi%2ByY%3D
+
+0.000131 --> PATH: token
+0.000136 --> METHOD: POST
+0.000138 --> HTTP_AUTHORIZATION: Basic YmdwR2VQTWZkQTBFOmJhZTA0MmMxMzg0MTFmZmY0MzMyNDY0ZDdlYWJjMzIyYjgzZmY4ZmFkNTExNjY5MWUwYTg5OTRh
+0.000268 ---------- AccessToken ----------
+0.000308 --> code=4U7nBbyq8nnybRNKVh3WMXF4yMTNbM3RLcO8yFuR4JV0NuIPMPCMrt44SaCdrfR1%2BlxEyXNP9A8423RNJuvtCdvkpDxxaAG7T7B0uRNi%2ByY%3D&grant_type=authorization_code&redirect_uri=https%3A%2F%2Flocalhost%3A8088%2Fauthz_cb
+0.005883 <-- {"access_token": "4U7nBbyq8nnybRNKVh3WMXF4yMTNbM3RLcO8yFuR4JV0NuIPMPCMrt44SaCdrfR1f1Si3/neXnKXuROSBa8l0ONovddfE/Nk+HCDmDHprd4=", "id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImExIn0.eyJub25jZSI6ICIxRHNMeFo4SGdGdHhycW1JIiwgInN1YiI6ICItZmRmYjRhODQxZGNlMTY3IiwgImlzcyI6ICJodHRwczovL2xvY2FsaG9zdDo4MDkyL3JwLXRvay1jc2Jhc2ljL18vXy9fL25vcm1hbC8iLCAiYWNyIjogIlBBU1NXT1JEIiwgImV4cCI6IDE0MzE1OTYzNTYsICJhdXRoX3RpbWUiOiAxNDMxNTE3MTU2LCAiaWF0IjogMTQzMTUxNzE1NiwgImF1ZCI6IFsiYmdwR2VQTWZkQTBFIl19.NOWc1JscO1BjVXTseqXnLrdEBMj59vYdvI-dr0KlrYGs4TUgb3r0wYzNurb_CupccG_5T3nHFpDx_IUhxYNDwycZ8uiRxLJFLwFMJj0UtzPoCgRxd-qUe0VepKDvzPu32VWrSR6nej_oMYEeNEPplzGH_OfAOlc2IqbV4g9wImY", "expires_in": 3600, "token_type": "Bearer", "state": "mXQY6eaN7N63ohNp", "scope": "openid", "refresh_token": "4U7nBbyq8nnybRNKVh3WMXF4yMTNbM3RLcO8yFuR4JV0NuIPMPCMrt44SaCdrfR1lxxw+6q/unjszeLDcw2XiGasb8xaxA3ewqkVFqhD910="}
+
+0.000610 --> PATH: .well-known/webfinger
+0.000616 --> METHOD: GET
+0.000792 ---------- WebFinger ----------
+0.000796 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-tok-csbasic&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000806 QUERY: {'resource': ['https://localhost:8092/rp-tok-csbasic'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000951 <-- {"expires": "2015-05-13T13:02:52Z", "links": [{"href": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-tok-csbasic"}
+
+0.000652 --> PATH: .well-known/webfinger
+0.000658 --> METHOD: GET
+0.000819 ---------- WebFinger ----------
+0.000822 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-tok-csbasic&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000831 QUERY: {'resource': ['https://localhost:8092/rp-tok-csbasic'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.001416 <-- {"expires": "2015-05-13T13:03:48Z", "links": [{"href": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-tok-csbasic"}
+
+0.000108 --> PATH: .well-known/openid-configuration
+0.000114 --> METHOD: GET
+0.000243 ---------- ProviderConfiguration ----------
+0.000246 --> PATH: /rp-tok-csbasic/_/_/_/normal/.well-known/openid-configuration
+0.000248 --> QUERY: 
+0.000288 --> 
+0.001003 <-- {"acr_values_supported": ["PASSWORD"], "subject_types_supported": ["public", "pairwise"], "request_parameter_supported": true, "userinfo_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "claims_supported": ["profile", "family_name", "phone_number", "email_verified", "middle_name", "name", "phone_number_verified", "picture", "locale", "gender", "zoneinfo", "preferred_username", "updated_at", "birthdate", "website", "given_name", "address", "nickname", "email", "sub"], "issuer": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/", "id_token_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "require_request_uri_registration": true, "grant_types_supported": ["authorization_code", "implicit", "urn:ietf:params:oauth:grant-type:jwt-bearer"], "token_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/token", "request_uri_parameter_supported": true, "version": "3.0", "registration_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/registration", "response_modes_supported": ["query", "fragment", "form_post"], "jwks_uri": "https://localhost:8092/static/jwk.json", "userinfo_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "scopes_supported": ["profile", "openid", "offline_access", "phone", "address", "email", "openid"], "token_endpoint_auth_methods_supported": ["client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"], "userinfo_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "id_token_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "claims_parameter_supported": true, "id_token_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "token_endpoint_auth_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "ES256", "RS384"], "userinfo_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/userinfo", "request_object_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "response_types_supported": ["code", "token", "id_token", "code token", "code id_token", "id_token token", "code token id_token"], "end_session_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/end_session", "authorization_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/authorization", "claim_types_supported": ["normal", "aggregated", "distributed"]}
+
+0.000121 --> PATH: registration
+0.000127 --> METHOD: POST
+0.000330 ---------- ClientRegistration ----------
+0.000375 --> {"application_type": "web", "redirect_uris": ["https://localhost:8088/authz_cb"]}
+0.058934 <-- {"client_id_issued_at": 1431518628, "redirect_uris": ["https://localhost:8088/authz_cb"], "application_type": "web", "registration_client_uri": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/registration?client_id=PitCkoJl6goZ", "registration_access_token": "4O49eKz0eoL4Q0pyg0DSYREUM5xXwp0x", "client_id": "PitCkoJl6goZ", "client_secret": "a9fc110d2ddc079c1ae4cd9ca14c36cfdf7dbc681d23c5ddf7145d46", "client_secret_expires_at": 1431605028}
+
+0.000117 --> PATH: authorization
+0.000123 --> METHOD: GET
+0.000260 ---------- Authorization ----------
+0.000294 --> scope=openid&redirect_uri=https%3A%2F%2Flocalhost%3A8088%2Fauthz_cb&response_type=code&client_id=PitCkoJl6goZ
+0.001601 <-- https://localhost:8088/authz_cb?scope=openid&code=b1OKVr3TDZYeAPfDnIwrK65tAgV6mZfDYCaYXHlMaBXuNg2dVXOpfesz2wfaGvB2VaBAZ5FuCF86VpvNHJDlRd9nTlRMP5OiIXiKi3F4WwU%3D
+
+0.000139 --> PATH: token
+0.000145 --> METHOD: POST
+0.000147 --> HTTP_AUTHORIZATION: Basic UGl0Q2tvSmw2Z29aOmE5ZmMxMTBkMmRkYzA3OWMxYWU0Y2Q5Y2ExNGMzNmNmZGY3ZGJjNjgxZDIzYzVkZGY3MTQ1ZDQ2
+0.000278 ---------- AccessToken ----------
+0.000318 --> code=b1OKVr3TDZYeAPfDnIwrK65tAgV6mZfDYCaYXHlMaBXuNg2dVXOpfesz2wfaGvB2VaBAZ5FuCF86VpvNHJDlRd9nTlRMP5OiIXiKi3F4WwU%3D&grant_type=authorization_code&redirect_uri=https%3A%2F%2Flocalhost%3A8088%2Fauthz_cb
+0.005931 <-- {"access_token": "b1OKVr3TDZYeAPfDnIwrK65tAgV6mZfDYCaYXHlMaBXuNg2dVXOpfesz2wfaGvB2KeVmj+lSxCSzkSjDuLNZ1VuvK3f8e6suPLJhu4rvCKk=", "id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImExIn0.eyJzdWIiOiAiLWZkZmI0YTg0MWRjZTE2NyIsICJpc3MiOiAiaHR0cHM6Ly9sb2NhbGhvc3Q6ODA5Mi9ycC10b2stY3NiYXNpYy9fL18vXy9ub3JtYWwvIiwgImFjciI6ICJQQVNTV09SRCIsICJleHAiOiAxNDMxNjAxNDI4LCAiYXV0aF90aW1lIjogMTQzMTUyMjIyOCwgImlhdCI6IDE0MzE1MjIyMjgsICJhdWQiOiBbIlBpdENrb0psNmdvWiJdfQ.KPR2mA0LpIRfBAt73mkHVC8NO3Q7bFqmzyyCk3m_-6Xs3NecKBoV75Xxnik-3BgN7dckb47lYmhHI0upotQSJkdC4JH__xoEVcwLZ4rdt37FIU1ywNdK8pWWl7KPhwfKxm-OlLoWTwQDDIMTO1kFo5rOYT7rdQjubAEtRPxqd7o", "expires_in": 3600, "token_type": "Bearer", "scope": "openid", "refresh_token": "b1OKVr3TDZYeAPfDnIwrK65tAgV6mZfDYCaYXHlMaBXuNg2dVXOpfesz2wfaGvB2GB64+SxFNRfWJmOjkcGYW+PB2BrlYHH3gAnBJjKtehc="}
+
+0.000510 --> PATH: .well-known/webfinger
+0.000516 --> METHOD: GET
+0.000672 ---------- WebFinger ----------
+0.000675 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-tok-csbasic&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000684 QUERY: {'resource': ['https://localhost:8092/rp-tok-csbasic'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000821 <-- {"expires": "2015-05-13T13:04:58Z", "links": [{"href": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-tok-csbasic"}
+
+0.000115 --> PATH: .well-known/openid-configuration
+0.000121 --> METHOD: GET
+0.000251 ---------- ProviderConfiguration ----------
+0.000254 --> PATH: /rp-tok-csbasic/_/_/_/normal/.well-known/openid-configuration
+0.000255 --> QUERY: 
+0.000290 --> 
+0.001013 <-- {"acr_values_supported": ["PASSWORD"], "subject_types_supported": ["public", "pairwise"], "request_parameter_supported": true, "userinfo_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "claims_supported": ["profile", "family_name", "phone_number", "email_verified", "middle_name", "name", "phone_number_verified", "picture", "locale", "gender", "zoneinfo", "preferred_username", "updated_at", "birthdate", "website", "given_name", "address", "nickname", "email", "sub"], "issuer": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/", "id_token_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "require_request_uri_registration": true, "grant_types_supported": ["authorization_code", "implicit", "urn:ietf:params:oauth:grant-type:jwt-bearer"], "token_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/token", "request_uri_parameter_supported": true, "version": "3.0", "registration_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/registration", "response_modes_supported": ["query", "fragment", "form_post"], "jwks_uri": "https://localhost:8092/static/jwk.json", "userinfo_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "scopes_supported": ["profile", "openid", "offline_access", "phone", "address", "email", "openid"], "token_endpoint_auth_methods_supported": ["client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"], "userinfo_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "id_token_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "claims_parameter_supported": true, "id_token_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "token_endpoint_auth_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "ES256", "RS384"], "userinfo_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/userinfo", "request_object_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "response_types_supported": ["code", "token", "id_token", "code token", "code id_token", "id_token token", "code token id_token"], "end_session_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/end_session", "authorization_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/authorization", "claim_types_supported": ["normal", "aggregated", "distributed"]}
+
+0.000134 --> PATH: registration
+0.000140 --> METHOD: POST
+0.000275 ---------- ClientRegistration ----------
+0.000318 --> {"application_type": "web", "redirect_uris": ["https://localhost:8088/authz_cb"]}
+0.044213 <-- {"client_id_issued_at": 1431518707, "redirect_uris": ["https://localhost:8088/authz_cb"], "application_type": "web", "registration_client_uri": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/registration?client_id=gju5jsMiUVnB", "registration_access_token": "BTjjdWKq7en147KXWf8g0xbpPSjR5iev", "client_id": "gju5jsMiUVnB", "client_secret": "eec18ef2ac624840a1450d3849c760edefd3559616f64c46c7f00b5a", "client_secret_expires_at": 1431605107}
+
+0.000117 --> PATH: authorization
+0.000123 --> METHOD: GET
+0.000250 ---------- Authorization ----------
+0.000282 --> scope=openid&redirect_uri=https%3A%2F%2Flocalhost%3A8088%2Fauthz_cb&response_type=code&client_id=gju5jsMiUVnB
+0.002972 <-- https://localhost:8088/authz_cb?scope=openid&code=xdFcHcrZHIVP2rk2Jt0VjHC7ifTAt4OosmNKJRTyeNgNdL7%2FUf0ahRa885GRx3eiiYeyANU%2FZW6xJ0WZwtpXSreLOYoH7W7bFQCohtK6HlY%3D
+
+0.000579 --> PATH: .well-known/webfinger
+0.000585 --> METHOD: GET
+0.000744 ---------- WebFinger ----------
+0.000747 --> resource=https%3A%2F%2Flocalhost%3A8092%2Frp-tok-csbasic&rel=http%3A%2F%2Fopenid.net%2Fspecs%2Fconnect%2F1.0%2Fissuer
+0.000756 QUERY: {'resource': ['https://localhost:8092/rp-tok-csbasic'], 'rel': ['http://openid.net/specs/connect/1.0/issuer']}
+0.000887 <-- {"expires": "2015-05-13T13:06:50Z", "links": [{"href": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal", "rel": "http://openid.net/specs/connect/1.0/issuer"}], "subject": "https://localhost:8092/rp-tok-csbasic"}
+
+0.000149 --> PATH: .well-known/openid-configuration
+0.000156 --> METHOD: GET
+0.000379 ---------- ProviderConfiguration ----------
+0.000383 --> PATH: /rp-tok-csbasic/_/_/_/normal/.well-known/openid-configuration
+0.000386 --> QUERY: 
+0.000448 --> 
+0.001661 <-- {"acr_values_supported": ["PASSWORD"], "subject_types_supported": ["public", "pairwise"], "request_parameter_supported": true, "userinfo_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "claims_supported": ["profile", "family_name", "phone_number", "email_verified", "middle_name", "name", "phone_number_verified", "picture", "locale", "gender", "zoneinfo", "preferred_username", "updated_at", "birthdate", "website", "given_name", "address", "nickname", "email", "sub"], "issuer": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/", "id_token_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "require_request_uri_registration": true, "grant_types_supported": ["authorization_code", "implicit", "urn:ietf:params:oauth:grant-type:jwt-bearer"], "token_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/token", "request_uri_parameter_supported": true, "version": "3.0", "registration_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/registration", "response_modes_supported": ["query", "fragment", "form_post"], "jwks_uri": "https://localhost:8092/static/jwk.json", "userinfo_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "scopes_supported": ["profile", "openid", "offline_access", "phone", "address", "email", "openid"], "token_endpoint_auth_methods_supported": ["client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"], "userinfo_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "id_token_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "claims_parameter_supported": true, "id_token_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "token_endpoint_auth_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "ES256", "RS384"], "userinfo_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/userinfo", "request_object_signing_alg_values_supported": ["ES512", "PS521", "RS512", "HS512", "PS384", "RS256", "ES384", "HS256", "HS384", "PS256", "none", "ES256", "RS384"], "request_object_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "response_types_supported": ["code", "token", "id_token", "code token", "code id_token", "id_token token", "code token id_token"], "end_session_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/end_session", "authorization_endpoint": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/authorization", "claim_types_supported": ["normal", "aggregated", "distributed"]}
+
+0.000129 --> PATH: registration
+0.000135 --> METHOD: POST
+0.000268 ---------- ClientRegistration ----------
+0.000312 --> {"application_type": "web", "redirect_uris": ["https://localhost:8088/authz_cb"]}
+0.037651 <-- {"client_id_issued_at": 1431518810, "redirect_uris": ["https://localhost:8088/authz_cb"], "application_type": "web", "registration_client_uri": "https://localhost:8092/rp-tok-csbasic/_/_/_/normal/registration?client_id=yoCafx5Rc8ge", "registration_access_token": "Lv468ryk7ke7CZBS8pcfgSBD4VDW2BZU", "client_id": "yoCafx5Rc8ge", "client_secret": "24f1474695fd8f957607efb0919a257fe494fb2eb5166b2b0a65efbd", "client_secret_expires_at": 1431605210}
+
+0.000185 --> PATH: authorization
+0.000193 --> METHOD: GET
+0.000367 ---------- Authorization ----------
+0.000400 --> scope=openid&redirect_uri=https%3A%2F%2Flocalhost%3A8088%2Fauthz_cb&response_type=code&client_id=yoCafx5Rc8ge
+0.001730 <-- https://localhost:8088/authz_cb?scope=openid&code=Sn0HgopJLuml9gtryCDNrAhhMcEca6TB31HqNzfoflqc29rThI0OPny2o%2BjIHJ1q2W1277V%2FxktfT6ve%2F7wS4U1Mx5nweTrb%2FUrb9PGHo9M%3D
+
+0.000155 --> PATH: token
+0.000162 --> METHOD: POST
+0.000164 --> HTTP_AUTHORIZATION: Basic eW9DYWZ4NVJjOGdlOjI0ZjE0NzQ2OTVmZDhmOTU3NjA3ZWZiMDkxOWEyNTdmZTQ5NGZiMmViNTE2NmIyYjBhNjVlZmJk
+0.000298 ---------- AccessToken ----------
+0.000342 --> code=Sn0HgopJLuml9gtryCDNrAhhMcEca6TB31HqNzfoflqc29rThI0OPny2o%2BjIHJ1q2W1277V%2FxktfT6ve%2F7wS4U1Mx5nweTrb%2FUrb9PGHo9M%3D&grant_type=authorization_code&redirect_uri=https%3A%2F%2Flocalhost%3A8088%2Fauthz_cb
+0.006057 <-- {"access_token": "Sn0HgopJLuml9gtryCDNrAhhMcEca6TB31HqNzfoflqc29rThI0OPny2o+jIHJ1qmF+7mdj9r7WE43aEb6Fy1swfQbamKYHo9v/upZk6Bis=", "id_token": "eyJhbGciOiJSUzI1NiIsImtpZCI6ImExIn0.eyJzdWIiOiAiLWZkZmI0YTg0MWRjZTE2NyIsICJpc3MiOiAiaHR0cHM6Ly9sb2NhbGhvc3Q6ODA5Mi9ycC10b2stY3NiYXNpYy9fL18vXy9ub3JtYWwvIiwgImFjciI6ICJQQVNTV09SRCIsICJleHAiOiAxNDMxNjAxNjEwLCAiYXV0aF90aW1lIjogMTQzMTUyMjQxMCwgImlhdCI6IDE0MzE1MjI0MTAsICJhdWQiOiBbInlvQ2FmeDVSYzhnZSJdfQ.X-35y3T11rV-1p9O2XnkKowueDMC6x8pKydbmaspTw5YTX33FYJYkjMqvT4jge3U33b_y6U-2MrNPWMIXkzR14BTk5aqs5cAABsGkHs3eO8RfCWHdcXWkX1ASZXDXw02Irzl_AgPy4DFlYcA_iZJDyy_bKOEP1DQ2v-OysjQ_fA", "expires_in": 3600, "token_type": "Bearer", "scope": "openid", "refresh_token": "Sn0HgopJLuml9gtryCDNrAhhMcEca6TB31HqNzfoflqc29rThI0OPny2o+jIHJ1qc8NmHOtYyegpsK/0/0Yv3vQAKfKMko+c2gP+QztIxV8="}
+
