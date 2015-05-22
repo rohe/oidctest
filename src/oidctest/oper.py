@@ -162,14 +162,15 @@ class Authn(Request):
 
 
 class AccessToken(Request):
-    def __init__(self, conv, session, test_id, conf, args):
-        Request.__init__(self, conv, session, test_id, conf, args)
+    def __init__(self, conv, session, test_id, conf, funcs):
+        Request.__init__(self, conv, session, test_id, conf, funcs)
         self.op_args["state"] = conv.state
         self.req_args["redirect_uri"] = conv.client.redirect_uris[0]
 
     def __call__(self):
         self.conv.trace.info(
-            "Access Token Request with args: {}".format(self.args))
+            "Access Token Request with op_args: {}, req_args: {}".format(
+                self.op_args, self.req_args))
         atr = self.conv.client.do_access_token_request(
             request_args=self.req_args, **self.op_args)
         self.conv.trace.response(atr)

@@ -178,7 +178,7 @@ FLOWS = {
                     "id_token_signed_response_alg": "HS256",
                     "id_token_encrypted_response_alg": "RSA1_5",
                     "id_token_encrypted_response_enc": "A128CBC-HS256"},
-                set_jwks_uri: {}
+                set_jwks_uri: None
             }),
             (Authn, {set_op_args: {"response_type": ["id_token"]}}),
         ],
