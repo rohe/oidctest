@@ -1,3 +1,4 @@
+from jwkest import BadSignature
 from oidctest.oper import Webfinger
 from oidctest.oper import AccessToken
 from oidctest.oper import Discovery
@@ -17,12 +18,12 @@ ORDDESC = ["rp-webfinger", "rp-discovery", "rp-dynamic_registration", "rp-respon
            "rp-token_endpoint", "rp-id_token"]
 
 FLOWS = {
-    # "rp-discovery-webfinger_url": {
+    # "rp-webfinger-url": {
     #     "sequence": [Webfinger],
     #     "desc": "Can Discover Identifiers using URL Syntax",
     #     "profile": ".T..",
     # },
-    # "rp-discovery-webfinger_acct": {
+    # "rp-webfinger-acct": {
     #     "sequence": [(Webfinger, {resource: {"pattern": "acct:{}@{}"}})],
     #     "desc": "Can Discover Identifiers using acct Syntax",
     #     "profile": ".T..",
@@ -55,7 +56,7 @@ FLOWS = {
     #     "profile": "..T.",
     #     "desc": "Will detect a faulty issuer claim in OP config"
     # },
-    # "rp-registration-dynamic": {
+    # "rp-dynamic_registration": {
     #     "sequence": [
     #         Webfinger,
     #         Discovery,
@@ -178,11 +179,29 @@ FLOWS = {
                     "id_token_signed_response_alg": "HS256",
                     "id_token_encrypted_response_alg": "RSA1_5",
                     "id_token_encrypted_response_enc": "A128CBC-HS256"},
-                set_jwks_uri: {}
+                set_jwks_uri: None
             }),
             (Authn, {set_op_args: {"response_type": ["id_token"]}}),
         ],
         "profile": "I...T",
         "desc": "Can Request and Use Signed and Encrypted ID Token Response",
+    },
+    "rp-idt-invalid-asym_sig": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {
+                set_request_args: {
+                    "id_token_signed_response_alg": "RS256"
+                }
+            }),
+            (Authn, {
+                set_op_args: {"response_type": ["id_token"]},
+                expect_exception: BadSignature
+            }),
+        ],
+        "profile": "I...T",
+        "desc": "Reject Invalid Asymmetric ID Token Signature"
+
     },
 }
