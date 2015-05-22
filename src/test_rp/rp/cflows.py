@@ -185,6 +185,20 @@ FLOWS = {
         "profile": "I...T",
         "desc": "Can Request and Use Signed and Encrypted ID Token Response",
     },
+    "rp-idt-asym_sig": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {
+                set_request_args: {
+                    "id_token_signed_response_alg": "RS256"
+                }
+            }),
+            (Authn, {set_op_args: {"response_type": ["id_token"]}}),
+        ],
+        "profile": "I...T",
+        "desc": "Accept Valid Asymmetric ID Token Signature"
+    },
     "rp-idt-invalid-asym_sig": {
         "sequence": [
             Webfinger,
