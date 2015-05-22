@@ -247,4 +247,21 @@ FLOWS = {
         "profile": "I...T",
         "desc": "Reject Invalid Asymmetric ID Token Signature"
     },
+    "rp-idt-invalid-sym_sig": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {
+                set_request_args: {
+                    "id_token_signed_response_alg": "HS256"
+                }
+            }),
+            (Authn, {
+                set_op_args: {"response_type": ["id_token"]},
+                expect_exception: BadSignature
+            })
+        ],
+        "profile": "I...T",
+        "desc": "Reject Invalid Symmetric ID Token Signature"
+    },
 }
