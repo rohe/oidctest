@@ -27,11 +27,12 @@
     <div class="header">
         <h1>RP test tool</h1>
 
-        Before you start testing please read the "how to use the RPtest" guide,
+        Before you start testing please read the
         <a href="https://dirg.org.umu.se/static/oictest/how_to_use_rp_test.html"
            target="_blank">
-            click here to access the guide
+            "how to use the RPtest"
         </a>
+         introduction guide
     </div>
 
     <div ng-repeat="category_list in guidlines track by $index" class="row category_row">
