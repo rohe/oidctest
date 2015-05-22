@@ -13,8 +13,8 @@ from oic.exception import IssuerMismatch
 
 __author__ = 'roland'
 
-ORDDESC = ["rp-webfinger", "rp-disc", "rp-dynreg", "rp-rtyp", "rp-rmod",
-           "rp-tok", "rp-idt"]
+ORDDESC = ["rp-webfinger", "rp-discovery", "rp-dynamic_registration", "rp-response_type", "rp-response_mode",
+           "rp-token_endpoint", "rp-id_token"]
 
 FLOWS = {
     # "rp-webfinger-url": {
@@ -22,12 +22,12 @@ FLOWS = {
     #     "desc": "Can Discover Identifiers using URL Syntax",
     #     "profile": ".T..",
     # },
-    # "rp-webfinger-email": {
+    # "rp-webfinger-acct": {
     #     "sequence": [(Webfinger, {resource: {"pattern": "acct:{}@{}"}})],
     #     "desc": "Can Discover Identifiers using acct Syntax",
     #     "profile": ".T..",
     # },
-    # "rp-disc-config": {
+    # "rp-discovery-openid_configuration": {
     #     "sequence": [
     #         Webfinger,
     #         Discovery
@@ -35,7 +35,7 @@ FLOWS = {
     #     "profile": "..T.",
     #     "desc": "Uses openid-configuration Discovery Information"
     # },
-    # "rp-disc-jwks_uri": {
+    # "rp-discovery-jwks_uri_keys": {
     #     "sequence": [
     #         Webfinger,
     #         Discovery
@@ -47,7 +47,7 @@ FLOWS = {
     #         "bare-keys": {}
     #     }
     # },
-    # "rp-disc-faulty-issuer": {
+    # "rp-discovery-mismatching_issuers": {
     #     "sequence": [
     #         Webfinger,
     #         (Discovery, {expect_exception: IssuerMismatch})
@@ -55,7 +55,7 @@ FLOWS = {
     #     "profile": "..T.",
     #     "desc": "Will detect a faulty issuer claim in OP config"
     # },
-    # "rp-dynreg-0": {
+    # "rp-dynamic_registration": {
     #     "sequence": [
     #         Webfinger,
     #         Discovery,
@@ -64,7 +64,7 @@ FLOWS = {
     #     "profile": "...T",
     #     "desc": "Uses Dynamic Registration"
     # },
-    # "rp-rtyp-code": {
+    # "rp-response_type-code": {
     #     "sequence": [
     #         Webfinger,
     #         Discovery,
@@ -74,7 +74,7 @@ FLOWS = {
     #     "profile": "C...",
     #     "desc": "Can Make Request with 'code' Response Type"
     # },
-    #  "rp-rtyp-idt": {
+    #  "rp-response_type-id_token": {
     #     "sequence": [
     #         Webfinger,
     #         Discovery,
@@ -85,7 +85,7 @@ FLOWS = {
     #     "desc": "Can Make Request with 'id_token' Response Type",
     #     "profile": "I...",
     # },
-    # "rp-rtyp-idt_token": {
+    # "rp-response_type-id_token+token": {
     #     "sequence": [
     #         Webfinger,
     #         Discovery,
@@ -93,10 +93,10 @@ FLOWS = {
     #          {set_request_args: {"id_token_signed_response_alg": "RS256"}}),
     #         Authn
     #     ],
-    #     "profile": "IT...",
+    #     "profile": "I,IT...",
     #     "desc": "Can Make Request with 'id_token token' Response Type"
     # },
-    # "rp-rmod-form": {
+    # "rp-response_mode-form_post": {
     #     "sequence": [
     #         Webfinger,
     #         Discovery,
@@ -107,7 +107,7 @@ FLOWS = {
     #     "profile": "I,IT...",
     #     "desc": "Can Make Request with response_mode=form_post"
     # },
-    # "rp-tok-csbasic": {
+    # "rp-token_endpoint-client_secret_basic": {
     #     "sequence": [
     #         Webfinger,
     #         Discovery,
@@ -121,7 +121,7 @@ FLOWS = {
     #             "Authentication"
     # },
     # #client_secret_post
-    # "rp-tok-cspost": {
+    # "rp-token_endpoint-client_secret_post": {
     #     "sequence": [
     #         Webfinger,
     #         Discovery,
@@ -137,7 +137,7 @@ FLOWS = {
     #             "Authentication"
     # },
     # # client_secret_jwt
-    # "rp-tok-csjwt": {
+    # "rp-token_endpoint-client_secret_jwt": {
     #     "sequence": [
     #         Webfinger,
     #         Discovery,
@@ -153,7 +153,7 @@ FLOWS = {
     #             "Authentication"
     # },
     # # private_key_jwt
-    # "rp-tok-pkjwt": {
+    # "rp-token_endpoint-private_key_jwt": {
     #     "sequence": [
     #         Webfinger,
     #         Discovery,
@@ -169,7 +169,7 @@ FLOWS = {
     #     "desc": "Can Make Access Token Request with 'private_key_jwt' "
     #             "Authentication"
     # },
-    "rp-idt-sigenc": {
+    "rp-id_token-sig+enc": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -178,7 +178,7 @@ FLOWS = {
                     "id_token_signed_response_alg": "HS256",
                     "id_token_encrypted_response_alg": "RSA1_5",
                     "id_token_encrypted_response_enc": "A128CBC-HS256"},
-                set_jwks_uri: None
+                set_jwks_uri: {}
             }),
             (Authn, {set_op_args: {"response_type": ["id_token"]}}),
         ],
