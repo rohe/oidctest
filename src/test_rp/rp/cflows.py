@@ -94,7 +94,7 @@ FLOWS = {
              {set_request_args: {"id_token_signed_response_alg": "RS256"}}),
             Authn
         ],
-        "profile": "I,IT...",
+        "profile": "IT...",
         "desc": "Can Make Request with 'id_token token' Response Type"
     },
     "rp-response_mode-form_post": {
@@ -168,22 +168,6 @@ FLOWS = {
         "profile": "C,CI,CIT...",
         "desc": "Can Make Access Token Request with 'private_key_jwt' "
                 "Authentication"
-    },
-    "rp-id_token-sig+enc": {
-        "sequence": [
-            Webfinger,
-            Discovery,
-            (Registration, {
-                set_request_args: {
-                    "id_token_signed_response_alg": "HS256",
-                    "id_token_encrypted_response_alg": "RSA1_5",
-                    "id_token_encrypted_response_enc": "A128CBC-HS256"},
-                set_jwks_uri: None
-            }),
-            (Authn, {set_op_args: {"response_type": ["id_token"]}}),
-        ],
-        "profile": "I...T",
-        "desc": "Can Request and Use Signed and Encrypted ID Token Response",
     },
     "rp-idt-asym_sig": {
         "sequence": [
@@ -263,5 +247,34 @@ FLOWS = {
         ],
         "profile": "I...T",
         "desc": "Reject Invalid Symmetric ID Token Signature"
+    },
+    "rp-id_token-sig+enc": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {
+                set_request_args: {
+                    "id_token_signed_response_alg": "HS256",
+                    "id_token_encrypted_response_alg": "RSA1_5",
+                    "id_token_encrypted_response_enc": "A128CBC-HS256"},
+                set_jwks_uri: None
+            }),
+            (Authn, {set_op_args: {"response_type": ["id_token"]}}),
+        ],
+        "profile": "I...T",
+        "desc": "Can Request and Use Signed and Encrypted ID Token Response",
+    },
+    "rp-idt-none": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {
+                set_request_args: {"id_token_signed_response_alg": "none"}
+            }),
+            (Authn, {set_op_args: {"response_type": ["code"]}}),
+            AccessToken
+        ],
+        "profile": "C,CT,CIT...T",
+        "desc": "Can Request and Use unSigned ID Token Response"
     },
 }
