@@ -537,7 +537,7 @@ if __name__ == '__main__':
     from cherrypy import wsgiserver
     from cherrypy.wsgiserver import ssl_pyopenssl
 
-    from oictest.provider import Provider
+    from oidctest.provider import Provider
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', dest='verbose', action='store_true')
