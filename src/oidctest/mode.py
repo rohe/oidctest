@@ -1,7 +1,7 @@
 #from oic.oic.provider import Provider
 from oic.oic import OIDCONF_PATTERN
 from oic.utils.webfinger import WF_URL
-from oictest.provider import Provider
+from oidctest.provider import Provider
 
 __author__ = 'roland'
 

@@ -68,7 +68,7 @@ def run_func(spec, conv, req_args):
         return req_args
 
 
-def main(flows, profile, conf, profiles, **kw_args):
+def main(flows, profile, profiles, **kw_args):
     try:
         redirs = kw_args["cinfo"]["client"]["redirect_uris"]
     except KeyError:
@@ -81,7 +81,7 @@ def main(flows, profile, conf, profiles, **kw_args):
         _cli = make_client(**kw_args)
         conversation = Conversation(_flow, _cli, redirs)
         # noinspection PyTypeChecker
-        run_flow(profiles, conversation, tid, conf, profile)
+        run_flow(profiles, conversation, tid, kw_args["conf"], profile)
         print conversation.trace
 
 
@@ -99,6 +99,8 @@ if __name__ == '__main__':
     if "/" in cargs.flows:
         head, tail = os.path.split(cargs.flows)
         sys.path.insert(0, head)
+        if tail.endswith(".py"):
+            tail = tail[:-3]
         FLOWS = importlib.import_module(tail)
     else:
         FLOWS = importlib.import_module(cargs.flows)

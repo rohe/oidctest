@@ -13,26 +13,26 @@ from oic.oic import claims_match
 from oic.oic import message
 # from oic.utils.time_util import utc_time_sans_frac
 import time
-from oictest.regalg import MTI
-from oictest.regalg import REGISTERED_JWS_ALGORITHMS
-from oictest.regalg import REGISTERED_JWE_alg_ALGORITHMS
-from oictest.regalg import REGISTERED_JWE_enc_ALGORITHMS
-from rrtest import check
-from rrtest import Unknown
+from oidctest.regalg import MTI
+from oidctest.regalg import REGISTERED_JWS_ALGORITHMS
+from oidctest.regalg import REGISTERED_JWE_alg_ALGORITHMS
+from oidctest.regalg import REGISTERED_JWE_enc_ALGORITHMS
+from aatest import check
+from aatest import Unknown
 
-from rrtest.check import Check, OK, Warnings
-from rrtest.check import Information
-from rrtest.check import WARNING
-from rrtest.check import CONT_JSON
-from rrtest.check import CONT_JWT
-from rrtest.check import CriticalError
-from rrtest.check import Other
-from rrtest.check import Error
-from rrtest.check import ResponseInfo
-from rrtest.check import CRITICAL
-from rrtest.check import ERROR
-from rrtest.check import INTERACTION
-from rrtest.check import INFORMATION
+from aatest.check import Check, OK, Warnings
+from aatest.check import Information
+from aatest.check import WARNING
+from aatest.check import CONT_JSON
+from aatest.check import CONT_JWT
+from aatest.check import CriticalError
+from aatest.check import Other
+from aatest.check import Error
+from aatest.check import ResponseInfo
+from aatest.check import CRITICAL
+from aatest.check import ERROR
+from aatest.check import INTERACTION
+from aatest.check import INFORMATION
 
 __author__ = 'rohe0002'
 
