@@ -9,6 +9,7 @@ from oidctest.common import make_client
 from oidctest.common import make_list
 from oidctest.common import Conversation
 from oidctest.common import run_flow
+from oidctest.common import node_dict
 
 __author__ = 'roland'
 
@@ -50,7 +51,7 @@ def flow_list(environ, start_response, flows, done):
     resp = Response(mako_template="flowlist.mako",
                     template_lookup=LOOKUP,
                     headers=[])
-    argv = {"base": KW_ARGS["CONF"].BASE, "flows": flows, "done": done}
+    argv = {"base": KW_ARGS["conf"].BASE, "flows": flows, "done": done}
 
     return resp(environ, start_response, **argv)
 
@@ -86,8 +87,10 @@ def application(environ, start_response):
         return static(environ, start_response, path)
 
     if path == "":  # list
+        session["done"] = []
         session["flows"] = make_list(**KW_ARGS)
-        return flow_list(environ, start_response, session["flows"],
+        return flow_list(environ, start_response,
+                         node_dict(_flows, session["flows"]),
                          session["done"])
     elif path in _flows.keys():
         try:
@@ -110,7 +113,9 @@ def application(environ, start_response):
             if resp:
                 return resp(environ, start_response)
             else:
-                return flow_list(environ, start_response, _flows,
+                session["done"].append(path)
+                return flow_list(environ, start_response,
+                                 node_dict(_flows, session["flows"]),
                                  session["done"])
     else:
         logger.debug("unknown side: %s" % path)

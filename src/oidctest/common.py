@@ -258,6 +258,10 @@ def make_list(flows, profile, **kw_args):
 
     return res
 
+def node_dict(flows, lst):
+    return dict([(l,flows[l]) for l in lst])
+
+
 def run_flow(profiles, conv, test_id, conf, profile, index=0):
     #print(20*"="+test_id+20*"=")
     conv.test_id = test_id
