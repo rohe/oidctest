@@ -67,8 +67,8 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         ["Discovery", {
             "rp-discovery-webfinger_url": {
                 "short_description": "Can discover identifiers using URL syntax",
-                "detailed_description": "Tests if an entity can use WebFinger as described by " +
-                RFC7033 + " and the " + DISCOVERY_DOC + " to determine the location of the OpenID Provider. " +
+                "detailed_description": "Tests if an entity can use WebFinger, as described by " +
+                RFC7033 + " and the " + DISCOVERY_DOC + ", to determine the location of the OpenID Provider. " +
                 "The discovery should be done using " + URL_SYNTAX + " as end-user identifier",
                 "expected_result": "An issuer should be returned by the OpenID Provider"
             },
@@ -89,7 +89,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "short_description": "Rejects discovered issuer not matching openid-configuration issuer",
                 "detailed_description": "Retrieve "+ OPENID_CONFIGURATION_INFORMATION +" for OpenID Provider from the " +
                 ".well-known/openid-configuration path. Verify that the issuer in the "+ OPENID_CONFIGURATION +" matches the one returned by WebFinger",
-                "expected_result": "Identify that the issuers are not matching and rejects the openid-configuration"
+                "expected_result": "Identify that the issuer identifiers do not match and reject the openid-configuration"
             },
             "rp-discovery-openid_configuration": {
                 "short_description": "Uses openid-configuration Discovery Information",

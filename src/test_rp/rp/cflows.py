@@ -13,7 +13,7 @@ from oic.exception import IssuerMismatch
 
 __author__ = 'roland'
 
-ORDDESC = ["rp-webfinger", "rp-discovery", "rp-dynamic_registration", "rp-response_type", "rp-response_mode",
+ORDDESC = ["rp-webfinger", "rp-discovery", "rp-registration", "rp-response_type", "rp-response_mode",
            "rp-token_endpoint", "rp-id_token"]
 
 FLOWS = {
@@ -72,6 +72,15 @@ FLOWS = {
     #     "profile": "...T",
     #     "desc": "Uses Dynamic Registration"
     # },
+    "rp-registration-redirect_uris": {
+        "sequence": [
+          Webfinger,
+          Discovery,
+          Registration
+        ],
+        "profile": "...T",
+        "desc": "Tests if the Relying Party can add redirect_uris values to the Client Metadata while doing a registration request"
+    },
     # "rp-response_type-code": {
     #     "sequence": [
     #         Webfinger,
