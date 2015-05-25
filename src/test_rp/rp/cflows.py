@@ -17,12 +17,12 @@ ORDDESC = ["rp-webfinger", "rp-discovery", "rp-dynamic_registration", "rp-respon
            "rp-token_endpoint", "rp-id_token"]
 
 FLOWS = {
-    # "rp-webfinger-url": {
+    # "rp-discovery-webfinger_url": {
     #     "sequence": [Webfinger],
     #     "desc": "Can Discover Identifiers using URL Syntax",
     #     "profile": ".T..",
     # },
-    # "rp-webfinger-acct": {
+    # "rp-discovery-webfinger_acct": {
     #     "sequence": [(Webfinger, {resource: {"pattern": "acct:{}@{}"}})],
     #     "desc": "Can Discover Identifiers using acct Syntax",
     #     "profile": ".T..",
@@ -35,14 +35,14 @@ FLOWS = {
     #     "profile": "..T.",
     #     "desc": "Uses openid-configuration Discovery Information"
     # },
-    "rp-discovery-issuer_not_matching_config": {
-        "sequence": [
-            Webfinger,
-            (Discovery, {expect_exception: IssuerMismatch})
-        ],
-        "profile": "..T.",
-        "desc": "Retrieve openid-configuration information for OpenID Provider from the .well-known/openid-configuration path. Verify that the issuer in the openid-configuration matches the one returned by WebFinger"
-    },
+    # "rp-discovery-issuer_not_matching_config": {
+    #     "sequence": [
+    #         Webfinger,
+    #         (Discovery, {expect_exception: IssuerMismatch})
+    #     ],
+    #     "profile": "..T.",
+    #     "desc": "Retrieve openid-configuration information for OpenID Provider from the .well-known/openid-configuration path. Verify that the issuer in the openid-configuration matches the one returned by WebFinger"
+    # },
     # "rp-discovery-jwks_uri_keys": {
     #     "sequence": [
     #         Webfinger,

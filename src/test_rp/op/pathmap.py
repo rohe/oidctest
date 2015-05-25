@@ -4,8 +4,8 @@ NORMAL = "/_/_/_/normal"
 
 IDMAP = {
     # Discovery
-    "rp-webfinger-url": NORMAL,
-    "rp-webfinger-acct": NORMAL,
+    "rp-discovery-webfinger_url": NORMAL,
+    "rp-discovery-webfinger_acct": NORMAL,
     "rp-discovery-openid_configuration": NORMAL,
     "rp-discovery-jwks_uri_keys": NORMAL,
     "rp-discovery-issuer_not_matching_config": "/_/_/isso/normal",
