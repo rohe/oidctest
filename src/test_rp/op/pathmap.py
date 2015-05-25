@@ -12,7 +12,7 @@ IDMAP = {
     #"rp-discovery-mismatching_issuers": "/_/_/isso/normal", # TODO Should be removed?
 
     # Dynamic Client Registration
-    "rp-dynamic_registration": NORMAL,
+    "rp-registration-dynamic": NORMAL,
 
     # Response type and response mode
     "rp-response_type-code": NORMAL,
@@ -78,7 +78,7 @@ IDMAP = {
     "rp-request_uri-sig+enc": NORMAL,
 
     # Claims Request Parameter
-    "rp-id_token-claims": NORMAL,
+    "rp-claims_reqest-id_token_claims": NORMAL,
     "rp-claims_reqest-request_userinfo": NORMAL,
 
     # "rp-3rd-login": "",
