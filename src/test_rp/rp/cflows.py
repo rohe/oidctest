@@ -17,12 +17,12 @@ ORDDESC = ["rp-webfinger", "rp-discovery", "rp-dynamic_registration", "rp-respon
            "rp-token_endpoint", "rp-id_token"]
 
 FLOWS = {
-    # "rp-webfinger-url": {
+    # "rp-discovery-webfinger_url": {
     #     "sequence": [Webfinger],
     #     "desc": "Can Discover Identifiers using URL Syntax",
     #     "profile": ".T..",
     # },
-    # "rp-webfinger-acct": {
+    # "rp-discovery-webfinger_acct": {
     #     "sequence": [(Webfinger, {resource: {"pattern": "acct:{}@{}"}})],
     #     "desc": "Can Discover Identifiers using acct Syntax",
     #     "profile": ".T..",
@@ -55,7 +55,7 @@ FLOWS = {
     #     "profile": "..T.",
     #     "desc": "Will detect a faulty issuer claim in OP config"
     # },
-    # "rp-dynamic_registration": {
+    # "rp-registration-dynamic": {
     #     "sequence": [
     #         Webfinger,
     #         Discovery,

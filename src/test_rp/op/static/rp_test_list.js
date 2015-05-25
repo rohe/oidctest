@@ -4,11 +4,9 @@ app.controller('IndexCtrl', function ($scope, $sce) {
 
     var OPENID_DOCS = "OpenId connect documentation";
     var DISCOVERY_DOC = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery", OPENID_DOCS);
-    var PROVIDER_CONF_DOC = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig", OPENID_DOCS);
     var CLIENT_REGISTRATION_ENDPOINT = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientRegistration", "client registration endpoint");
     var CODE_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#CodeFlowAuth", "Code flow");
     var IMPLICIT_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitFlowSteps", "Implicit Flow");
-    var CLIENT_AUTHENTICATION = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication", OPENID_DOCS);
     var BEARER_HEADER_METHOD = convert_to_link("http://tools.ietf.org/html/rfc6750#section-2.1", "Bearer header method");
     var FORM_ENCODED_BODY_METHOD = convert_to_link("http://tools.ietf.org/html/rfc6750#section-2.2", "form-encoded body method");
     var RFC7033 = convert_to_link("http://tools.ietf.org/html/rfc7033#section-7", "RFC7033");
@@ -20,16 +18,16 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var CLIENT_SECRET_BASIC = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication", "client_secret_basic");
     var TOKEN_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#TokenResponse", "token response");
     var USERINFO_REQUEST = convert_to_link("https://openid.net/specs/openid-connect-standard-1_0-21.html#UserInfoRequest", "UserInfo request");
-    var USERINFO_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-standard-1_0-21.html#UserInfoResponse", "UserInfo response");
+    var USERINFO_RESPONSE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#UserInfo", "UserInfo response");
     var OPENID_PROVIDER_ISSUER_DISCOVERY = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery", "OpenID Provider Issuer Discovery");
-    var ISSUER_IN_THE_OPENID_CONFIGURATION = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata", "issuer in the openid-configuration");
+    var OPENID_CONFIGURATION = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata", "openid-configuration");
     var RESPONSE_TYPE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ImplicitAuthRequest", "response_type");
     var FORM_POST = convert_to_link("https://openid.net/specs/oauth-v2-form-post-response-mode-1_0.html#FormPostResponseMode", "form_post");
     var RESPONSE_MODE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest", "response mode");
     var CLIENT_SECRET_JWT = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication", "client_secret_jwt");
     var CLIENT_SECRET_POST = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication", "client_secret_post");
     var PRIVATE_KEY_JWT = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication", "private_key_jwt");
-    var UNSIGNED_ID_TOKEN = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "unsigned ID Token");
+    var ALG_VALUE_EQUAL_TO_NONE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "'alg' value equal to 'none'");
     var AUTHORIZATION_CODE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#CodeValidation", "authorization code");
     var C_HASH = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#HybridIDToken", "c_hash");
     var AT_HASH = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#HybridIDToken", "at_hash");
@@ -51,27 +49,30 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var ID_TOKEN_VALIDATION_FOR_CODE_FLOW = convert_to_link("http://openid.net/specs/openid-connect-core-1_0-17.html#IDTokenValidation", "ID Token validation for code flow");
     var VALIDATE_THE_NONCE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitIDTValidation", "validate the nonce");
     var OPENID_SCOPE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest", "openid scope");
-    var REQUEST_CLAIMS_USING_SCOPE_VALUES = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest", "request claims using Scope Values");
+    var REQUEST_CLAIMS_USING_SCOPE_VALUES = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims", "request claims using Scope Values");
     var OPENID_CONFIGURATION_DISCOVERY_INFORMATION = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig", "openid-configuration Discovery Information");
     var OPENID_PROVIDER_METADATA = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata", "OpenID Provider Metadata");
     var CLIENT_METADATA = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata", "Client Metadata");
     var JSON_WEB_KEY_FORMAT = convert_to_link("https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-4", "JSON Web Key (JWK) Format");
-    var KEY_ID = convert_to_link("https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-4.5", "Key ID (kid)");
-    var THIRD_PARTY_INITIATED_LOGIN = convert_to_link("https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-4.5", "third-party initiated login");
-    var initialize_a_logout = convert_to_link("https://openid.net/specs/openid-connect-session-1_0.html#RPLogout", "initialize a logout");
-    var RP_IFRAME = convert_to_link("https://openid.net/specs/openid-connect-session-1_0.html#RPiframe", "RP iframe");
+    var THIRD_PARTY_INITIATED_LOGIN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ThirdPartyInitiatedLogin", "third-party initiated login");
+    var OPENID_CONFIGURATION_INFORMATION = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig", "openid-configuration information");
+    var SIGNING_KEY_ROLLOVER = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys", "signing key rollover");
+    var ENCRYPTION_KEY_ROLLOVER = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateEncKeys", "encryption key rollover");
+    var SINGLE_KEY = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#Signing", "single key");
+    var MULTIPLE_KEYS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#Signing", "multiple keys");
+    var USES_HTTPS_IN_ALL_ENDPOINTS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#TLSRequirements", "uses https in all endpoints");
 
 
     $scope.guidlines = [
         ["Discovery", {
-            "rp-webfinger-url": {
+            "rp-discovery-webfinger_url": {
                 "short_description": "Can discover identifiers using URL syntax",
                 "detailed_description": "Tests if an entity can use WebFinger as described by " +
                 RFC7033 + " and the " + DISCOVERY_DOC + " to determine the location of the OpenID Provider. " +
                 "The discovery should be done using " + URL_SYNTAX + " as end-user identifier",
                 "expected_result": "An issuer should be returned by the OpenID Provider"
             },
-            "rp-webfinger-acct": {
+            "rp-discovery-webfinger_acct": {
                 "short_description": "Can discover identifiers using acct syntax",
                 "detailed_description": "Tests if an entity can use WebFinger as described by " +
                 RFC7033 + " and the " + DISCOVERY_DOC + " to determine the location of the OpenID Provider. " +
@@ -84,10 +85,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 OPENID_PROVIDER_ISSUER_DISCOVERY,
                 "expected_result": "An issuer should be returned"
             },
-            "rp-issuer-not-matching-config": {
+            "rp-discovery-issuer_not_matching_config": {
                 "short_description": "Rejects discovered issuer not matching openid-configuration issuer",
-                "detailed_description": "Retrieve openid-configuration information for OpenID Provider from the " +
-                ".well-known/openid-configuration path. Verify that the "+ ISSUER_IN_THE_OPENID_CONFIGURATION +" matches the one returned by WebFinger",
+                "detailed_description": "Retrieve "+ OPENID_CONFIGURATION_INFORMATION +" for OpenID Provider from the " +
+                ".well-known/openid-configuration path. Verify that the issuer in the "+ OPENID_CONFIGURATION +" matches the one returned by WebFinger",
                 "expected_result": "Identify that the issuers are not matching and rejects the openid-configuration"
             },
             "rp-discovery-openid_configuration": {
@@ -103,20 +104,19 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             "rp-discovery-jwks_uri_keys": {
                 "short_description": "Uses Keys Discovered with jwks_uri Value",
                 "detailed_description": "The Relying Party uses keys at the jwks_uri which has been obtained form the " + OPENID_PROVIDER_METADATA,
-                "expected_result": "Should be able to sign/encrypt requests using obtained keys"
+                "expected_result": "Should be able to sign and/or encrypt requests using obtained keys"
             }
         }],
         ["Dynamic Client Registration", {
-            "rp-dynamic_registration": {
+            "rp-registration-dynamic": {
                 "short_description": "Uses dynamic registration",
                 "detailed_description": "Tests if the Relying Party can use the " + CLIENT_REGISTRATION_ENDPOINT + " in order to dynamically " +
                 "register the Relaying Party",
                 "expected_result": "Get a " + CLIENT_REGISTRATION_RESPONSE + " as a JSON file"
             },
-            //TODO expected_result you want is to be able to sign/enc using the keys provided
             "rp-registration-redirect_uris": {
                 "short_description": "Registration has redirect_uris",
-                "detailed_description": "Tests if the Relying Party adds the redirect_uris value to the "+ CLIENT_METADATA +" while doing a registration request",
+                "detailed_description": "Tests if the Relying Party can add redirect_uris values to the "+ CLIENT_METADATA +" while doing a registration request",
                 "expected_result": "Can get a Client Registration Response"
             },
             "rp-registration-well_formed_jwk": {
@@ -124,12 +124,11 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "detailed_description": "The keys published by the Relying Party should follow the " + JSON_WEB_KEY_FORMAT,
                 "expected_result": "Can get a Client Registration Response"
             },
-            //TODO 16.17. TLS Requirements (core doc)
-            //"rp-registration-uses_https_endpoints": {
-            //    "short_description": "Uses https for all endpoints unless only using code flow",
-            //    "detailed_description": "",
-            //    "expected_result": ""
-            //}
+            "rp-registration-uses_https_endpoints": {
+                "short_description": "Uses https for all endpoints",
+                "detailed_description": "Tests if the Relying Party "+ USES_HTTPS_IN_ALL_ENDPOINTS +" published in the " + CLIENT_METADATA,
+                "expected_result": "No endpoints not supporting TLS"
+            }
         }],
         ["Response type and response mode", {
             "rp-response_type-code": {
@@ -155,15 +154,14 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 " should be set to 'id_token token' and the "+ RESPONSE_MODE +" should be " + FORM_POST,
                 "expected_result": "HTML form post response processed resulting in query encoded parameters"
             },
-            //TODO is this right??
             "rp-response_type-self_issued": {
                 "short_description": "Can use Self-Issued OP",
-                "detailed_description": "Tests if an Relying Party can make a authentication request from a " + SELF_ISSUED_OPENID_PROVIDERS,
+                "detailed_description": "Tests if an Relying Party can make a authentication request to a " + SELF_ISSUED_OPENID_PROVIDERS,
                 "expected_result": "A authorization response containing an id_token"
             }
         }],
         ["Claims Request Parameter", {
-            "rp-id_token-claims": {
+            "rp-claims_reqest-id_token_claims": {
                 "short_description": "Can Request and use claims in ID Token using the 'claims' request parameter",
                 "detailed_description": "The Relying Party can ask for a specific claim using the "+ CLAIMS_REQUEST_PARAMETER +". The claim should be returned in a ID Token",
                 "expected_result": "The claim should appear in the returned ID Token"
@@ -190,7 +188,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             "rp-request_uri-unsigned": {
                 "short_description": "Can Use request_uri Request Parameter with Unsigned Request",
                 "detailed_description": "The Relying Party can pass a "+ REQUEST_OBJECT_BY_REFERENCE +" using the " +
-                "request_uri parameter. The Request Object should be using 'alg':'none'",
+                "request_uri parameter. The Request Object should set 'alg' equal to 'none'",
                 "expected_result": "Completing the Authorization Request using request_uri Request Parameter"
             },
             "rp-request_uri-sig": {
@@ -284,7 +282,8 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             },
             "rp-id_token-sig_none": {
                 "short_description": "Can request and use unsigned ID Token response",
-                "detailed_description": "Tests if the Relying Party can request and use "+ UNSIGNED_ID_TOKEN +". "+ CODE_FLOW +" should be used and the 'alg' value should be set to 'none'",
+                "detailed_description": "Tests if the Relying Party can request and use unsigned ID Tokens. Use "+ CODE_FLOW +
+                " and set the " + ALG_VALUE_EQUAL_TO_NONE,
                 "expected_result": "Retrieve an unsigned ID Token"
             },
             "rp-id_token-bad_c_hash": {
@@ -299,6 +298,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "and it should be used in the " + ACCESS_TOKEN_VALIDATION + ". The response type should be set to 'id_token token'",
                 "expected_result": "The RP should be able to detect that the at_hash is invalid"
             },
+            //TODO Difference between this test and rp-discovery-mismatching_issuers
             "rp-id_token-mismatching_issuer": {
                 "short_description": "Rejects discovered issuer not matching ID Token iss",
                 "detailed_description": "The Relying Party should request an ID token and reject it if the issuer " +
@@ -325,71 +325,36 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "detailed_description": "The Relying Party should request an ID token and reject it if the "+ SUB +" claim is missing",
                 "expected_result": "Should detect when the sub claim is missing"
             },
-
-            //TODO not done yet does this ref suffice??
-            //"rp-idt-kid-absent": {
-            //    //10.1.  Signing (core)
-            //    "short_description": "Accept ID Token without kid claim if only one JWK supplied in jwks_uri",
-            //    "detailed_description": "If there are multiple keys in the referenced JWK Set document, a kid value MUST be provided in the JOSE Header.",
-            //    "expected_result": ""
-            //}
-
-            ////TODO Not in numbers
-            //"rp-id_token-c_hash": {
-            //    "short_description": "Verifies correct c_hash when response type equals 'code id_token'",
-            //    "detailed_description": "Tests if the client extract an c_hash from an ID token which " +
-            //    "has been signed using the HS256 algorithm. It should be used " +
-            //    "to validate the correctness of the authorization code.",
-            //    "expected_result": "The RP should be able to detect that the c_hash is valid"
-            //},
-            ////TODO Not in numbers
-            //"rp-id_token-at_hash": {
-            //    "short_description": "Verifies correct at_hash when response type equals 'id_token token'",
-            //    "detailed_description": "Tests if the client can extract an at_hash from an ID token " +
-            //    "and validate its correctness. When response type equals  id_token token",
-            //    "expected_result": "The RP should be able to detect that the at_hash is valid"
-            //},
-            ////TODO Not in numbers
-            //"RP-IdToken-Elliptic-Sig": {
-            //    "short_description": "Can Use Elliptic Curve ID Token Signatures",
-            //    "detailed_description": "Tests if the client can request and use an ID Token which is signed using Elliptic Curves",
-            //    "expected_result": "Retrieve an ID Token and verify signature"
-            //},
-            ////TODO Not in numbers doc
-            //"rp-idt-asym_sig": {
-            //    "short_description": "Accept valid asymmetric ID token signature",
-            //    "detailed_description": "Tests if the client accepts an ID Token with an " +
-            //    "valid signature singed by a asymmetric signing algorithm, for example RS256",
-            //    "expected_result": "Get valid ID token"
-            //},
-            ////TODO Not in numbers doc
-            //"rp-idt-sym_sig": {
-            //    "short_description": "Accept valid symmetric ID token signature",
-            //    "detailed_description": "Tests if the client accepts an ID Token with an " +
-            //    "valid signature singed by a symmetric signing algorithm, for example HS256",
-            //    "expected_result": "Get valid ID token"
-            //},
-
+            "rp-id_token-kid_absent_single_jwks": {
+                "short_description": "Accept ID Token without kid claim if only one JWK supplied in jwks_uri",
+                "detailed_description": "If the JWK supplied in jwks_uri only contains a "+ SINGLE_KEY +" the ID Token does not need to contain a kid claim",
+                "expected_result": "The Relying Party should be accept the JWK"
+            },
+            "rp-id_token-kid_absent_multiple_jwks": {
+                "short_description": "Reject ID Token without kid claim if multiple JWKs supplied in jwks_uri",
+                "detailed_description": "If there are "+ MULTIPLE_KEYS +" in the referenced JWK Set document, a kid value MUST be provided in the JOSE Header",
+                "expected_result": "Accept ID Token containing kid"
+            }
         }],
         ["Key Rollover", {
             "rp-key_rollover-op_sign_key": {
                 "short_description": "Support OP Signing Key Rollover",
-                "detailed_description": "The OpenID Connect Providera signing key rollover at its jwks_uri location after it has been used by Relying Party",
+                "detailed_description": "The OpenID Connect Providera should do a "+ SIGNING_KEY_ROLLOVER +" at its jwks_uri location after it has been used by Relying Party",
                 "expected_result": "Relying Party successfully uses the old then new signing key"
             },
             "rp-key_rollover-rp_sign_key": {
                 "short_description": "Can Rollover RP Signing Key",
-                "detailed_description": "The Relying Party a signing key rollover at its jwks_uri location after it has been used by OpenID Connect Provider",
+                "detailed_description": "The Relying Party should do a "+ SIGNING_KEY_ROLLOVER +" at its jwks_uri location after it has been used by OpenID Connect Provider",
                 "expected_result": "OpenID Connect Provider successfully uses the old then new signing key"
             },
             "rp-key_rollover-op_enc_key": {
                 "short_description": "Support OP Encryption Key Rollover",
-                "detailed_description": "The Relying Party a encryption key rollover at its jwks_uri location after it has been used by OpenID Connect Provider",
+                "detailed_description": "The Relying Party should do a "+ ENCRYPTION_KEY_ROLLOVER +" at its jwks_uri location after it has been used by OpenID Connect Provider",
                 "expected_result": "Relying Party successfully uses the old then new encryption key"
             },
             "rp-key_rollover-rp_enc_key": {
                 "short_description": "Can rollover RP encryption key",
-                "detailed_description": "The Relying Party a encryption key rollover at its jwks_uri location after it has been used by OpenID Connect Provider",
+                "detailed_description": "The Relying Party should do a "+ ENCRYPTION_KEY_ROLLOVER +" at its jwks_uri location after it has been used by OpenID Connect Provider",
                 "expected_result": "OpenID Connect Provider successfully uses the old then new encryption key"
             }
         }],
@@ -443,31 +408,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "detailed_description": "The Relying Party should obtain a "+ USERINFO_RESPONSE +" and compare its 'sub' value to ID Token's 'sub' claim",
                 "expected_result": "Should reject UserInfo result when 'sub' value is missing or doesn't match ID Token 'sub' claim"
             }
-            ////TODO Not in numbers
-            //"RP-userinfo-json": {
-            //    "short_description": "Can Request and Use JSON UserInfo Response",
-            //    "detailed_description": "Can Request and Use UserInfo Response which is neither signed nor encrypted",
-            //    "expected_result": "Receiving user info response"
-            //},
-        }],
-        ["Session Management", {
-            "rp-session-init_logout": {
-                "short_description": "Logout Initiated by RP",
-                "detailed_description": "The Relying Party should "+ initialize_a_logout +" by redirect the End-User's User Agent to the OpenID Connect Providers logout endpoint URL",
-                "expected_result": "Logout request sent to OpenID Connect Provider"
-            },
-            "rp-session-state_change": {
-                "short_description": "State Change Other than Logout Received by RP",
-                "detailed_description": "Change logged in user at the OpenID Connect Provider and notify Relying Party through the " + RP_IFRAME,
-                "expected_result": "Change detected by Relying Party"
-            }
-            //TODO no doc?
-            //"rp-session-recived_by_rp": {
-            //    "short_description": "Logout Received by RP",
-            //    "detailed_description": "",
-            //    "expected_result": "RP detects logout request and logs out"
-            //}
-        }],
+        }]
     ];
 
     $scope.category_const = 0;

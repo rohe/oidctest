@@ -4,14 +4,14 @@ NORMAL = "/_/_/_/normal"
 
 IDMAP = {
     # Discovery
-    "rp-webfinger-url": NORMAL,
-    "rp-webfinger-acct": NORMAL,
+    "rp-discovery-webfinger_url": NORMAL,
+    "rp-discovery-webfinger_acct": NORMAL,
     "rp-discovery-openid_configuration": NORMAL,
     "rp-discovery-jwks_uri_keys": NORMAL,
     "rp-discovery-mismatching_issuers": "/_/_/isso/normal",
 
     # Dynamic Client Registration
-    "rp-dynamic_registration": NORMAL,
+    "rp-registration-dynamic": NORMAL,
 
     # Response type and response mode
     "rp-response_type-code": NORMAL,
@@ -77,7 +77,7 @@ IDMAP = {
     "rp-request_uri-sig+enc": NORMAL,
 
     # Claims Request Parameter
-    "rp-id_token-claims": NORMAL,
+    "rp-claims_reqest-id_token_claims": NORMAL,
     "rp-claims_reqest-request_userinfo": NORMAL,
 
     # "rp-3rd-login": "",
