@@ -35,6 +35,14 @@ FLOWS = {
     #     "profile": "..T.",
     #     "desc": "Uses openid-configuration Discovery Information"
     # },
+    "rp-discovery-issuer_not_matching_config": {
+        "sequence": [
+            Webfinger,
+            (Discovery, {expect_exception: IssuerMismatch})
+        ],
+        "profile": "..T.",
+        "desc": "Retrieve openid-configuration information for OpenID Provider from the .well-known/openid-configuration path. Verify that the issuer in the openid-configuration matches the one returned by WebFinger"
+    },
     # "rp-discovery-jwks_uri_keys": {
     #     "sequence": [
     #         Webfinger,
@@ -169,20 +177,20 @@ FLOWS = {
     #     "desc": "Can Make Access Token Request with 'private_key_jwt' "
     #             "Authentication"
     # },
-    "rp-id_token-sig+enc": {
-        "sequence": [
-            Webfinger,
-            Discovery,
-            (Registration, {
-                set_request_args: {
-                    "id_token_signed_response_alg": "HS256",
-                    "id_token_encrypted_response_alg": "RSA1_5",
-                    "id_token_encrypted_response_enc": "A128CBC-HS256"},
-                set_jwks_uri: {}
-            }),
-            (Authn, {set_op_args: {"response_type": ["id_token"]}}),
-        ],
-        "profile": "I...T",
-        "desc": "Can Request and Use Signed and Encrypted ID Token Response",
-    },
+    # "rp-id_token-sig+enc": {
+    #     "sequence": [
+    #         Webfinger,
+    #         Discovery,
+    #         (Registration, {
+    #             set_request_args: {
+    #                 "id_token_signed_response_alg": "HS256",
+    #                 "id_token_encrypted_response_alg": "RSA1_5",
+    #                 "id_token_encrypted_response_enc": "A128CBC-HS256"},
+    #             set_jwks_uri: {}
+    #         }),
+    #         (Authn, {set_op_args: {"response_type": ["id_token"]}}),
+    #     ],
+    #     "profile": "I...T",
+    #     "desc": "Can Request and Use Signed and Encrypted ID Token Response",
+    # },
 }

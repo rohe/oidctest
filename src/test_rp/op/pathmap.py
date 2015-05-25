@@ -8,7 +8,8 @@ IDMAP = {
     "rp-webfinger-acct": NORMAL,
     "rp-discovery-openid_configuration": NORMAL,
     "rp-discovery-jwks_uri_keys": NORMAL,
-    "rp-discovery-mismatching_issuers": "/_/_/isso/normal",
+    "rp-discovery-issuer_not_matching_config": "/_/_/isso/normal",
+    #"rp-discovery-mismatching_issuers": "/_/_/isso/normal", # TODO Should be removed?
 
     # Dynamic Client Registration
     "rp-dynamic_registration": NORMAL,
