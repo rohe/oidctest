@@ -1,5 +1,5 @@
 from jwkest import BadSignature
-from oidctest.oper import Webfinger
+from oidctest.oper import Webfinger, UserInfo
 from oidctest.oper import AccessToken
 from oidctest.oper import Discovery
 from oidctest.oper import Registration
@@ -277,4 +277,16 @@ FLOWS = {
         "profile": "C,CT,CIT...T",
         "desc": "Can Request and Use unSigned ID Token Response"
     },
+    "rp-user_info-bad_sub_claim": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            Authn,
+            AccessToken,
+            (UserInfo, {expect_exception: UserInfo.SubjectMismatch})
+        ],
+        "profile": "C,CI,CT,CIT...",
+        "desc": "Reject UserInfo with Invalid Sub claim"
+    }
 }
