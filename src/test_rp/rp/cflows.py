@@ -305,5 +305,21 @@ FLOWS = {
         ],
         "profile": "C,CI,CT,CIT...",
         "desc": "Accesses UserInfo Endpoint with form-encoded body method"
+    },
+    "rp-user_info-bearer_header": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            Authn,
+            AccessToken,
+            (UserInfo, {
+                set_request_args: {
+                    "behavior": "use_authorization_header"
+                }
+            })
+        ],
+        "profile": "C,CI,CT,CIT...",
+        "desc": " Accesses UserInfo Endpoint with Header Method "
     }
 }
