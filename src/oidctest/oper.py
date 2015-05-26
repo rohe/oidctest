@@ -112,14 +112,14 @@ class Request(Operation):
     def __init__(self, conv, session, test_id, conf, funcs):
         Operation.__init__(self, conv, session, test_id, conf, funcs)
 
-    
+
 class Authn(Request):
     def __init__(self, conv, session, test_id, conf, funcs):
         Request.__init__(self, conv, session, test_id, conf, funcs)
 
         self.op_args["endpoint"] = conv.client.provider_info[
             "authorization_endpoint"]
-            
+
         conv.state = rndstr()
         self.req_args["state"] = conv.state
         conv.nonce = rndstr()
@@ -157,6 +157,11 @@ class Authn(Request):
                     resp[inp.attrs["name"]] = inp.attrs["value"]
             resp.verify(keyjar=self.conv.client.keyjar)
 
+        try:
+            self.conv.client.id_token = resp["id_token"]
+        except KeyError:
+            pass
+
         self.conv.trace.response(resp)
         return resp
 
@@ -173,19 +178,40 @@ class AccessToken(Request):
                 self.op_args, self.req_args))
         atr = self.conv.client.do_access_token_request(
             request_args=self.req_args, **self.op_args)
+        try:
+            self.conv.client.id_token = atr["id_token"]
+        except KeyError:
+            pass
+
         self.conv.trace.response(atr)
         assert isinstance(atr, AccessTokenResponse)
 
 
 class UserInfo(Request):
+    class SubjectMismatch(Exception):
+        pass
+
     def __init__(self, conv, session, test_id, conf, args):
         Request.__init__(self, conv, session, test_id, conf, args)
         self.op_args["state"] = conv.state
 
     def __call__(self):
-        user_info = self.conv.client.do_user_info_request(**self.args)
+        user_info = self.conv.client.do_user_info_request(**self.op_args)
         assert user_info
         self.conv.client.userinfo = user_info
+
+        self.catch_exception(self._verify_subject_identifier,
+                             client=self.conv.client,
+                             user_info=user_info)
+
+        self.conv.trace.response(user_info)
+
+    def _verify_subject_identifier(self, client, user_info):
+        if client.id_token:
+            if user_info["sub"] != client.id_token["sub"]:
+                msg = "user_info['sub'] != id_token['sub']: '{}!={}'".format(
+                    user_info["sub"], client.id_token["sub"])
+                raise UserInfo.SubjectMismatch(msg)
 
 
 class DisplayUserInfo(Operation):
