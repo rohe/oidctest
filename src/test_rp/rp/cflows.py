@@ -320,7 +320,7 @@ FLOWS = {
             })
         ],
         "profile": "C,CI,CT,CIT...",
-        "desc": " Accesses UserInfo Endpoint with Header Method "
+        "desc": "Accesses UserInfo Endpoint with Header Method "
     },
     "rp-user_info-enc": {
         "sequence": [
@@ -338,7 +338,7 @@ FLOWS = {
             UserInfo
         ],
         "profile": "C,CI,CT,CIT...",
-        "desc": " Accesses UserInfo Endpoint with Header Method "
+        "desc": "Can Request and Use Encrypted UserInfo Response "
     },
     "rp-user_info-sig+enc": {
         "sequence": [
@@ -357,6 +357,6 @@ FLOWS = {
             UserInfo
         ],
         "profile": "C,CI,CT,CIT...",
-        "desc": " Accesses UserInfo Endpoint with Header Method "
+        "desc": "Can Request and Use Signed and Encrypted UserInfo Response"
     }
 }
