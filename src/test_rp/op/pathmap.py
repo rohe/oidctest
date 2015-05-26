@@ -83,7 +83,7 @@ IDMAP = {
     # "rp-3rd-login": "",
 
     # Claim Types
-    "rp-claims-aggregated": "/_/_/_/_/aggregate",
+    "rp-claims-aggregated": "/_/_/_/aggregated",
     "rp-claims-distributed": "/_/_/_/_/distributed"
 
     # "rp-logout-init": "",

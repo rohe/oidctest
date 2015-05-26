@@ -375,5 +375,17 @@ FLOWS = {
         ],
         "profile": "C,CI,CT,CIT...",
         "desc": "Can Request and Use Signed UserInfo Response"
+    },
+    "rp-claims-aggregated": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            Authn,
+            AccessToken,
+            UserInfo
+        ],
+        "profile": "C,CI,CT,CIT...",
+        "desc": "Can handle aggregated user information"
     }
 }

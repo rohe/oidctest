@@ -201,12 +201,14 @@ class UserInfo(Request):
 
         user_info = self.conv.client.do_user_info_request(**args)
         assert user_info
-        self.conv.client.userinfo = user_info
 
         self.catch_exception(self._verify_subject_identifier,
                              client=self.conv.client,
                              user_info=user_info)
 
+        user_info = self.conv.client.unpack_aggregated_claims(user_info)
+
+        self.conv.client.userinfo = user_info
         self.conv.trace.response(user_info)
 
     def _verify_subject_identifier(self, client, user_info):
