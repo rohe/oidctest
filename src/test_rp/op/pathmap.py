@@ -14,6 +14,7 @@ IDMAP = {
     # Dynamic Client Registration
     "rp-registration-dynamic": NORMAL,
     "rp-registration-redirect_uris": NORMAL,
+    "rp-registration-well_formed_jwk": NORMAL,
 
     # Response type and response mode
     "rp-response_type-code": NORMAL,
