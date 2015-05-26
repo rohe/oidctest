@@ -321,5 +321,23 @@ FLOWS = {
         ],
         "profile": "C,CI,CT,CIT...",
         "desc": " Accesses UserInfo Endpoint with Header Method "
+    },
+    "rp-user_info-enc": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {
+                set_request_args: {
+                    "userinfo_encrypted_response_alg": "RSA1_5",
+                    "userinfo_encrypted_response_enc": "A128CBC-HS256"
+                },
+                set_jwks_uri: None
+            }),
+            Authn,
+            AccessToken,
+            UserInfo
+        ],
+        "profile": "C,CI,CT,CIT...",
+        "desc": " Accesses UserInfo Endpoint with Header Method "
     }
 }
