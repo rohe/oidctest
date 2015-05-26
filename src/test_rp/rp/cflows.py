@@ -1,5 +1,6 @@
 from jwkest import BadSignature
-from oidctest.oper import Webfinger, UserInfo
+from oidctest.oper import Webfinger
+from oidctest.oper import UserInfo
 from oidctest.oper import AccessToken
 from oidctest.oper import Discovery
 from oidctest.oper import Registration
