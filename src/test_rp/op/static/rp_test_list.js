@@ -2,6 +2,64 @@ var app = angular.module('main', ['ngSanitize']);
 
 app.controller('IndexCtrl', function ($scope, $sce) {
 
+    var OPTIONAL = "(optional)"
+    var REJECTION_ALLOWED = "(rejection allowed)"
+    var ALT_TO_HDR_METHOD = "(alt to hdr method)"
+
+    var BASIC = {"text" : "Basic"}
+    var BASIC_OPTIONAL = {"text" : BASIC.text, "optional_text": OPTIONAL}
+    var BASIC_ALT_TO_HDR_METHOD = {"text" : BASIC.text, "optional_text": ALT_TO_HDR_METHOD}
+
+    var IMPLICIT = {"text" : "Implicit"}
+    var IMPLICIT_OPTIONAL = {"text" : IMPLICIT.text, "optional_text": OPTIONAL}
+    var IMPLICIT_REJECTION_ALLOWED = {"text" : IMPLICIT.text, "optional_text": REJECTION_ALLOWED}
+    var IMPLICIT_ALT_TO_HDR_METHOD = {"text" : IMPLICIT.text, "optional_text": ALT_TO_HDR_METHOD}
+
+    var HYBRID = {"text" :"Hybrid"}
+    var HYBRID_OPTIONAL = {"text" : HYBRID.text, "optional_text": OPTIONAL}
+    var HYBRID_REJECTION_ALLOWED = {"text" : HYBRID.text, "optional_text": REJECTION_ALLOWED}
+    var HYBRID_ALT_TO_HDR_METHOD = {"text" : HYBRID.text, "optional_text": ALT_TO_HDR_METHOD}
+
+    var SELF_ISSUED = {"text" :"Self-issued"}
+    var SELF_ISSUED_OPTIONAL = {"text" : SELF_ISSUED.text, "optional_text": OPTIONAL}
+
+    var CONFIG = {"text" :"Config"}
+    var CONFIG_OPTIONAL = {"text" : CONFIG.text, "optional_text": OPTIONAL}
+
+    var DYNAMIC = {"text" :"Dynamic"}
+    var DYNAMIC_OPTIONAL = {"text" : DYNAMIC.text, "optional_text": OPTIONAL}
+
+    $scope.profiles = [
+        {profile: 'All tests' },
+        {profile: BASIC.text },
+        {profile: IMPLICIT.text },
+        {profile: HYBRID.text },
+        {profile: SELF_ISSUED.text },
+        {profile: CONFIG.text },
+        {profile: DYNAMIC.text}
+    ];
+
+    $scope.selectedItem = $scope.profiles[0];
+
+    $scope.contains_selected_profile = function(profile_list){
+
+        if ($scope.selectedItem == $scope.profiles[0]){
+            return true;
+        }
+
+        if (profile_list == null){
+            return false;
+        }
+
+        for (var i=0; i<profile_list.length; i++){
+            if ($scope.selectedItem.profile == profile_list[i].text){
+                return true;
+            }
+        }
+
+        return false;
+    };
+
     var OPENID_DOCS = "OpenId connect documentation";
     var DISCOVERY_DOC = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery", OPENID_DOCS);
     var CLIENT_REGISTRATION_ENDPOINT = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientRegistration", "client registration endpoint");
@@ -62,11 +120,11 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var MULTIPLE_KEYS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#Signing", "multiple keys");
     var USES_HTTPS_IN_ALL_ENDPOINTS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#TLSRequirements", "uses https in all endpoints");
 
-
     $scope.guidlines = [
         ["Discovery", {
             "rp-discovery-webfinger_url": {
                 "short_description": "Can discover identifiers using URL syntax",
+                "profiles": [DYNAMIC],
                 "detailed_description": "Tests if an entity can use WebFinger as described by " +
                 RFC7033 + " and the " + DISCOVERY_DOC + " to determine the location of the OpenID Provider. " +
                 "The discovery should be done using " + URL_SYNTAX + " as end-user identifier",
@@ -74,6 +132,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             },
             "rp-discovery-webfinger_acct": {
                 "short_description": "Can discover identifiers using acct syntax",
+                "profiles": [DYNAMIC],
                 "detailed_description": "Tests if an entity can use WebFinger as described by " +
                 RFC7033 + " and the " + DISCOVERY_DOC + " to determine the location of the OpenID Provider. " +
                 "The discovery should be done using " + ACCT_SYNTAX + " as end-user identifier",
@@ -81,28 +140,33 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             },
             "rp-discovery": {
                 "short_description": "Uses openid-configuration Discovery",
+                "profiles": [DYNAMIC],
                 "detailed_description": "The Relying Party should be able to determine the OpenID Provider location by using " +
                 OPENID_PROVIDER_ISSUER_DISCOVERY,
                 "expected_result": "An issuer should be returned"
             },
             "rp-discovery-issuer_not_matching_config": {
                 "short_description": "Rejects discovered issuer not matching openid-configuration issuer",
+                "profiles": [CONFIG, DYNAMIC],
                 "detailed_description": "Retrieve "+ OPENID_CONFIGURATION_INFORMATION +" for OpenID Provider from the " +
                 ".well-known/openid-configuration path. Verify that the issuer in the "+ OPENID_CONFIGURATION +" matches the one returned by WebFinger",
                 "expected_result": "Identify that the issuers are not matching and rejects the openid-configuration"
             },
             "rp-discovery-openid_configuration": {
                 "short_description": "Uses openid-configuration Discovery Information",
+                "profiles": [CONFIG, DYNAMIC],
                 "detailed_description": "The Relying Party should be able to request and use the " + OPENID_CONFIGURATION_DISCOVERY_INFORMATION,
                 "expected_result": "Use the JSON object returned from the OpenId Connect Provider"
             },
             "rp-discovery-mismatching_issuers": {
                 "short_description": "Rejects ID Token with iss Not Matching Discovered issuer",
+                "profiles": [CONFIG, DYNAMIC],
                 "detailed_description": "The Relying Party should obtain an ID token and compare iss value to issuer in the " + OPENID_PROVIDER_METADATA,
                 "expected_result": "Rejects ID Token when iss and issuer values differ"
             },
             "rp-discovery-jwks_uri_keys": {
                 "short_description": "Uses Keys Discovered with jwks_uri Value",
+                "profiles": [CONFIG, DYNAMIC],
                 "detailed_description": "The Relying Party uses keys at the jwks_uri which has been obtained form the " + OPENID_PROVIDER_METADATA,
                 "expected_result": "Should be able to sign and/or encrypt requests using obtained keys"
             }
@@ -110,22 +174,26 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         ["Dynamic Client Registration", {
             "rp-registration-dynamic": {
                 "short_description": "Uses dynamic registration",
+                "profiles": [DYNAMIC],
                 "detailed_description": "Tests if the Relying Party can use the " + CLIENT_REGISTRATION_ENDPOINT + " in order to dynamically " +
                 "register the Relaying Party",
                 "expected_result": "Get a " + CLIENT_REGISTRATION_RESPONSE + " as a JSON file"
             },
             "rp-registration-redirect_uris": {
                 "short_description": "Registration has redirect_uris",
+                "profiles": [DYNAMIC],
                 "detailed_description": "Tests if the Relying Party can add redirect_uris values to the "+ CLIENT_METADATA +" while doing a registration request",
                 "expected_result": "Can get a Client Registration Response"
             },
             "rp-registration-well_formed_jwk": {
                 "short_description": "Keys in RP follows JWK format",
+                "profiles": [DYNAMIC],
                 "detailed_description": "The keys published by the Relying Party should follow the " + JSON_WEB_KEY_FORMAT,
                 "expected_result": "Can get a Client Registration Response"
             },
             "rp-registration-uses_https_endpoints": {
                 "short_description": "Uses https for all endpoints",
+                "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
                 "detailed_description": "Tests if the Relying Party "+ USES_HTTPS_IN_ALL_ENDPOINTS +" published in the " + CLIENT_METADATA,
                 "expected_result": "No endpoints not supporting TLS"
             }
@@ -133,17 +201,20 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         ["Response type and response mode", {
             "rp-response_type-code": {
                 "short_description": "Can make requests with 'code' response type",
+                "profiles": [BASIC],
                 "detailed_description": "Tests if an Relying Party can make a authentication request using the " + AUTHORIZATION_CODE_FLOW,
                 "expected_result": "A " + AUTHENTICATION_RESPONSE + " containing an authorization code"
             },
             "rp-response_type-id_token": {
                 "short_description": "Can make request with 'id_token' response type",
+                "profiles": [IMPLICIT],
                 "detailed_description": "Tests if an Relying Party can make a authentication request using the " + IMPLICIT_FLOW +
                 ". The "+ RESPONSE_TYPE +" should be set to 'id_token'"  ,
                 "expected_result": "A authorization response containing an id_token"
             },
             "rp-response_type-id_token+token": {
                 "short_description": "Can make request with 'id_token token' response type",
+                "profiles": [IMPLICIT],
                 "detailed_description": "Tests if an Relying Party can make a authentication request using the " + IMPLICIT_FLOW +
                 ". The "+ RESPONSE_TYPE +" should be set to 'id_token token'"  ,
                 "expected_result": "A authorization response containing an id_token and an access token"
@@ -156,6 +227,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             },
             "rp-response_type-self_issued": {
                 "short_description": "Can use Self-Issued OP",
+                "profiles": [SELF_ISSUED],
                 "detailed_description": "Tests if an Relying Party can make a authentication request to a " + SELF_ISSUED_OPENID_PROVIDERS,
                 "expected_result": "A authorization response containing an id_token"
             }
@@ -187,12 +259,14 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             },
             "rp-request_uri-unsigned": {
                 "short_description": "Can Use request_uri Request Parameter with Unsigned Request",
+                "profiles": [DYNAMIC_OPTIONAL],
                 "detailed_description": "The Relying Party can pass a "+ REQUEST_OBJECT_BY_REFERENCE +" using the " +
                 "request_uri parameter. The Request Object should set 'alg' equal to 'none'",
                 "expected_result": "Completing the Authorization Request using request_uri Request Parameter"
             },
             "rp-request_uri-sig": {
                 "short_description": "Can Use request_uri Request Parameter with Signed Request",
+                "profiles": [DYNAMIC_OPTIONAL],
                 "detailed_description": "The Relying Party can pass a "+ REQUEST_OBJECT_BY_REFERENCE +" using the " +
                 "request_uri parameter. "+ SIGN_THE_REQUEST_OBJECT +" using the RS256 algorithm",
                 "expected_result": "Completing the Authorization Request using request_uri Request Parameter"
@@ -208,11 +282,13 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         ["scope Request Parameter", {
             "rp-scope-contains_openid_scope": {
                 "short_description": "openid scope value should be present in the Authorization Request",
+                "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
                 "detailed_description": "The Relying Party should always add the "+ OPENID_SCOPE + " value while sending an Authorization Request.",
                 "expected_result": "Receiving successful Authorization response"
             },
             "rp-scope-userinfo_claims": {
                 "short_description": "Requesting UserInfo Claims with scope values",
+                "profiles": [BASIC_OPTIONAL, IMPLICIT_OPTIONAL, HYBRID_OPTIONAL, SELF_ISSUED_OPTIONAL],
                 "detailed_description": "The Relying Party should be able to " + REQUEST_CLAIMS_USING_SCOPE_VALUES,
                 "expected_result": "Receiving UserInfo response"
             }
@@ -220,6 +296,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         ["nonce Request Parameter", {
             "rp-nonce-unless_code_flow": {
                 "short_description": "Sends nonce request parameter unless using code flow",
+                "profiles": [IMPLICIT, HYBRID, SELF_ISSUED],
                 "detailed_description": "The Relying Party should always send a nonce as a request parameter while using " +
                 "implicit or hybrid flow. Since the server is suppose to return the nonce in the ID Token return from " +
                 "Authorization Endpoint, see ID Token required claims in " + HYBRID_FLOW_ID_TOKEN + " or " + IMPLICIT_FLOW_ID_TOKEN +
@@ -228,6 +305,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             },
             "rp-nonce-invalid": {
                 "short_description": "Reject ID Token with invalid nonce when nonce valid sent",
+                "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
                 "detailed_description": "If a nonce value was sent in the Authentication Request the Relying Party " +
                 "must "+ VALIDATE_THE_NONCE +" returned in the ID Token.",
                 "expected_result": "Should reject the ID Token if the nonce is not valid"
@@ -236,6 +314,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         ["Client Authentication", {
             "rp-token_endpoint-client_secret_basic": {
                 "short_description": "Can make Access Token request with 'client_secret_basic' authentication",
+                "profiles": [BASIC, IMPLICIT, HYBRID],
                 "detailed_description": "Tests if a client can authenticate to the authentication server " +
                 "when using the token endpoint. In order to authenticate " +
                 "the client should be using '" + CLIENT_SECRET_BASIC + "'",
@@ -263,6 +342,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         ["ID Token", {
             "rp-id_token-bad_asym_sig_rs256": {
                 "short_description": "Reject invalid asymmetric ID Token signature, signed with RS256",
+                "profiles": [BASIC_OPTIONAL, IMPLICIT, HYBRID, SELF_ISSUED],
                 "detailed_description": "Tests if the Relying Party can identify and reject an ID Token with an " +
                 "invalid signature. The ID Token has been signed using the asymmetric algorithm RS256. " +
                 "For more information see list item 6 in " + ID_TOKEN_VALIDATION,
@@ -282,18 +362,21 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             },
             "rp-id_token-sig_none": {
                 "short_description": "Can request and use unsigned ID Token response",
+                "profiles": [BASIC_OPTIONAL, CONFIG_OPTIONAL, DYNAMIC_OPTIONAL],
                 "detailed_description": "Tests if the Relying Party can request and use unsigned ID Tokens. Use "+ CODE_FLOW +
                 " and set the " + ALG_VALUE_EQUAL_TO_NONE,
                 "expected_result": "Retrieve an unsigned ID Token"
             },
             "rp-id_token-bad_c_hash": {
                 "short_description": "Rejects incorrect c_hash from an ID token when code flow is used",
+                "profiles": [HYBRID],
                 "detailed_description": "Tests if the Relying Party extract an "+ C_HASH +" from an ID token presented as json. It should be used " +
                 "to validate the correctness of the " + AUTHORIZATION_CODE,
                 "expected_result": "The RP should be able to detect that the c_hash i invalid"
             },
             "rp-id_token-bad_at_hash": {
                 "short_description": "Rejects incorrect at_hash when response type equals 'id_token token'",
+                "profiles": [IMPLICIT, HYBRID],
                 "detailed_description": "Tests if the Relying Party can extract an "+ AT_HASH +" from an ID token " +
                 "and it should be used in the " + ACCESS_TOKEN_VALIDATION + ". The response type should be set to 'id_token token'",
                 "expected_result": "The RP should be able to detect that the at_hash is invalid"
@@ -301,12 +384,14 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             //TODO Difference between this test and rp-discovery-mismatching_issuers
             "rp-id_token-mismatching_issuer": {
                 "short_description": "Rejects discovered issuer not matching ID Token iss",
+                "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
                 "detailed_description": "The Relying Party should request an ID token and reject it if the issuer " +
                 "identifier for the OpenID Provider isn't matching the issuer in the returned ID Token",
                 "expected_result": "Should do a "+ ID_TOKEN_VALIDATION +" and detect that the issuers are not matching"
             },
             "rp-id_token-iat": {
                 "short_description": "Reject ID Token without iat claim",
+                "profiles": [BASIC, IMPLICIT, HYBRID],
                 "detailed_description": "The Relying Party should request an ID token if it does not contain a "+ IAT +" claim it should be rejected",
                 "expected_result": "Should do a "+ ID_TOKEN_VALIDATION +" and detect that the iat claim is missing"
             },
@@ -317,21 +402,25 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             },
             "rp-id_token-aud": {
                 "short_description": "Reject ID Token with invalid aud claim",
+                "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
                 "detailed_description": "The Relying Party should request an ID token and compare its "+ AUD +" value to Relying Party's " + CLIENT_ID,
                 "expected_result": "Should do a "+ ID_TOKEN_VALIDATION +" and detect when 'aud' claim is missing or doesn't match Client ID"
             },
             "rp-id_token-sub": {
                 "short_description": "Reject ID Token without sub claim",
+                "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
                 "detailed_description": "The Relying Party should request an ID token and reject it if the "+ SUB +" claim is missing",
                 "expected_result": "Should detect when the sub claim is missing"
             },
             "rp-id_token-kid_absent_single_jwks": {
                 "short_description": "Accept ID Token without kid claim if only one JWK supplied in jwks_uri",
+                "profiles": [BASIC_OPTIONAL, IMPLICIT, HYBRID],
                 "detailed_description": "If the JWK supplied in jwks_uri only contains a "+ SINGLE_KEY +" the ID Token does not need to contain a kid claim",
                 "expected_result": "The Relying Party should be accept the JWK"
             },
             "rp-id_token-kid_absent_multiple_jwks": {
                 "short_description": "Reject ID Token without kid claim if multiple JWKs supplied in jwks_uri",
+                "profiles": [BASIC_OPTIONAL, IMPLICIT_REJECTION_ALLOWED, HYBRID_REJECTION_ALLOWED],
                 "detailed_description": "If there are "+ MULTIPLE_KEYS +" in the referenced JWK Set document, a kid value MUST be provided in the JOSE Header",
                 "expected_result": "Accept ID Token containing kid"
             }
@@ -339,11 +428,13 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         ["Key Rollover", {
             "rp-key_rollover-op_sign_key": {
                 "short_description": "Support OP Signing Key Rollover",
+                "profiles": [CONFIG, DYNAMIC],
                 "detailed_description": "The OpenID Connect Providera should do a "+ SIGNING_KEY_ROLLOVER +" at its jwks_uri location after it has been used by Relying Party",
                 "expected_result": "Relying Party successfully uses the old then new signing key"
             },
             "rp-key_rollover-rp_sign_key": {
                 "short_description": "Can Rollover RP Signing Key",
+                "profiles": [DYNAMIC],
                 "detailed_description": "The Relying Party should do a "+ SIGNING_KEY_ROLLOVER +" at its jwks_uri location after it has been used by OpenID Connect Provider",
                 "expected_result": "OpenID Connect Provider successfully uses the old then new signing key"
             },
@@ -373,18 +464,21 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         ["UserInfo Endpoint", {
             "rp-user_info-bearer_header": {
                 "short_description": "Accesses UserInfo Endpoint with Header Method",
+                "profiles": [BASIC, IMPLICIT, HYBRID],
                 "detailed_description": "While doing the " + USERINFO_REQUEST + " the the Relying Party should send the access token using the " +
                 BEARER_HEADER_METHOD,
                 "expected_result": "Receiving " + USERINFO_RESPONSE
             },
             "rp-user_info-bearer_body": {
                 "short_description": "Accesses UserInfo Endpoint with form-encoded body method",
+                "profiles": [BASIC_ALT_TO_HDR_METHOD, IMPLICIT_ALT_TO_HDR_METHOD, HYBRID_ALT_TO_HDR_METHOD],
                 "detailed_description": "While doing the " + USERINFO_REQUEST + " the the Relying Party should send the access token using the " +
                 FORM_ENCODED_BODY_METHOD,
                 "expected_result": "Should receive a " + USERINFO_RESPONSE
             },
             "rp-user_info-sign":{
                 "short_description": "Can Request and Use Signed UserInfo Response",
+                "profiles": [CONFIG_OPTIONAL, DYNAMIC_OPTIONAL],
                 "detailed_description": "The Relying Party should request and use UserInfo Response which has been signed",
                 "expected_result": "Should receive and verify the signature of the " + USERINFO_RESPONSE
             },
@@ -400,11 +494,13 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             },
             "rp-user_info-not_query":{
                 "short_description": "Does Not Access UserInfo Endpoint with Query Parameter Method",
+                "profiles": [BASIC, IMPLICIT, HYBRID],
                 "detailed_description": "While doing a "+ USERINFO_REQUEST +" the Relying party should not send the access token as a Query Parameter, but only as a Bearer Token",
                 "expected_result": "Should receive a " + USERINFO_RESPONSE + " without using the Query Parameter method"
             },
             "rp-user_info-bad_sub_claim":{
                 "short_description": "Rejects UserInfo with Invalid Sub claim",
+                "profiles": [BASIC, IMPLICIT, HYBRID],
                 "detailed_description": "The Relying Party should obtain a "+ USERINFO_RESPONSE +" and compare its 'sub' value to ID Token's 'sub' claim",
                 "expected_result": "Should reject UserInfo result when 'sub' value is missing or doesn't match ID Token 'sub' claim"
             }

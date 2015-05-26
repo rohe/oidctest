@@ -33,11 +33,22 @@
             "how to use the RPtest"
         </a>
          introduction guide
+
+        <br>
+        Select the profile you want to use:
+        <br>
+        <select ng-model="selectedItem"
+              ng-options="item as item.profile for item in profiles">
+        </select>
+
     </div>
 
     <div ng-repeat="category_list in guidlines track by $index" class="row category_row">
+
         <span class="category_text">{{category_list[category_const]}}</span>
-        <div ng-repeat="(test_name, test_data) in category_list[test_const]" class="row test_row">
+
+        <div ng-repeat="(test_name, test_data) in category_list[test_const]" class="row test_row" ng-show="contains_selected_profile(test_data.profiles)">
+
             <div class="col-sm-11" ng-click="toggle_more_info_visibility($parent.$index, test_name);">
                 <img src="static/pictures/arrowRight.png" ng-show="!test_data.visible">
                 <img src="static/pictures/arrowDown.png" ng-show="test_data.visible">
@@ -52,6 +63,10 @@
                     <tr>
                         <td>Identifier</td>
                         <td>{{test_name}}</td>
+                    </tr>
+                    <tr>
+                        <td>Profiles</td>
+                        <td><span ng-repeat="profile in test_data.profiles">{{profile.text}} {{profile.optional_text}} , </span></td>
                     </tr>
                     <tr>
                         <td>Description</td>
