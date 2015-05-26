@@ -358,5 +358,22 @@ FLOWS = {
         ],
         "profile": "C,CI,CT,CIT...",
         "desc": "Can Request and Use Signed and Encrypted UserInfo Response"
+    },
+    "rp-user_info-sign": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {
+                set_request_args: {
+                    "userinfo_signed_response_alg": "RS256",
+                },
+                set_jwks_uri: None
+            }),
+            Authn,
+            AccessToken,
+            UserInfo
+        ],
+        "profile": "C,CI,CT,CIT...",
+        "desc": "Can Request and Use Signed UserInfo Response"
     }
 }
