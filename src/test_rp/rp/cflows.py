@@ -387,5 +387,17 @@ FLOWS = {
         ],
         "profile": "C,CI,CT,CIT...",
         "desc": "Can handle aggregated user information"
+    },
+    "rp-claims-distributed": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            Authn,
+            AccessToken,
+            UserInfo
+        ],
+        "profile": "C,CI,CT,CIT...",
+        "desc": "Handles distributed user information"
     }
 }
