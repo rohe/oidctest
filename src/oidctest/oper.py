@@ -215,6 +215,7 @@ class UserInfo(Request):
                 msg = "user_info['sub'] != id_token['sub']: '{}!={}'".format(
                     user_info["sub"], client.id_token["sub"])
                 raise UserInfo.SubjectMismatch(msg)
+        return "Subject identifier ok!"
 
 
 class DisplayUserInfo(Operation):
