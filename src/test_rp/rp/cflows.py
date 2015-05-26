@@ -289,5 +289,21 @@ FLOWS = {
         ],
         "profile": "C,CI,CT,CIT...",
         "desc": "Reject UserInfo with Invalid Sub claim"
+    },
+    "rp-user_info-bearer_body": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            Authn,
+            AccessToken,
+            (UserInfo, {
+                set_request_args: {
+                    "behavior": "token_in_message_body"
+                }
+            })
+        ],
+        "profile": "C,CI,CT,CIT...",
+        "desc": "Accesses UserInfo Endpoint with form-encoded body method"
     }
 }
