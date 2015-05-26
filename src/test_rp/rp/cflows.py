@@ -3,13 +3,11 @@ from oidctest.oper import AccessToken
 from oidctest.oper import Discovery
 from oidctest.oper import Registration
 from oidctest.oper import Authn
-from oidctest.testfunc import resource
-from oidctest.testfunc import set_jwks_uri
 from oidctest.testfunc import set_op_args
 from oidctest.testfunc import expect_exception
 from oidctest.testfunc import set_request_args
 
-from oic.exception import IssuerMismatch
+from oic.exception import IssuerMismatch, PyoidcError
 
 __author__ = 'roland'
 
@@ -72,15 +70,26 @@ FLOWS = {
     #     "profile": "...T",
     #     "desc": "Uses Dynamic Registration"
     # },
-    "rp-registration-redirect_uris": {
-        "sequence": [
-          Webfinger,
-          Discovery,
-          Registration
-        ],
-        "profile": "...T",
-        "desc": "Tests if the Relying Party can add redirect_uris values to the Client Metadata while doing a registration request"
-    },
+    # "rp-registration-redirect_uris": {
+    #     "sequence": [
+    #       Webfinger,
+    #       Discovery,
+    #       (Registration, {set_request_args: {"redirect_uris": [""]}, expect_exception: PyoidcError}),
+    #       Registration
+    #     ],
+    #     "profile": "...T",
+    #     "desc": "Sends redirect_uris value which only contains a empty string while doing a registration request. Then send a valid redirect_uris list"
+    # },
+    # "rp-registration-uses_https_endpoints": {
+    #     "sequence": [
+    #       Webfinger,
+    #       Discovery,
+    #       (Registration, {set_request_args: {"redirect_uris": ["http://test.com"]}, expect_exception: PyoidcError}),
+    #       Registration
+    #     ],
+    #     "profile": "...T",
+    #     "desc": "Sends a redirect_uri endpoint which does not use https. The a valid redirect_uri is sent to the OP"
+    # },
     # "rp-response_type-code": {
     #     "sequence": [
     #         Webfinger,

@@ -100,12 +100,12 @@ class Registration(Operation):
 
     def setup(self, profile_map):
         self.map_profile(profile_map)
-        self._setup()
 
         if self.dynamic:
             self.req_args.update(self.conf.INFO["client"])
             self.req_args["url"] = self.conv.client.provider_info[
                 "registration_endpoint"]
+        self._setup()
 
 
 class Request(Operation):
