@@ -196,7 +196,10 @@ class UserInfo(Request):
         self.op_args["state"] = conv.state
 
     def __call__(self):
-        user_info = self.conv.client.do_user_info_request(**self.op_args)
+        args = self.op_args.copy()
+        args.update(self.req_args)
+
+        user_info = self.conv.client.do_user_info_request(**args)
         assert user_info
         self.conv.client.userinfo = user_info
 
