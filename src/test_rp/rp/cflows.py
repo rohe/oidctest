@@ -1,4 +1,6 @@
+from jwkest import BadSignature
 from oidctest.oper import Webfinger
+from oidctest.oper import UserInfo
 from oidctest.oper import AccessToken
 from oidctest.oper import Discovery
 from oidctest.oper import Registration
@@ -15,7 +17,7 @@ ORDDESC = ["rp-webfinger", "rp-discovery", "rp-registration", "rp-response_type"
            "rp-token_endpoint", "rp-id_token"]
 
 FLOWS = {
-    "rp-discovery-webfinger_url": {
+   "rp-discovery-webfinger_url": {
         "sequence": [Webfinger],
         "desc": "Can Discover Identifiers using URL Syntax",
         "profile": ".T..",
@@ -24,24 +26,24 @@ FLOWS = {
         "sequence": [(Webfinger, {resource: {"pattern": "acct:{}@{}"}})],
         "desc": "Can Discover Identifiers using acct Syntax",
         "profile": ".T..",
-    },
-    "rp-discovery-openid_configuration": {
+   },
+   "rp-discovery-openid_configuration": {
         "sequence": [
             Webfinger,
             Discovery
         ],
         "profile": "..T.",
         "desc": "Uses openid-configuration Discovery Information"
-    },
-    "rp-discovery-issuer_not_matching_config": {
+   },
+   "rp-discovery-issuer_not_matching_config": {
         "sequence": [
             Webfinger,
             (Discovery, {expect_exception: IssuerMismatch})
         ],
         "profile": "..T.",
         "desc": "Retrieve openid-configuration information for OpenID Provider from the .well-known/openid-configuration path. Verify that the issuer in the openid-configuration matches the one returned by WebFinger"
-    },
-    "rp-discovery-jwks_uri_keys": {
+   },
+   "rp-discovery-jwks_uri_keys": {
         "sequence": [
             Webfinger,
             Discovery
@@ -52,8 +54,8 @@ FLOWS = {
             "providerinfo-has-jwks_uri": {},
             "bare-keys": {}
         }
-    },
-    "rp-discovery-mismatching_issuers": {
+   },
+   "rp-discovery-mismatching_issuers": {
         "sequence": [
             Webfinger,
             (Discovery, {expect_exception: IssuerMismatch})
@@ -117,8 +119,8 @@ FLOWS = {
         ],
         "profile": "C...",
         "desc": "Can Make Request with 'code' Response Type"
-    },
-    "rp-response_type-id_token": {
+   },
+   "rp-response_type-id_token": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -128,8 +130,8 @@ FLOWS = {
         ],
         "desc": "Can Make Request with 'id_token' Response Type",
         "profile": "I...",
-    },
-    "rp-response_type-id_token+token": {
+   },
+   "rp-response_type-id_token+token": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -139,8 +141,8 @@ FLOWS = {
         ],
         "profile": "I,IT...",
         "desc": "Can Make Request with 'id_token token' Response Type"
-    },
-    "rp-response_mode-form_post": {
+   },
+   "rp-response_mode-form_post": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -150,8 +152,8 @@ FLOWS = {
         ],
         "profile": "I,IT...",
         "desc": "Can Make Request with response_mode=form_post"
-    },
-    "rp-token_endpoint-client_secret_basic": {
+   },
+   "rp-token_endpoint-client_secret_basic": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -179,9 +181,9 @@ FLOWS = {
         "profile": "C,CI,CIT...",
         "desc": "Can Make Access Token Request with 'client_secret_post' "
                 "Authentication"
-    },
-    # client_secret_jwt
-    "rp-token_endpoint-client_secret_jwt": {
+   },
+   # client_secret_jwt
+   "rp-token_endpoint-client_secret_jwt": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -195,9 +197,9 @@ FLOWS = {
         "profile": "C,CI,CIT...",
         "desc": "Can Make Access Token Request with 'client_secret_jwt' "
                 "Authentication"
-    },
-    # private_key_jwt
-    "rp-token_endpoint-private_key_jwt": {
+   },
+   # private_key_jwt
+   "rp-token_endpoint-private_key_jwt": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -212,8 +214,87 @@ FLOWS = {
         "profile": "C,CI,CIT...",
         "desc": "Can Make Access Token Request with 'private_key_jwt' "
                 "Authentication"
-    },
-    "rp-id_token-sig+enc": {
+   },
+   "rp-idt-asym_sig": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {
+                set_request_args: {
+                    "id_token_signed_response_alg": "RS256"
+                }
+            }),
+            (Authn, {set_op_args: {"response_type": ["id_token"]}}),
+        ],
+        "profile": "I...T",
+        "desc": "Accept Valid Asymmetric ID Token Signature"
+   },
+   "rp-idt-sym_sig": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {
+                set_request_args: {
+                    "id_token_signed_response_alg": "HS256"
+                }
+            }),
+            (Authn, {set_op_args: {"response_type": ["id_token"]}})
+        ],
+        "profile": "I...T",
+        "desc": "Accept Valid Symmetric ID Token Signature"
+   },
+   "rp-idt-invalid-asym_sig": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {
+                set_request_args: {
+                    "id_token_signed_response_alg": "RS256"
+                }
+            }),
+            (Authn, {
+                set_op_args: {"response_type": ["id_token"]},
+                expect_exception: BadSignature
+            }),
+        ],
+        "profile": "I...T",
+        "desc": "Reject Invalid Asymmetric ID Token Signature"
+   },
+   "rp-idt-invalid-ec_sig": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {
+                set_request_args: {
+                    "id_token_signed_response_alg": "ES256"
+                }
+            }),
+            (Authn, {
+                set_op_args: {"response_type": ["id_token"]},
+                expect_exception: BadSignature
+            })
+        ],
+        "profile": "I...T",
+        "desc": "Reject Invalid Asymmetric ID Token Signature"
+   },
+   "rp-idt-invalid-sym_sig": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {
+                set_request_args: {
+                    "id_token_signed_response_alg": "HS256"
+                }
+            }),
+            (Authn, {
+                set_op_args: {"response_type": ["id_token"]},
+                expect_exception: BadSignature
+            })
+        ],
+        "profile": "I...T",
+        "desc": "Reject Invalid Symmetric ID Token Signature"
+   },
+   "rp-id_token-sig+enc": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -228,5 +309,18 @@ FLOWS = {
         ],
         "profile": "I...T",
         "desc": "Can Request and Use Signed and Encrypted ID Token Response",
+   },
+    "rp-idt-none": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {
+                set_request_args: {"id_token_signed_response_alg": "none"}
+            }),
+            (Authn, {set_op_args: {"response_type": ["code"]}}),
+            AccessToken
+        ],
+        "profile": "C,CT,CIT...T",
+        "desc": "Can Request and Use unSigned ID Token Response"
     },
 }

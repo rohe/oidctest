@@ -54,7 +54,7 @@ IDMAP = {
     "rp-user_info-bearer_header": NORMAL,
     "rp-user_info-bearer_body": NORMAL,
     "rp-user_info-not_query": NORMAL,
-    "rp-bad-userinfo-sub": "/_/_/uisub/normal",
+    "rp-user_info-bad_sub_claim": "/_/_/uisub/normal",
     "rp-user_info-sign": NORMAL,
     "rp-user_info-enc": NORMAL,
     "rp-user_info-sig+enc": NORMAL,

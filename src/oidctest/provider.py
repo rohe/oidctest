@@ -117,8 +117,8 @@ class Provider(provider.Provider):
             ava["_claim_sources"] = Message(
                 src1={"endpoint": urlbase + "claim", "access_token": _tok})
 
-        if "sub" in self.behavior_type:
-            ava["uisub"] = "foobar"
+        if "uisub" in self.behavior_type:
+            ava["sub"] = "foobar"
 
         return ava
 
