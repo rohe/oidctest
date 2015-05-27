@@ -206,8 +206,9 @@ class UserInfo(Request):
                              client=self.conv.client,
                              user_info=user_info)
 
-        user_info = self.conv.client.unpack_aggregated_claims(user_info)
-        user_info = self.conv.client.fetch_distributed_claims(user_info)
+        if "_claim_sources" in user_info:
+            user_info = self.conv.client.unpack_aggregated_claims(user_info)
+            user_info = self.conv.client.fetch_distributed_claims(user_info)
 
         self.conv.client.userinfo = user_info
         self.conv.trace.response(user_info)
