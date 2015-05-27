@@ -133,37 +133,37 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         ["Response type and response mode", {
             "rp-response_type-code": {
                 "short_description": "Can make requests with 'code' response type",
-                "detailed_description": "Tests if an Relying Party can make a authentication request using the " + AUTHORIZATION_CODE_FLOW,
-                "expected_result": "A " + AUTHENTICATION_RESPONSE + " containing an authorization code"
+                "detailed_description": "Tests if a Relying Party can make an authentication request using the " + AUTHORIZATION_CODE_FLOW,
+                "expected_result": "An " + AUTHENTICATION_RESPONSE + " containing an authorization code"
             },
             "rp-response_type-id_token": {
                 "short_description": "Can make request with 'id_token' response type",
-                "detailed_description": "Tests if an Relying Party can make a authentication request using the " + IMPLICIT_FLOW +
+                "detailed_description": "Tests if a Relying Party can make an authentication request using the " + IMPLICIT_FLOW +
                 ". The "+ RESPONSE_TYPE +" should be set to 'id_token'"  ,
-                "expected_result": "A authorization response containing an id_token"
+                "expected_result": "An authorization response containing an id_token"
             },
             "rp-response_type-id_token+token": {
                 "short_description": "Can make request with 'id_token token' response type",
-                "detailed_description": "Tests if an Relying Party can make a authentication request using the " + IMPLICIT_FLOW +
+                "detailed_description": "Tests if a Relying Party can make an authentication request using the " + IMPLICIT_FLOW +
                 ". The "+ RESPONSE_TYPE +" should be set to 'id_token token'"  ,
-                "expected_result": "A authorization response containing an id_token and an access token"
+                "expected_result": "An authorization response containing an id_token and an access token"
             },
             "rp-response_mode-form_post": {
                 "short_description": "Can make request using response_type='id_token token' and response_mode='form_post'",
-                "detailed_description": "Tests if an Relying Party can make a authentication request. The "+ RESPONSE_TYPE +
+                "detailed_description": "Tests if a Relying Party can make an authentication request. The "+ RESPONSE_TYPE +
                 " should be set to 'id_token token' and the "+ RESPONSE_MODE +" should be " + FORM_POST,
                 "expected_result": "HTML form post response processed resulting in query encoded parameters"
             },
             "rp-response_type-self_issued": {
                 "short_description": "Can use Self-Issued OP",
-                "detailed_description": "Tests if an Relying Party can make a authentication request to a " + SELF_ISSUED_OPENID_PROVIDERS,
-                "expected_result": "A authorization response containing an id_token"
+                "detailed_description": "Tests if a Relying Party can make an authentication request to a " + SELF_ISSUED_OPENID_PROVIDERS,
+                "expected_result": "An authorization response containing an id_token"
             }
         }],
         ["Claims Request Parameter", {
             "rp-claims_reqest-id_token_claims": {
                 "short_description": "Can Request and use claims in ID Token using the 'claims' request parameter",
-                "detailed_description": "The Relying Party can ask for a specific claim using the "+ CLAIMS_REQUEST_PARAMETER +". The claim should be returned in a ID Token",
+                "detailed_description": "The Relying Party can ask for a specific claim using the "+ CLAIMS_REQUEST_PARAMETER +". The claim should be returned in an ID Token",
                 "expected_result": "The claim should appear in the returned ID Token"
             },
             "rp-id_token-request_userinfo": {
