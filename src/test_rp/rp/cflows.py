@@ -337,8 +337,9 @@ FLOWS = {
                                                     }
                                             }
                                         }}),
+            AccessToken
         ],
-        "profile": "...T",
+        "profile": "...",
         "desc": "The Relying Party can ask for a specific claim using the 'claims' request parameter. The claim should be returned in an ID Token"
    },
 }
