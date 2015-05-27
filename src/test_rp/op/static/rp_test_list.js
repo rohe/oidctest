@@ -166,7 +166,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "detailed_description": "The Relying Party can ask for a specific claim using the "+ CLAIMS_REQUEST_PARAMETER +". The claim should be returned in an ID Token",
                 "expected_result": "The claim should appear in the returned ID Token"
             },
-            "rp-id_token-request_userinfo": {
+            "rp-claims_reqest-request_userinfo": {
                 "short_description": "Can Request UserInfo Claims by using the 'claims' request parameter",
                 "detailed_description": "The Relying Party can ask for a specific claim using the "+ CLAIMS_REQUEST_PARAMETER +". The claim should be returned in a UserInfo response",
                 "expected_result": "The claim should appear in the UserInfo response"
