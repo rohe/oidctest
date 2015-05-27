@@ -10,7 +10,7 @@ from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
 from oic.oic import AuthorizationResponse
 from oic.oic import AccessTokenResponse
-from oidctest.prof_util import WEBFINGER
+from oidctest.prof_util import WEBFINGER, RESPONSE
 from oidctest.prof_util import DISCOVER
 from oidctest.prof_util import REGISTER
 
@@ -173,18 +173,19 @@ class AccessToken(Request):
         self.req_args["redirect_uri"] = conv.client.redirect_uris[0]
 
     def __call__(self):
-        self.conv.trace.info(
-            "Access Token Request with op_args: {}, req_args: {}".format(
-                self.op_args, self.req_args))
-        atr = self.conv.client.do_access_token_request(
-            request_args=self.req_args, **self.op_args)
-        try:
-            self.conv.client.id_token = atr["id_token"]
-        except KeyError:
-            pass
+        if "C" in self.profile[RESPONSE]:
+            self.conv.trace.info(
+                "Access Token Request with op_args: {}, req_args: {}".format(
+                    self.op_args, self.req_args))
+            atr = self.conv.client.do_access_token_request(
+                request_args=self.req_args, **self.op_args)
+            try:
+                self.conv.client.id_token = atr["id_token"]
+            except KeyError:
+                pass
 
-        self.conv.trace.response(atr)
-        assert isinstance(atr, AccessTokenResponse)
+            self.conv.trace.response(atr)
+            assert isinstance(atr, AccessTokenResponse)
 
 
 class UserInfo(Request):
