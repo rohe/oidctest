@@ -18,33 +18,33 @@ ORDDESC = ["rp-webfinger", "rp-discovery", "rp-registration", "rp-response_type"
            "rp-token_endpoint", "rp-id_token", "rp-claims_reqest", "rp-request_uri", "rp-scope"]
 
 FLOWS = {
-   "rp-discovery-webfinger_url": {
+    "rp-discovery-webfinger_url": {
         "sequence": [Webfinger],
         "desc": "Can Discover Identifiers using URL Syntax",
         "profile": ".T..",
-   },
-   "rp-discovery-webfinger_acct": {
+    },
+    "rp-discovery-webfinger_acct": {
         "sequence": [(Webfinger, {resource: {"pattern": "acct:{}@{}"}})],
         "desc": "Can Discover Identifiers using acct Syntax",
         "profile": ".T..",
-   },
-   "rp-discovery-openid_configuration": {
+    },
+    "rp-discovery-openid_configuration": {
         "sequence": [
             Webfinger,
             Discovery
         ],
         "profile": "..T.",
         "desc": "Uses openid-configuration Discovery Information"
-   },
-   "rp-discovery-issuer_not_matching_config": {
+    },
+    "rp-discovery-issuer_not_matching_config": {
         "sequence": [
             Webfinger,
             (Discovery, {expect_exception: IssuerMismatch})
         ],
         "profile": "..T.",
         "desc": "Retrieve openid-configuration information for OpenID Provider from the .well-known/openid-configuration path. Verify that the issuer in the openid-configuration matches the one returned by WebFinger"
-   },
-   "rp-discovery-jwks_uri_keys": {
+    },
+    "rp-discovery-jwks_uri_keys": {
         "sequence": [
             Webfinger,
             Discovery
@@ -55,16 +55,16 @@ FLOWS = {
             "providerinfo-has-jwks_uri": {},
             "bare-keys": {}
         }
-   },
-   "rp-discovery-mismatching_issuers": {
+    },
+    "rp-discovery-mismatching_issuers": {
         "sequence": [
             Webfinger,
             (Discovery, {expect_exception: IssuerMismatch})
         ],
         "profile": "..T.",
         "desc": "Will detect a faulty issuer claim in OP config"
-   },
-   "rp-registration-dynamic": {
+    },
+    "rp-registration-dynamic": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -72,28 +72,28 @@ FLOWS = {
         ],
         "profile": "...T",
         "desc": "Uses Dynamic Registration"
-   },
-   "rp-registration-redirect_uris": {
+    },
+    "rp-registration-redirect_uris": {
         "sequence": [
-          Webfinger,
-          Discovery,
-          (Registration, {set_request_args: {"redirect_uris": [""]}, expect_exception: PyoidcError}),
-          Registration
+            Webfinger,
+            Discovery,
+            (Registration, {set_request_args: {"redirect_uris": [""]}, expect_exception: PyoidcError}),
+            Registration
         ],
         "profile": "...T",
         "desc": "Sends redirect_uris value which only contains a empty string while doing a registration request. Then send a valid redirect_uris list"
-   },
-   "rp-registration-uses_https_endpoints": {
+    },
+    "rp-registration-uses_https_endpoints": {
         "sequence": [
-          Webfinger,
-          Discovery,
-          (Registration, {set_request_args: {"redirect_uris": ["http://test.com"]}, expect_exception: PyoidcError}),
-          Registration
+            Webfinger,
+            Discovery,
+            (Registration, {set_request_args: {"redirect_uris": ["http://test.com"]}, expect_exception: PyoidcError}),
+            Registration
         ],
         "profile": "...T",
         "desc": "Sends a redirect_uri endpoint which does not use https. The a valid redirect_uri is sent to the OP"
-   },
-   "rp-registration-well_formed_jwk": {
+    },
+    "rp-registration-well_formed_jwk": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -110,8 +110,8 @@ FLOWS = {
         ],
         "profile": "...T",
         "desc": ""
-   },
-   "rp-response_type-code": {
+    },
+    "rp-response_type-code": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -120,8 +120,8 @@ FLOWS = {
         ],
         "profile": "C...",
         "desc": "Can Make Request with 'code' Response Type"
-   },
-   "rp-response_type-id_token": {
+    },
+    "rp-response_type-id_token": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -131,8 +131,8 @@ FLOWS = {
         ],
         "desc": "Can Make Request with 'id_token' Response Type",
         "profile": "I...",
-   },
-   "rp-response_type-id_token+token": {
+    },
+    "rp-response_type-id_token+token": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -142,8 +142,8 @@ FLOWS = {
         ],
         "profile": "I,IT...",
         "desc": "Can Make Request with 'id_token token' Response Type"
-   },
-   "rp-response_mode-form_post": {
+    },
+    "rp-response_mode-form_post": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -153,8 +153,8 @@ FLOWS = {
         ],
         "profile": "I,IT...",
         "desc": "Can Make Request with response_mode=form_post"
-   },
-   "rp-token_endpoint-client_secret_basic": {
+    },
+    "rp-token_endpoint-client_secret_basic": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -166,9 +166,9 @@ FLOWS = {
         "profile": "C,CI,CIT...",
         "desc": "Can Make Access Token Request with 'client_secret_basic' "
                 "Authentication"
-   },
-   #client_secret_post
-   "rp-token_endpoint-client_secret_post": {
+    },
+    # client_secret_post
+    "rp-token_endpoint-client_secret_post": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -182,9 +182,9 @@ FLOWS = {
         "profile": "C,CI,CIT...",
         "desc": "Can Make Access Token Request with 'client_secret_post' "
                 "Authentication"
-   },
-   # client_secret_jwt
-   "rp-token_endpoint-client_secret_jwt": {
+    },
+    # client_secret_jwt
+    "rp-token_endpoint-client_secret_jwt": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -198,9 +198,9 @@ FLOWS = {
         "profile": "C,CI,CIT...",
         "desc": "Can Make Access Token Request with 'client_secret_jwt' "
                 "Authentication"
-   },
-   # private_key_jwt
-   "rp-token_endpoint-private_key_jwt": {
+    },
+    # private_key_jwt
+    "rp-token_endpoint-private_key_jwt": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -215,8 +215,8 @@ FLOWS = {
         "profile": "C,CI,CIT...",
         "desc": "Can Make Access Token Request with 'private_key_jwt' "
                 "Authentication"
-   },
-   "rp-idt-asym_sig": {
+    },
+    "rp-idt-asym_sig": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -229,8 +229,8 @@ FLOWS = {
         ],
         "profile": "I...T",
         "desc": "Accept Valid Asymmetric ID Token Signature"
-   },
-   "rp-idt-sym_sig": {
+    },
+    "rp-idt-sym_sig": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -243,8 +243,8 @@ FLOWS = {
         ],
         "profile": "I...T",
         "desc": "Accept Valid Symmetric ID Token Signature"
-   },
-   "rp-idt-invalid-asym_sig": {
+    },
+    "rp-idt-invalid-asym_sig": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -260,8 +260,8 @@ FLOWS = {
         ],
         "profile": "I...T",
         "desc": "Reject Invalid Asymmetric ID Token Signature"
-   },
-   "rp-idt-invalid-ec_sig": {
+    },
+    "rp-idt-invalid-ec_sig": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -277,8 +277,8 @@ FLOWS = {
         ],
         "profile": "I...T",
         "desc": "Reject Invalid Asymmetric ID Token Signature"
-   },
-   "rp-idt-invalid-sym_sig": {
+    },
+    "rp-idt-invalid-sym_sig": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -294,8 +294,8 @@ FLOWS = {
         ],
         "profile": "I...T",
         "desc": "Reject Invalid Symmetric ID Token Signature"
-   },
-   "rp-id_token-sig+enc": {
+    },
+    "rp-id_token-sig+enc": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -310,8 +310,8 @@ FLOWS = {
         ],
         "profile": "I...T",
         "desc": "Can Request and Use Signed and Encrypted ID Token Response",
-   },
-   "rp-idt-none": {
+    },
+    "rp-idt-none": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -323,8 +323,8 @@ FLOWS = {
         ],
         "profile": "C,CT,CIT...T",
         "desc": "Can Request and Use unSigned ID Token Response"
-   },
-   "rp-claims_reqest-id_token_claims": {
+    },
+    "rp-claims_reqest-id_token_claims": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -342,8 +342,8 @@ FLOWS = {
         ],
         "profile": "...",
         "desc": "The Relying Party can ask for a specific claim using the 'claims' request parameter. The claim should be returned in an ID Token"
-   },
-   "rp-claims_reqest-request_userinfo": {
+    },
+    "rp-claims_reqest-request_userinfo": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -361,8 +361,8 @@ FLOWS = {
         ],
         "profile": "C,IT,CI,CT,CIT...",
         "desc": "The Relying Party can ask for a specific claim using the 'claims' request parameter. The claim should be returned in a UserInfo response",
-   },
-   "rp-scope-contains_openid_scope": {
+    },
+    "rp-scope-contains_openid_scope": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -371,8 +371,8 @@ FLOWS = {
         ],
         "profile": "...",
         "desc": "The Relying Party should always add the openid scope value while sending an Authorization Request.",
-   },
-   "rp-scope-userinfo_claims": {
+    },
+    "rp-scope-userinfo_claims": {
         "sequence": [
             Webfinger,
             Discovery,
@@ -383,5 +383,5 @@ FLOWS = {
         ],
         "profile": "...",
         "desc": "The Relying Party should be able to request claims using Scope Values",
-   }
+    }
 }
