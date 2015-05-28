@@ -17,7 +17,6 @@ from oic.oauth2 import HttpError
 from oic.oauth2 import OtherError
 
 from oic.oic import Client
-from oic.oic.message import factory as message_factory
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 from oic.utils.keyio import build_keyjar
 
@@ -72,10 +71,11 @@ class Trace(aatest.Trace):
 
 
 class Conversation(object):
-    def __init__(self, flow, client, cb_uris):
+    def __init__(self, flow, client, cb_uris, msg_factory):
         self.flow = flow
         self.client = client
         self.callback_uris = cb_uris
+        self.msg_factory = msg_factory
         self.trace = Trace()
         self.response = []
         self.last_url = ""
@@ -263,7 +263,7 @@ def node_dict(flows, lst):
 
 
 def run_flow(profiles, conv, test_id, conf, profile, index=0):
-    #print(20*"="+test_id+20*"=")
+    print("=="+test_id)
     conv.test_id = test_id
     conv.conf = conf
 
@@ -288,7 +288,7 @@ def run_flow(profiles, conv, test_id, conf, profile, index=0):
 
     try:
         if conv.flow["tests"]:
-            _ver = Verify(check_factory, message_factory, conv)
+            _ver = Verify(check_factory, conv.msg_factory, conv)
             _ver.test_sequence(conv.flow["tests"])
     except KeyError:
         pass

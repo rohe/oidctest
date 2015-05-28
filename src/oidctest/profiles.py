@@ -1,4 +1,5 @@
-from oper import Authn, Registration
+from oper import Registration
+from oper import SyncAuthn
 from oper import AccessToken
 from oper import UserInfo
 from oper import DisplayUserInfo
@@ -15,7 +16,7 @@ PMAP = {"C": "Basic",
 CRYPT = {"n": "none", "s": "signing", "e": "encryption"}
 
 PROFILEMAP = {
-    Authn: {
+    SyncAuthn: {
         "C": {set_request_args: {"response_type": ["code"],
                                  "scope": ["openid"]}},
         "I": {set_request_args: {"response_type": ["id_token"],

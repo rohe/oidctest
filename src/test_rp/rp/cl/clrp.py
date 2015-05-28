@@ -12,7 +12,7 @@ from urlparse import urlparse
 from oic.utils.authn.client import BearerHeader
 from oic.utils.keyio import build_keyjar
 
-from aatest import NotSupported
+from aatest import NotSupported, exception_trace
 from aatest import ConfigurationError
 
 from oidctest.common import make_list
@@ -79,15 +79,19 @@ def main(flows, profile, profiles, **kw_args):
     for tid in test_list:
         _flow = flows[tid]
         _cli = make_client(**kw_args)
-        conversation = Conversation(_flow, _cli, redirs)
+        conversation = Conversation(_flow, _cli, redirs, kw_args["msg_factory"])
         # noinspection PyTypeChecker
-        run_flow(profiles, conversation, tid, kw_args["conf"], profile)
-        print conversation.trace
+        try:
+            run_flow(profiles, conversation, tid, kw_args["conf"], profile)
+        except Exception as err:
+            exception_trace("", err, logger)
+            print conversation.trace
 
 
 if __name__ == '__main__':
     from oidctest import profiles
     from oidctest import oper
+    from oic.oic.message import factory as oic_message_factory
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', dest='flows')
@@ -129,6 +133,6 @@ if __name__ == '__main__':
                   "jwks_uri": jwks_uri, "flows": FLOWS.FLOWS, "conf": CONF,
                   "cinfo": CONF.INFO, "orddesc": FLOWS.ORDDESC,
                   "profiles": profiles, "operations": oper,
-                  "profile": cargs.profile}
+                  "profile": cargs.profile, "msg_factory": oic_message_factory}
 
         main(**kwargs)

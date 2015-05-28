@@ -2,17 +2,16 @@ import logging
 import os
 from urlparse import urlparse
 from aatest.operation import Operation
-from bs4 import BeautifulSoup
 
 from oic.oauth2 import rndstr
-from oic.oic import AuthorizationRequest
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
-from oic.oic import AuthorizationResponse
 from oic.oic import AccessTokenResponse
 from oidctest.prof_util import WEBFINGER
 from oidctest.prof_util import DISCOVER
 from oidctest.prof_util import REGISTER
+from oidctest.request import SyncGetRequest, SyncPostRequest
+from oidctest.request import SyncRequest
 
 __author__ = 'roland'
 
@@ -108,18 +107,15 @@ class Registration(Operation):
                 "registration_endpoint"]
 
 
-class Request(Operation):
-    def __init__(self, conv, session, test_id, conf, funcs):
-        Operation.__init__(self, conv, session, test_id, conf, funcs)
+class SyncAuthn(SyncGetRequest):
+    response_cls = "AuthorizationResponse"
+    request_cls = "AuthorizationRequest"
 
-    
-class Authn(Request):
     def __init__(self, conv, session, test_id, conf, funcs):
-        Request.__init__(self, conv, session, test_id, conf, funcs)
-
+        SyncGetRequest.__init__(self, conv, session, test_id, conf, funcs)
         self.op_args["endpoint"] = conv.client.provider_info[
             "authorization_endpoint"]
-            
+
         conv.state = rndstr()
         self.req_args["state"] = conv.state
         conv.nonce = rndstr()
@@ -131,39 +127,10 @@ class Authn(Request):
 
         self.req_args["redirect_uri"] = self.conv.callback_uris[0]
 
-    def __call__(self):
-        url, body, ht_args, csi = self.conv.client.request_info(
-            AuthorizationRequest, method="GET", request_args=self.req_args,
-            **self.op_args)
 
-        self.catch_exception(self.do_authentication_request, url=url,
-                             ht_args=ht_args, csi=csi)
-
-    def do_authentication_request(self, url, ht_args, csi):
-        self.conv.trace.request(url)
-        self.conv.trace.request("HT_ARGS: {}".format(ht_args))
-        r = self.conv.client.http_request(url, **ht_args)
-        resp = None
-        if 300 < r.status_code < 400:
-            r = self.conv.intermit(r)
-            resp = self.conv.parse_request_response(
-                r, AuthorizationResponse, body_type="urlencoded",
-                state=self.conv.state, keyjar=self.conv.client.keyjar)
-        elif r.status_code == 200:
-            resp = AuthorizationResponse()
-            if "response_mode" in csi and csi["response_mode"] == "form_post":
-                forms = BeautifulSoup(r.content).findAll('form')
-                for inp in forms[0].find_all("input"):
-                    resp[inp.attrs["name"]] = inp.attrs["value"]
-            resp.verify(keyjar=self.conv.client.keyjar)
-
-        self.conv.trace.response(resp)
-        return resp
-
-
-class AccessToken(Request):
+class AccessToken(SyncPostRequest):
     def __init__(self, conv, session, test_id, conf, funcs):
-        Request.__init__(self, conv, session, test_id, conf, funcs)
+        Operation.__init__(self, conv, session, test_id, conf, funcs)
         self.op_args["state"] = conv.state
         self.req_args["redirect_uri"] = conv.client.redirect_uris[0]
 
@@ -177,30 +144,16 @@ class AccessToken(Request):
         assert isinstance(atr, AccessTokenResponse)
 
 
-class UserInfo(Request):
+class UserInfo(SyncGetRequest):
     def __init__(self, conv, session, test_id, conf, args):
-        Request.__init__(self, conv, session, test_id, conf, args)
+        Operation.__init__(self, conv, session, test_id, conf, args)
         self.op_args["state"] = conv.state
 
     def __call__(self):
-        user_info = self.conv.client.do_user_info_request(**self.args)
+        user_info = self.conv.client.do_user_info_request(**self.op_args)
         assert user_info
         self.conv.client.userinfo = user_info
 
 
 class DisplayUserInfo(Operation):
     pass
-
-
-# NAME2CLASS = {
-#     "webfinger": Webfinger,
-#     "static_webfinger": StaticWebFinger,
-#     "provider-discovery": Discovery,
-#     "static_discovery": StaticDiscovery,
-#     "oic-registration": Registration,
-#     "static_registration": StaticRegistration,
-#     "oic-login": Authn,
-#     "access-token-request": AccessToken,
-#     "userinfo": UserInfo,
-#     "display_userinfo": DisplayUserInfo
-# }
