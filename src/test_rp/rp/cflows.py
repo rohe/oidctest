@@ -1,5 +1,6 @@
 from jwkest import BadSignature
-from oic.oauth2.message import MissingRequiredAttribute
+from oic.exception import IssuerMismatch, PyoidcError
+
 from oidctest.oper import Webfinger
 from oidctest.oper import UserInfo
 from oidctest.oper import AccessToken
@@ -12,12 +13,13 @@ from oidctest.testfunc import set_op_args
 from oidctest.testfunc import expect_exception
 from oidctest.testfunc import set_request_args
 
-from oic.exception import IssuerMismatch, PyoidcError
 
 __author__ = 'roland'
 
-ORDDESC = ["rp-webfinger", "rp-discovery", "rp-registration", "rp-response_type", "rp-response_mode",
-           "rp-token_endpoint", "rp-id_token", "rp-claims_reqest", "rp-request_uri", "rp-scope"]
+ORDDESC = ["rp-webfinger", "rp-discovery", "rp-registration",
+           "rp-response_type", "rp-response_mode",
+           "rp-token_endpoint", "rp-id_token", "rp-claims_reqest",
+           "rp-request_uri", "rp-scope"]
 
 FLOWS = {
     "rp-discovery-webfinger_url": {
@@ -58,7 +60,7 @@ FLOWS = {
             "bare-keys": {}
         }
     },
-    "rp-discovery-mismatching_issuers": {
+    "rp-discovery-issuer_not_matching_config": {
         "sequence": [
             Webfinger,
             (Discovery, {expect_exception: IssuerMismatch})
@@ -79,7 +81,8 @@ FLOWS = {
         "sequence": [
             Webfinger,
             Discovery,
-            (Registration, {set_request_args: {"redirect_uris": [""]}, expect_exception: PyoidcError}),
+            (Registration, {set_request_args: {"redirect_uris": [""]},
+                            expect_exception: PyoidcError}),
             Registration
         ],
         "profile": "...T",
@@ -89,7 +92,9 @@ FLOWS = {
         "sequence": [
             Webfinger,
             Discovery,
-            (Registration, {set_request_args: {"redirect_uris": ["http://test.com"]}, expect_exception: PyoidcError}),
+            (Registration,
+             {set_request_args: {"redirect_uris": ["http://test.com"]},
+              expect_exception: PyoidcError}),
             Registration
         ],
         "profile": "...T",
@@ -341,15 +346,18 @@ FLOWS = {
             Webfinger,
             Discovery,
             Registration,
-            (Authn, {set_request_args: {"claims":
-                                            {
-                                                "id_token":
-                                                    {
-                                                        "auth_time": {"essential": True},
-                                                        "email": {"essential": True},
-                                                    }
-                                            }
-                                        }}),
+            (Authn, {set_request_args: {
+                "claims": {
+                    "id_token": {
+                        "auth_time": {
+                            "essential": True
+                        },
+                        "email": {
+                            "essential": True
+                        },
+                    }
+                }
+            }}),
             AccessToken
         ],
         "profile": "...",
@@ -360,14 +368,15 @@ FLOWS = {
             Webfinger,
             Discovery,
             Registration,
-            (Authn, {set_request_args: {"claims":
-                                            {
-                                                "userinfo":
-                                                    {
-                                                        "email": {"essential": True},
-                                                    }
-                                            }
-                                        }}),
+            (Authn, {set_request_args: {
+                "claims": {
+                    "userinfo": {
+                        "email": {
+                            "essential": True
+                        },
+                    }
+                }
+            }}),
             AccessToken,
             UserInfo
         ],
@@ -389,11 +398,12 @@ FLOWS = {
             Webfinger,
             Discovery,
             Registration,
-            (Authn, {set_request_args: {"scope": ["openid", "email", "profile"]}}),
+            (Authn,
+             {set_request_args: {"scope": ["openid", "email", "profile"]}}),
             AccessToken,
             UserInfo
         ],
-        "profile": "...",
+        "profile": "IT,CT,CIT...",
         "desc": "The Relying Party should be able to request claims using Scope Values",
     },
     "rp-user_info-bearer_body": {

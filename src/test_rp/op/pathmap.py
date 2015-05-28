@@ -9,12 +9,12 @@ IDMAP = {
     "rp-discovery-openid_configuration": NORMAL,
     "rp-discovery-jwks_uri_keys": NORMAL,
     "rp-discovery-issuer_not_matching_config": "/_/_/isso/normal",
-    #"rp-discovery-mismatching_issuers": "/_/_/isso/normal", # TODO Should be removed?
 
     # Dynamic Client Registration
     "rp-registration-dynamic": NORMAL,
     "rp-registration-redirect_uris": NORMAL,
     "rp-registration-well_formed_jwk": NORMAL,
+    "rp-registration-uses_https_endpoints": NORMAL,
 
     # Response type and response mode
     "rp-response_type-code": NORMAL,
