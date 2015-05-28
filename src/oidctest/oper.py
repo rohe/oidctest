@@ -5,6 +5,7 @@ from aatest.operation import Operation
 from bs4 import BeautifulSoup
 
 from oic.oauth2 import rndstr
+from oic.oauth2.message import AuthorizationErrorResponse
 from oic.oic import AuthorizationRequest
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
@@ -114,6 +115,9 @@ class Request(Operation):
 
 
 class Authn(Request):
+    class ErrorResponse(Exception):
+        pass
+
     def __init__(self, conv, session, test_id, conf, funcs):
         Request.__init__(self, conv, session, test_id, conf, funcs)
 
@@ -156,6 +160,11 @@ class Authn(Request):
                 for inp in forms[0].find_all("input"):
                     resp[inp.attrs["name"]] = inp.attrs["value"]
             resp.verify(keyjar=self.conv.client.keyjar)
+        elif 400 <= r.status_code < 600: # errors from OP
+            resp = self.conv.parse_request_response(
+                r, AuthorizationErrorResponse, body_type="json",
+                state=self.conv.state, keyjar=self.conv.client.keyjar)
+            raise Authn.ErrorResponse(str(resp))
 
         try:
             self.conv.client.id_token = resp["id_token"]
