@@ -6,7 +6,9 @@ from oidctest.oper import AccessToken
 from oidctest.oper import Discovery
 from oidctest.oper import Registration
 from oidctest.oper import Authn
-from oidctest.testfunc import set_op_args, set_jwks_uri, resource
+from oidctest.testfunc import resource
+from oidctest.testfunc import set_jwks_uri
+from oidctest.testfunc import set_op_args
 from oidctest.testfunc import expect_exception
 from oidctest.testfunc import set_request_args
 
@@ -140,7 +142,7 @@ FLOWS = {
              {set_request_args: {"id_token_signed_response_alg": "RS256"}}),
             Authn
         ],
-        "profile": "I,IT...",
+        "profile": "IT...",
         "desc": "Can Make Request with 'id_token token' Response Type"
     },
     "rp-response_mode-form_post": {
@@ -151,7 +153,7 @@ FLOWS = {
              {set_request_args: {"id_token_signed_response_alg": "RS256"}}),
             (Authn, {set_request_args: {"response_mode": ["form_post"]}})
         ],
-        "profile": "I,IT...",
+        "profile": "I,IT,CI,CT,CIT,...",
         "desc": "Can Make Request with response_mode=form_post"
     },
     "rp-token_endpoint-client_secret_basic": {
@@ -161,13 +163,12 @@ FLOWS = {
             Registration,
             Authn,
             (AccessToken,
-             {set_request_args: {"authn_method": "client_secret_basic"}})
+             {set_op_args: {"authn_method": "client_secret_basic"}})
         ],
         "profile": "C,CI,CIT...",
         "desc": "Can Make Access Token Request with 'client_secret_basic' "
                 "Authentication"
     },
-    # client_secret_post
     "rp-token_endpoint-client_secret_post": {
         "sequence": [
             Webfinger,
@@ -177,13 +178,12 @@ FLOWS = {
                  "token_endpoint_auth_method": "client_secret_post"}}),
             Authn,
             (AccessToken,
-             {set_request_args: {"authn_method": "client_secret_post"}})
+             {set_op_args: {"authn_method": "client_secret_post"}})
         ],
         "profile": "C,CI,CIT...",
         "desc": "Can Make Access Token Request with 'client_secret_post' "
                 "Authentication"
     },
-    # client_secret_jwt
     "rp-token_endpoint-client_secret_jwt": {
         "sequence": [
             Webfinger,
@@ -193,21 +193,21 @@ FLOWS = {
                  "token_endpoint_auth_method": "client_secret_jwt"}}),
             Authn,
             (AccessToken,
-             {set_request_args: {"authn_method": "client_secret_jwt"}})
+             {set_op_args: {"authn_method": "client_secret_jwt"}})
         ],
         "profile": "C,CI,CIT...",
         "desc": "Can Make Access Token Request with 'client_secret_jwt' "
                 "Authentication"
     },
-    # private_key_jwt
     "rp-token_endpoint-private_key_jwt": {
         "sequence": [
             Webfinger,
             Discovery,
-            (Registration,
-             {set_request_args: {
-                 "token_endpoint_auth_method": "private_key_jwt",
-                 "jwks_uri": "https://localhost:8088/static/jwk.json"}}),
+            (Registration, {
+                set_request_args: {
+                    "token_endpoint_auth_method": "private_key_jwt"},
+                set_jwks_uri: None
+            }),
             Authn,
             (AccessToken,
              {set_request_args: {"authn_method": "private_key_jwt"}})
@@ -304,7 +304,7 @@ FLOWS = {
                     "id_token_signed_response_alg": "HS256",
                     "id_token_encrypted_response_alg": "RSA1_5",
                     "id_token_encrypted_response_enc": "A128CBC-HS256"},
-                set_jwks_uri: {}
+                set_jwks_uri: None
             }),
             (Authn, {set_op_args: {"response_type": ["id_token"]}}),
         ],
@@ -323,6 +323,18 @@ FLOWS = {
         ],
         "profile": "C,CT,CIT...T",
         "desc": "Can Request and Use unSigned ID Token Response"
+    },
+    "rp-user_info-bad_sub_claim": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            Authn,
+            AccessToken,
+            (UserInfo, {expect_exception: UserInfo.SubjectMismatch})
+        ],
+        "profile": "C,CI,CT,CIT...",
+        "desc": "Reject UserInfo with Invalid Sub claim"
     },
     "rp-claims_reqest-id_token_claims": {
         "sequence": [
@@ -383,5 +395,115 @@ FLOWS = {
         ],
         "profile": "...",
         "desc": "The Relying Party should be able to request claims using Scope Values",
+    },
+    "rp-user_info-bearer_body": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            Authn,
+            AccessToken,
+            (UserInfo, {
+                set_request_args: {
+                    "behavior": "token_in_message_body"
+                }
+            })
+        ],
+        "profile": "C,CI,CT,CIT...",
+        "desc": "Accesses UserInfo Endpoint with form-encoded body method"
+    },
+    "rp-user_info-bearer_header": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            Authn,
+            AccessToken,
+            (UserInfo, {
+                set_request_args: {
+                    "behavior": "use_authorization_header"
+                }
+            })
+        ],
+        "profile": "C,CI,CT,CIT...",
+        "desc": "Accesses UserInfo Endpoint with Header Method "
+    },
+    "rp-user_info-enc": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {
+                set_request_args: {
+                    "userinfo_encrypted_response_alg": "RSA1_5",
+                    "userinfo_encrypted_response_enc": "A128CBC-HS256"
+                },
+                set_jwks_uri: None
+            }),
+            Authn,
+            AccessToken,
+            UserInfo
+        ],
+        "profile": "C,CI,CT,CIT...",
+        "desc": "Can Request and Use Encrypted UserInfo Response "
+    },
+    "rp-user_info-sig+enc": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {
+                set_request_args: {
+                    "userinfo_signed_response_alg": "RS256",
+                    "userinfo_encrypted_response_alg": "RSA1_5",
+                    "userinfo_encrypted_response_enc": "A128CBC-HS256"
+                },
+                set_jwks_uri: None
+            }),
+            Authn,
+            AccessToken,
+            UserInfo
+        ],
+        "profile": "C,CI,CT,CIT...",
+        "desc": "Can Request and Use Signed and Encrypted UserInfo Response"
+    },
+    "rp-user_info-sign": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {
+                set_request_args: {
+                    "userinfo_signed_response_alg": "RS256",
+                },
+                set_jwks_uri: None
+            }),
+            Authn,
+            AccessToken,
+            UserInfo
+        ],
+        "profile": "C,CI,CT,CIT...",
+        "desc": "Can Request and Use Signed UserInfo Response"
+    },
+    "rp-claims-aggregated": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            Authn,
+            AccessToken,
+            UserInfo
+        ],
+        "profile": "C,CI,CT,CIT...",
+        "desc": "Can handle aggregated user information"
+    },
+    "rp-claims-distributed": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            Authn,
+            AccessToken,
+            UserInfo
+        ],
+        "profile": "C,CI,CT,CIT...",
+        "desc": "Handles distributed user information"
     }
 }

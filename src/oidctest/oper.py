@@ -138,7 +138,7 @@ class Authn(Request):
     def __call__(self):
         url, body, ht_args, csi = self.conv.client.request_info(
             AuthorizationRequest, method="GET", request_args=self.req_args,
-            **self.op_args)
+            target=self.conv.client.provider_info["issuer"], **self.op_args)
 
         self.catch_exception(self.do_authentication_request, url=url,
                              ht_args=ht_args, csi=csi)
@@ -206,14 +206,21 @@ class UserInfo(Request):
         self.op_args["state"] = conv.state
 
     def __call__(self):
-        user_info = self.conv.client.do_user_info_request(**self.op_args)
+        args = self.op_args.copy()
+        args.update(self.req_args)
+
+        user_info = self.conv.client.do_user_info_request(**args)
         assert user_info
-        self.conv.client.userinfo = user_info
 
         self.catch_exception(self._verify_subject_identifier,
                              client=self.conv.client,
                              user_info=user_info)
 
+        if "_claim_sources" in user_info:
+            user_info = self.conv.client.unpack_aggregated_claims(user_info)
+            user_info = self.conv.client.fetch_distributed_claims(user_info)
+
+        self.conv.client.userinfo = user_info
         self.conv.trace.response(user_info)
 
     def _verify_subject_identifier(self, client, user_info):
@@ -222,6 +229,7 @@ class UserInfo(Request):
                 msg = "user_info['sub'] != id_token['sub']: '{}!={}'".format(
                     user_info["sub"], client.id_token["sub"])
                 raise UserInfo.SubjectMismatch(msg)
+        return "Subject identifier ok!"
 
 
 class DisplayUserInfo(Operation):
