@@ -5,12 +5,13 @@ from aatest.operation import Operation
 from bs4 import BeautifulSoup
 
 from oic.oauth2 import rndstr
+from oic.oauth2.message import AuthorizationErrorResponse
 from oic.oic import AuthorizationRequest
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
 from oic.oic import AuthorizationResponse
 from oic.oic import AccessTokenResponse
-from oidctest.prof_util import WEBFINGER
+from oidctest.prof_util import WEBFINGER, RESPONSE
 from oidctest.prof_util import DISCOVER
 from oidctest.prof_util import REGISTER
 
@@ -100,26 +101,29 @@ class Registration(Operation):
 
     def setup(self, profile_map):
         self.map_profile(profile_map)
-        self._setup()
 
         if self.dynamic:
             self.req_args.update(self.conf.INFO["client"])
             self.req_args["url"] = self.conv.client.provider_info[
                 "registration_endpoint"]
+        self._setup()
 
 
 class Request(Operation):
     def __init__(self, conv, session, test_id, conf, funcs):
         Operation.__init__(self, conv, session, test_id, conf, funcs)
 
-    
+
 class Authn(Request):
+    class ErrorResponse(Exception):
+        pass
+
     def __init__(self, conv, session, test_id, conf, funcs):
         Request.__init__(self, conv, session, test_id, conf, funcs)
 
         self.op_args["endpoint"] = conv.client.provider_info[
             "authorization_endpoint"]
-            
+
         conv.state = rndstr()
         self.req_args["state"] = conv.state
         conv.nonce = rndstr()
@@ -134,7 +138,7 @@ class Authn(Request):
     def __call__(self):
         url, body, ht_args, csi = self.conv.client.request_info(
             AuthorizationRequest, method="GET", request_args=self.req_args,
-            **self.op_args)
+            target=self.conv.client.provider_info["issuer"], **self.op_args)
 
         self.catch_exception(self.do_authentication_request, url=url,
                              ht_args=ht_args, csi=csi)
@@ -156,6 +160,16 @@ class Authn(Request):
                 for inp in forms[0].find_all("input"):
                     resp[inp.attrs["name"]] = inp.attrs["value"]
             resp.verify(keyjar=self.conv.client.keyjar)
+        elif 400 <= r.status_code < 600: # errors from OP
+            resp = self.conv.parse_request_response(
+                r, AuthorizationErrorResponse, body_type="json",
+                state=self.conv.state, keyjar=self.conv.client.keyjar)
+            raise Authn.ErrorResponse(str(resp))
+
+        try:
+            self.conv.client.id_token = resp["id_token"]
+        except KeyError:
+            pass
 
         self.conv.trace.response(resp)
         return resp
@@ -168,24 +182,54 @@ class AccessToken(Request):
         self.req_args["redirect_uri"] = conv.client.redirect_uris[0]
 
     def __call__(self):
-        self.conv.trace.info(
-            "Access Token Request with op_args: {}, req_args: {}".format(
-                self.op_args, self.req_args))
-        atr = self.conv.client.do_access_token_request(
-            request_args=self.req_args, **self.op_args)
-        self.conv.trace.response(atr)
-        assert isinstance(atr, AccessTokenResponse)
+        if "C" in self.profile[RESPONSE]:
+            self.conv.trace.info(
+                "Access Token Request with op_args: {}, req_args: {}".format(
+                    self.op_args, self.req_args))
+            atr = self.conv.client.do_access_token_request(
+                request_args=self.req_args, **self.op_args)
+            try:
+                self.conv.client.id_token = atr["id_token"]
+            except KeyError:
+                pass
+
+            self.conv.trace.response(atr)
+            assert isinstance(atr, AccessTokenResponse)
 
 
 class UserInfo(Request):
+    class SubjectMismatch(Exception):
+        pass
+
     def __init__(self, conv, session, test_id, conf, args):
         Request.__init__(self, conv, session, test_id, conf, args)
         self.op_args["state"] = conv.state
 
     def __call__(self):
-        user_info = self.conv.client.do_user_info_request(**self.args)
+        args = self.op_args.copy()
+        args.update(self.req_args)
+
+        user_info = self.conv.client.do_user_info_request(**args)
         assert user_info
+
+        self.catch_exception(self._verify_subject_identifier,
+                             client=self.conv.client,
+                             user_info=user_info)
+
+        if "_claim_sources" in user_info:
+            user_info = self.conv.client.unpack_aggregated_claims(user_info)
+            user_info = self.conv.client.fetch_distributed_claims(user_info)
+
         self.conv.client.userinfo = user_info
+        self.conv.trace.response(user_info)
+
+    def _verify_subject_identifier(self, client, user_info):
+        if client.id_token:
+            if user_info["sub"] != client.id_token["sub"]:
+                msg = "user_info['sub'] != id_token['sub']: '{}!={}'".format(
+                    user_info["sub"], client.id_token["sub"])
+                raise UserInfo.SubjectMismatch(msg)
+        return "Subject identifier ok!"
 
 
 class DisplayUserInfo(Operation):

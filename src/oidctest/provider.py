@@ -106,8 +106,10 @@ class Provider(provider.Provider):
         if "aggregated" in self.claims_type:  # add some aggregated claims
             extra = Message(eye_color="blue", shoe_size=8)
             _jwt = extra.to_jwt(algorithm="none")
-            ava["_claim_names"] = Message(eye_color="src1", shoe_size="src1")
-            ava["_claim_sources"] = Message(src1={"JWT": _jwt})
+            ava["_claim_names"] = Message(eye_color=self.baseurl,
+                                          shoe_size=self.baseurl)
+            _src = {self.baseurl: {"JWT": _jwt}}
+            ava["_claim_sources"] = Message(**_src)
 
         if "distributed" in self.claims_type:
             urlbase = self.name
@@ -117,8 +119,8 @@ class Provider(provider.Provider):
             ava["_claim_sources"] = Message(
                 src1={"endpoint": urlbase + "claim", "access_token": _tok})
 
-        if "sub" in self.behavior_type:
-            ava["uisub"] = "foobar"
+        if "uisub" in self.behavior_type:
+            ava["sub"] = "foobar"
 
         return ava
 
