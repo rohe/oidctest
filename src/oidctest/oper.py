@@ -138,7 +138,7 @@ class Authn(Request):
     def __call__(self):
         url, body, ht_args, csi = self.conv.client.request_info(
             AuthorizationRequest, method="GET", request_args=self.req_args,
-            **self.op_args)
+            target=self.conv.client.provider_info["issuer"], **self.op_args)
 
         self.catch_exception(self.do_authentication_request, url=url,
                              ht_args=ht_args, csi=csi)
