@@ -21,9 +21,10 @@ from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 from oic.utils.keyio import build_keyjar
 
 from aatest import FatalError
+from aatest.verify import Verify
+
 from oidctest.prof_util import map_prof
 from oidctest.check import factory as check_factory
-from oidctest.verify import Verify
 
 __author__ = 'roland'
 
