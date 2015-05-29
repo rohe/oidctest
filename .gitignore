@@ -59,4 +59,5 @@ docs/_build/
 # PyBuilder
 target/
 
-
+# JWKS
+jwk.json
