@@ -11,6 +11,7 @@ from oidctest.prof_util import WEBFINGER
 from oidctest.prof_util import DISCOVER
 from oidctest.prof_util import REGISTER
 from oidctest.request import SyncGetRequest
+from oidctest.request import AsyncGetRequest
 from oidctest.request import SyncPostRequest
 
 __author__ = 'roland'
@@ -123,7 +124,28 @@ class SyncAuthn(SyncGetRequest):
     request_cls = "AuthorizationRequest"
 
     def __init__(self, conv, session, test_id, conf, funcs):
-        SyncGetRequest.__init__(self, conv, session, test_id, conf, funcs)
+        super(SyncAuthn, self).__init__(conv, session, test_id, conf, funcs)
+        self.op_args["endpoint"] = conv.client.provider_info[
+            "authorization_endpoint"]
+
+        conv.state = rndstr()
+        self.req_args["state"] = conv.state
+        conv.nonce = rndstr()
+        self.req_args["nonce"] = conv.nonce
+
+    def setup(self, profile_map):
+        self.map_profile(profile_map)
+        self._setup()
+
+        self.req_args["redirect_uri"] = self.conv.callback_uris[0]
+
+
+class AsyncAuthn(AsyncGetRequest):
+    response_cls = "AuthorizationResponse"
+    request_cls = "AuthorizationRequest"
+
+    def __init__(self, conv, session, test_id, conf, funcs):
+        super(AsyncAuthn, self).__init__(conv, session, test_id, conf, funcs)
         self.op_args["endpoint"] = conv.client.provider_info[
             "authorization_endpoint"]
 

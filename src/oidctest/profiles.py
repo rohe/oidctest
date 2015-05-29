@@ -1,10 +1,11 @@
-from oper import Registration
-from oper import Webfinger
-from oper import Discovery
-from oper import SyncAuthn
 from oper import AccessToken
-from oper import UserInfo
+from oper import AsyncAuthn
+from oper import Discovery
 from oper import DisplayUserInfo
+from oper import Registration
+from oper import SyncAuthn
+from oper import UserInfo
+from oper import Webfinger
 
 from testfunc import set_request_args
 
@@ -19,6 +20,21 @@ PROFILEMAP = {
     Webfinger: {"C": {}, "I": {}, "IT": {}, "CI": {}, "CT": {}, "CIT": {}},
     Discovery: {"C": {}, "I": {}, "IT": {}, "CI": {}, "CT": {}, "CIT": {}},
     SyncAuthn: {
+        "C": {set_request_args: {"response_type": ["code"],
+                                 "scope": ["openid"]}},
+        "I": {set_request_args: {"response_type": ["id_token"],
+                                 "scope": ["openid"]}},
+        "IT": {set_request_args: {"response_type": ["id_token", "token"],
+                                  "scope": ["openid"]}},
+        "CI": {set_request_args: {"response_type": ["code", "id_token"],
+                                  "scope": ["openid"]}},
+        "CT": {set_request_args: {"response_type": ["code", "token"],
+                                  "scope": ["openid"]}},
+        "CIT": {set_request_args:
+                 {"response_type": ["code", "id_token", "token"],
+                  "scope": ["openid"]}},
+    },
+    AsyncAuthn: {
         "C": {set_request_args: {"response_type": ["code"],
                                  "scope": ["openid"]}},
         "I": {set_request_args: {"response_type": ["id_token"],
