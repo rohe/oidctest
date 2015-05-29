@@ -8,10 +8,13 @@ IDMAP = {
     "rp-discovery-webfinger_acct": NORMAL,
     "rp-discovery-openid_configuration": NORMAL,
     "rp-discovery-jwks_uri_keys": NORMAL,
-    "rp-discovery-mismatching_issuers": "/_/_/isso/normal",
+    "rp-discovery-issuer_not_matching_config": "/_/_/isso/normal",
 
     # Dynamic Client Registration
     "rp-registration-dynamic": NORMAL,
+    "rp-registration-redirect_uris": NORMAL,
+    "rp-registration-well_formed_jwk": NORMAL,
+    "rp-registration-uses_https_endpoints": NORMAL,
 
     # Response type and response mode
     "rp-response_type-code": NORMAL,
@@ -51,7 +54,7 @@ IDMAP = {
     "rp-user_info-bearer_header": NORMAL,
     "rp-user_info-bearer_body": NORMAL,
     "rp-user_info-not_query": NORMAL,
-    "rp-bad-userinfo-sub": "/_/_/uisub/normal",
+    "rp-user_info-bad_sub_claim": "/_/_/uisub/normal",
     "rp-user_info-sign": NORMAL,
     "rp-user_info-enc": NORMAL,
     "rp-user_info-sig+enc": NORMAL,
@@ -83,8 +86,8 @@ IDMAP = {
     # "rp-3rd-login": "",
 
     # Claim Types
-    "rp-claims-aggregated": "/_/_/_/_/aggregate",
-    "rp-claims-distributed": "/_/_/_/_/distributed"
+    "rp-claims-aggregated": "/_/_/_/aggregated",
+    "rp-claims-distributed": "/_/_/_/distributed"
 
     # "rp-logout-init": "",
     # "rp-logout-received": "",
