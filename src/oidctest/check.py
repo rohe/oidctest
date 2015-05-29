@@ -2313,6 +2313,21 @@ class AuthTimeCheck(Warnings):
         return {}
 
 
+class ValidCode(Error):
+    """ Check that the authorization response contained a valid access code."""
+    cid = "valid_code"
+
+    def _func(self, conv):
+        _grants = conv.client.grant.keys()
+        try:
+            assert len(_grants) == 1
+            assert conv.client.grant[_grants[0]].is_valid()
+        except AssertionError:
+            self._status = ERROR
+            self._message = "No valid access code"
+
+        return {}
+
 CLASS_CACHE = {}
 
 

@@ -131,7 +131,8 @@ FLOWS = {
             SyncAuthn
         ],
         "profile": "C...",
-        "desc": "Can Make Request with 'code' Response Type"
+        "desc": "Can Make Request with 'code' Response Type",
+        # "tests": {"valid_code": {}}
     },
     "rp-response_type-id_token": {
         "sequence": [

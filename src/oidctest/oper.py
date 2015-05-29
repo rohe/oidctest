@@ -119,6 +119,8 @@ class SyncAuthn(SyncGetRequest):
         self.req_args["state"] = conv.state
         conv.nonce = rndstr()
         self.req_args["nonce"] = conv.nonce
+        # verify that I've got a valid access code
+        self.tests["post"].append("valid_code")
 
     def op_setup(self):
         self.req_args["redirect_uri"] = self.conv.callback_uris[0]
@@ -139,7 +141,7 @@ class AsyncAuthn(AsyncGetRequest):
         conv.nonce = rndstr()
         self.req_args["nonce"] = conv.nonce
 
-    def op_setup(self, profile_map):
+    def op_setup(self):
         self.req_args["redirect_uri"] = self.conv.callback_uris[0]
 
 
