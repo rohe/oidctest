@@ -5,10 +5,9 @@ from urlparse import parse_qs
 from bs4 import BeautifulSoup
 
 from oic.oauth2.util import URL_ENCODED
-from oic.oauth2 import rndstr, ResponseError
-from oic.oauth2 import AuthorizationResponse
-from oic.oauth2 import AuthorizationRequest
-from oic.utils.http_util import Redirect, get_post
+from oic.oauth2 import ResponseError
+from oic.utils.http_util import Redirect
+from oic.utils.http_util import get_post
 from oic.utils.time_util import utc_time_sans_frac
 #from oictest.check import CheckEndpoint
 
@@ -79,7 +78,7 @@ class SyncRequest(Operation):
 
         return resp
 
-    def __call__(self):
+    def run(self):
         _client = self.conv.client
 
         url, body, ht_args, csi = _client.request_info(
@@ -130,7 +129,7 @@ class AsyncRequest(Operation):
         else:
             self.com = Log
 
-    def __call__(self):
+    def run(self):
         _client = self.conv.client
         _trace = self.conv.trace
 

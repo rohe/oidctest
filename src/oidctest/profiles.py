@@ -1,4 +1,6 @@
 from oper import Registration
+from oper import Webfinger
+from oper import Discovery
 from oper import SyncAuthn
 from oper import AccessToken
 from oper import UserInfo
@@ -12,7 +14,10 @@ PMAP = {"C": "Basic",
         "I": "Implicit (id_token)", "IT": "Implicit (id_token+token)",
         "CI": "Hybrid (code+id_token)", "CT": "Hybrid (code+token)",
         "CIT": "Hybrid (code+id_token+token)"}
+
 PROFILEMAP = {
+    Webfinger: {"C": {}, "I": {}, "IT": {}, "CI": {}, "CT": {}, "CIT": {}},
+    Discovery: {"C": {}, "I": {}, "IT": {}, "CI": {}, "CT": {}, "CIT": {}},
     SyncAuthn: {
         "C": {set_request_args: {"response_type": ["code"],
                                  "scope": ["openid"]}},
@@ -30,12 +35,15 @@ PROFILEMAP = {
     },
     AccessToken: {
         "C": {},
+        "I": None,
+        "IT": None,
         "CI": {},
         "CT": {},
         "CIT": {},
     },
     UserInfo: {
         "C": {},
+        "I": None,
         "IT": {},
         "CI": {},
         "CT": {},
@@ -43,6 +51,7 @@ PROFILEMAP = {
     },
     DisplayUserInfo: {
         "C": {},
+        "I": None,
         "IT": {},
         "CI": {},
         "CT": {},

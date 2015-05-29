@@ -68,6 +68,23 @@ def run_func(spec, conv, req_args):
         return req_args
 
 
+def run_one(test_id, flows, profile, profiles, **kw_args):
+    try:
+        redirs = kw_args["cinfo"]["client"]["redirect_uris"]
+    except KeyError:
+        redirs = kw_args["cinfo"]["registered"]["redirect_uris"]
+
+    _flow = flows[test_id]
+    _cli = make_client(**kw_args)
+    conversation = Conversation(_flow, _cli, redirs, kw_args["msg_factory"])
+    # noinspection PyTypeChecker
+    try:
+        run_flow(profiles, conversation, test_id, kw_args["conf"], profile)
+    except Exception as err:
+        exception_trace("", err, logger)
+        print conversation.trace
+
+
 def main(flows, profile, profiles, **kw_args):
     try:
         redirs = kw_args["cinfo"]["client"]["redirect_uris"]
@@ -97,6 +114,7 @@ if __name__ == '__main__':
     parser.add_argument('-f', dest='flows')
     parser.add_argument('-l', dest="log_name")
     parser.add_argument('-p', dest="profile")
+    parser.add_argument('-t', dest="testid")
     parser.add_argument(dest="config")
     cargs = parser.parse_args()
 
@@ -117,22 +135,22 @@ if __name__ == '__main__':
         setup_logger(logger)
 
     # Add own keys for signing/encrypting JWTs
-    try:
-        jwks, keyjar, kidd = build_keyjar(CONF.keys)
-    except KeyError:
-        pass
+    jwks, keyjar, kidd = build_keyjar(CONF.keys)
+
+    # export JWKS
+    p = urlparse(CONF.KEY_EXPORT_URL)
+    f = open("."+p.path, "w")
+    f.write(json.dumps(jwks))
+    f.close()
+    jwks_uri = p.geturl()
+
+    kwargs = {"base_url": CONF.BASE, "kidd": kidd, "keyjar": keyjar,
+              "jwks_uri": jwks_uri, "flows": FLOWS.FLOWS, "conf": CONF,
+              "cinfo": CONF.INFO, "orddesc": FLOWS.ORDDESC,
+              "profiles": profiles, "operations": oper,
+              "profile": cargs.profile, "msg_factory": oic_message_factory}
+
+    if cargs.testid:
+        run_one(cargs.testid, **kwargs)
     else:
-        # export JWKS
-        p = urlparse(CONF.KEY_EXPORT_URL)
-        f = open("."+p.path, "w")
-        f.write(json.dumps(jwks))
-        f.close()
-        jwks_uri = p.geturl()
-
-        kwargs = {"base_url": CONF.BASE, "kidd": kidd, "keyjar": keyjar,
-                  "jwks_uri": jwks_uri, "flows": FLOWS.FLOWS, "conf": CONF,
-                  "cinfo": CONF.INFO, "orddesc": FLOWS.ORDDESC,
-                  "profiles": profiles, "operations": oper,
-                  "profile": cargs.profile, "msg_factory": oic_message_factory}
-
         main(**kwargs)

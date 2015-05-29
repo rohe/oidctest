@@ -12,7 +12,7 @@ IDMAP = {
 
     # Dynamic Client Registration
     "rp-registration-dynamic": NORMAL,
-    "rp-registration-redirect_uris": NORMAL,
+    'rp-registration-redirect_uris': NORMAL,
     "rp-registration-well_formed_jwk": NORMAL,
     "rp-registration-uses_https_endpoints": NORMAL,
 
@@ -80,8 +80,8 @@ IDMAP = {
     "rp-request_uri-sig+enc": NORMAL,
 
     # Claims Request Parameter
-    "rp-claims_reqest-id_token_claims": NORMAL,
-    "rp-claims_reqest-request_userinfo": NORMAL,
+    "rp-claims_request-id_token_claims": NORMAL,
+    "rp-claims_request-request_userinfo": NORMAL,
 
     # "rp-3rd-login": "",
 
