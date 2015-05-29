@@ -99,7 +99,6 @@ FLOWS = {
             (Registration,
              {set_request_args: {"redirect_uris": ["http://test.com"]},
               expect_exception: PyoidcError}),
-            Registration
         ],
         "profile": "I,IT,CI,CT,CIT...T",
         "desc": "Sends a redirect_uri endpoint which does not use https. The "

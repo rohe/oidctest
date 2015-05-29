@@ -1,4 +1,5 @@
 from urlparse import urlparse
+from aatest.status import ERROR
 
 __author__ = 'roland'
 
@@ -21,3 +22,13 @@ def set_jwks_uri(oper, args):
 
 def set_op_args(oper, args):
     oper.op_args.update(args)
+
+def check_endpoint(oper, args):
+    try:
+        _ = oper.conv.client.provider_info[args]
+    except KeyError:
+        oper.conv.test_output.append(
+            {"id": "check_endpoint",
+             "status": ERROR,
+             "message": "{} not in provider configuration".format(args)})
+        oper.skip = True

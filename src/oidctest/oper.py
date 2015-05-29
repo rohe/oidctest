@@ -35,8 +35,9 @@ def include(url, test_id):
 
 
 class Webfinger(Operation):
-    def __init__(self, conv, profile, test_id, conf, funcs):
-        Operation.__init__(self, conv, profile, test_id, conf, funcs)
+    def __init__(self, conv, profile, test_id, conf, funcs, chk_factory):
+        Operation.__init__(self, conv, profile, test_id, conf, funcs,
+                           chk_factory)
         self.resource = ""
         self.dynamic = self.profile[WEBFINGER] == "T"
 
@@ -50,10 +51,7 @@ class Webfinger(Operation):
             self.conv.trace.reply(issuer)
             self.conv.info["issuer"] = issuer
 
-    def setup(self, profile_map):
-        self.map_profile(profile_map)
-        self._setup()
-
+    def op_setup(self):
         try:
             self.resource = self.op_args["resource"]
         except KeyError:
@@ -61,8 +59,9 @@ class Webfinger(Operation):
 
 
 class Discovery(Operation):
-    def __init__(self, conv, session, test_id, conf, funcs):
-        Operation.__init__(self, conv, session, test_id, conf, funcs)
+    def __init__(self, conv, session, test_id, conf, funcs, chk_factory):
+        Operation.__init__(self, conv, session, test_id, conf, funcs,
+                           chk_factory)
 
         self.dynamic = self.profile[DISCOVER] == "T"
 
@@ -75,10 +74,7 @@ class Discovery(Operation):
                 **self.conf.INFO["provider_info"]
             )
 
-    def setup(self, profile_map):
-        self.map_profile(profile_map)
-        self._setup()
-
+    def op_setup(self):
         if self.dynamic:
             try:
                 _issuer = include(self.op_args["issuer"], self.test_id)
@@ -89,8 +85,9 @@ class Discovery(Operation):
 
 
 class Registration(Operation):
-    def __init__(self, conv, session, test_id, conf, funcs):
-        Operation.__init__(self, conv, session, test_id, conf, funcs)
+    def __init__(self, conv, session, test_id, conf, funcs, chk_factory):
+        Operation.__init__(self, conv, session, test_id, conf, funcs,
+                           chk_factory)
 
         self.dynamic = self.profile[REGISTER] == "T"
 
@@ -101,30 +98,20 @@ class Registration(Operation):
             self.conv.client.store_registration_info(
                 RegistrationResponse(**self.conf.INFO["registered"]))
 
-    def setup(self, profile_map):
-        """
-        Set all request and oeprations args. The order of the methods here
-        is important.
-
-        :param profile_map:
-        :return:
-        """
-        self.map_profile(profile_map)
-
+    def op_setup(self):
         if self.dynamic:
             self.req_args.update(self.conf.INFO["client"])
             self.req_args["url"] = self.conv.client.provider_info[
                 "registration_endpoint"]
-
-        self._setup()
 
 
 class SyncAuthn(SyncGetRequest):
     response_cls = "AuthorizationResponse"
     request_cls = "AuthorizationRequest"
 
-    def __init__(self, conv, session, test_id, conf, funcs):
-        super(SyncAuthn, self).__init__(conv, session, test_id, conf, funcs)
+    def __init__(self, conv, session, test_id, conf, funcs, chk_factory):
+        super(SyncAuthn, self).__init__(conv, session, test_id, conf, funcs,
+                                        chk_factory)
         self.op_args["endpoint"] = conv.client.provider_info[
             "authorization_endpoint"]
 
@@ -133,10 +120,7 @@ class SyncAuthn(SyncGetRequest):
         conv.nonce = rndstr()
         self.req_args["nonce"] = conv.nonce
 
-    def setup(self, profile_map):
-        self.map_profile(profile_map)
-        self._setup()
-
+    def op_setup(self):
         self.req_args["redirect_uri"] = self.conv.callback_uris[0]
 
 
@@ -144,8 +128,9 @@ class AsyncAuthn(AsyncGetRequest):
     response_cls = "AuthorizationResponse"
     request_cls = "AuthorizationRequest"
 
-    def __init__(self, conv, session, test_id, conf, funcs):
-        super(AsyncAuthn, self).__init__(conv, session, test_id, conf, funcs)
+    def __init__(self, conv, session, test_id, conf, funcs, chk_factory):
+        super(AsyncAuthn, self).__init__(conv, session, test_id, conf, funcs,
+                                         chk_factory)
         self.op_args["endpoint"] = conv.client.provider_info[
             "authorization_endpoint"]
 
@@ -154,16 +139,14 @@ class AsyncAuthn(AsyncGetRequest):
         conv.nonce = rndstr()
         self.req_args["nonce"] = conv.nonce
 
-    def setup(self, profile_map):
-        self.map_profile(profile_map)
-        self._setup()
-
+    def op_setup(self, profile_map):
         self.req_args["redirect_uri"] = self.conv.callback_uris[0]
 
 
 class AccessToken(SyncPostRequest):
-    def __init__(self, conv, session, test_id, conf, funcs):
-        Operation.__init__(self, conv, session, test_id, conf, funcs)
+    def __init__(self, conv, session, test_id, conf, funcs, chk_factory):
+        Operation.__init__(self, conv, session, test_id, conf, funcs,
+                           chk_factory)
         self.op_args["state"] = conv.state
         self.req_args["redirect_uri"] = conv.client.redirect_uris[0]
 
@@ -181,8 +164,9 @@ class AccessToken(SyncPostRequest):
 
 
 class UserInfo(SyncGetRequest):
-    def __init__(self, conv, session, test_id, conf, args):
-        Operation.__init__(self, conv, session, test_id, conf, args)
+    def __init__(self, conv, session, test_id, conf, args, chk_factory):
+        Operation.__init__(self, conv, session, test_id, conf, args,
+                           chk_factory)
         self.op_args["state"] = conv.state
 
     def run(self):

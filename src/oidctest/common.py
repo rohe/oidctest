@@ -24,7 +24,6 @@ from aatest import FatalError
 from aatest.verify import Verify
 
 from oidctest.prof_util import map_prof
-from oidctest.check import factory as check_factory
 
 __author__ = 'roland'
 
@@ -82,6 +81,7 @@ class Conversation(object):
         self.last_url = ""
         self.test_id = ""
         self.info = {}
+        self.test_output = []
 
     def for_me(self, url):
         for cb in self.callback_uris:
@@ -167,7 +167,6 @@ class Conversation(object):
                 raise OtherError("Didn't expect a response body")
         else:
             return reqresp
-
 
 
 def setup_logger(log, log_file_name="rp.log"):
@@ -263,7 +262,7 @@ def node_dict(flows, lst):
     return dict([(l,flows[l]) for l in lst])
 
 
-def run_flow(profiles, conv, test_id, conf, profile, index=0):
+def run_flow(profiles, conv, test_id, conf, profile, chk_factory, index=0):
     print("=="+test_id)
     conv.test_id = test_id
     conv.conf = conf
@@ -280,7 +279,7 @@ def run_flow(profiles, conv, test_id, conf, profile, index=0):
             cls = item
             funcs = {}
 
-        _oper = cls(conv, profile, test_id, conf, funcs)
+        _oper = cls(conv, profile, test_id, conf, funcs, chk_factory)
         conv.operation = _oper
         _oper.setup(profiles.PROFILEMAP)
         _oper()
@@ -289,7 +288,7 @@ def run_flow(profiles, conv, test_id, conf, profile, index=0):
 
     try:
         if conv.flow["tests"]:
-            _ver = Verify(check_factory, conv.msg_factory, conv)
+            _ver = Verify(chk_factory, conv.msg_factory, conv)
             _ver.test_sequence(conv.flow["tests"])
     except KeyError:
         pass
