@@ -23,7 +23,7 @@ PROFILEMAP = {
     SyncAuthn: {
         "C": {set_request_args: {"response_type": ["code"],
                                  "scope": ["openid"]},
-              check_endpoint: "authorization_endp"},
+              check_endpoint: "authorization_endpoint"},
         "I": {set_request_args: {"response_type": ["id_token"],
                                  "scope": ["openid"]}},
         "IT": {set_request_args: {"response_type": ["id_token", "token"],
