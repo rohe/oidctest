@@ -84,6 +84,7 @@ class SyncRequest(Operation):
 
         url, body, ht_args, csi = _client.request_info(
             self.request, method=self.method, request_args=self.req_args,
+            target=_client.provider_info["issuer"],
             **self.op_args)
 
         try:
