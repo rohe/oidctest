@@ -32,6 +32,9 @@ class SyncRequest(Operation):
     accept = None
     _tests = {"post": [], "pre": []}
 
+    class ErrorResponse(Exception):
+        pass
+
     def __init__(self, conv, session, test_id, conf, funcs, chk_factory):
         Operation.__init__(self, conv, session, test_id, conf, funcs,
                            chk_factory)
@@ -76,6 +79,13 @@ class SyncRequest(Operation):
             resp.verify(keyjar=self.conv.client.keyjar)
         else:
             resp = r
+
+        try:
+            if self.req_args['nonce'] != resp["id_token"]['nonce']:
+                raise SyncRequest.ErrorResponse("invalid nonce! {} != {}".format(self.req_args['nonce'], resp["id_token"]['nonce']))
+            self.conv.client.id_token = resp["id_token"]
+        except KeyError:
+            pass
 
         return resp
 
