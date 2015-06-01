@@ -298,4 +298,4 @@ def run_flow(profiles, conv, test_id, conf, profile, chk_factory, index=0):
 
     info = test_summation(conv, test_id)
 
-    return None
+    return info
