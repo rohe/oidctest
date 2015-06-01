@@ -1,5 +1,5 @@
 from urlparse import urlparse
-from aatest.status import ERROR
+from aatest.check import ERROR
 
 __author__ = 'roland'
 

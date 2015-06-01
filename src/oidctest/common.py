@@ -1,4 +1,3 @@
-import aatest
 import argparse
 import importlib
 import json
@@ -8,6 +7,7 @@ import sys
 import time
 
 from urlparse import urlparse
+import aatest
 
 from oic.oauth2 import SUCCESSFUL
 from oic.oauth2 import verify_header
@@ -22,7 +22,7 @@ from oic.utils.keyio import build_keyjar
 
 from aatest import FatalError
 from aatest.verify import Verify
-from oictest.setup import test_summation
+from oidctest.setup import test_summation
 
 from oidctest.prof_util import map_prof
 
@@ -298,4 +298,4 @@ def run_flow(profiles, conv, test_id, conf, profile, chk_factory, index=0):
 
     info = test_summation(conv, test_id)
 
-    return None
+    return info
