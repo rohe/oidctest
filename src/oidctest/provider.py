@@ -133,3 +133,11 @@ class Provider(provider.Provider):
             _response["issuer"] = "https://example.com"
 
         return _response
+
+    def _get_keyjar(self):
+        return self.server.keyjar
+
+    def _set_keyjar(self, item):
+        self.server.keyjar = item
+
+    keyjar = property(_get_keyjar, _set_keyjar)
