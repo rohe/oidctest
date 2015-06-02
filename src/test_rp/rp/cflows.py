@@ -1,7 +1,7 @@
 from jwkest import BadSignature
 from oic.exception import IssuerMismatch, PyoidcError
 
-from oidctest.oper import Webfinger, SubjectMismatch
+from oidctest.oper import Webfinger, SubjectMismatch, UpdateProviderKeys
 from oidctest.oper import UserInfo
 from oidctest.oper import AccessToken
 from oidctest.oper import Discovery
@@ -570,4 +570,28 @@ FLOWS = {
         "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
                 "Encrypt the Request Object using RSA1_5 and A128CBC-HS256 algorithms"
     },
+    "rp-key_rollover-op_enc_key": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            (SyncAuthn, {
+                set_op_args: {
+                    "request_method": "request",
+                    "request_object_encryption_alg": "RSA1_5",
+                    "request_object_encryption_enc": "A128CBC-HS256"
+                }
+            }),
+            UpdateProviderKeys,
+            (SyncAuthn, {
+                set_op_args: {
+                    "request_method": "request",
+                    "request_object_encryption_alg": "RSA1_5",
+                    "request_object_encryption_enc": "A128CBC-HS256"
+                }
+            }),
+        ],
+        "profile": "...",
+        "desc": "Support OP Encryption Key Rollover"
+    }
 }
