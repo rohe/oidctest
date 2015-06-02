@@ -76,6 +76,9 @@ class SyncRequest(Operation):
                 forms = BeautifulSoup(r.content).findAll('form')
                 for inp in forms[0].find_all("input"):
                     resp[inp.attrs["name"]] = inp.attrs["value"]
+            else:
+                r = self.conv.intermit(r)
+
             resp.verify(keyjar=self.conv.client.keyjar)
         else:
             resp = r

@@ -52,10 +52,11 @@ class Webfinger(Operation):
             self.conv.info["issuer"] = issuer
 
     def op_setup(self):
-        try:
-            self.resource = self.op_args["resource"]
-        except KeyError:
-            self.resource = self.conf.ISSUER+self.test_id
+        # try:
+        #     self.resource = self.op_args["resource"]
+        # except KeyError:
+        #     self.resource = self.conf.ISSUER+self.test_id
+        pass
 
 
 class Discovery(Operation):
@@ -75,13 +76,14 @@ class Discovery(Operation):
             )
 
     def op_setup(self):
-        if self.dynamic:
-            try:
-                _issuer = include(self.op_args["issuer"], self.test_id)
-            except KeyError:
-                _issuer = include(self.conv.info["issuer"], self.test_id)
-
-            self.op_args["issuer"] = _issuer
+        # if self.dynamic:
+        #     try:
+        #         _issuer = include(self.op_args["issuer"], self.test_id)
+        #     except KeyError:
+        #         _issuer = include(self.conv.info["issuer"], self.test_id)
+        #
+        #     self.op_args["issuer"] = _issuer
+        pass
 
 
 class Registration(Operation):
