@@ -14,12 +14,13 @@ from oic.utils.keyio import build_keyjar
 
 from aatest import NotSupported, exception_trace
 from aatest import ConfigurationError
+from aatest.conversation import Conversation
 
 from oidctest.common import make_list
 from oidctest.common import make_client
-from oidctest.common import Conversation
 from oidctest.common import setup_logger
 from oidctest.common import run_flow
+from oidctest.common import Trace
 
 __author__ = 'roland'
 
@@ -97,7 +98,8 @@ def main(flows, profile, profiles, **kw_args):
     for tid in test_list:
         _flow = flows[tid]
         _cli = make_client(**kw_args)
-        conversation = Conversation(_flow, _cli, redirs, kw_args["msg_factory"])
+        conversation = Conversation(_flow, _cli, redirs, kw_args["msg_factory"],
+                                    trace_cls=Trace)
         # noinspection PyTypeChecker
         try:
             run_flow(profiles, conversation, tid, kw_args["conf"],

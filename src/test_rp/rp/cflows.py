@@ -13,6 +13,8 @@ from oidctest.testfunc import set_op_args
 from oidctest.testfunc import expect_exception
 from oidctest.testfunc import set_request_args
 
+from cl.func import set_webfinger_resource, set_discovery_issuer
+
 __author__ = 'roland'
 
 ORDDESC = ["rp-webfinger", "rp-discovery", "rp-registration",
@@ -22,26 +24,27 @@ ORDDESC = ["rp-webfinger", "rp-discovery", "rp-registration",
 
 FLOWS = {
     "rp-discovery-webfinger_url": {
-        "sequence": [Webfinger],
+        "sequence": [(Webfinger, {set_webfinger_resource: {}})],
         "desc": "Can Discover Identifiers using URL Syntax",
         "profile": ".T..",
     },
     "rp-discovery-webfinger_acct": {
-        "sequence": [(Webfinger, {resource: {"pattern": "acct:{}@{}"}})],
+        "sequence": [(Webfinger, {resource: {"pattern": "acct:{}@{}"},
+                                  set_webfinger_resource: {}})],
         "desc": "Can Discover Identifiers using acct Syntax",
         "profile": ".T..",
     },
     "rp-discovery-openid_configuration": {
         "sequence": [
-            Webfinger,
-            Discovery
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}})
         ],
         "profile": "..T.",
         "desc": "Uses openid-configuration Discovery Information"
     },
     # "rp-discovery-issuer_not_matching_config": {
     #     "sequence": [
-    #         Webfinger,
+    #         (Webfinger, {set_webfinger_resource: {}}),
     #         (Discovery, {expect_exception: IssuerMismatch})
     #     ],
     #     "profile": "..T.",
@@ -52,8 +55,8 @@ FLOWS = {
     # },
     'rp-discovery-jwks_uri_keys': {
         "sequence": [
-            Webfinger,
-            Discovery
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}})
         ],
         "profile": "..T.",
         "desc": "Can read and understand jwks_uri",
@@ -64,16 +67,17 @@ FLOWS = {
     },
     'rp-discovery-issuer_not_matching_config': {
         "sequence": [
-            Webfinger,
-            (Discovery, {expect_exception: IssuerMismatch})
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {},
+                         expect_exception: IssuerMismatch})
         ],
         "profile": "..T.",
         "desc": "Will detect a faulty issuer claim in OP config"
     },
     "rp-registration-dynamic": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration
         ],
         "profile": "...T",
@@ -81,8 +85,8 @@ FLOWS = {
     },
     "rp-registration-redirect_uris": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {set_request_args: {"redirect_uris": [""]},
                             expect_exception: PyoidcError}),
             Registration
@@ -94,8 +98,8 @@ FLOWS = {
     },
     "rp-registration-uses_https_endpoints": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration,
              {set_request_args: {"redirect_uris": ["http://test.com"]},
               expect_exception: PyoidcError}),
@@ -106,8 +110,8 @@ FLOWS = {
     },
     "rp-registration-well_formed_jwk": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {set_request_args: {"jwks": {
                 "keys": [{
                     "use": "sig",
@@ -125,8 +129,8 @@ FLOWS = {
     },
     "rp-response_type-code": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             SyncAuthn
         ],
@@ -135,8 +139,8 @@ FLOWS = {
     },
     "rp-response_type-id_token": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration,
              {set_request_args: {"id_token_signed_response_alg": "RS256"}}),
             SyncAuthn
@@ -146,8 +150,8 @@ FLOWS = {
     },
     "rp-response_type-id_token+token": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration,
              {set_request_args: {"id_token_signed_response_alg": "RS256"}}),
             SyncAuthn
@@ -157,8 +161,8 @@ FLOWS = {
     },
     "rp-response_mode-form_post": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration,
              {set_request_args: {"id_token_signed_response_alg": "RS256"}}),
             (SyncAuthn, {set_request_args: {"response_mode": ["form_post"]}})
@@ -168,8 +172,8 @@ FLOWS = {
     },
     "rp-token_endpoint-client_secret_basic": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             SyncAuthn,
             (AccessToken,
@@ -181,8 +185,8 @@ FLOWS = {
     },
     "rp-token_endpoint-client_secret_post": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration,
              {set_request_args: {
                  "token_endpoint_auth_method": "client_secret_post"}}),
@@ -196,8 +200,8 @@ FLOWS = {
     },
     "rp-token_endpoint-client_secret_jwt": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration,
              {set_request_args: {
                  "token_endpoint_auth_method": "client_secret_jwt"}}),
@@ -211,8 +215,8 @@ FLOWS = {
     },
     "rp-token_endpoint-private_key_jwt": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {
                 set_request_args: {
                     "token_endpoint_auth_method": "private_key_jwt"},
@@ -228,8 +232,8 @@ FLOWS = {
     },
     "rp-idt-asym_sig": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {
                 set_request_args: {
                     "id_token_signed_response_alg": "RS256"
@@ -242,8 +246,8 @@ FLOWS = {
     },
     "rp-idt-sym_sig": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {
                 set_request_args: {
                     "id_token_signed_response_alg": "HS256"
@@ -256,8 +260,8 @@ FLOWS = {
     },
     "rp-idt-invalid-asym_sig": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {
                 set_request_args: {
                     "id_token_signed_response_alg": "RS256"
@@ -273,8 +277,8 @@ FLOWS = {
     },
     "rp-idt-invalid-ec_sig": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {
                 set_request_args: {
                     "id_token_signed_response_alg": "ES256"
@@ -290,8 +294,8 @@ FLOWS = {
     },
     "rp-idt-invalid-sym_sig": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {
                 set_request_args: {
                     "id_token_signed_response_alg": "HS256"
@@ -307,8 +311,8 @@ FLOWS = {
     },
     "rp-id_token-sig+enc": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {
                 set_request_args: {
                     "id_token_signed_response_alg": "HS256",
@@ -323,8 +327,8 @@ FLOWS = {
     },
     "rp-idt-none": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {
                 set_request_args: {"id_token_signed_response_alg": "none"}
             }),
@@ -336,8 +340,8 @@ FLOWS = {
     },
     "rp-user_info-bad_sub_claim": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             SyncAuthn,
             AccessToken,
@@ -348,8 +352,8 @@ FLOWS = {
     },
     "rp-claims_request-id_token_claims": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             (SyncAuthn, {set_request_args: {
                 "claims": {
@@ -372,8 +376,8 @@ FLOWS = {
     },
     "rp-claims_request-request_userinfo": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             (SyncAuthn, {set_request_args: {
                 "claims": {
@@ -394,8 +398,8 @@ FLOWS = {
     },
     "rp-scope-contains_openid_scope": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             (SyncAuthn, {set_request_args: {"scope": ["wrong"]}}),
         ],
@@ -405,8 +409,8 @@ FLOWS = {
     },
     "rp-scope-userinfo_claims": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             (SyncAuthn,
              {set_request_args: {"scope": ["openid", "email", "profile"]}}),
@@ -419,8 +423,8 @@ FLOWS = {
     },
     "rp-user_info-bearer_body": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             SyncAuthn,
             AccessToken,
@@ -435,8 +439,8 @@ FLOWS = {
     },
     "rp-user_info-bearer_header": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             SyncAuthn,
             AccessToken,
@@ -451,8 +455,8 @@ FLOWS = {
     },
     "rp-user_info-enc": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {
                 set_request_args: {
                     "userinfo_encrypted_response_alg": "RSA1_5",
@@ -469,8 +473,8 @@ FLOWS = {
     },
     "rp-user_info-sig+enc": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {
                 set_request_args: {
                     "userinfo_signed_response_alg": "RS256",
@@ -488,8 +492,8 @@ FLOWS = {
     },
     "rp-user_info-sign": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {
                 set_request_args: {
                     "userinfo_signed_response_alg": "RS256",
@@ -505,8 +509,8 @@ FLOWS = {
     },
     "rp-claims-aggregated": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             SyncAuthn,
             AccessToken,
@@ -517,8 +521,8 @@ FLOWS = {
     },
     "rp-claims-distributed": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             SyncAuthn,
             AccessToken,
@@ -529,8 +533,8 @@ FLOWS = {
     },
     "rp-nonce-invalid": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             SyncAuthn
         ],
@@ -539,8 +543,8 @@ FLOWS = {
     },
     "rp-nonce-unless_code_flow": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             (SyncAuthn, {set_request_args: {"nonce": None}})
         ],
@@ -552,14 +556,15 @@ FLOWS = {
     },
     "rp-request_uri-enc": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             (SyncAuthn, {set_op_args: {"request_method": "file",
                                        "request_object_encryption_alg": "RSA1_5",
                                        "request_object_encryption_enc": "A128CBC-HS256",
                                        "local_dir": "./request_objects",
-                                       "base_path": "http://localhost:8099/request_objects/"}})
+                                       "base_path": "https://localhost:8088/request_objects/"
+                                       }})
         ],
         "profile": "...",
         "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
