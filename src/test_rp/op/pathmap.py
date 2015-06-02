@@ -61,7 +61,7 @@ IDMAP = {
 
     # nonce Request Parameter
     "rp-nonce-unless_code_flow": NORMAL,
-    "rp-nonce-invalid": "/_/_/_/nonce/normal",
+    "rp-nonce-invalid": "/_/_/nonce/normal",
 
     # scope Request Parameter
     "rp-scope-contains_openid_scope": NORMAL,
