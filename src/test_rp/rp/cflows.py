@@ -17,8 +17,8 @@ __author__ = 'roland'
 
 ORDDESC = ["rp-webfinger", "rp-discovery", "rp-registration",
            "rp-response_type", "rp-response_mode",
-           "rp-token_endpoint", "rp-id_token", "rp-claims_request",
-           "rp-request_uri", "rp-scope"]
+           "rp-token_endpoint", "rp-id_token", "rp-claims_reqest",
+           "rp-request_uri", "rp-scope", "rp-nonce"]
 
 FLOWS = {
     "rp-discovery-webfinger_url": {
@@ -131,8 +131,7 @@ FLOWS = {
             SyncAuthn
         ],
         "profile": "C...",
-        "desc": "Can Make Request with 'code' Response Type",
-        # "tests": {"valid_code": {}}
+        "desc": "Can Make Request with 'code' Response Type"
     },
     "rp-response_type-id_token": {
         "sequence": [
@@ -527,5 +526,43 @@ FLOWS = {
         ],
         "profile": "C,CI,CT,CIT...",
         "desc": "Handles distributed user information"
-    }
+    },
+    "rp-nonce-invalid": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            SyncAuthn
+        ],
+        "profile": "I,IT,CI,CIT...",
+        "desc": "If a nonce value was sent in the Authentication Request the Relying Party must validate the nonce returned in the ID Token."
+    },
+    "rp-nonce-unless_code_flow": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            (SyncAuthn, {set_request_args: {"nonce": None}})
+        ],
+        "profile": "I,IT,CI,CIT...",
+        "desc": "The Relying Party should always send a nonce as a request parameter while using implicit or hybrid flow. "
+                "Since the server is suppose to return the nonce in the ID Token return from Authorization Endpoint, "
+                "see ID Token required claims in hybrid flow or implicit flow. When using Code flow the the nonce is not "
+                "required, see ID Token validation for code flow"
+    },
+    "rp-request_uri-enc": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            (SyncAuthn, {set_op_args: {"request_method": "file",
+                                       "request_object_encryption_alg": "RSA1_5",
+                                       "request_object_encryption_enc": "A128CBC-HS256",
+                                       "local_dir": "./request_objects",
+                                       "base_path": "http://localhost:8099/request_objects/"}})
+        ],
+        "profile": "...",
+        "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
+                "Encrypt the Request Object using RSA1_5 and A128CBC-HS256 algorithms"
+    },
 }
