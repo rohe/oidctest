@@ -203,3 +203,19 @@ class UserInfo(SyncGetRequest):
 
 class DisplayUserInfo(Operation):
     pass
+
+
+class UpdateProviderKeys(Operation):
+    def __call__(self, *args, **kwargs):
+        def request_with_client_http_session(method, url, **kwargs):
+            return self.conv.client.http_request(url, method)
+
+        # Monkey-patch: make sure we use the same http session (preserving
+        # cookies) as for the rest of the test sequence
+        import oic.utils.keyio
+        oic.utils.keyio.request = request_with_client_http_session
+
+        issuer = self.conv.client.provider_info["issuer"]
+        # Update all keys
+        for keybundle in self.conv.client.keyjar.issuer_keys[issuer]:
+            keybundle.update()
