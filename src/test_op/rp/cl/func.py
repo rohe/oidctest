@@ -9,7 +9,4 @@ def set_webfinger_resource(oper, args):
 
 def set_discovery_issuer(oper, args):
     if oper.dynamic:
-        try:
-            _ = oper.op_args["issuer"]
-        except KeyError:
-            oper.op_args["issuer"] = oper.conv.info["issuer"]
+        oper.op_args["issuer"] = oper.conv.info["issuer"]

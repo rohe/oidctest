@@ -62,8 +62,8 @@ class SyncRequest(Operation):
         return response
 
     def handle_response(self, r, csi):
+        r = self.conv.intermit(r)
         if 300 < r.status_code < 400:
-            r = self.conv.intermit(r)
             resp = self.conv.parse_request_response(
                 r, self.response, body_type=self.response_type,
                 state=self.conv.state, keyjar=self.conv.client.keyjar)

@@ -39,3 +39,27 @@ INFO = {
     # srv_discovery_url
     # provider_info
 }
+
+INTERACTION = [
+    {
+        "matches": {
+            "url": "{}authorization".format(ISSUER),
+            "title": "OpenID Connect provider example"
+        },
+        "page-type": "login",
+        "control": {
+            "type": "form",
+            "set": {"login": "diana", "password": "krall"}
+        }
+    },
+    {
+        "matches": {
+            "url": "{}authorization".format(ISSUER),
+            "title": "Submit This Form"
+        },
+        "page-type": "other",
+        "control": {
+            "type": "form",
+        }
+    }
+]

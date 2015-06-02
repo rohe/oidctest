@@ -9,18 +9,10 @@ import time
 from urlparse import urlparse
 import aatest
 
-from oic.oauth2 import SUCCESSFUL
-from oic.oauth2 import verify_header
-from oic.oauth2 import ParseError
-from oic.oauth2 import ErrorResponse
-from oic.oauth2 import HttpError
-from oic.oauth2 import OtherError
-
 from oic.oic import Client
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 from oic.utils.keyio import build_keyjar
 
-from aatest import FatalError
 from aatest.verify import Verify
 from oidctest.setup import test_summation
 
@@ -69,105 +61,6 @@ class Trace(aatest.Trace):
                                  separators=(',', ': '))
 
                 self.trace.append("%f %s: %s" % (delta, cl_name, txt))
-
-
-class Conversation(object):
-    def __init__(self, flow, client, cb_uris, msg_factory):
-        self.flow = flow
-        self.client = client
-        self.callback_uris = cb_uris
-        self.msg_factory = msg_factory
-        self.trace = Trace()
-        self.response = []
-        self.last_url = ""
-        self.test_id = ""
-        self.info = {}
-        self.test_output = []
-
-    def for_me(self, url):
-        for cb in self.callback_uris:
-            if url.startswith(cb):
-                return True
-        return False
-
-    def intermit(self, response):
-        if response.status_code >= 400:
-            done = True
-        else:
-            done = False
-
-        rdseq = []
-        while not done:
-            url = response.url
-
-            while response.status_code in [302, 301, 303]:
-                url = response.headers["location"]
-                if url in rdseq:
-                    raise FatalError("Loop detected in redirects")
-                else:
-                    rdseq.append(url)
-                    if len(rdseq) > 8:
-                        raise FatalError(
-                            "Too long sequence of redirects: %s" % rdseq)
-
-                self.trace.reply("REDIRECT TO: %s" % url)
-
-                # If back to me
-                if self.for_me(url):
-                    done = True
-                    self.response.append(response)
-                    break
-                else:
-                    try:
-                        response = self.client.send(
-                            url, "GET", headers={"Referer": self.last_url})
-                    except Exception, err:
-                        raise FatalError("%s" % err)
-
-                    content = response.text
-                    self.trace.reply("CONTENT: %s" % content)
-                    self.response.append(response)
-
-                    if response.status_code >= 400:
-                        done = True
-                        break
-
-            if done or url is None:
-                break
-
-            if response.status_code < 300 or response.status_code >= 400:
-                break
-
-        return response
-
-    def parse_request_response(self, reqresp, response, body_type, state="",
-                               **kwargs):
-
-        text = reqresp.text
-        if reqresp.status_code in SUCCESSFUL:
-            body_type = verify_header(reqresp, body_type)
-        elif reqresp.status_code == 302:  # redirect
-            text = reqresp.headers["location"]
-        elif reqresp.status_code == 500:
-            logger.error("(%d) %s" % (reqresp.status_code, reqresp.text))
-            raise ParseError("ERROR: Something went wrong: %s" % reqresp.text)
-        elif reqresp.status_code in [400, 401]:
-            #expecting an error response
-            if issubclass(response, ErrorResponse):
-                pass
-        else:
-            logger.error("(%d) %s" % (reqresp.status_code, reqresp.text))
-            raise HttpError("HTTP ERROR: %s [%s] on %s" % (
-                reqresp.text, reqresp.status_code, reqresp.url))
-
-        if body_type:
-            if response:
-                return self.client.parse_response(response, text,
-                                                  body_type, state, **kwargs)
-            else:
-                raise OtherError("Didn't expect a response body")
-        else:
-            return reqresp
 
 
 def setup_logger(log, log_file_name="rp.log"):
