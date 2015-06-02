@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 from oic.oauth2.util import URL_ENCODED
 from oic.oauth2 import ResponseError
-from oic.utils.http_util import Redirect
+from oic.utils.http_util import Redirect, Response
 from oic.utils.http_util import get_post
 from oic.utils.time_util import utc_time_sans_frac
 #from oictest.check import CheckEndpoint
@@ -84,9 +84,10 @@ class SyncRequest(Operation):
             resp = r
 
         try:
-            if self.req_args['nonce'] != resp["id_token"]['nonce']:
-                raise SyncRequest.ErrorResponse("invalid nonce! {} != {}".format(self.req_args['nonce'], resp["id_token"]['nonce']))
-            self.conv.client.id_token = resp["id_token"]
+            if isinstance(resp, Response):
+                if self.req_args['nonce'] != resp["id_token"]['nonce']:
+                    raise SyncRequest.ErrorResponse("invalid nonce! {} != {}".format(self.req_args['nonce'], resp["id_token"]['nonce']))
+                self.conv.client.id_token = resp["id_token"]
         except KeyError:
             pass
 
