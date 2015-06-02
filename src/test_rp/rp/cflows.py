@@ -579,4 +579,20 @@ FLOWS = {
         "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
                 "Sign the Request Object using the RS256 algorithm"
     },
+    "rp-request_uri-sig+enc": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {set_jwks_uri: None}),
+            (SyncAuthn, {set_op_args: {"request_method": "file",
+                                       "request_object_signing_alg": "RS256",
+                                       "request_object_encryption_alg": "RSA1_5",
+                                       "request_object_encryption_enc": "A128CBC-HS256",
+                                       "local_dir": "./request_objects",
+                                       "base_path": "http://localhost:8099/request_objects/"}})
+        ],
+        "profile": "...",
+        "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
+                "Encrypt the Request Object using RSA1_5 and A128CBC-HS256 algorithms and sign it using RS256 algorithm"
+    },
 }
