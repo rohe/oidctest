@@ -94,6 +94,18 @@ class Provider(provider.Provider):
     def id_token_as_signed_jwt(self, session, loa="2", alg="", code=None,
                                access_token=None, user_info=None, auth_time=0,
                                exp=None, extra_claims=None):
+
+        if "rotsig" in self.behavior_type:  # Rollover signing keys
+            if alg == "RS256":
+                key = RSAKey(kid="rotated_rsa_{}".format(time.time()),
+                             use="sig").load_key(RSA.generate(2048))
+            elif alg == "ES256":
+                key = ECKey(kid="rotated_ec_{}".format(time.time()),
+                            use="sig").load_key(P256)
+
+            new_key = {"keys": [key.serialize(private=True)]}
+            self.do_key_rollover(new_key, "%d")
+
         _jws = provider.Provider.id_token_as_signed_jwt(
             self, session, loa=loa, alg=alg, code=code,
             access_token=access_token, user_info=user_info, auth_time=auth_time,
@@ -157,8 +169,10 @@ class Provider(provider.Provider):
             signing_keys = [k.to_dict() for k in self.keyjar.get_signing_key()]
             new_keys["keys"].extend(signing_keys)
             return json.dumps(new_keys)
-
-        return None
+        else:  # Return all keys
+            keys = [k.to_dict() for kb in self.keyjar[""] for k in kb.keys()]
+            jwks = dict(keys=keys)
+            return json.dumps(jwks)
 
     def __setattr__(self, key, value):
         if key == "keys":
