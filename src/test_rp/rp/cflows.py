@@ -1,5 +1,5 @@
 from jwkest import BadSignature
-from oic.exception import IssuerMismatch, PyoidcError
+from oic.exception import IssuerMismatch, PyoidcError, NotForMe
 
 from oidctest.oper import Webfinger, SubjectMismatch
 from oidctest.oper import UserInfo
@@ -85,7 +85,6 @@ FLOWS = {
             Discovery,
             (Registration, {set_request_args: {"redirect_uris": [""]},
                             expect_exception: PyoidcError}),
-            Registration
         ],
         "profile": "...T",
         "desc": "Sends redirect_uris value which only contains a empty string "
@@ -611,4 +610,14 @@ FLOWS = {
         "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
                 "The Request Object should set 'alg' equal to 'none'"
     },
+    "rp-id_token-aud": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            (SyncAuthn, {expect_exception: NotForMe})
+        ],
+        "profile": "...",
+        "desc": "The Relying Party should request an ID token and compare its aud value to Relying Party's Client ID"
+    }
 }
