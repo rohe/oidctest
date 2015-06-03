@@ -615,9 +615,25 @@ FLOWS = {
             Webfinger,
             Discovery,
             Registration,
-            (SyncAuthn, {expect_exception: NotForMe})
+            #(SyncAuthn, {expect_exception: NotForMe}),
+            SyncAuthn,
+            AccessToken
         ],
         "profile": "...",
         "desc": "The Relying Party should request an ID token and compare its aud value to Relying Party's Client ID"
-    }
+    },
+    "rp-id_token-bad_asym_sig_rs256": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            #(SyncAuthn, {expect_exception, BadSignature}),
+            SyncAuthn,
+            AccessToken
+        ],
+        "profile": "...",
+        "desc": "Tests if the Relying Party can identify and reject an ID Token with an invalid signature. "
+                "The ID Token has been signed using the asymmetric algorithm RS256. For more information "
+                "see list item 6 in ID Token validation"
+    },
 }
