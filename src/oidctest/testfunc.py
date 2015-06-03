@@ -5,11 +5,27 @@ __author__ = 'roland'
 
 def resource(oper, args):
     _p = urlparse(oper.conv.conf.ISSUER)
-    oper.op_args["resource"] = args["pattern"].format(oper.conv.test_id, _p.netloc)
+    oper.op_args["resource"] = args["pattern"].format(oper.conv.test_id,
+                                                      _p.netloc)
 
 
 def expect_exception(oper, args):
     oper.expect_exception = args
+
+
+def conditional_expect_exception(oper, args):
+    condition = args["condition"]
+    exception = args["exception"]
+
+    for key in condition.keys():
+        try:
+            assert condition[key] == oper.req_args[key]
+        except KeyError:
+            pass
+        except AssertionError:
+            return  # Not applied
+
+    oper.expect_exception = exception
 
 
 def set_request_args(oper, args):
