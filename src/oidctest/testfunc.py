@@ -17,15 +17,21 @@ def conditional_expect_exception(oper, args):
     condition = args["condition"]
     exception = args["exception"]
 
+    res = True
     for key in condition.keys():
         try:
-            assert condition[key] == oper.req_args[key]
+            assert oper.req_args[key] in condition[key]
         except KeyError:
             pass
         except AssertionError:
-            return  # Not applied
+            res = False
 
-    oper.expect_exception = exception
+    try:
+        if res == args["oper"]:
+            oper.expect_exception = exception
+    except KeyError:
+        if res is True:
+            oper.expect_exception = exception
 
 
 def set_request_args(oper, args):
