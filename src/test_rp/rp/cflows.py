@@ -1,5 +1,6 @@
 from jwkest import BadSignature
 from oic.exception import IssuerMismatch, PyoidcError, NotForMe
+from oic.oic.message import AtHashError
 
 from oidctest.oper import Webfinger, SubjectMismatch
 from oidctest.oper import UserInfo
@@ -626,7 +627,7 @@ FLOWS = {
         "sequence": [
             Webfinger,
             Discovery,
-            Registration,
+            (Registration, {set_request_args: {"id_token_signed_response_alg": "RS256"}}),
             #(SyncAuthn, {expect_exception, BadSignature}),
             SyncAuthn,
             AccessToken
@@ -635,5 +636,16 @@ FLOWS = {
         "desc": "Tests if the Relying Party can identify and reject an ID Token with an invalid signature. "
                 "The ID Token has been signed using the asymmetric algorithm RS256. For more information "
                 "see list item 6 in ID Token validation"
+    },
+    "rp-id_token-bad_at_hash": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            (SyncAuthn, {expect_exception: AtHashError})
+        ],
+        "profile": "IT...",
+        "desc": "Tests if the Relying Party can extract an at_hash from an ID token and it should be used in the "
+                "access_token validation. The response type should be set to 'id_token token'"
     },
 }
