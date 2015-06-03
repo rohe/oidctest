@@ -593,5 +593,16 @@ FLOWS = {
         ],
         "profile": "...",
         "desc": "Support OP Encryption Key Rollover"
+    },
+    "rp-key_rollover-op_sign_key": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            SyncAuthn,
+            SyncAuthn
+        ],
+        "profile": "I,IT,CI,CIT...",
+        "desc": "Support OP Encryption Key Rollover"
     }
 }
