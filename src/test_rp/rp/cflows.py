@@ -572,8 +572,8 @@ FLOWS = {
     },
     "rp-key_rollover-op_enc_key": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             (SyncAuthn, {
                 set_op_args: {
@@ -596,8 +596,8 @@ FLOWS = {
     },
     "rp-key_rollover-op_sign_key": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             SyncAuthn,
             SyncAuthn
