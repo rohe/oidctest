@@ -1,14 +1,14 @@
 import logging
 import os
 from urlparse import urlparse
+from aatest import END_TAG
+from aatest.operation import Operation
 import functools
 
-from aatest.operation import Operation
 from oic.oauth2 import rndstr
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
 from oic.oic import AccessTokenResponse
-
 from oidctest.prof_util import WEBFINGER
 from oidctest.prof_util import DISCOVER
 from oidctest.prof_util import REGISTER
@@ -16,11 +16,9 @@ from oidctest.request import SyncGetRequest
 from oidctest.request import AsyncGetRequest
 from oidctest.request import SyncPostRequest
 
-
 __author__ = 'roland'
 
 logger = logging.getLogger(__name__)
-
 
 class SubjectMismatch(Exception):
     pass
@@ -35,6 +33,7 @@ def include(url, test_id):
             return url
 
     return "%s://%s/%s%s_/_/_/normal" % (p.scheme, p.netloc, test_id, p.path)
+
 
 
 class Webfinger(Operation):
@@ -216,6 +215,10 @@ class DisplayUserInfo(Operation):
     pass
 
 
+class Done(Operation):
+    def run(self, *args, **kwargs):
+        self.conv.trace.info(END_TAG)
+
 class UpdateProviderKeys(Operation):
     def __call__(self, *args, **kwargs):
        # Monkey-patch: make sure we use the same http session (preserving
@@ -239,3 +242,4 @@ def request_with_client_http_session(instance, method, url, **kwargs):
     so we can't bind the instance method directly.
     """
     return instance.conv.client.http_request(url, method)
+

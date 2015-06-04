@@ -11,6 +11,8 @@ import logging
 import sys
 from oic.utils.keyio import build_keyjar
 from oidctest.interface import Interface
+from oidctest import CRYPTSUPPORT
+from oidctest.plattform import PlattForm
 
 SERVER_LOG_FOLDER = "server_log"
 if not os.path.isdir(SERVER_LOG_FOLDER):
@@ -35,10 +37,7 @@ try:
     from oic.utils.http_util import Redirect
     from oic.utils.http_util import get_post
     from oic.utils.http_util import BadRequest
-    from oictest.oprp import setup_logging
-    from oictest.oprp import OPRP
-    from oictest.oprp import CRYPTSUPPORT
-    from oictest.oprp import post_tests
+    from oidctest.session import SessionHandler
 except Exception as ex:
     COMMON_LOGGER.exception(ex)
     raise ex
@@ -58,6 +57,9 @@ def application(environ, start_response):
     interface.environ = environ
     interface.start_response = start_response
 
+    pf = PlattForm(interface, **ENV)
+    _pfsh = pf.sh
+    
     if path == "robots.txt":
         return interface.static("static/robots.txt")
     elif path == "favicon.ico":
@@ -69,7 +71,7 @@ def application(environ, start_response):
 
     if path == "":  # list
         try:
-            if interface.session_init(session):
+            if _pfsh.session_init(session):
                 return interface.flow_list(session)
             else:
                 try:
@@ -106,10 +108,10 @@ def application(environ, start_response):
         path = path.replace(":", "%3A")
         return interface.static(path)
     elif "flow_names" not in session:
-        interface.session_init(session)
+        _pfsh.session_init(session)
 
     if path == "reset":
-        interface.reset_session(session)
+        _pfsh.reset_session(session)
         return interface.flow_list(session)
     elif path == "pedit":
         try:
@@ -154,7 +156,7 @@ def application(environ, start_response):
                     cp = cp[:-1]
 
             # reset all test flows
-            interface.reset_session(session, ".".join(cp))
+            _pfsh.reset_session(session, ".".join(cp))
             return interface.flow_list(session)
         except Exception as err:
             return interface.err_response(session, "profile", err)
@@ -171,7 +173,7 @@ def application(environ, start_response):
             query = parse_qs(environ["QUERY_STRING"])
             path = query["path"][0]
             index = int(query["index"][0])
-            conv, sequence_info, ots, trace, index = interface.session_setup(
+            conv, sequence_info, ots, trace, index = _pfsh.session_setup(
                 session, path, index)
 
             try:
@@ -190,7 +192,7 @@ def application(environ, start_response):
 
         index += 1
         try:
-            return interface.run_sequence(sequence_info, session, conv, ots,
+            return pf.run_sequence(sequence_info, session, conv, ots,
                                      conv.trace, index)
         except Exception as err:
             return interface.err_response(session, "run_sequence", err)
@@ -206,11 +208,11 @@ def application(environ, start_response):
     # expected path format: /<testid>[/<endpoint>]
     elif path in session["flow_names"]:
         LOGGER.info("<=<=<=<=< %s >=>=>=>=>" % path)
-        conv, sequence_info, ots, trace, index = interface.session_setup(session,
+        conv, sequence_info, ots, trace, index = sh.session_setup(session,
                                                                     path)
         session["node"].complete = False
         try:
-            return interface.run_sequence(sequence_info, session, conv, ots,
+            return pf.run_sequence(sequence_info, session, conv, ots,
                                      trace, index)
         except Exception as err:
             return interface.err_response(session, "run_sequence", err)
