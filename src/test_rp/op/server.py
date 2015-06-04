@@ -438,7 +438,15 @@ def application(environ, start_response):
         return display_log(environ, start_response)
     elif path.startswith("_static/"):
         return static(environ, start_response, path)
-    
+    elif path.startswith("jwks.json"):
+        try:
+            jwks = session["op"].generate_jwks()
+            resp = Response(jwks, headers=[('Content-Type', 'application/json')])
+            return resp(environ, start_response)
+        except KeyError:
+            # Try to load from static file
+            return static(environ, start_response, "static/jwks.json")
+
     trace = Trace()
 
     if path == "test_list":
@@ -615,7 +623,7 @@ if __name__ == '__main__':
         "symkey": config.SYM_KEY,
         "template_lookup": LOOKUP,
         "template": {"form_post": "form_response.mako"},
-        }
+    }
 
     OP_ARG = {}
 
@@ -657,12 +665,12 @@ if __name__ == '__main__':
         pass
     else:
         # export JWKS
-        p = urlparse(config.KEY_EXPORT_URL % args.port)
-        f = open("."+p.path, "w")
-        f.write(json.dumps(jwks))
+        name = "./static/jwks.json"
+        with open(name, "w") as f:
+            f.write(json.dumps(jwks))
         f.close()
-        OP_ARG["keyjar"] = OAS.keyjar
-        OP_ARG["jwks_uri"] = p.geturl()
+        OP_ARG["jwks_uri"] = "{}jwks.json".format(_baseurl)
+        OP_ARG["keys"] = config.keys
 
     # Setup the web server
     SRV = wsgiserver.CherryPyWSGIServer(('0.0.0.0', args.port),

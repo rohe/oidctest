@@ -35,8 +35,6 @@ SERVER_KEY = "certs/server.key"
 #CA_BUNDLE="certs/chain.pem"
 CA_BUNDLE = None
 
-KEY_EXPORT_URL = "%sstatic/jwk.json" % issuer
-
 CLIENT_DB = "client_db"
 
 # =======  SIMPLE DATABASE ==============

@@ -3,6 +3,7 @@ import os
 from urlparse import urlparse
 from aatest import END_TAG
 from aatest.operation import Operation
+import functools
 
 from oic.oauth2 import rndstr
 from oic.oic import ProviderConfigurationResponse
@@ -125,6 +126,14 @@ class SyncAuthn(SyncGetRequest):
         # verify that I've got a valid access code
         self.tests["post"].append("valid_code")
 
+        # Monkey-patch: make sure we use the same http session (preserving
+        # cookies) when fetching keys from issuers 'jwks_uri' as for the
+        # rest of the test sequence
+        import oic.utils.keyio
+
+        oic.utils.keyio.request = functools.partial(
+            request_with_client_http_session, self)
+
     def op_setup(self):
         self.req_args["redirect_uri"] = self.conv.callback_uris[0]
 
@@ -205,6 +214,32 @@ class UserInfo(SyncGetRequest):
 class DisplayUserInfo(Operation):
     pass
 
+
 class Done(Operation):
     def run(self, *args, **kwargs):
         self.conv.trace.info(END_TAG)
+
+class UpdateProviderKeys(Operation):
+    def __call__(self, *args, **kwargs):
+       # Monkey-patch: make sure we use the same http session (preserving
+        # cookies) when fetching keys from issuers 'jwks_uri' as for the
+        # rest of the test sequence
+        import oic.utils.keyio
+
+        oic.utils.keyio.request = functools.partial(
+            request_with_client_http_session, self)
+
+        issuer = self.conv.client.provider_info["issuer"]
+        # Update all keys
+        for keybundle in self.conv.client.keyjar.issuer_keys[issuer]:
+            keybundle.update()
+
+
+def request_with_client_http_session(instance, method, url, **kwargs):
+    """Use the clients http session to make http request.
+    Note: client.http_request function requires the parameters in reverse
+    order (compared to the requests library): (method, url) vs (url, method)
+    so we can't bind the instance method directly.
+    """
+    return instance.conv.client.http_request(url, method)
+
