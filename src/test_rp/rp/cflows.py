@@ -8,6 +8,7 @@ from oidctest.oper import AccessToken
 from oidctest.oper import Discovery
 from oidctest.oper import Registration
 from oidctest.oper import SyncAuthn
+from oidctest.request import ErrorResponse
 from oidctest.testfunc import resource
 from oidctest.testfunc import set_jwks_uri
 from oidctest.testfunc import set_op_args
@@ -647,5 +648,102 @@ FLOWS = {
         "profile": "IT...",
         "desc": "Tests if the Relying Party can extract an at_hash from an ID token and it should be used in the "
                 "access_token validation. The response type should be set to 'id_token token'"
+    },
+    "rp-id_token-bad_es256_sig": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {set_request_args: {"id_token_signed_response_alg": "ES256"}}),
+            SyncAuthn,
+            AccessToken
+        ],
+        "profile": "...",
+        "desc": "The Relying Party should reject invalid asymmetric ID Token signature which has been "
+                "signed using the algorithm ES256"
+    },
+    "rp-id_token-bad_symmetric_sig_hs256": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {set_request_args: {"id_token_signed_response_alg": "HS256"}}),
+            SyncAuthn,
+            AccessToken
+        ],
+        "profile": "...",
+        "desc": "Tests if the Relying Party can identify and reject an ID Token with an invalid signature. "
+                "The ID Token has been signed using the symmetric algorithm HS256. For more information see "
+                "list item 6 in ID Token validation"
+    },
+    "rp-id_token-iat": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            #(SyncAuthn, {expected_exception: MissingRequiredAttribute}),
+            SyncAuthn,
+            AccessToken
+        ],
+        "profile": "...",
+        "desc": "The Relying Party should request an ID token if it does not contain a iat claim it should be rejected"
+    },
+    "rp-id_token-mismatching_issuer": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            # Registration,
+            (Registration, {set_request_args: {"id_token_signed_response_alg": "HS256"}}), # TODO Need to run HS256 alg, or else badSignature error (can't find keys)
+            SyncAuthn,
+            AccessToken
+        ],
+        "profile": "...",
+        "desc": "The Relying Party should request an ID token and reject it if the issuer identifier for the "
+                "OpenID Provider isn't matching the issuer in the returned ID Token"
+    },
+    "rp-id_token-sig+enc": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            SyncAuthn,
+            AccessToken
+        ],
+        "profile": "...",
+        "desc": "Tests if the Relying Party can request and use an signed and encrypted ID Token"
+    },
+    "rp-id_token-sig_none": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            (Registration, {set_request_args: {"id_token_signed_response_alg": "none"}}),
+            SyncAuthn,
+            AccessToken
+        ],
+        "profile": "C...",
+        "desc": "Tests if the Relying Party can request and use unsigned ID Tokens. Use Code flow and "
+                "set the 'alg' value equal to 'none'"
+    },
+    "rp-id_token-sub": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            #(SyncAuthn, {expect_exception: MissingRequiredAttribute}}),
+            SyncAuthn,
+            AccessToken
+        ],
+        "profile": "...",
+        "desc": "The Relying Party should request an ID token and reject it if the sub claim is missing"
+    },
+    "rp-id_token-bad_c_hash": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            SyncAuthn,
+            (AccessToken, {expect_exception: ErrorResponse})
+        ],
+        "profile": "...",
+        "desc": "Tests if the Relying Party extract an c_hash from an ID token presented as json. "
+                "It should be used to validate the correctness of the authorization code"
     },
 }

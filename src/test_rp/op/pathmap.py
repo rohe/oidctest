@@ -46,7 +46,7 @@ IDMAP = {
     "rp-idt-kid-absent": "/_/_/nokid1jwks/normal",
     "rp-idt-kid": "/_/_/nokidjwks/normal",
     "rp-id_token-bad_at_hash": "/_/_/ath/normal",
-    "rp-id_token-bad_c_hash": "/_/_/ath/normal",
+    "rp-id_token-bad_c_hash": "/_/_/ch/normal",
     "rp-id_token-mismatching_issuer": "/_/_/issi/normal",
     # "rp-idt-epk": "",
 

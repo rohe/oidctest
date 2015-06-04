@@ -2,6 +2,7 @@ import logging
 import os
 from urlparse import urlparse
 from aatest.operation import Operation
+from oic.exception import IssuerMismatch
 
 from oic.oauth2 import rndstr
 from oic.oic import ProviderConfigurationResponse
@@ -10,9 +11,12 @@ from oic.oic import AccessTokenResponse
 from oidctest.prof_util import WEBFINGER
 from oidctest.prof_util import DISCOVER
 from oidctest.prof_util import REGISTER
+from oidctest.request import ErrorResponse, same_issuer
 from oidctest.request import SyncGetRequest
 from oidctest.request import AsyncGetRequest
 from oidctest.request import SyncPostRequest
+
+from jwkest import jws
 
 __author__ = 'roland'
 
@@ -163,6 +167,16 @@ class AccessToken(SyncPostRequest):
                 self.op_args, self.req_args))
         atr = self.conv.client.do_access_token_request(
             request_args=self.req_args, **self.op_args)
+
+        # Check the c_hash
+        resp_hash = jws.left_hash(self.req_args["code"], atr["id_token"].jws_header["alg"])
+        if atr["id_token"]["c_hash"] != resp_hash:
+            raise ErrorResponse("c_hash mismatch {} != {}".format(atr["id_token"]["c_hash"], jws.left_hash(self.req_args["code"], "HS256")))
+
+        if not same_issuer(self.conv.info["issuer"], atr["id_token"]["iss"]):
+            # if self.conv.info["issuer"] != atr["id_token"]["iss"]:
+            raise IssuerMismatch(" {} != {}".format(self.conv.info["issuer"], atr["id_token"]["iss"]))
+
         self.conv.trace.response(atr)
         assert isinstance(atr, AccessTokenResponse)
 

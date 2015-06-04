@@ -41,7 +41,7 @@ class Server(oic.Server):
 
         if "itsub" in self.behavior_type:  # missing sub claim
             try:
-                del idt["itsub"]
+                del idt["sub"]
             except KeyError:
                 pass
 

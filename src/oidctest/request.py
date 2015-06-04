@@ -1,12 +1,14 @@
 import logging
+from oic.exception import NotForMe, IssuerMismatch
 import requests
 import copy
 from urlparse import parse_qs
 from bs4 import BeautifulSoup
 
+from requests.models import Response
 from oic.oauth2.util import URL_ENCODED
 from oic.oauth2 import ResponseError
-from oic.utils.http_util import Redirect, Response
+from oic.utils.http_util import Redirect
 from oic.utils.http_util import get_post
 from oic.utils.time_util import utc_time_sans_frac
 #from oictest.check import CheckEndpoint
@@ -21,6 +23,10 @@ logger = logging.getLogger(__name__)
 DUMMY_URL = "https://remove.this.url/"
 
 
+class ErrorResponse(Exception):
+    pass
+
+
 class SyncRequest(Operation):
     request_cls = None
     method = ""
@@ -31,9 +37,6 @@ class SyncRequest(Operation):
     response_type = "urlencoded"
     accept = None
     _tests = {"post": [], "pre": []}
-
-    class ErrorResponse(Exception):
-        pass
 
     def __init__(self, conv, session, test_id, conf, funcs, chk_factory):
         Operation.__init__(self, conv, session, test_id, conf, funcs,
@@ -83,13 +86,19 @@ class SyncRequest(Operation):
         else:
             resp = r
 
-        try:
-            if isinstance(resp, Response):
+        if not isinstance(resp, Response):
+            try:
                 if self.req_args['nonce'] != resp["id_token"]['nonce']:
-                    raise SyncRequest.ErrorResponse("invalid nonce! {} != {}".format(self.req_args['nonce'], resp["id_token"]['nonce']))
+                    raise ErrorResponse("invalid nonce! {} != {}".format(self.req_args['nonce'], resp["id_token"]['nonce']))
                 self.conv.client.id_token = resp["id_token"]
-        except KeyError:
-            pass
+            except KeyError:
+                pass
+
+            try:
+                if not same_issuer(self.conv.info["issuer"], resp["id_token"]["iss"]):
+                    raise IssuerMismatch(" {} != {}".format(self.conv.info["issuer"], resp["id_token"]["iss"]))
+            except KeyError:
+                pass
 
         return resp
 
@@ -205,6 +214,14 @@ class AsyncRequest(Operation):
         logger.info("Parsed response: %s" % response.to_dict())
         self.conv.protocol_response.append((response, info))
         self.conv.trace.response(response)
+
+
+def same_issuer(issuer_A, issuer_B):
+    if not issuer_A.endswith("/"):
+        issuer_A += "/"
+    if not issuer_B.endswith("/"):
+        issuer_B += "/"
+    return issuer_A == issuer_B
 
 
 class SyncGetRequest(SyncRequest):
