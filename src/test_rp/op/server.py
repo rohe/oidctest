@@ -665,7 +665,6 @@ if __name__ == '__main__':
         pass
     else:
         # export JWKS
-        p = urlparse(config.KEY_EXPORT_URL % args.port)
         name = "./static/jwks.json"
         with open(name, "w") as f:
             f.write(json.dumps(jwks))
