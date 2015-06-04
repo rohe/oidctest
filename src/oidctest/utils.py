@@ -1,10 +1,8 @@
-import json
 import logging
 import os
 import tarfile
 from urllib import quote_plus
 
-from aatest.check import END_TAG, STATUSCODE
 from oic.utils.time_util import in_a_while
 
 __author__ = 'roland'
@@ -179,4 +177,3 @@ def get_profile_info(session, test_id=None):
                 "Timestamp": in_a_while()}
 
     return {}
-

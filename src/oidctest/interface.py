@@ -2,6 +2,7 @@ import logging
 import os
 from urlparse import unquote
 from aatest import exception_trace
+from aatest import Break
 
 from oic.utils.http_util import Response, NotFound
 from oic.utils.time_util import in_a_while
@@ -10,7 +11,7 @@ from aatest.check import ERROR
 from aatest.check import OK
 from aatest.check import WARNING
 from aatest.check import INCOMPLETE
-from aatest.summation import represent_result
+from aatest.summation import represent_result, evaluate
 from aatest.summation import test_output
 from aatest.summation import trace_output
 from aatest.summation import create_tar_archive
@@ -245,6 +246,43 @@ class Interface(object):
                 resp = Response("No saved logs")
                 return resp(self.environ, self.start_response)
 
+    @staticmethod
+    def get_err_type(session):
+        errt = WARNING
+        try:
+            if session["node"].mti == {"all": "MUST"}:
+                errt = ERROR
+        except KeyError:
+            pass
+        return errt
+
+    def log_fault(self, session, err, where, err_type=0):
+        if err_type == 0:
+            err_type = self.get_err_type(session)
+
+        if "node" in session:
+            if err:
+                if isinstance(err, Break):
+                    session["node"].state = WARNING
+                else:
+                    session["node"].state = err_type
+            else:
+                session["node"].state = err_type
+
+        if "conv" in session:
+            if err:
+                if isinstance(err, basestring):
+                    pass
+                else:
+                    session["conv"].trace.error("%s:%s" % (
+                        err.__class__.__name__, str(err)))
+                session["conv"].test_output.append(
+                    {"id": "-", "status": err_type, "message": "%s" % err})
+            else:
+                session["conv"].test_output.append(
+                    {"id": "-", "status": err_type,
+                     "message": "Error in %s" % where})
+
     def err_response(self, session, where, err):
         if err:
             exception_trace(where, err, logger)
@@ -266,4 +304,15 @@ class Interface(object):
                         headers=[])
         argv = {"htmlpage": homepage,
                 "error": str(err)}
+        return resp(self.environ, self.start_response, **argv)
+
+    def opresult(self, conv, session):
+        evaluate(session)
+        return self.flow_list(session)
+
+    def opresult_fragment(self):
+        resp = Response(mako_template="opresult_repost.mako",
+                        template_lookup=self.lookup,
+                        headers=[])
+        argv = {}
         return resp(self.environ, self.start_response, **argv)

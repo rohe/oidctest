@@ -1,6 +1,7 @@
 import logging
 import os
 from urlparse import urlparse
+from aatest import END_TAG
 from aatest.operation import Operation
 
 from oic.oauth2 import rndstr
@@ -203,3 +204,7 @@ class UserInfo(SyncGetRequest):
 
 class DisplayUserInfo(Operation):
     pass
+
+class Done(Operation):
+    def run(self, *args, **kwargs):
+        self.conv.trace.info(END_TAG)

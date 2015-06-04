@@ -1,13 +1,16 @@
 import logging
+
 from aatest import get_node, make_node
+
 from oidctest.prof_util import flows
+from oidctest.oper import Done
 
 __author__ = 'roland'
 
 logger = logging.getLogger(__name__)
 
 class SessionHandler(object):
-    def __init__(self, profiles, profile, test_flows, test_class):
+    def __init__(self, profiles, profile, test_flows, test_class, **kwargs):
         self.profiles = profiles
         self.profile = profile
         self.test_flows = test_flows
