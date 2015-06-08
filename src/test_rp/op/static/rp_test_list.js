@@ -214,11 +214,11 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "An " + IMPLICIT_AUTHENTICATION_RESPONSE + " containing an " + ID_TOKEN_IMPLICIT_FLOW + "."
             },
             "rp-response_type-id_token+token": {
-                "short_description": "Can make request with 'id_token token' response type",
+                "short_description": "Can make request using response_type 'id_token token'",
                 "profiles": [IMPLICIT],
-                "detailed_description": "Tests if an Relying Party can make a authentication request using the " + IMPLICIT_FLOW +
-                ". The "+ RESPONSE_TYPE +" should be set to 'id_token token'"  ,
-                "expected_result": "A authorization response containing an id_token and an access token"
+                "detailed_description": "Make an authentication request using the " + IMPLICIT_FLOW +
+                ", specifying the "+ RESPONSE_TYPE +" as 'id_token token'"  ,
+                "expected_result": "An " + IMPLICIT_AUTHENTICATION_RESPONSE + " containing an " + ID_TOKEN_IMPLICIT_FLOW + " and an Access Token."
             },
             "rp-response_mode-form_post": {
                 "short_description": "Can make request using response_type='id_token token' and response_mode='form_post'",
