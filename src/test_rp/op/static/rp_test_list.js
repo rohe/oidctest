@@ -218,9 +218,9 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             },
             "rp-response_mode-form_post": {
                 "short_description": "Can make request using response_type='id_token token' and response_mode='form_post'",
-                "detailed_description": "Tests if an Relying Party can make a authentication request. The "+ RESPONSE_TYPE +
-                " should be set to 'id_token token' and the "+ RESPONSE_MODE +" should be " + FORM_POST,
-                "expected_result": "HTML form post response processed resulting in query encoded parameters"
+                "detailed_description": "Make an authentication request with the "+ RESPONSE_TYPE +
+                " set to 'id_token token' and the "+ RESPONSE_MODE +" set to " + FORM_POST + ".",
+                "expected_result": "HTML form post response processed, resulting in query encoded parameters."
             },
             "rp-response_type-self_issued": {
                 "short_description": "Can use Self-Issued OP",
