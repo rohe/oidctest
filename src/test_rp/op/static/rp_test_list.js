@@ -197,10 +197,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         }],
         ["Response type and response mode", {
             "rp-response_type-code": {
-                "short_description": "Can make requests with 'code' response type",
+                "short_description": "Can make request using response_type 'code'",
                 "profiles": [BASIC],
-                "detailed_description": "Tests if an Relying Party can make a authentication request using the " + AUTHORIZATION_CODE_FLOW,
-                "expected_result": "A " + AUTHENTICATION_RESPONSE + " containing an authorization code"
+                "detailed_description": "Make an authentication request using the " + AUTHORIZATION_CODE_FLOW + ".",
+                "expected_result": "An " + AUTHENTICATION_RESPONSE + " containing an authorization code."
             },
             "rp-response_type-id_token": {
                 "short_description": "Can make request with 'id_token' response type",
