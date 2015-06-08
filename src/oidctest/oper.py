@@ -221,7 +221,7 @@ class Done(Operation):
 
 class UpdateProviderKeys(Operation):
     def __call__(self, *args, **kwargs):
-       # Monkey-patch: make sure we use the same http session (preserving
+        # Monkey-patch: make sure we use the same http session (preserving
         # cookies) when fetching keys from issuers 'jwks_uri' as for the
         # rest of the test sequence
         import oic.utils.keyio

@@ -161,8 +161,16 @@ class AsyncRequest(Operation):
         self.conv.timestamp.append((url, utc_time_sans_frac()))
         return Redirect(str(url))
 
-    def parse_response(self, path, environ, message_factory):
+    def parse_response(self, path, io, message_factory):
         _ctype = self.response_type
+        _conv = self.conv
+
+        if self.csi is None:
+            url, body, ht_args, csi = _conv.client.request_info(
+                self.request, method=self.method, request_args=self.req_args,
+                **self.op_args)
+
+            self.csi = csi
 
         try:
             response_mode = self.csi["response_mode"]
@@ -171,39 +179,31 @@ class AsyncRequest(Operation):
 
         # parse the response
         if response_mode == "form_post":
-            info = parse_qs(get_post(environ))
+            info = parse_qs(get_post(io.environ))
             _ctype = "dict"
-        elif path == "authz_post":
-            query = parse_qs(get_post(environ))
-            try:
-                info = query["fragment"][0]
-            except KeyError:
-                return self.com.sorry_response(self.conv.conf.BASE,
-                                               "missing fragment ?!")
-            _ctype = "urlencoded"
         elif self.response_where == "url":
-            info = environ["QUERY_STRING"]
+            info = io.environ["QUERY_STRING"]
             _ctype = "urlencoded"
         else:  # resp_c.where == "body"
-            info = get_post(environ)
+            info = get_post(io.environ)
 
         logger.info("Response: %s" % info)
-        self.conv.trace.reply(info)
+        _conv.trace.reply(info)
         resp_cls = message_factory(self.response_cls)
-        algs = self.conv.client.sign_enc_algs("id_token")
+        algs = _conv.client.sign_enc_algs("id_token")
         try:
-            response = self.conv.client.parse_response(
+            response = _conv.client.parse_response(
                 resp_cls, info, _ctype,
-                self.conv.AuthorizationRequest["state"],
-                keyjar=self.conv.client.keyjar, algs=algs)
+                self.csi["state"],
+                keyjar=_conv.client.keyjar, algs=algs)
         except ResponseError as err:
-            return self.com.err_response(self.conv, "run_sequence", err)
+            return io.err_response(_conv, "run_sequence", err)
         except Exception as err:
-            return self.com.err_response(self.conv, "run_sequence", err)
+            return io.err_response(_conv, "run_sequence", err)
 
         logger.info("Parsed response: %s" % response.to_dict())
-        self.conv.protocol_response.append((response, info))
-        self.conv.trace.response(response)
+        _conv.protocol_response.append((response, info))
+        _conv.trace.response(response)
 
 
 class SyncGetRequest(SyncRequest):
@@ -224,5 +224,3 @@ class SyncPutRequest(SyncRequest):
 
 class SyncDeleteRequest(SyncRequest):
     method = "DELETE"
-
-

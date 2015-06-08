@@ -1,4 +1,4 @@
-from oper import AccessToken
+from oper import AccessToken, Done
 from oper import AsyncAuthn
 from oper import Discovery
 from oper import DisplayUserInfo
@@ -20,6 +20,7 @@ PMAP = {"C": "Basic",
 PROFILEMAP = {
     Webfinger: {"C": {}, "I": {}, "IT": {}, "CI": {}, "CT": {}, "CIT": {}},
     Discovery: {"C": {}, "I": {}, "IT": {}, "CI": {}, "CT": {}, "CIT": {}},
+    Done: {"C": {}, "I": {}, "IT": {}, "CI": {}, "CT": {}, "CIT": {}},
     SyncAuthn: {
         "C": {set_request_args: {"response_type": ["code"],
                                  "scope": ["openid"]},
