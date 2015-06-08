@@ -173,9 +173,9 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             "rp-registration-dynamic": {
                 "short_description": "Uses dynamic registration",
                 "profiles": [DYNAMIC],
-                "detailed_description": "Tests if the Relying Party can use the " + CLIENT_REGISTRATION_ENDPOINT + " in order to dynamically " +
-                "register the Relaying Party",
-                "expected_result": "Get a " + CLIENT_REGISTRATION_RESPONSE + " as a JSON file"
+                "detailed_description": "Use the " + CLIENT_REGISTRATION_ENDPOINT + " in order to dynamically " +
+                "register the Relying Party.",
+                "expected_result": "Get a " + CLIENT_REGISTRATION_RESPONSE + "."
             },
             "rp-registration-redirect_uris": {
                 "short_description": "Registration has redirect_uris",
