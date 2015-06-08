@@ -189,7 +189,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Get a " + CLIENT_REGISTRATION_RESPONSE + "."
             },
             "rp-registration-well_formed_jwk": {
-                "short_description": "Keys are published as a well-formed JWKS",
+                "short_description": "Keys are published as a well-formed JWK Set",
                 "profiles": [DYNAMIC],
                 "detailed_description": "The keys published by the Relying Party should follow the " + JSON_WEB_KEY_SET_FORMAT + ".",
                 "expected_result": "Get a " + CLIENT_REGISTRATION_RESPONSE + "."
