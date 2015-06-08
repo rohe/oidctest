@@ -124,6 +124,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var SELF_ISSUED_ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedValidation", "self-issued ID Token");
     var TOKEN_REQUEST = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#TokenRequest", "Token Request");
     var ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#IDToken", "ID Token");
+    var UNSECURED_JWS = convert_to_link("https://tools.ietf.org/html/rfc7518#section-3.6", "Unsecured JWS");
 
     $scope.guidlines = [
         ["Discovery", {
@@ -265,11 +266,11 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "An authentication response to the signed and encrypted request passed using the request_uri request parameter."
             },
             "rp-request_uri-unsigned": {
-                "short_description": "Can Use request_uri Request Parameter with Unsigned Request",
+                "short_description": "Can use request_uri request parameter with unsigned request",
                 "profiles": [DYNAMIC_OPTIONAL],
-                "detailed_description": "The Relying Party can pass a "+ REQUEST_OBJECT_BY_REFERENCE +" using the " +
-                "request_uri parameter. The Request Object should set 'alg' equal to 'none'",
-                "expected_result": "Completing the Authorization Request using request_uri Request Parameter"
+                "detailed_description": "Pass a "+ REQUEST_OBJECT_BY_REFERENCE +", using the " +
+                "request_uri parameter. The Request Object should be signed using the algorithm 'none' (" +UNSECURED_JWS + ").",
+                "expected_result": "An authentication response to the unsigned request passed using the request_uri request parameter."
             },
             "rp-request_uri-sig": {
                 "short_description": "Can use request_uri request parameter with signed request",
