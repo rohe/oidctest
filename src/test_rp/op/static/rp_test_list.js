@@ -165,10 +165,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Rejects ID Token when iss and issuer values differ"
             },
             "rp-discovery-jwks_uri_keys": {
-                "short_description": "Uses Keys Discovered with jwks_uri Value",
+                "short_description": "Uses keys discovered with jwks_uri value",
                 "profiles": [CONFIG, DYNAMIC],
-                "detailed_description": "The Relying Party uses keys at the jwks_uri which has been obtained form the " + OPENID_PROVIDER_METADATA,
-                "expected_result": "Should be able to sign and/or encrypt requests using obtained keys"
+                "detailed_description": "The Relying Party uses keys from the jwks_uri which has been obtained from the " + OPENID_PROVIDER_METADATA + ".",
+                "expected_result": "Should be able to verify signed responses and/or encrypt requests using obtained keys."
             }
         }],
         ["Dynamic Client Registration", {
