@@ -236,10 +236,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             }
         }],
         ["Claims Request Parameter", {
-            "rp-claims_reqest-id_token_claims": {
-                "short_description": "Can Request and use claims in ID Token using the 'claims' request parameter",
-                "detailed_description": "The Relying Party can ask for a specific claim using the "+ CLAIMS_REQUEST_PARAMETER +". The claim should be returned in a ID Token",
-                "expected_result": "The claim should appear in the returned ID Token"
+            "rp-claims_request-id_token_claims": {
+                "short_description": "Can request and use claims in ID Token using the 'claims' request parameter",
+                "detailed_description": "Ask for a specific claim using the "+ CLAIMS_REQUEST_PARAMETER + ".",
+                "expected_result": "An ID Token containing the requested claim."
             },
             "rp-id_token-request_userinfo": {
                 "short_description": "Can Request UserInfo Claims by using the 'claims' request parameter",
