@@ -109,7 +109,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var REQUEST_CLAIMS_USING_SCOPE_VALUES = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims", "request claims using Scope Values");
     var OPENID_PROVIDER_METADATA = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata", "OpenID Provider Metadata");
     var CLIENT_METADATA = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata", "Client Metadata");
-    var JSON_WEB_KEY_FORMAT = convert_to_link("https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-4", "JSON Web Key (JWK) Format");
+    var JSON_WEB_KEY_SET_FORMAT = convert_to_link("https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-5", "JSON Web Key Set (JWK Set) Format");
     var THIRD_PARTY_INITIATED_LOGIN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ThirdPartyInitiatedLogin", "third-party initiated login");
     var OPENID_CONFIGURATION_INFORMATION = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig", "OpenID Provider Configuration Information");
     var SIGNING_KEY_ROLLOVER = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys", "signing key rollover");
@@ -183,10 +183,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Get a " + CLIENT_REGISTRATION_RESPONSE + "."
             },
             "rp-registration-well_formed_jwk": {
-                "short_description": "Keys in RP follows JWK format",
+                "short_description": "Keys are published as a well-formed JWKS",
                 "profiles": [DYNAMIC],
-                "detailed_description": "The keys published by the Relying Party should follow the " + JSON_WEB_KEY_FORMAT,
-                "expected_result": "Can get a Client Registration Response"
+                "detailed_description": "The keys published by the Relying Party should follow the " + JSON_WEB_KEY_SET_FORMAT + ".",
+                "expected_result": "Get a " + CLIENT_REGISTRATION_RESPONSE + "."
             },
             "rp-registration-uses_https_endpoints": {
                 "short_description": "Uses HTTPS for all endpoints",
