@@ -255,14 +255,14 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             "rp-request_uri-enc": {
                 "short_description": "Can use request_uri request parameter with encrypted request",
                 "detailed_description": "Pass a "+ REQUEST_OBJECT_BY_REFERENCE + ", using the " +
-                "request_uri parameter. " + ENCRYPT_THE_REQUEST_OBJECT +" using 'RSA1_5' and 'A128CBC-HS256' algorithms.",
+                "request_uri parameter. " + ENCRYPT_THE_REQUEST_OBJECT +" using the 'RSA1_5' and 'A128CBC-HS256' algorithms.",
                 "expected_result": "An authentication response to the encrypted request passed using the request_uri request parameter."
             },
             "rp-request_uri-sig+enc": {
-                "short_description": "Can Use request_uri Request Parameter with Signed and Encrypted Request",
-                "detailed_description": "The Relying Party can pass a "+ REQUEST_OBJECT_BY_REFERENCE +" using the " +
-                "request_uri parameter. "+ ENCRYPT_THE_REQUEST_OBJECT +" using RSA1_5 and A128CBC-HS256 algorithms and sign it using RS256 algorithm",
-                "expected_result": "Completing the Authorization Request using request_uri Request Parameter"
+                "short_description": "Can use request_uri request parameter with signed and encrypted request",
+                "detailed_description": "Pass a "+ REQUEST_OBJECT_BY_REFERENCE +", using the " +
+                "request_uri parameter. "+ SIGN_THE_REQUEST_OBJECT +" using the 'RS256' algorithm, then " + ENCRYPT_THE_REQUEST_OBJECT +" using the 'RSA1_5' and 'A128CBC-HS256' algorithms.",
+                "expected_result": "An authentication response to the signed and encrypted request passed using the request_uri request parameter."
             },
             "rp-request_uri-unsigned": {
                 "short_description": "Can Use request_uri Request Parameter with Unsigned Request",
