@@ -108,7 +108,6 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var VALIDATE_THE_NONCE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitIDTValidation", "validate the nonce");
     var OPENID_SCOPE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest", "openid scope");
     var REQUEST_CLAIMS_USING_SCOPE_VALUES = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims", "request claims using Scope Values");
-    var OPENID_CONFIGURATION_DISCOVERY_INFORMATION = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig", "openid-configuration Discovery Information");
     var OPENID_PROVIDER_METADATA = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata", "OpenID Provider Metadata");
     var CLIENT_METADATA = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata", "Client Metadata");
     var JSON_WEB_KEY_FORMAT = convert_to_link("https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-4", "JSON Web Key (JWK) Format");
@@ -153,10 +152,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Identify that the issuers are not matching and reject the provider configuration."
             },
             "rp-discovery-openid_configuration": {
-                "short_description": "Uses openid-configuration Discovery Information",
+                "short_description": "Uses \"Provider Configuration Information\"",
                 "profiles": [CONFIG, DYNAMIC],
-                "detailed_description": "The Relying Party should be able to request and use the " + OPENID_CONFIGURATION_DISCOVERY_INFORMATION,
-                "expected_result": "Use the JSON object returned from the OpenId Connect Provider"
+                "detailed_description": "Retrieve and use the " + OPENID_CONFIGURATION_INFORMATION + ".",
+                "expected_result": "Read and use the JSON object returned from the OpenID Connect Provider."
             },
             "rp-discovery-mismatching_issuers": {
                 "short_description": "Rejects ID Token with iss Not Matching Discovered issuer",
