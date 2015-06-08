@@ -60,8 +60,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         return false;
     };
 
-    var OPENID_DOCS = "OpenId connect documentation";
-    var DISCOVERY_DOC = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery", OPENID_DOCS);
+    var ISSUER_DISCOVERY_DOC = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery", "OpenID Provider Issuer Discovery");
     var CLIENT_REGISTRATION_ENDPOINT = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientRegistration", "client registration endpoint");
     var CODE_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#CodeFlowAuth", "Code flow");
     var IMPLICIT_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitFlowSteps", "Implicit Flow");
@@ -69,7 +68,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var FORM_ENCODED_BODY_METHOD = convert_to_link("http://tools.ietf.org/html/rfc6750#section-2.2", "form-encoded body method");
     var RFC7033 = convert_to_link("http://tools.ietf.org/html/rfc7033#section-7", "RFC7033");
     var URL_SYNTAX = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#URLSyntax", "URL syntax");
-    var ACCT_SYNTAX = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#EmailSyntax", "acct syntax");
+    var ACCT_SYNTAX = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#AcctURISyntax", "acct URI syntax");
     var CLIENT_REGISTRATION_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#RegistrationResponse", "Client Registration Response");
     var AUTHORIZATION_CODE_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#CodeFlowAuth", "authorization code flow");
     var AUTHENTICATION_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitAuthResponse", "authentication response");
@@ -125,17 +124,17 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "short_description": "Can discover identifiers using URL syntax",
                 "profiles": [DYNAMIC],
                 "detailed_description": "Tests if an entity can use WebFinger as described by " +
-                RFC7033 + " and the " + DISCOVERY_DOC + " to determine the location of the OpenID Provider. " +
+                RFC7033 + " and the " + ISSUER_DISCOVERY_DOC + " to determine the location of the OpenID Provider. " +
                 "The discovery should be done using " + URL_SYNTAX + " as end-user identifier",
                 "expected_result": "An issuer should be returned by the OpenID Provider"
             },
             "rp-discovery-webfinger_acct": {
-                "short_description": "Can discover identifiers using acct syntax",
+                "short_description": "Can discover OpenID providers using acct URI syntax",
                 "profiles": [DYNAMIC],
-                "detailed_description": "Tests if an entity can use WebFinger as described by " +
-                RFC7033 + " and the " + DISCOVERY_DOC + " to determine the location of the OpenID Provider. " +
-                "The discovery should be done using " + ACCT_SYNTAX + " as end-user identifier",
-                "expected_result": "An issuer should be returned"
+                "detailed_description": "Use WebFinger (" +
+                RFC7033 + ") and " + ISSUER_DISCOVERY_DOC + " to determine the location of the OpenID Provider. " +
+                "The discovery should be done using " + ACCT_SYNTAX + " as user input identifier.",
+                "expected_result": "An issuer location should be returned."
             },
             "rp-discovery": {
                 "short_description": "Uses \"OpenID Connect Discovery\"",
