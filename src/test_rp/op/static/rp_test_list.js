@@ -116,7 +116,6 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var ENCRYPTION_KEY_ROLLOVER = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateEncKeys", "encryption key rollover");
     var SINGLE_KEY = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#Signing", "single key");
     var MULTIPLE_KEYS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#Signing", "multiple keys");
-    var USES_HTTPS_IN_ALL_ENDPOINTS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#TLSRequirements", "uses https in all endpoints");
 
     $scope.guidlines = [
         ["Discovery", {
@@ -190,10 +189,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Can get a Client Registration Response"
             },
             "rp-registration-uses_https_endpoints": {
-                "short_description": "Uses https for all endpoints",
+                "short_description": "Uses HTTPS for all endpoints",
                 "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
-                "detailed_description": "Tests if the Relying Party "+ USES_HTTPS_IN_ALL_ENDPOINTS +" published in the " + CLIENT_METADATA,
-                "expected_result": "No endpoints not supporting TLS"
+                "detailed_description": "Only register URLs using the https scheme for all endpoints in the " +  CLIENT_METADATA + ".",
+                "expected_result": "No endpoints not supporting HTTPS."
             }
         }],
         ["Response type and response mode", {
