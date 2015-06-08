@@ -103,7 +103,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var SIGN_THE_REQUEST_OBJECT = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SignedRequestObject", "Sign the Request Object");
     var AGGREGATED_CLAIMS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ClaimTypes", "Aggregated Claims");
     var DISTRIBUTED_CLAIMS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ClaimTypes", "Distributed Claims");
-    var SELF_ISSUED_OPENID_PROVIDERS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssued", "Self-Issued OpenID Providers");
+    var SELF_ISSUED_OPENID_PROVIDERS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssued", "Self-Issued OpenID Provider");
     var HYBRID_FLOW_ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0-17.html#HybridIDToken", "hybrid flow");
     var IMPLICIT_FLOW_ID_TOKEN = convert_to_link(IMPLICIT_FLOW_ID_TOKEN_URL, "implicit flow");
     var ID_TOKEN_VALIDATION_FOR_CODE_FLOW = convert_to_link("http://openid.net/specs/openid-connect-core-1_0-17.html#IDTokenValidation", "ID Token validation for code flow");
@@ -120,6 +120,8 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var SINGLE_KEY = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#Signing", "single key");
     var MULTIPLE_KEYS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#Signing", "multiple keys");
     var ID_TOKEN_IMPLICIT_FLOW = convert_to_link(IMPLICIT_FLOW_ID_TOKEN_URL, "ID Token");
+    var SELF_ISSUED_AUTH_RESPONSE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedResponse", "authentication response");
+    var SELF_ISSUED_ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedValidation", "self-issued ID Token")
 
     $scope.guidlines = [
         ["Discovery", {
@@ -227,10 +229,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "HTML form post response processed, resulting in query encoded parameters."
             },
             "rp-response_type-self_issued": {
-                "short_description": "Can use Self-Issued OP",
+                "short_description": "Can use Self-Issued OpenID Provider",
                 "profiles": [SELF_ISSUED],
-                "detailed_description": "Tests if an Relying Party can make a authentication request to a " + SELF_ISSUED_OPENID_PROVIDERS,
-                "expected_result": "A authorization response containing an id_token"
+                "detailed_description": "Make an authentication request to a " + SELF_ISSUED_OPENID_PROVIDERS + ".",
+                "expected_result": "An " + SELF_ISSUED_AUTH_RESPONSE + " containing an " + SELF_ISSUED_ID_TOKEN + "."
             }
         }],
         ["Claims Request Parameter", {
