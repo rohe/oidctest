@@ -1,3 +1,6 @@
+import base64
+from jwkest import b64d
+from jwkest.jwt import b64encode_item
 from oic import oic
 from oic.oauth2 import Message, rndstr
 from oic.oic import provider, ProviderConfigurationResponse
@@ -96,6 +99,14 @@ class Provider(provider.Provider):
             p = _jws.split(".")
             p[2] = sort_string(p[2])
             _jws = ".".join(p)
+
+        if "nokidmuljwks" in self.behavior_type:
+            _split_jws = _jws.split(".")
+            header = eval(b64d(_split_jws[0]))
+            header.pop("kid", None)
+            header = b64encode_item(header)
+            _split_jws[0] = header
+            _jws = ".".join(_split_jws)
 
         return _jws
 

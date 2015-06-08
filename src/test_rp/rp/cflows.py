@@ -742,8 +742,22 @@ FLOWS = {
             SyncAuthn,
             (AccessToken, {expect_exception: ErrorResponse})
         ],
-        "profile": "...",
+        "profile": "C,CI,CT,CIT...",
         "desc": "Tests if the Relying Party extract an c_hash from an ID token presented as json. "
                 "It should be used to validate the correctness of the authorization code"
+    },
+    "rp-id_token-kid_absent_multiple_jwks": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            # (Registration,
+            #  {set_request_args: {"id_token_signed_response_alg": "RS256"}}),
+            (SyncAuthn, {set_request_args: {}}),
+            AccessToken
+        ],
+        "profile": "...",
+        "desc": "If there are multiple keys in the referenced JWK Set document, "
+                "a kid value MUST be provided in the JOSE Header"
     },
 }
