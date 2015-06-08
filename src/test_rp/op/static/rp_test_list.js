@@ -60,6 +60,8 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         return false;
     };
 
+    var IMPLICIT_FLOW_ID_TOKEN_URL = "https://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitIDToken";
+
     var ISSUER_DISCOVERY_DOC = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery", "OpenID Provider Issuer Discovery");
     var CLIENT_REGISTRATION_ENDPOINT = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientRegistration", "client registration endpoint");
     var CODE_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#CodeFlowAuth", "Code flow");
@@ -70,8 +72,9 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var URL_SYNTAX = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#URLSyntax", "URL syntax");
     var ACCT_SYNTAX = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#AcctURISyntax", "acct URI syntax");
     var CLIENT_REGISTRATION_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#RegistrationResponse", "Client Registration Response");
-    var AUTHORIZATION_CODE_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#CodeFlowAuth", "authorization code flow");
-    var AUTHENTICATION_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitAuthResponse", "authentication response");
+    var AUTHORIZATION_CODE_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#CodeFlowAuth", "Authorization Code Flow");
+    var CODE_AUTHENTICATION_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#AuthResponse", "authentication response");
+    var IMPLICIT_AUTHENTICATION_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitAuthResponse", "authentication response");
     var CLIENT_SECRET_BASIC = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication", "client_secret_basic");
     var TOKEN_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#TokenResponse", "token response");
     var USERINFO_REQUEST = convert_to_link("https://openid.net/specs/openid-connect-standard-1_0-21.html#UserInfoRequest", "UserInfo request");
@@ -102,7 +105,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var DISTRIBUTED_CLAIMS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ClaimTypes", "Distributed Claims");
     var SELF_ISSUED_OPENID_PROVIDERS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssued", "Self-Issued OpenID Providers");
     var HYBRID_FLOW_ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0-17.html#HybridIDToken", "hybrid flow");
-    var IMPLICIT_FLOW_ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitIDToken", "implicit flow");
+    var IMPLICIT_FLOW_ID_TOKEN = convert_to_link(IMPLICIT_FLOW_ID_TOKEN_URL, "implicit flow");
     var ID_TOKEN_VALIDATION_FOR_CODE_FLOW = convert_to_link("http://openid.net/specs/openid-connect-core-1_0-17.html#IDTokenValidation", "ID Token validation for code flow");
     var VALIDATE_THE_NONCE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitIDTValidation", "validate the nonce");
     var OPENID_SCOPE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest", "openid scope");
@@ -116,6 +119,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var ENCRYPTION_KEY_ROLLOVER = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateEncKeys", "encryption key rollover");
     var SINGLE_KEY = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#Signing", "single key");
     var MULTIPLE_KEYS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#Signing", "multiple keys");
+    var ID_TOKEN_IMPLICIT_FLOW = convert_to_link(IMPLICIT_FLOW_ID_TOKEN_URL, "ID Token");
 
     $scope.guidlines = [
         ["Discovery", {
@@ -200,14 +204,14 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "short_description": "Can make request using response_type 'code'",
                 "profiles": [BASIC],
                 "detailed_description": "Make an authentication request using the " + AUTHORIZATION_CODE_FLOW + ".",
-                "expected_result": "An " + AUTHENTICATION_RESPONSE + " containing an authorization code."
+                "expected_result": "An " + CODE_AUTHENTICATION_RESPONSE + " containing an authorization code."
             },
             "rp-response_type-id_token": {
-                "short_description": "Can make request with 'id_token' response type",
+                "short_description": "Can make request using response_type 'id_token'",
                 "profiles": [IMPLICIT],
-                "detailed_description": "Tests if an Relying Party can make a authentication request using the " + IMPLICIT_FLOW +
-                ". The "+ RESPONSE_TYPE +" should be set to 'id_token'"  ,
-                "expected_result": "A authorization response containing an id_token"
+                "detailed_description": "Make an authentication request using the " + IMPLICIT_FLOW +
+                ", specifying the "+ RESPONSE_TYPE +" as 'id_token'."  ,
+                "expected_result": "An " + IMPLICIT_AUTHENTICATION_RESPONSE + " containing an " + ID_TOKEN_IMPLICIT_FLOW + "."
             },
             "rp-response_type-id_token+token": {
                 "short_description": "Can make request with 'id_token token' response type",
