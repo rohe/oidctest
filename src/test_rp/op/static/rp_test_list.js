@@ -78,7 +78,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var USERINFO_REQUEST = convert_to_link("https://openid.net/specs/openid-connect-standard-1_0-21.html#UserInfoRequest", "UserInfo request");
     var USERINFO_RESPONSE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#UserInfo", "UserInfo response");
     var OPENID_PROVIDER_ISSUER_DISCOVERY = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery", "OpenID Provider Issuer Discovery");
-    var OPENID_CONFIGURATION = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata", "openid-configuration");
+    var PROVIDER_CONFIGURATION = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata", "provider configuration");
     var RESPONSE_TYPE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ImplicitAuthRequest", "response_type");
     var FORM_POST = convert_to_link("https://openid.net/specs/oauth-v2-form-post-response-mode-1_0.html#FormPostResponseMode", "form_post");
     var RESPONSE_MODE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest", "response mode");
@@ -113,7 +113,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var CLIENT_METADATA = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata", "Client Metadata");
     var JSON_WEB_KEY_FORMAT = convert_to_link("https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-4", "JSON Web Key (JWK) Format");
     var THIRD_PARTY_INITIATED_LOGIN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ThirdPartyInitiatedLogin", "third-party initiated login");
-    var OPENID_CONFIGURATION_INFORMATION = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig", "openid-configuration information");
+    var OPENID_CONFIGURATION_INFORMATION = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig", "OpenID Provider Configuration Information");
     var SIGNING_KEY_ROLLOVER = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys", "signing key rollover");
     var ENCRYPTION_KEY_ROLLOVER = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateEncKeys", "encryption key rollover");
     var SINGLE_KEY = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#Signing", "single key");
@@ -146,11 +146,11 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "An issuer location should be returned."
             },
             "rp-discovery-issuer_not_matching_config": {
-                "short_description": "Rejects discovered issuer not matching openid-configuration issuer",
+                "short_description": "Rejects discovered issuer not matching provider configuration issuer",
                 "profiles": [CONFIG, DYNAMIC],
                 "detailed_description": "Retrieve "+ OPENID_CONFIGURATION_INFORMATION +" for OpenID Provider from the " +
-                ".well-known/openid-configuration path. Verify that the issuer in the "+ OPENID_CONFIGURATION +" matches the one returned by WebFinger",
-                "expected_result": "Identify that the issuers are not matching and rejects the openid-configuration"
+                ".well-known/openid-configuration path. Verify that the issuer in the "+ PROVIDER_CONFIGURATION +" matches the one returned by WebFinger.",
+                "expected_result": "Identify that the issuers are not matching and reject the provider configuration."
             },
             "rp-discovery-openid_configuration": {
                 "short_description": "Uses openid-configuration Discovery Information",
