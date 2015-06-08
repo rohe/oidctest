@@ -139,11 +139,11 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "An issuer should be returned"
             },
             "rp-discovery": {
-                "short_description": "Uses openid-configuration Discovery",
+                "short_description": "Uses \"OpenID Connect Discovery\"",
                 "profiles": [DYNAMIC],
                 "detailed_description": "The Relying Party should be able to determine the OpenID Provider location by using " +
-                OPENID_PROVIDER_ISSUER_DISCOVERY,
-                "expected_result": "An issuer should be returned"
+                OPENID_PROVIDER_ISSUER_DISCOVERY + ".",
+                "expected_result": "An issuer location should be returned."
             },
             "rp-discovery-issuer_not_matching_config": {
                 "short_description": "Rejects discovered issuer not matching openid-configuration issuer",
