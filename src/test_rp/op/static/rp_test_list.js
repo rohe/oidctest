@@ -121,12 +121,12 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     $scope.guidlines = [
         ["Discovery", {
             "rp-discovery-webfinger_url": {
-                "short_description": "Can discover identifiers using URL syntax",
+                "short_description": "Can discover OpenID providers using URL syntax",
                 "profiles": [DYNAMIC],
-                "detailed_description": "Tests if an entity can use WebFinger as described by " +
-                RFC7033 + " and the " + ISSUER_DISCOVERY_DOC + " to determine the location of the OpenID Provider. " +
-                "The discovery should be done using " + URL_SYNTAX + " as end-user identifier",
-                "expected_result": "An issuer should be returned by the OpenID Provider"
+                "detailed_description": "Use WebFinger (" +
+                RFC7033 + ") and " + ISSUER_DISCOVERY_DOC + " to determine the location of the OpenID Provider. " +
+                "The discovery should be done using " + URL_SYNTAX + " as user input identifier.",
+                "expected_result": "An issuer location should be returned."
             },
             "rp-discovery-webfinger_acct": {
                 "short_description": "Can discover OpenID providers using acct URI syntax",
