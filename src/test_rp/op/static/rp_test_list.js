@@ -98,7 +98,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var CLIENT_ID = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#RegistrationResponse", "Client ID");
     var SUB = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "sub");
     var CLAIMS_REQUEST_PARAMETER = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ClaimsParameter", "'claims' request parameter");
-    var REQUEST_OBJECT_BY_REFERENCE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RequestUriParameter", "Request Object by reference");
+    var REQUEST_OBJECT_BY_REFERENCE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RequestUriParameter", "Request Object by Reference");
     var ENCRYPT_THE_REQUEST_OBJECT = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#EncryptedRequestObject", "Encrypt the Request Object");
     var SIGN_THE_REQUEST_OBJECT = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SignedRequestObject", "Sign the Request Object");
     var AGGREGATED_CLAIMS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ClaimTypes", "Aggregated Claims");
@@ -254,9 +254,9 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         ["request_uri Request Parameter", {
             "rp-request_uri-enc": {
                 "short_description": "Can use request_uri request parameter with encrypted request",
-                "detailed_description": "The Relying Party can pass a "+ REQUEST_OBJECT_BY_REFERENCE +" using the " +
-                "request_uri parameter. "+ ENCRYPT_THE_REQUEST_OBJECT +" using RSA1_5 and A128CBC-HS256 algorithms",
-                "expected_result": "Completing the Authorization Request using request_uri Request Parameter"
+                "detailed_description": "Pass a "+ REQUEST_OBJECT_BY_REFERENCE + ", using the " +
+                "request_uri parameter. " + ENCRYPT_THE_REQUEST_OBJECT +" using 'RSA1_5' and 'A128CBC-HS256' algorithms.",
+                "expected_result": "An authentication response to the encrypted request passed using the request_uri request parameter."
             },
             "rp-request_uri-sig+enc": {
                 "short_description": "Can Use request_uri Request Parameter with Signed and Encrypted Request",
