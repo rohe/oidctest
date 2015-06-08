@@ -66,7 +66,8 @@
                     </tr>
                     <tr>
                         <td>Profiles</td>
-                        <td><span ng-repeat="profile in test_data.profiles">{{profile.text}} {{profile.optional_text}} , </span></td>
+                        <td><span ng-repeat="profile in test_data.profiles">{{profile.text}}<span ng-show="profile.optional_text"> {{profile.optional_text}}</span><span ng-show="!$last">, </span></span>
+                        </td>
                     </tr>
                     <tr>
                         <td>Description</td>
