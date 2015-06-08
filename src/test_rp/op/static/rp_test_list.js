@@ -77,8 +77,8 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var IMPLICIT_AUTHENTICATION_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitAuthResponse", "authentication response");
     var CLIENT_SECRET_BASIC = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication", "client_secret_basic");
     var TOKEN_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#TokenResponse", "token response");
-    var USERINFO_REQUEST = convert_to_link("https://openid.net/specs/openid-connect-standard-1_0-21.html#UserInfoRequest", "UserInfo request");
-    var USERINFO_RESPONSE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#UserInfo", "UserInfo response");
+    var USERINFO_REQUEST = convert_to_link("https://openid.net/specs/openid-connect-standard-1_0-21.html#UserInfoRequest", "UserInfo Request");
+    var USERINFO_RESPONSE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#UserInfo", "UserInfo Response");
     var OPENID_PROVIDER_ISSUER_DISCOVERY = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery", "OpenID Provider Issuer Discovery");
     var PROVIDER_CONFIGURATION = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata", "provider configuration");
     var RESPONSE_TYPE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ImplicitAuthRequest", "response_type");
@@ -121,7 +121,9 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var MULTIPLE_KEYS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#Signing", "multiple keys");
     var ID_TOKEN_IMPLICIT_FLOW = convert_to_link(IMPLICIT_FLOW_ID_TOKEN_URL, "ID Token");
     var SELF_ISSUED_AUTH_RESPONSE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedResponse", "authentication response");
-    var SELF_ISSUED_ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedValidation", "self-issued ID Token")
+    var SELF_ISSUED_ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedValidation", "self-issued ID Token");
+    var TOKEN_REQUEST = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#TokenRequest", "Token Request");
+    var ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#IDToken", "ID Token");
 
     $scope.guidlines = [
         ["Discovery", {
@@ -238,13 +240,15 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         ["Claims Request Parameter", {
             "rp-claims_request-id_token_claims": {
                 "short_description": "Can request and use claims in ID Token using the 'claims' request parameter",
-                "detailed_description": "Ask for a specific claim using the "+ CLAIMS_REQUEST_PARAMETER + ".",
-                "expected_result": "An ID Token containing the requested claim."
+                "detailed_description": "Ask for a specific claim using the "+ CLAIMS_REQUEST_PARAMETER +
+                ". Retrieve the claims from an ID Token, either by making a " + TOKEN_REQUEST + " or by using " + IMPLICIT_FLOW + ".",
+                "expected_result": "An " + ID_TOKEN + " containing the requested claim."
             },
-            "rp-id_token-request_userinfo": {
-                "short_description": "Can Request UserInfo Claims by using the 'claims' request parameter",
-                "detailed_description": "The Relying Party can ask for a specific claim using the "+ CLAIMS_REQUEST_PARAMETER +". The claim should be returned in a UserInfo response",
-                "expected_result": "The claim should appear in the UserInfo response"
+            "rp-claims_request-request_userinfo": {
+                "short_description": "Can request and use claims in UserInfo Response using the 'claims' request parameter",
+                "detailed_description": "Ask for a specific claim using the "+ CLAIMS_REQUEST_PARAMETER +
+                ". Retrieve the claims by making a " + USERINFO_REQUEST + ".",
+                "expected_result": "A " + USERINFO_RESPONSE + " containing the requested claim."
             }
         }],
         ["request_uri Request Parameter", {
