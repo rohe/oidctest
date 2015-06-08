@@ -178,10 +178,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Get a " + CLIENT_REGISTRATION_RESPONSE + "."
             },
             "rp-registration-redirect_uris": {
-                "short_description": "Registration has redirect_uris",
+                "short_description": "Registration request has redirect_uris",
                 "profiles": [DYNAMIC],
-                "detailed_description": "Tests if the Relying Party can add redirect_uris values to the "+ CLIENT_METADATA +" while doing a registration request",
-                "expected_result": "Can get a Client Registration Response"
+                "detailed_description": "Set the redirect_uris parameter of the "+ CLIENT_METADATA +" in a registration request.",
+                "expected_result": "Get a " + CLIENT_REGISTRATION_RESPONSE + "."
             },
             "rp-registration-well_formed_jwk": {
                 "short_description": "Keys in RP follows JWK format",
