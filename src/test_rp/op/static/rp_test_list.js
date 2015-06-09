@@ -399,9 +399,9 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Should do a "+ ID_TOKEN_VALIDATION +" and detect that the iat claim is missing"
             },
             "rp-id_token-bad_es256_sig": {
-                "short_description": "Reject Invalid Asymmetric ID Token Signature",
-                "detailed_description": "The Relying Party should reject invalid asymmetric ID Token signature which has been signed using the algorithm ES256",
-                "expected_result": "Should do a "+ ID_TOKEN_VALIDATION +" and detect that the ID Token signature is invalid"
+                "short_description": "Rejects ID Token with invalid asymmetric 'ES256' signature",
+                "detailed_description": "Request an ID token and verify its signature using the keys provided by the Issuer.",
+                "expected_result": "Identify the invalid signature and reject the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
             "rp-id_token-aud": {
                 "short_description": "Rejects ID Token with invalid 'aud' claim",
