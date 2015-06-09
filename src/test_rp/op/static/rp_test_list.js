@@ -97,6 +97,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var ID_TOKEN_VALIDATION = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation", "ID Token validation");
     var IAT = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "iat");
     var AUD = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "aud");
+    var ISS = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "iss");
     var CLIENT_ID = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#RegistrationResponse", "client_id");
     var SUB = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "sub");
     var CLAIMS_REQUEST_PARAMETER = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ClaimsParameter", "'claims' request parameter");
@@ -383,13 +384,11 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "detailed_description": "Make an authentication request using response_type='id_token token'. Verify the 'at_hash' value in the returned " + ID_TOKEN + ".",
                 "expected_result": "Identify the incorrect 'at_hash' value and reject the ID Token after doing " + ACCESS_TOKEN_VALIDATION + "."
             },
-            //TODO Difference between this test and rp-discovery-mismatching_issuers
             "rp-id_token-mismatching_issuer": {
-                "short_description": "Rejects discovered issuer not matching ID Token iss",
+                "short_description": "Rejects ID Token with incorrect 'iss' claim",
                 "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
-                "detailed_description": "The Relying Party should request an ID token and reject it if the issuer " +
-                "identifier for the OpenID Provider isn't matching the issuer in the returned ID Token",
-                "expected_result": "Should do a "+ ID_TOKEN_VALIDATION +" and detect that the issuers are not matching"
+                "detailed_description": "Request an ID token and verify its '" + ISS + "' value.",
+                "expected_result": "Identify the incorrect 'iss' value and reject the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
             "rp-id_token-iat": {
                 "short_description": "Rejects ID Token without 'iat' claim",
