@@ -133,6 +133,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var ENCRYPTED_REQUEST = convert_to_link(JWT_REQUESTS_URL, "encrypted authentication request");
     var SIGNING_KEY_ROTATION = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys", "rolled over signing keys");
     var SIGNED_REQUEST = convert_to_link(JWT_REQUESTS_URL, "signed authentication request");
+    var USER_INFO_SUB_CLAIM = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse", "comparing it with the ID Token's 'sub' value");
 
     $scope.guidlines = [
         ["Discovery", {
@@ -511,10 +512,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Should receive a " + USERINFO_RESPONSE + " without using the Query Parameter method"
             },
             "rp-user_info-bad_sub_claim":{
-                "short_description": "Rejects UserInfo with Invalid Sub claim",
+                "short_description": "Rejects UserInfo Response with invalid 'sub' claim",
                 "profiles": [BASIC, IMPLICIT, HYBRID],
-                "detailed_description": "The Relying Party should obtain a "+ USERINFO_RESPONSE +" and compare its 'sub' value to ID Token's 'sub' claim",
-                "expected_result": "Should reject UserInfo result when 'sub' value is missing or doesn't match ID Token 'sub' claim"
+                "detailed_description": "Make a " + USERINFO_REQUEST + " and verify the 'sub' value of the "+ USERINFO_RESPONSE + " by " + USER_INFO_SUB_CLAIM + ".",
+                "expected_result": "Identify the invalid 'sub' value and reject the UserInfo Response."
             }
         }]
     ];
