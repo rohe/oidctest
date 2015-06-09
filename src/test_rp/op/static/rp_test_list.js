@@ -289,10 +289,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         }],
         ["scope Request Parameter", {
             "rp-scope-contains_openid_scope": {
-                "short_description": "openid scope value should be present in the Authorization Request",
+                "short_description": "'openid' scope value should be present in the Authentication Request",
                 "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
-                "detailed_description": "The Relying Party should always add the "+ OPENID_SCOPE + " value while sending an Authorization Request.",
-                "expected_result": "Receiving successful Authorization response"
+                "detailed_description": "Always add the "+ OPENID_SCOPE + " value when sending an Authentication Request.",
+                "expected_result": "An authentication response."
             },
             "rp-scope-userinfo_claims": {
                 "short_description": "Requesting UserInfo Claims with scope values",
