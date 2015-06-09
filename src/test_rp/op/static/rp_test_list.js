@@ -106,7 +106,6 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var SELF_ISSUED_OPENID_PROVIDERS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssued", "Self-Issued OpenID Provider");
     var HYBRID_FLOW_ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0-17.html#HybridIDToken", "hybrid flow");
     var IMPLICIT_FLOW_ID_TOKEN = convert_to_link(IMPLICIT_FLOW_ID_TOKEN_URL, "implicit flow");
-    var ID_TOKEN_VALIDATION_FOR_CODE_FLOW = convert_to_link("http://openid.net/specs/openid-connect-core-1_0-17.html#IDTokenValidation", "ID Token validation for code flow");
     var OPENID_SCOPE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest", "openid scope");
     var REQUEST_CLAIMS_USING_SCOPE_VALUES = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims", "Request claims using scope values");
     var OPENID_PROVIDER_METADATA = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata", "OpenID Provider Metadata");
@@ -304,13 +303,11 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         }],
         ["nonce Request Parameter", {
             "rp-nonce-unless_code_flow": {
-                "short_description": "Sends nonce request parameter unless using code flow",
+                "short_description": "Sends 'nonce' unless using code flow",
                 "profiles": [IMPLICIT, HYBRID, SELF_ISSUED],
-                "detailed_description": "The Relying Party should always send a nonce as a request parameter while using " +
-                "implicit or hybrid flow. Since the server is suppose to return the nonce in the ID Token return from " +
-                "Authorization Endpoint, see ID Token required claims in " + HYBRID_FLOW_ID_TOKEN + " or " + IMPLICIT_FLOW_ID_TOKEN +
-                ". When using Code flow the the nonce is not required, see "+ ID_TOKEN_VALIDATION_FOR_CODE_FLOW,
-                "expected_result": "The nonce should be returned in the ID Token when using implicit or hybrid flow"
+                "detailed_description": "Always send a " + NONCE_IMPLMENTATION + " as a request parameter while using implicit or hybrid flow. " +
+                "Verify the 'nonce' value returned in the " + ID_TOKEN + ".",
+                "expected_result": "An " + ID_TOKEN + ", either from the Authorization Endpoint or from the Token Endpoint, containing the same 'nonce' value as passed in the authentication request when using " + HYBRID_FLOW_ID_TOKEN + " or " + IMPLICIT_FLOW_ID_TOKEN + "."
             },
             "rp-nonce-invalid": {
                 "short_description": "Rejects ID Token with invalid 'nonce' when valid 'nonce' sent",
