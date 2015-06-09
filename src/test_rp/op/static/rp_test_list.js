@@ -282,7 +282,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         }],
         ["Third Party Initiated Login", {
             "rp-support_3rd_party_init_login": {
-                "short_description": "Support third-party initiated login",
+                "short_description": "Supports third-party initiated login",
                 "detailed_description": "Receive a "+ THIRD_PARTY_INITIATED_LOGIN +" request and send authentication request to the specified OpenID Connect Provider.",
                 "expected_result": "An authentication response."
             }
