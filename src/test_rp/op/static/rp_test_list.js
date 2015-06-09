@@ -62,6 +62,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
 
     var IMPLICIT_FLOW_ID_TOKEN_URL = "https://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitIDToken";
     var CLIENT_AUTHENTICATION_URL = "https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication";
+    var SIGNING_URL = "https://openid.net/specs/openid-connect-core-1_0.html#Signing";
 
     var ISSUER_DISCOVERY_DOC = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery", "OpenID Provider Issuer Discovery");
     var CLIENT_REGISTRATION_ENDPOINT = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientRegistration", "client registration endpoint");
@@ -116,8 +117,6 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var OPENID_CONFIGURATION_INFORMATION = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig", "OpenID Provider Configuration Information");
     var SIGNING_KEY_ROLLOVER = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys", "signing key rollover");
     var ENCRYPTION_KEY_ROLLOVER = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateEncKeys", "encryption key rollover");
-    var SINGLE_KEY = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#Signing", "single key");
-    var MULTIPLE_KEYS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#Signing", "multiple keys");
     var ID_TOKEN_IMPLICIT_FLOW = convert_to_link(IMPLICIT_FLOW_ID_TOKEN_URL, "ID Token");
     var SELF_ISSUED_AUTH_RESPONSE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedResponse", "authentication response");
     var SELF_ISSUED_ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedValidation", "self-issued ID Token");
@@ -126,7 +125,8 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var UNSECURED_JWS = convert_to_link("https://tools.ietf.org/html/rfc7518#section-3.6", "Unsecured JWS");
     var NONCE_IMPLMENTATION = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#NonceNotes", "'nonce' value");
     var HYBRID_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth", "Hybrid Flow");
-    var SYMMETRIC_SIGNATURES = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#Signing", "'client_secret' as MAC key");
+    var SYMMETRIC_SIGNATURES = convert_to_link(SIGNING_URL, "'client_secret' as MAC key");
+    var MULITPLE_KEYS_JWKS = convert_to_link(SIGNING_URL, "multiple keys in its JWK Set document");
 
     $scope.guidlines = [
         ["Discovery", {
@@ -416,16 +416,16 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Should detect when the sub claim is missing"
             },
             "rp-id_token-kid_absent_single_jwks": {
-                "short_description": "Accept ID Token without kid claim if only one JWK supplied in jwks_uri",
+                "short_description": "Accepts ID Token without 'kid' claim in JOSE header if only one JWK supplied in 'jwks_uri'",
                 "profiles": [BASIC_OPTIONAL, IMPLICIT, HYBRID],
-                "detailed_description": "If the JWK supplied in jwks_uri only contains a "+ SINGLE_KEY +" the ID Token does not need to contain a kid claim",
-                "expected_result": "The Relying Party should be accept the JWK"
+                "detailed_description": "Request an ID token and verify its signature using the keys provided by the Issuer.",
+                "expected_result": "Use the single key published by the Issuer to verify the ID Tokens signature and accept the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
             "rp-id_token-kid_absent_multiple_jwks": {
                 "short_description": "Rejects ID Token without 'kid' claim in JOSE header if multiple JWKs supplied in 'jwks_uri'",
                 "profiles": [BASIC_OPTIONAL, IMPLICIT_REJECTION_ALLOWED, HYBRID_REJECTION_ALLOWED],
                 "detailed_description": "Request an ID token and verify its signature using the keys provided by the Issuer.",
-                "expected_result": "Identify that the 'kid' value is missing from the JOSE header and that the Issuer publishes multiple keys in its JWK Set document referenced by 'jwks_uri'. Reject the ID Token after doing " + ID_TOKEN_VALIDATION + "."
+                "expected_result": "Identify that the 'kid' value is missing from the JOSE header and that the Issuer publishes " + MULITPLE_KEYS_JWKS + " (referenced by 'jwks_uri'). Reject the ID Token since it can not be determined which key to use to verify the signature."
             }
         }],
         ["Key Rollover", {
