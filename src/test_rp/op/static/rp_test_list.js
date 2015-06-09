@@ -313,7 +313,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             "rp-nonce-invalid": {
                 "short_description": "Rejects ID Token with invalid 'nonce' when valid 'nonce' sent",
                 "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
-                "detailed_description": "Pass a " + NONCE_IMPLMENTATION + " in the Authentication Request. Validate the 'nonce' value " +
+                "detailed_description": "Pass a " + NONCE_IMPLMENTATION + " in the Authentication Request. Verify the 'nonce' value " +
                 "returned in the " + ID_TOKEN + ".",
                 "expected_result": "Identity that the 'nonce' value in the ID Token is invalid and reject the ID Token."
             }
