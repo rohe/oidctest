@@ -392,10 +392,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Should do a "+ ID_TOKEN_VALIDATION +" and detect that the issuers are not matching"
             },
             "rp-id_token-iat": {
-                "short_description": "Reject ID Token without iat claim",
+                "short_description": "Rejects ID Token without 'iat' claim",
                 "profiles": [BASIC, IMPLICIT, HYBRID],
-                "detailed_description": "The Relying Party should request an ID token if it does not contain a "+ IAT +" claim it should be rejected",
-                "expected_result": "Should do a "+ ID_TOKEN_VALIDATION +" and detect that the iat claim is missing"
+                "detailed_description": "Request an ID token and verify its '" + IAT + "' value.",
+                "expected_result": "Identify the missing 'iat' value and reject the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
             "rp-id_token-bad_es256_sig": {
                 "short_description": "Rejects ID Token with invalid asymmetric 'ES256' signature",
