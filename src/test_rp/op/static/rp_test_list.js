@@ -64,6 +64,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var CLIENT_AUTHENTICATION_URL = "https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication";
     var SIGNING_URL = "https://openid.net/specs/openid-connect-core-1_0.html#Signing";
     var ID_TOKEN_URL = "https://openid.net/specs/openid-connect-core-1_0.html#IDToken";
+    var JWT_REQUESTS_URL = "https://openid.net/specs/openid-connect-core-1_0.html#JWTRequests";
 
     var ISSUER_DISCOVERY_DOC = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery", "OpenID Provider Issuer Discovery");
     var CLIENT_REGISTRATION_ENDPOINT = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientRegistration", "client registration endpoint");
@@ -128,8 +129,9 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var HYBRID_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth", "Hybrid Flow");
     var SYMMETRIC_SIGNATURES = convert_to_link(SIGNING_URL, "'client_secret' as MAC key");
     var MULITPLE_KEYS_JWKS = convert_to_link(SIGNING_URL, "multiple keys in its JWK Set document");
-    var ENCRYPTED_REQUEST = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#JWTRequests", "encrypted authentication request");
+    var ENCRYPTED_REQUEST = convert_to_link(JWT_REQUESTS_URL, "encrypted authentication request");
     var SIGNING_KEY_ROTATION = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys", "rolled over signing keys");
+    var SIGNED_REQUEST = convert_to_link(JWT_REQUESTS_URL, "signed authentication request");
 
     $scope.guidlines = [
         ["Discovery", {
@@ -438,10 +440,11 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Successfully verify both ID Token signatures, fetching the " + SIGNING_KEY_ROTATION + " if the 'kid' claim in the JOSE header is unknown."
             },
             "rp-key_rollover-rp_sign_key": {
-                "short_description": "Can Rollover RP Signing Key",
+                "short_description": "Can rotate signing keys",
                 "profiles": [DYNAMIC],
-                "detailed_description": "The Relying Party should do a "+ SIGNING_KEY_ROLLOVER +" at its jwks_uri location after it has been used by OpenID Connect Provider",
-                "expected_result": "OpenID Connect Provider successfully uses the old then new signing key"
+                "detailed_description": "Make a " + SIGNED_REQUEST + ". Do a " + SIGNING_KEY_ROLLOVER +" at the Relying Party's 'jwks_uri' after it has been used by OpenID Connect Provider. " +
+                "Make a new signed authentication request.",
+                "expected_result": "The OpenID Connect Provider successfully uses the rotated signing key: a successful authentication response to both authentication requests signed using the rotated signing key."
             },
             "rp-key_rollover-op_enc_key": {
                 "short_description": "Supports rotation of provider's asymmetric encryption keys",
