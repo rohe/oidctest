@@ -129,6 +129,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var SYMMETRIC_SIGNATURES = convert_to_link(SIGNING_URL, "'client_secret' as MAC key");
     var MULITPLE_KEYS_JWKS = convert_to_link(SIGNING_URL, "multiple keys in its JWK Set document");
     var ENCRYPTED_REQUEST = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#JWTRequests", "encrypted authentication request");
+    var SIGNING_KEY_ROTATION = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys", "rolled over signing keys");
 
     $scope.guidlines = [
         ["Discovery", {
@@ -431,10 +432,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         }],
         ["Key Rollover", {
             "rp-key_rollover-op_sign_key": {
-                "short_description": "Support OP Signing Key Rollover",
+                "short_description": "Supports rotation of provider's asymmetric signing keys",
                 "profiles": [CONFIG, DYNAMIC],
-                "detailed_description": "The OpenID Connect Providera should do a "+ SIGNING_KEY_ROLLOVER +" at its jwks_uri location after it has been used by Relying Party",
-                "expected_result": "Relying Party successfully uses the old then new signing key"
+                "detailed_description": "Request an ID Token and verify its signature. Make a new authentication and retrieve another ID Token and verify its signature.",
+                "expected_result": "Successfully verify both ID Token signatures, fetching the " + SIGNING_KEY_ROTATION + " if the 'kid' claim in the JOSE header is unknown."
             },
             "rp-key_rollover-rp_sign_key": {
                 "short_description": "Can Rollover RP Signing Key",
@@ -445,7 +446,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             "rp-key_rollover-op_enc_key": {
                 "short_description": "Supports rotation of provider's asymmetric encryption keys",
                 "detailed_description": "Fetch the issuer's keys from the 'jwks_uri' and make an " + ENCRYPTED_REQUEST +  " using the issuer's encryption keys. " +
-                "Fetch the issuer's encryption keys from the jwks_uri again, and make a new encrypted request using the rotated encryption keys.",
+                "Fetch the issuer's keys from the jwks_uri again, and make a new encrypted request using the rotated encryption keys.",
                 "expected_result": "A successful authentication response to both authentication requests encrypted using rotated encryption keys."
             },
             "rp-key_rollover-rp_enc_key": {
