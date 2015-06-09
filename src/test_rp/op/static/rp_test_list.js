@@ -422,10 +422,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "The Relying Party should be accept the JWK"
             },
             "rp-id_token-kid_absent_multiple_jwks": {
-                "short_description": "Reject ID Token without kid claim if multiple JWKs supplied in jwks_uri",
+                "short_description": "Rejects ID Token without 'kid' claim in JOSE header if multiple JWKs supplied in 'jwks_uri'",
                 "profiles": [BASIC_OPTIONAL, IMPLICIT_REJECTION_ALLOWED, HYBRID_REJECTION_ALLOWED],
-                "detailed_description": "If there are "+ MULTIPLE_KEYS +" in the referenced JWK Set document, a kid value MUST be provided in the JOSE Header",
-                "expected_result": "Accept ID Token containing kid"
+                "detailed_description": "Request an ID token and verify its signature using the keys provided by the Issuer.",
+                "expected_result": "Identify that the 'kid' value is missing from the JOSE header and that the Issuer publishes multiple keys in its JWK Set document referenced by 'jwks_uri'. Reject the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             }
         }],
         ["Key Rollover", {
