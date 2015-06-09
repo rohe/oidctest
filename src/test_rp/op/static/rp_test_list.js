@@ -126,6 +126,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var UNSECURED_JWS = convert_to_link("https://tools.ietf.org/html/rfc7518#section-3.6", "Unsecured JWS");
     var NONCE_IMPLMENTATION = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#NonceNotes", "'nonce' value");
     var HYBRID_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth", "Hybrid Flow");
+    var SYMMETRIC_SIGNATURES = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#Signing", "'client_secret' as MAC key");
 
     $scope.guidlines = [
         ["Discovery", {
@@ -354,11 +355,9 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Identify the invalid signature and reject the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
             "rp-id_token-bad_symmetric_sig_hs256": {
-                "short_description": "Reject invalid symmetric ID Token signature with HS256",
-                "detailed_description": "Tests if the Relying Party can identify and reject an ID Token with an " +
-                "invalid signature. The ID Token has been signed using the symmetric algorithm HS256. " +
-                "For more information see list item 6 in " + ID_TOKEN_VALIDATION,
-                "expected_result": "Identify invalid ID token"
+                "short_description": "Rejects ID Token with invalid symmetric 'HS256' signature",
+                "detailed_description": "Request an ID token and verify its signature using the " + SYMMETRIC_SIGNATURES + ".",
+                "expected_result": "Identify the invalid signature and reject the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
             "rp-id_token-sig+enc": {
                 "short_description": "Can request and use signed and encrypted ID Token response",
