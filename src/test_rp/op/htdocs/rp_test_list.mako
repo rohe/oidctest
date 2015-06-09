@@ -76,7 +76,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td>Expected result:</td>
+                        <td class="text-nowrap">Expected result:</td>
                         <td>
                             <p ng-bind-html="test_data.expected_result"></p>
                         </td>
