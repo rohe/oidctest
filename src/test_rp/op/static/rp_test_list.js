@@ -63,6 +63,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var IMPLICIT_FLOW_ID_TOKEN_URL = "https://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitIDToken";
     var CLIENT_AUTHENTICATION_URL = "https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication";
     var SIGNING_URL = "https://openid.net/specs/openid-connect-core-1_0.html#Signing";
+    var ID_TOKEN_URL = "https://openid.net/specs/openid-connect-core-1_0.html#IDToken";
 
     var ISSUER_DISCOVERY_DOC = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery", "OpenID Provider Issuer Discovery");
     var CLIENT_REGISTRATION_ENDPOINT = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientRegistration", "client registration endpoint");
@@ -89,17 +90,16 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var CLIENT_SECRET_JWT = convert_to_link(CLIENT_AUTHENTICATION_URL, "client_secret_jwt");
     var CLIENT_SECRET_POST = convert_to_link(CLIENT_AUTHENTICATION_URL, "client_secret_post");
     var PRIVATE_KEY_JWT = convert_to_link(CLIENT_AUTHENTICATION_URL, "private_key_jwt");
-    var ALG_VALUE_EQUAL_TO_NONE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "'alg' value equal to 'none'");
     var AUTHORIZATION_CODE_VALIDATION = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#CodeValidation", "Authorization Code Validation");
     var C_HASH = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#HybridIDToken", "c_hash");
     var AT_HASH = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#HybridIDToken", "at_hash");
     var ACCESS_TOKEN_VALIDATION = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowTokenValidation", "Access Token validation");
     var ID_TOKEN_VALIDATION = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation", "ID Token validation");
-    var IAT = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "iat");
-    var AUD = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "aud");
-    var ISS = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "iss");
+    var IAT = convert_to_link(ID_TOKEN_URL, "iat");
+    var AUD = convert_to_link(ID_TOKEN_URL, "aud");
+    var ISS = convert_to_link(ID_TOKEN_URL, "iss");
     var CLIENT_ID = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#RegistrationResponse", "client_id");
-    var SUB = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "sub");
+    var SUB = convert_to_link(ID_TOKEN_URL, "sub");
     var CLAIMS_REQUEST_PARAMETER = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ClaimsParameter", "'claims' request parameter");
     var REQUEST_OBJECT_BY_REFERENCE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RequestUriParameter", "Request Object by Reference");
     var ENCRYPT_THE_REQUEST_OBJECT = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#EncryptedRequestObject", "Encrypt the Request Object");
@@ -410,10 +410,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
 
             },
             "rp-id_token-sub": {
-                "short_description": "Reject ID Token without sub claim",
+                "short_description": "Rejects ID Token without 'sub' claim",
                 "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
-                "detailed_description": "The Relying Party should request an ID token and reject it if the "+ SUB +" claim is missing",
-                "expected_result": "Should detect when the sub claim is missing"
+                "detailed_description": "Request an ID token and verify it contains a " + SUB + " value.",
+                "expected_result": "Identify the missing 'sub' value and reject the ID Token."
             },
             "rp-id_token-kid_absent_single_jwks": {
                 "short_description": "Accepts ID Token without 'kid' claim in JOSE header if only one JWK supplied in 'jwks_uri'",
