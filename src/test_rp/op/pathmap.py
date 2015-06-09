@@ -44,11 +44,12 @@ IDMAP = {
     "rp-id_token-aud": "/_/_/aud/normal",
     "rp-id_token-iat": "/_/_/iat/normal",
     # "rp-idt-kid-absent": "/_/_/nokid1jwks/normal",
-    "rp-idt-kid": "/_/_/nokidjwks/normal",
+    #"rp-idt-kid": "/_/_/nokidjwks/normal",
     "rp-id_token-bad_at_hash": "/_/_/ath/normal",
     "rp-id_token-bad_c_hash": "/_/_/ch/normal",
     "rp-id_token-mismatching_issuer": "/_/_/issi/normal",
     "rp-id_token-kid_absent_multiple_jwks": "/_/_/nokidmuljwks/normal",
+    "rp-id_token-kid_absent_single_jwks": "/_/_/nokid1jwk/normal",
     # "rp-idt-epk": "",
 
     # UserInfo Endpoint

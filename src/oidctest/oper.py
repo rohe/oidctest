@@ -2,7 +2,7 @@ import logging
 import os
 from urlparse import urlparse
 from aatest.operation import Operation
-from oic.exception import IssuerMismatch
+from oic.exception import IssuerMismatch, PyoidcError
 
 from oic.oauth2 import rndstr
 from oic.oic import ProviderConfigurationResponse
@@ -172,6 +172,11 @@ class AccessToken(SyncPostRequest):
         resp_hash = jws.left_hash(self.req_args["code"], atr["id_token"].jws_header["alg"])
         if atr["id_token"]["c_hash"] != resp_hash:
             raise ErrorResponse("c_hash mismatch {} != {}".format(atr["id_token"]["c_hash"], jws.left_hash(self.req_args["code"], "HS256")))
+
+        if not "kid" in atr["id_token"].jws_header:
+            for key, value in self.conv.client.keyjar.issuer_keys.iteritems():
+                if not key == "" and (len(value) > 1 or len(value[0].keys()) > 1):
+                    raise PyoidcError("No 'kid' in id_token header!")
 
         if not same_issuer(self.conv.info["issuer"], atr["id_token"]["iss"]):
             # if self.conv.info["issuer"] != atr["id_token"]["iss"]:

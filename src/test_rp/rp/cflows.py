@@ -751,13 +751,23 @@ FLOWS = {
             Webfinger,
             Discovery,
             Registration,
-            # (Registration,
-            #  {set_request_args: {"id_token_signed_response_alg": "RS256"}}),
-            (SyncAuthn, {set_request_args: {}}),
+            SyncAuthn,
             AccessToken
         ],
         "profile": "...",
         "desc": "If there are multiple keys in the referenced JWK Set document, "
                 "a kid value MUST be provided in the JOSE Header"
+    },
+    "rp-id_token-kid_absent_single_jwks": {
+        "sequence": [
+            Webfinger,
+            Discovery,
+            Registration,
+            SyncAuthn,
+            AccessToken
+        ],
+        "profile": "...",
+        "desc": "If the JWK supplied in jwks_uri only contains a single key "
+                "the ID Token does not need to contain a kid claim"
     },
 }

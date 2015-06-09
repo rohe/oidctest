@@ -89,6 +89,15 @@ class Provider(provider.Provider):
     def id_token_as_signed_jwt(self, session, loa="2", alg="", code=None,
                                access_token=None, user_info=None, auth_time=0,
                                exp=None, extra_claims=None):
+
+        # if "nokid1jwk" in self.behavior_type:
+            # self.keyjar.issuer_keys[""][0].keys()[0].kid = None
+
+        if "nokidmuljwks" in self.behavior_type:
+            for key in self.keyjar.issuer_keys[""]:
+                for inner_key in key.keys():
+                    inner_key.kid = None
+
         _jws = provider.Provider.id_token_as_signed_jwt(
             self, session, loa=loa, alg=alg, code=code,
             access_token=access_token, user_info=user_info, auth_time=auth_time,
@@ -99,14 +108,6 @@ class Provider(provider.Provider):
             p = _jws.split(".")
             p[2] = sort_string(p[2])
             _jws = ".".join(p)
-
-        if "nokidmuljwks" in self.behavior_type:
-            _split_jws = _jws.split(".")
-            header = eval(b64d(_split_jws[0]))
-            header.pop("kid", None)
-            header = b64encode_item(header)
-            _split_jws[0] = header
-            _jws = ".".join(_split_jws)
 
         return _jws
 
