@@ -3,6 +3,7 @@ from oidctest.oper import Webfinger
 from oidctest.oper import Discovery
 from oidctest.oper import Registration
 from oidctest.oper import SyncAuthn
+
 from cl.func import set_webfinger_resource
 from cl.func import set_discovery_issuer
 

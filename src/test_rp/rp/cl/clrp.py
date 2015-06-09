@@ -14,76 +14,62 @@ from oic.utils.keyio import build_keyjar
 
 from aatest import NotSupported, exception_trace
 from aatest import ConfigurationError
+from aatest.conversation import Conversation
 
 from oidctest.common import make_list
 from oidctest.common import make_client
-from oidctest.common import Conversation
 from oidctest.common import setup_logger
 from oidctest.common import run_flow
+from oidctest.common import Trace
+from oidctest.io import ClIO
+from oidctest.tool import ClTester
+from oidctest.session import SessionHandler
 
 __author__ = 'roland'
 
 
 logger = logging.getLogger("")
 
-
-def get_claims(client):
-    resp = {}
-    for src in client.userinfo["_claim_names"].values():
-        spec = client.userinfo["_claim_sources"][src]
-        ht_args = BearerHeader(client).construct(**spec)
-
-        try:
-            part = client.http_request(spec["endpoint"], "GET", **ht_args)
-        except Exception:
-            raise
-        resp.update(json.loads(part.content))
-
-    return resp
-
-
-def endpoint_support(client, endpoint):
-    if endpoint in client.provider_info:
-        return True
-    else:
-        return False
-
-
-def run_func(spec, conv, req_args):
-    if isinstance(spec, tuple):
-        func, args = spec
-    else:
-        func = spec
-        args = {}
-
-    try:
-        req_args = func(req_args, conv, args)
-    except KeyError as err:
-        conv.trace.error("function: %s failed" % func)
-        conv.trace.error(str(err))
-        raise NotSupported
-    except ConfigurationError:
-        raise
-    else:
-        return req_args
-
-
-def run_one(test_id, flows, profile, profiles, **kw_args):
-    try:
-        redirs = kw_args["cinfo"]["client"]["redirect_uris"]
-    except KeyError:
-        redirs = kw_args["cinfo"]["registered"]["redirect_uris"]
-
-    _flow = flows[test_id]
-    _cli = make_client(**kw_args)
-    conversation = Conversation(_flow, _cli, redirs, kw_args["msg_factory"])
-    # noinspection PyTypeChecker
-    try:
-        run_flow(profiles, conversation, test_id, kw_args["conf"],
-                 profile, kw_args["check_factory"])
-    except Exception as err:
-        exception_trace("", err, logger)
-        print conversation.trace
+#
+# def get_claims(client):
+#     resp = {}
+#     for src in client.userinfo["_claim_names"].values():
+#         spec = client.userinfo["_claim_sources"][src]
+#         ht_args = BearerHeader(client).construct(**spec)
+#
+#         try:
+#             part = client.http_request(spec["endpoint"], "GET", **ht_args)
+#         except Exception:
+#             raise
+#         resp.update(json.loads(part.content))
+#
+#     return resp
+#
+#
+# def endpoint_support(client, endpoint):
+#     if endpoint in client.provider_info:
+#         return True
+#     else:
+#         return False
+#
+#
+# def run_func(spec, conv, req_args):
+#     if isinstance(spec, tuple):
+#         func, args = spec
+#     else:
+#         func = spec
+#         args = {}
+#
+#     try:
+#         req_args = func(req_args, conv, args)
+#     except KeyError as err:
+#         conv.trace.error("function: %s failed" % func)
+#         conv.trace.error(str(err))
+#         raise NotSupported
+#     except ConfigurationError:
+#         raise
+#     else:
+#         return req_args
 
 
 def main(flows, profile, profiles, **kw_args):
@@ -97,7 +83,8 @@ def main(flows, profile, profiles, **kw_args):
     for tid in test_list:
         _flow = flows[tid]
         _cli = make_client(**kw_args)
-        conversation = Conversation(_flow, _cli, redirs, kw_args["msg_factory"])
+        conversation = Conversation(_flow, _cli, redirs, kw_args["msg_factory"],
+                                    trace_cls=Trace)
         # noinspection PyTypeChecker
         try:
             run_flow(profiles, conversation, tid, kw_args["conf"],
@@ -149,12 +136,26 @@ if __name__ == '__main__':
 
     kwargs = {"base_url": CONF.BASE, "kidd": kidd, "keyjar": keyjar,
               "jwks_uri": jwks_uri, "flows": FLOWS.FLOWS, "conf": CONF,
-              "cinfo": CONF.INFO, "orddesc": FLOWS.ORDDESC,
-              "profiles": profiles, "operations": oper,
+              "cinfo": CONF.INFO, "orddesc": FLOWS.ORDDESC, "desc": FLOWS.DESC,
+              "profiles": profiles, "operation": oper,
               "profile": cargs.profile, "msg_factory": oic_message_factory,
               "check_factory": check_factory}
 
     if cargs.testid:
-        run_one(cargs.testid, **kwargs)
+        io = ClIO(**kwargs)
+        sh = SessionHandler({}, **kwargs)
+        sh.init_session({}, profile=cargs.profile)
+        tester = ClTester(io, sh, **kwargs)
+        tester.run(cargs.testid, **kwargs)
+        io.dump_log(sh.session, cargs.testid)
     else:
-        main(**kwargs)
+        _sh = SessionHandler({}, **kwargs)
+        _sh.init_session({}, profile=cargs.profile)
+
+        for tid in _sh.session["flow_names"]:
+            io = ClIO(**kwargs)
+            sh = SessionHandler({}, **kwargs)
+            sh.init_session({}, profile=cargs.profile)
+            tester = ClTester(io, sh, **kwargs)
+            if tester.run(tid, **kwargs):
+                io.result(sh.session)

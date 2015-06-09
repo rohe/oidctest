@@ -1,9 +1,14 @@
-import base64
-from jwkest import b64d
-from jwkest.jwt import b64encode_item
+import json
 from oic import oic
+import time
+
+from Crypto.PublicKey import RSA
+from jwkest.ecc import P256
+from jwkest.jwk import RSAKey, ECKey
 from oic.oauth2 import Message, rndstr
 from oic.oic import provider, ProviderConfigurationResponse
+from oic.utils.keyio import keyjar_init
+
 
 __author__ = 'roland'
 
@@ -90,6 +95,18 @@ class Provider(provider.Provider):
                                access_token=None, user_info=None, auth_time=0,
                                exp=None, extra_claims=None):
 
+        if "rotsig" in self.behavior_type:  # Rollover signing keys
+            if alg == "RS256":
+                key = RSAKey(kid="rotated_rsa_{}".format(time.time()),
+                             use="sig").load_key(RSA.generate(2048))
+            elif alg == "ES256":
+                key = ECKey(kid="rotated_ec_{}".format(time.time()),
+                            use="sig").load_key(P256)
+
+            new_key = {"keys": [key.serialize(private=True)]}
+            self.do_key_rollover(new_key, "%d")
+
+
         # if "nokid1jwk" in self.behavior_type:
             # self.keyjar.issuer_keys[""][0].keys()[0].kid = None
 
@@ -145,6 +162,33 @@ class Provider(provider.Provider):
             _response["issuer"] = "https://example.com"
 
         return _response
+
+    def generate_jwks(self):
+        if "rotenc" in self.behavior_type:  # Rollover encryption keys
+            rsa_key = RSAKey(kid="rotated_rsa_{}".format(time.time()),
+                             use="enc").load_key(RSA.generate(2048))
+            ec_key = ECKey(kid="rotated_ec_{}".format(time.time()),
+                           use="enc").load_key(P256)
+
+            keys = [rsa_key.serialize(private=True),
+                    ec_key.serialize(private=True)]
+            new_keys = {"keys": keys}
+            self.do_key_rollover(new_keys, "%d")
+
+            signing_keys = [k.to_dict() for k in self.keyjar.get_signing_key()]
+            new_keys["keys"].extend(signing_keys)
+            return json.dumps(new_keys)
+        else:  # Return all keys
+            keys = [k.to_dict() for kb in self.keyjar[""] for k in kb.keys()]
+            jwks = dict(keys=keys)
+            return json.dumps(jwks)
+
+    def __setattr__(self, key, value):
+        if key == "keys":
+            # Update the keyjar instead of just storing the keys description
+            keyjar_init(self, value)
+        else:
+            super(Provider, self).__setattr__(key, value)
 
     def _get_keyjar(self):
         return self.server.keyjar

@@ -38,8 +38,6 @@ SERVER_KEY = "certs/server.key"
 CERT_CHAIN = None
 CA_BUNDLE = None
 
-KEY_EXPORT_URL = "%sexport/jwk.json" % issuer
-
 CLIENT_DB = "client_db"
 
 # =======  SIMPLE DATABASE ==============
