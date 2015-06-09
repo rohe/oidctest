@@ -107,7 +107,6 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var HYBRID_FLOW_ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0-17.html#HybridIDToken", "hybrid flow");
     var IMPLICIT_FLOW_ID_TOKEN = convert_to_link(IMPLICIT_FLOW_ID_TOKEN_URL, "implicit flow");
     var ID_TOKEN_VALIDATION_FOR_CODE_FLOW = convert_to_link("http://openid.net/specs/openid-connect-core-1_0-17.html#IDTokenValidation", "ID Token validation for code flow");
-    var VALIDATE_THE_NONCE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitIDTValidation", "validate the nonce");
     var OPENID_SCOPE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest", "openid scope");
     var REQUEST_CLAIMS_USING_SCOPE_VALUES = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims", "Request claims using scope values");
     var OPENID_PROVIDER_METADATA = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata", "OpenID Provider Metadata");
@@ -125,6 +124,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var TOKEN_REQUEST = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#TokenRequest", "Token Request");
     var ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#IDToken", "ID Token");
     var UNSECURED_JWS = convert_to_link("https://tools.ietf.org/html/rfc7518#section-3.6", "Unsecured JWS");
+    var NONCE_IMPLMENTATION = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#NonceNotes", "'nonce' value");
 
     $scope.guidlines = [
         ["Discovery", {
@@ -313,11 +313,11 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "The nonce should be returned in the ID Token when using implicit or hybrid flow"
             },
             "rp-nonce-invalid": {
-                "short_description": "Reject ID Token with invalid nonce when nonce valid sent",
+                "short_description": "Rejects ID Token with invalid 'nonce' when valid 'nonce' sent",
                 "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
-                "detailed_description": "If a nonce value was sent in the Authentication Request the Relying Party " +
-                "must "+ VALIDATE_THE_NONCE +" returned in the ID Token.",
-                "expected_result": "Should reject the ID Token if the nonce is not valid"
+                "detailed_description": "Pass a " + NONCE_IMPLMENTATION + " in the Authentication Request. Validate the 'nonce' value " +
+                "returned in the " + ID_TOKEN + ".",
+                "expected_result": "Identity that the 'nonce' value in the ID Token is invalid and reject the ID Token."
             }
         }],
         ["Client Authentication", {
