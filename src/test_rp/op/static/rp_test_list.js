@@ -361,9 +361,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Identify the invalid signature and reject the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
             "rp-id_token-sig+enc": {
-                "short_description": "Can request and use signed and encrypted ID Token response",
-                "detailed_description": "Tests if the Relying Party can request and use an signed and encrypted ID Token",
-                "expected_result": "Retrieve, verify the signature and decrypt the ID token"
+                "short_description": "Can request and use signed and encrypted ID Token",
+                "detailed_description": "Request an encrypted ID Token (using 'id_token_encrypted_response_alg' and 'id_token_encrypted_response_enc' in registered " + CLIENT_METADATA + "). " +
+                "Decrypt the returned the ID Token and verify its signature using the keys published by the Issuer.",
+                "expected_result": "Accept the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
             "rp-id_token-sig_none": {
                 "short_description": "Can request and use unsigned ID Token response",
