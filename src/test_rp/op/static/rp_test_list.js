@@ -500,9 +500,9 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Should receive and verify the signature of the " + USERINFO_RESPONSE
             },
             "rp-user_info-sig+enc":{
-                "short_description": "Can Request and Use Signed and Encrypted UserInfo Response",
-                "detailed_description": "The Relying Party should request and use UserInfo Response which are both signed and encrypted",
-                "expected_result": "Should receive, verify the signature and decrypt the " + USERINFO_RESPONSE
+                "short_description": "Can request and use signed and encrypted UserInfo Response",
+                "detailed_description": "Request signed and encrypted UserInfo (using 'userinfo_signed_response_alg', 'userinfo_encrypted_response_alg' and 'userinfo_encrypted_response_enc' in registered " + CLIENT_METADATA + "). Decrypt the " + USERINFO_RESPONSE + " and verify its signature.",
+                "expected_result": "Successful decryption and signature verification of the " + USERINFO_RESPONSE + "."
             },
             "rp-user_info-enc":{
                 "short_description": "Can request and use encrypted UserInfo Response",
