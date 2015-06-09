@@ -494,10 +494,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "A successful " + USERINFO_RESPONSE + " without passing the Access Token as a query parameter."
             },
             "rp-user_info-sign":{
-                "short_description": "Can Request and Use Signed UserInfo Response",
+                "short_description": "Can request and use signed UserInfo Response",
                 "profiles": [CONFIG_OPTIONAL, DYNAMIC_OPTIONAL],
-                "detailed_description": "The Relying Party should request and use UserInfo Response which has been signed",
-                "expected_result": "Should receive and verify the signature of the " + USERINFO_RESPONSE
+                "detailed_description": "Request signed UserInfo (using 'userinfo_signed_response_alg' in registered " + CLIENT_METADATA + ").",
+                "expected_result": "Successful signature verification of the " + USERINFO_RESPONSE + "."
             },
             "rp-user_info-sig+enc":{
                 "short_description": "Can request and use signed and encrypted UserInfo Response",
