@@ -65,6 +65,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var SIGNING_URL = "https://openid.net/specs/openid-connect-core-1_0.html#Signing";
     var ID_TOKEN_URL = "https://openid.net/specs/openid-connect-core-1_0.html#IDToken";
     var JWT_REQUESTS_URL = "https://openid.net/specs/openid-connect-core-1_0.html#JWTRequests";
+    var AGGREGATED_DISTRIBUTED_CLAIMS_URL = "http://openid.net/specs/openid-connect-core-1_0.html#AggregatedDistributedClaims";
 
     var ISSUER_DISCOVERY_DOC = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery", "OpenID Provider Issuer Discovery");
     var CLIENT_REGISTRATION_ENDPOINT = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientRegistration", "client registration endpoint");
@@ -105,8 +106,8 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var REQUEST_OBJECT_BY_REFERENCE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RequestUriParameter", "Request Object by Reference");
     var ENCRYPT_THE_REQUEST_OBJECT = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#EncryptedRequestObject", "Encrypt the Request Object");
     var SIGN_THE_REQUEST_OBJECT = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SignedRequestObject", "Sign the Request Object");
-    var AGGREGATED_CLAIMS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ClaimTypes", "Aggregated Claims");
-    var DISTRIBUTED_CLAIMS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ClaimTypes", "Distributed Claims");
+    var AGGREGATED_CLAIMS = convert_to_link(AGGREGATED_DISTRIBUTED_CLAIMS_URL, "Aggregated Claims");
+    var DISTRIBUTED_CLAIMS = convert_to_link(AGGREGATED_DISTRIBUTED_CLAIMS_URL, "Distributed Claims");
     var SELF_ISSUED_OPENID_PROVIDERS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssued", "Self-Issued OpenID Provider");
     var HYBRID_FLOW_ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0-17.html#HybridIDToken", "hybrid flow");
     var IMPLICIT_FLOW_ID_TOKEN = convert_to_link(IMPLICIT_FLOW_ID_TOKEN_URL, "implicit flow");
@@ -462,9 +463,9 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         }],
         ["Claim Types", {
             "rp-claims-aggregated": {
-                "short_description": "Can handle aggregated user information",
-                "detailed_description": "The Relying Party can display "+ AGGREGATED_CLAIMS +" received from OpenID Connect Provider",
-                "expected_result": "Receiving UserInfo response"
+                "short_description": "Can use Aggregated Claims",
+                "detailed_description": "Make a " + USERINFO_REQUEST + " and read the " + AGGREGATED_CLAIMS + ".",
+                "expected_result": "Understand the aggregated claims in the " + USERINFO_RESPONSE + "."
             },
             "rp-claims-distributed": {
                 "short_description": "Handles distributed user information",
