@@ -117,7 +117,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var THIRD_PARTY_INITIATED_LOGIN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ThirdPartyInitiatedLogin", "third-party initiated login");
     var OPENID_CONFIGURATION_INFORMATION = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig", "OpenID Provider Configuration Information");
     var SIGNING_KEY_ROLLOVER = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys", "signing key rollover");
-    var ENCRYPTION_KEY_ROTATION = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateEncKeys", "encryption key rotation");
+    var ENCRYPTION_KEY_ROLLOVER = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateEncKeys", "encryption key rollover");
     var ID_TOKEN_IMPLICIT_FLOW = convert_to_link(IMPLICIT_FLOW_ID_TOKEN_URL, "ID Token");
     var SELF_ISSUED_AUTH_RESPONSE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedResponse", "authentication response");
     var SELF_ISSUED_ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedValidation", "self-issued ID Token");
@@ -450,9 +450,11 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "A successful authentication response to both authentication requests encrypted using rotated encryption keys."
             },
             "rp-key_rollover-rp_enc_key": {
-                "short_description": "Can rollover RP encryption key",
-                "detailed_description": "The Relying Party should do a "+ ENCRYPTION_KEY_ROTATION +" at its jwks_uri location after it has been used by OpenID Connect Provider",
-                "expected_result": "OpenID Connect Provider successfully uses the old then new encryption key"
+                "short_description": "Can rotate encryption keys",
+                "detailed_description": "Request an encrypted ID Token (using 'id_token_encrypted_response_alg' and 'id_token_encrypted_response_enc' in registered "
+                + CLIENT_METADATA + ") and decrypt it. Do an "+ ENCRYPTION_KEY_ROLLOVER +" at the Relying Party's 'jwks_uri' after it has been used by the OpenID Connect Provider. " +
+                "Make a new request for an encrypted ID Token and decrypt it using the rotated decryption key.",
+                "expected_result": "The OpenID Connect Provider successfully uses the rotated key: the first ID Token can decrypted using the first key and the second ID Token can be decrypted using the rolled over key."
             }
         }],
         ["Claim Types", {
