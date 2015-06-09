@@ -499,9 +499,9 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Should receive, verify the signature and decrypt the " + USERINFO_RESPONSE
             },
             "rp-user_info-enc":{
-                "short_description": "Can Request and Use Encrypted UserInfo Response",
-                "detailed_description": "The Relying Party should request and use UserInfo Response which has been encrypted",
-                "expected_result": "Should receive and decrypt the " + USERINFO_RESPONSE
+                "short_description": "Can request and use encrypted UserInfo Response",
+                "detailed_description": "Request encrypted UserInfo (using 'userinfo_encrypted_response_alg' and 'userinfo_encrypted_response_enc' in registered " + CLIENT_METADATA + "). Decrypt the " + USERINFO_RESPONSE + ".",
+                "expected_result": "A " + USERINFO_RESPONSE + "."
             },
             "rp-user_info-not_query":{
                 "short_description": "Does Not Access UserInfo Endpoint with Query Parameter Method",
