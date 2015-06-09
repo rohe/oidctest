@@ -117,7 +117,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var THIRD_PARTY_INITIATED_LOGIN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ThirdPartyInitiatedLogin", "third-party initiated login");
     var OPENID_CONFIGURATION_INFORMATION = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig", "OpenID Provider Configuration Information");
     var SIGNING_KEY_ROLLOVER = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys", "signing key rollover");
-    var ENCRYPTION_KEY_ROLLOVER = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateEncKeys", "encryption key rollover");
+    var ENCRYPTION_KEY_ROTATION = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateEncKeys", "encryption key rotation");
     var ID_TOKEN_IMPLICIT_FLOW = convert_to_link(IMPLICIT_FLOW_ID_TOKEN_URL, "ID Token");
     var SELF_ISSUED_AUTH_RESPONSE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedResponse", "authentication response");
     var SELF_ISSUED_ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedValidation", "self-issued ID Token");
@@ -128,6 +128,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var HYBRID_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth", "Hybrid Flow");
     var SYMMETRIC_SIGNATURES = convert_to_link(SIGNING_URL, "'client_secret' as MAC key");
     var MULITPLE_KEYS_JWKS = convert_to_link(SIGNING_URL, "multiple keys in its JWK Set document");
+    var ENCRYPTED_REQUEST = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#JWTRequests", "encrypted authentication request");
 
     $scope.guidlines = [
         ["Discovery", {
@@ -442,13 +443,14 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "OpenID Connect Provider successfully uses the old then new signing key"
             },
             "rp-key_rollover-op_enc_key": {
-                "short_description": "Support OP Encryption Key Rollover",
-                "detailed_description": "The Relying Party should do a "+ ENCRYPTION_KEY_ROLLOVER +" at its jwks_uri location after it has been used by OpenID Connect Provider",
-                "expected_result": "Relying Party successfully uses the old then new encryption key"
+                "short_description": "Supports rotation of provider's asymmetric encryption keys",
+                "detailed_description": "Fetch the issuer's keys from the 'jwks_uri' and make an " + ENCRYPTED_REQUEST +  " using the issuer's encryption keys. " +
+                "Fetch the issuer's encryption keys from the jwks_uri again, and make a new encrypted request using the rotated encryption keys.",
+                "expected_result": "A successful authentication response to both authentication requests encrypted using rotated encryption keys."
             },
             "rp-key_rollover-rp_enc_key": {
                 "short_description": "Can rollover RP encryption key",
-                "detailed_description": "The Relying Party should do a "+ ENCRYPTION_KEY_ROLLOVER +" at its jwks_uri location after it has been used by OpenID Connect Provider",
+                "detailed_description": "The Relying Party should do a "+ ENCRYPTION_KEY_ROTATION +" at its jwks_uri location after it has been used by OpenID Connect Provider",
                 "expected_result": "OpenID Connect Provider successfully uses the old then new encryption key"
             }
         }],
