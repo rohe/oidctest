@@ -61,16 +61,16 @@
 
                 <table class="table table-striped">
                     <tr>
-                        <td>Identifier</td>
+                        <td>Identifier:</td>
                         <td>{{test_name}}</td>
                     </tr>
                     <tr>
-                        <td>Profiles</td>
+                        <td>Profiles:</td>
                         <td><span ng-repeat="profile in test_data.profiles">{{profile.text}}<span ng-show="profile.optional_text"> {{profile.optional_text}}</span><span ng-show="!$last">, </span></span>
                         </td>
                     </tr>
                     <tr>
-                        <td>Description</td>
+                        <td>Description:</td>
                         <td>
                             <p ng-bind-html="test_data.detailed_description"></p>
                         </td>
