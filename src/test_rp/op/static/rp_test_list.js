@@ -66,7 +66,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
 
     var ISSUER_DISCOVERY_DOC = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery", "OpenID Provider Issuer Discovery");
     var CLIENT_REGISTRATION_ENDPOINT = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientRegistration", "client registration endpoint");
-    var CODE_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#CodeFlowAuth", "Code flow");
+    var CODE_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#CodeFlowAuth", "Code Flow");
     var IMPLICIT_FLOW = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth", "Implicit Flow");
     var BEARER_HEADER_METHOD = convert_to_link("http://tools.ietf.org/html/rfc6750#section-2.1", "Bearer header method");
     var FORM_ENCODED_BODY_METHOD = convert_to_link("http://tools.ietf.org/html/rfc6750#section-2.2", "form-encoded body method");
@@ -367,11 +367,11 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Accept the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
             "rp-id_token-sig_none": {
-                "short_description": "Can request and use unsigned ID Token response",
+                "short_description": "Can request and use unsigned ID Token",
                 "profiles": [BASIC_OPTIONAL, CONFIG_OPTIONAL, DYNAMIC_OPTIONAL],
-                "detailed_description": "Tests if the Relying Party can request and use unsigned ID Tokens. Use "+ CODE_FLOW +
-                " and set the " + ALG_VALUE_EQUAL_TO_NONE,
-                "expected_result": "Retrieve an unsigned ID Token"
+                "detailed_description": "Register with the provider specifying \"id_token_signed_response_alg='none'\" in the " +
+                CLIENT_METADATA + ". Use " + CODE_FLOW + " and retrieve an unsigned ID Token.",
+                "expected_result": "Accept the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
             "rp-id_token-bad_c_hash": {
                 "short_description": "Rejects ID Token with incorrect 'c_hash' claim when hybrid flow is used",
