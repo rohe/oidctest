@@ -72,7 +72,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var CODE_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#CodeFlowAuth", "Code Flow");
     var IMPLICIT_FLOW = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth", "Implicit Flow");
     var BEARER_HEADER_METHOD = convert_to_link("http://tools.ietf.org/html/rfc6750#section-2.1", "Bearer header method");
-    var FORM_ENCODED_BODY_METHOD = convert_to_link("http://tools.ietf.org/html/rfc6750#section-2.2", "form-encoded body method");
+    var FORM_ENCODED_BODY_PARAMETER = convert_to_link("http://tools.ietf.org/html/rfc6750#section-2.2", "form-encoded body parameter");
     var RFC7033 = convert_to_link("http://tools.ietf.org/html/rfc7033#section-7", "RFC7033");
     var URL_SYNTAX = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#URLSyntax", "URL syntax");
     var ACCT_SYNTAX = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#AcctURISyntax", "acct URI syntax");
@@ -483,11 +483,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Receiving " + USERINFO_RESPONSE
             },
             "rp-user_info-bearer_body": {
-                "short_description": "Accesses UserInfo Endpoint with form-encoded body method",
+                "short_description": "Can send Access Token as form-encoded body parameter",
                 "profiles": [BASIC_ALT_TO_HDR_METHOD, IMPLICIT_ALT_TO_HDR_METHOD, HYBRID_ALT_TO_HDR_METHOD],
-                "detailed_description": "While doing the " + USERINFO_REQUEST + " the the Relying Party should send the access token using the " +
-                FORM_ENCODED_BODY_METHOD,
-                "expected_result": "Should receive a " + USERINFO_RESPONSE
+                "detailed_description": "Pass the access token as a " + FORM_ENCODED_BODY_PARAMETER + " while doing the " + USERINFO_REQUEST + ".",
+                "expected_result": "A " + USERINFO_RESPONSE + "."
             },
             "rp-user_info-sign":{
                 "short_description": "Can Request and Use Signed UserInfo Response",
