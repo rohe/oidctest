@@ -65,7 +65,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var ISSUER_DISCOVERY_DOC = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery", "OpenID Provider Issuer Discovery");
     var CLIENT_REGISTRATION_ENDPOINT = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientRegistration", "client registration endpoint");
     var CODE_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#CodeFlowAuth", "Code flow");
-    var IMPLICIT_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitFlowSteps", "Implicit Flow");
+    var IMPLICIT_FLOW = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth", "Implicit Flow");
     var BEARER_HEADER_METHOD = convert_to_link("http://tools.ietf.org/html/rfc6750#section-2.1", "Bearer header method");
     var FORM_ENCODED_BODY_METHOD = convert_to_link("http://tools.ietf.org/html/rfc6750#section-2.2", "form-encoded body method");
     var RFC7033 = convert_to_link("http://tools.ietf.org/html/rfc7033#section-7", "RFC7033");
@@ -109,7 +109,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var ID_TOKEN_VALIDATION_FOR_CODE_FLOW = convert_to_link("http://openid.net/specs/openid-connect-core-1_0-17.html#IDTokenValidation", "ID Token validation for code flow");
     var VALIDATE_THE_NONCE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitIDTValidation", "validate the nonce");
     var OPENID_SCOPE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest", "openid scope");
-    var REQUEST_CLAIMS_USING_SCOPE_VALUES = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims", "request claims using Scope Values");
+    var REQUEST_CLAIMS_USING_SCOPE_VALUES = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims", "Request claims using scope values");
     var OPENID_PROVIDER_METADATA = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata", "OpenID Provider Metadata");
     var CLIENT_METADATA = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata", "Client Metadata");
     var JSON_WEB_KEY_SET_FORMAT = convert_to_link("https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-5", "JSON Web Key Set (JWK Set) Format");
@@ -295,10 +295,11 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "An authentication response."
             },
             "rp-scope-userinfo_claims": {
-                "short_description": "Requesting UserInfo Claims with scope values",
+                "short_description": "Can request and use claims using scope values",
                 "profiles": [BASIC_OPTIONAL, IMPLICIT_OPTIONAL, HYBRID_OPTIONAL, SELF_ISSUED_OPTIONAL],
-                "detailed_description": "The Relying Party should be able to " + REQUEST_CLAIMS_USING_SCOPE_VALUES,
-                "expected_result": "Receiving UserInfo response"
+                "detailed_description": REQUEST_CLAIMS_USING_SCOPE_VALUES + ".",
+                "expected_result": "A " + USERINFO_RESPONSE + " containing the requested claims. If no access token is issued (when using "
+                + IMPLICIT_FLOW + " with response_type='id_token') the " + ID_TOKEN + " contains the requested claims."
             }
         }],
         ["nonce Request Parameter", {
