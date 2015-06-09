@@ -468,9 +468,9 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Understand the aggregated claims in the " + USERINFO_RESPONSE + "."
             },
             "rp-claims-distributed": {
-                "short_description": "Handles distributed user information",
-                "detailed_description": "The Relying Party can display "+ DISTRIBUTED_CLAIMS +" received from OpenID Connect Provider",
-                "expected_result": "Receiving UserInfo response"
+                "short_description": "Can use Distributed Claims",
+                "detailed_description": "Make a " + USERINFO_REQUEST + " and read the " + DISTRIBUTED_CLAIMS + ".",
+                "expected_result": "Understand the distributed claims in the " + USERINFO_RESPONSE + "."
             }
         }],
         ["UserInfo Endpoint", {
