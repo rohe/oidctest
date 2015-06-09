@@ -92,7 +92,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var AUTHORIZATION_CODE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#CodeValidation", "authorization code");
     var C_HASH = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#HybridIDToken", "c_hash");
     var AT_HASH = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#HybridIDToken", "at_hash");
-    var ACCESS_TOKEN_VALIDATION = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowTokenValidation", "access_token validation");
+    var ACCESS_TOKEN_VALIDATION = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowTokenValidation", "Access Token validation");
     var ID_TOKEN_VALIDATION = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation", "ID Token validation");
     var IAT = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "iat");
     var AUD = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "aud");
@@ -379,11 +379,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "The RP should be able to detect that the c_hash i invalid"
             },
             "rp-id_token-bad_at_hash": {
-                "short_description": "Rejects incorrect at_hash when response type equals 'id_token token'",
+                "short_description": "Rejects ID Token with incorrect 'at_hash' claim when response_type='id_token token'",
                 "profiles": [IMPLICIT, HYBRID],
-                "detailed_description": "Tests if the Relying Party can extract an "+ AT_HASH +" from an ID token " +
-                "and it should be used in the " + ACCESS_TOKEN_VALIDATION + ". The response type should be set to 'id_token token'",
-                "expected_result": "The RP should be able to detect that the at_hash is invalid"
+                "detailed_description": "Make an authentication request using response_type='id_token token'. Verify the 'at_hash' value in the returned " + ID_TOKEN + ".",
+                "expected_result": "Identify the incorrect 'at_hash' value and reject the ID Token after doing " + ACCESS_TOKEN_VALIDATION + "."
             },
             //TODO Difference between this test and rp-discovery-mismatching_issuers
             "rp-id_token-mismatching_issuer": {
