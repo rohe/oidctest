@@ -15,37 +15,15 @@ from oidctest.testfunc import set_op_args
 from oidctest.testfunc import expect_exception
 from oidctest.testfunc import set_request_args
 
-from cl.func import set_webfinger_resource, set_discovery_issuer
-#from oidctest.testfunc import conditional_expect_exception
+from func import set_webfinger_resource, set_discovery_issuer
 
 __author__ = 'roland'
 
-ORDDESC = ["rp-webfinger", "rp-discovery", "rp-registration",
+ORDDESC = ["rp-discovery", "rp-registration",
            "rp-response_type", "rp-response_mode",
-           "rp-token_endpoint", "rp-id_token", "rp-claims_request",
-           "rp-request_uri", "rp-scope", "rp-nonce",
-           "rp-key_rollover", "rp_userinfo"]
-
-DESC = {
-    "webfinger": "WebFinger",
-    "discovery": "Discovery",
-    "registration": "Dynamic Client Registration",
-    "response_type": "Response Type",
-    "response_mode": "Response Mode",
-    "token_endpoint": "Token Endpoint",
-    "id_token": "ID Token",
-    "claims_request": "claims Request Parameter",
-    "request_uri": "request_uri Request Parameter",
-    "scope": "scope Request Parameter",
-    "nonce": "nonce Request Parameter",
-    "key_rollover": "Key Rotation",
-    "userInfo": "Userinfo Endpoint",
-    #
-    "Req": "Misc Request Parameters",
-    "OAuth": "OAuth behaviors",
-    "ClientAuth": "Client Authentication",
-    "request": "request Request Parameter",
-}
+           "rp-token_endpoint", "rp-idt", "rp-id_token",
+           "rp-user_info", "rp-claims", "rp-claims_request",
+           "rp-request_uri", "rp-scope", "rp-nonce", "rp-key_rollover"]
 
 FLOWS = {
     "rp-discovery-webfinger_url": {
@@ -255,7 +233,7 @@ FLOWS = {
         "desc": "Can Make Access Token Request with 'private_key_jwt' "
                 "Authentication"
     },
-    "rp-id_token-asym_sig": {
+    "rp-idt-asym_sig": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -269,7 +247,7 @@ FLOWS = {
         "profile": "I...T",
         "desc": "Accept Valid Asymmetric ID Token Signature"
     },
-    "rp-id_token-sym_sig": {
+    "rp-idt-sym_sig": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -283,7 +261,7 @@ FLOWS = {
         "profile": "I...T",
         "desc": "Accept Valid Symmetric ID Token Signature"
     },
-    "rp-id_token-invalid-asym_sig": {
+    "rp-idt-invalid-asym_sig": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -300,7 +278,7 @@ FLOWS = {
         "profile": "I...T",
         "desc": "Reject Invalid Asymmetric ID Token Signature"
     },
-    "rp-id_token-invalid-ec_sig": {
+    "rp-idt-invalid-ec_sig": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -317,7 +295,7 @@ FLOWS = {
         "profile": "I...T",
         "desc": "Reject Invalid Asymmetric ID Token Signature"
     },
-    "rp-id_token-invalid-sym_sig": {
+    "rp-idt-invalid-sym_sig": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -350,7 +328,7 @@ FLOWS = {
         "profile": "I...T",
         "desc": "Can Request and Use Signed and Encrypted ID Token Response",
     },
-    "rp-id_token-none": {
+    "rp-idt-none": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),

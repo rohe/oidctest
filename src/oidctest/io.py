@@ -27,32 +27,48 @@ TEST_RESULTS = {OK: "OK", ERROR: "ERROR", WARNING: "WARNING",
                 INCOMPLETE: "INCOMPLETE"}
 
 
-class Interface(object):
-    def __init__(self, lookup, conf, test_flows, cache, test_profile,
-                 profiles, test_class, check_factory, environ=None,
-                 start_response=None):
-        self.lookup = lookup
+class IO(object):
+    def __init__(self, conf, flows, profile, profiles, operation,
+                 check_factory, desc, cache=None, **kwargs):
         self.conf = conf
-        self.test_flows = test_flows
+        self.flows = flows
         self.cache = cache
-        self.test_profile = test_profile
+        self.test_profile = profile
         self.profiles = profiles
-        self.test_class = test_class
+        self.operation = operation
         self.check_factory = check_factory
+        self.desc = desc
+
+    def dump_log(self, session, test_id):
+        pass
+
+    def err_response(self, session, where, err):
+        pass
+
+
+class WebIO(IO):
+    def __init__(self, conf, flows, profile, profiles, operation,
+                 check_factory, desc, lookup, cache=None, environ=None,
+                 start_response=None, **kwargs):
+        IO.__init__(self, conf, flows, profile, profiles, operation,
+            check_factory, desc, cache, **kwargs)
+        self.lookup = lookup
         self.environ = environ
         self.start_response = start_response
 
-    def store_test_info(self, session, profile_info=None):
+    @staticmethod
+    def store_test_info(session, profile_info=None):
+        _conv = session["conv"]
         _info = {
-            "trace": session["conv"].trace,
-            "test_output": session["conv"].test_output,
+            "trace": _conv.trace,
+            "test_output": _conv.test_output,
             "index": session["index"],
-            "seqlen": len(session["seq_info"]["sequence"]),
+            "seqlen": len(session["sequence"]),
             "descr": session["node"].desc
         }
 
         try:
-            _info["node"] = session["seq_info"]["node"]
+            _info["node"] = session["node"]
         except KeyError:
             pass
 
@@ -84,7 +100,7 @@ class Interface(object):
             "profile": session["profile"],
             "test_info": session["test_info"].keys(),
             "base": self.conf.BASE,
-            "headlines": self.test_flows.DESC,
+            "headlines": self.desc,
             "testresults": TEST_RESULTS
         }
 
@@ -115,7 +131,7 @@ class Interface(object):
                 # and lastly the result
                 self.store_test_info(session, _pi)
                 _info = session["test_info"][_tid]
-                output.append("RESULT: %s" % represent_result(_info, _tid))
+                output.append("RESULT: %s" % represent_result(_info, session))
                 output.append("")
 
                 f = open(path, "w")
@@ -149,7 +165,8 @@ class Interface(object):
             "profile": info["profile_info"],
             "trace": info["trace"],
             "output": info["test_output"],
-            "result": represent_result(info, testid).replace("\n", "<br>\n")
+            "result": represent_result(
+                info, session).replace("\n", "<br>\n")
         }
 
         return resp(self.environ, self.start_response, **argv)
@@ -307,7 +324,7 @@ class Interface(object):
         return resp(self.environ, self.start_response, **argv)
 
     def opresult(self, conv, session):
-        evaluate(session)
+        evaluate(session, session["test_info"][conv.test_id])
         return self.flow_list(session)
 
     def opresult_fragment(self):
@@ -316,3 +333,48 @@ class Interface(object):
                         headers=[])
         argv = {}
         return resp(self.environ, self.start_response, **argv)
+
+
+SIGN = {OK: "+", WARNING: "?", ERROR: "-", INCOMPLETE: "!"}
+
+class ClIO(IO):
+    def flow_list(self, session):
+        pass
+
+    def dump_log(self, session, test_id):
+        try:
+            _conv = session["conv"]
+        except KeyError:
+            pass
+        else:
+            _pi = get_profile_info(session, test_id)
+            if _pi:
+                sline = 60*"="
+                output = ["%s: %s" % (k, _pi[k]) for k in ["Issuer", "Profile",
+                                                           "Test ID"]]
+                output.append("Timestamp: %s" % in_a_while())
+                output.extend(["", sline, ""])
+                output.extend(trace_output(_conv.trace))
+                output.extend(["", sline, ""])
+                output.extend(test_output(_conv.test_output))
+                output.extend(["", sline, ""])
+                # and lastly the result
+                info = {
+                    "test_output": _conv.test_output,
+                    "trace": _conv.trace
+                }
+                output.append("RESULT: %s" % represent_result(info, session))
+                output.append("")
+
+                txt = "\n".join(output)
+
+                print(txt)
+
+    def result(self, session):
+        _conv = session["conv"]
+        info = {
+            "test_output": _conv.test_output,
+            "trace": _conv.trace
+        }
+        _state = evaluate(session, info)
+        print "{} {}".format(SIGN[_state], session["node"].name)

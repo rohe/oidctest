@@ -5,14 +5,14 @@ import importlib
 import json
 import os
 from urllib import quote_plus
-from urlparse import parse_qs, urlparse
+from urlparse import urlparse
 import argparse
 import logging
 import sys
 from oic.utils.keyio import build_keyjar
-from oidctest.interface import Interface
-from oidctest import CRYPTSUPPORT
-from oidctest.plattform import PlattForm
+from oidctest.utils import setup_logging
+from oidctest.io import WebIO
+from oidctest.tool import WebTester
 
 SERVER_LOG_FOLDER = "server_log"
 if not os.path.isdir(SERVER_LOG_FOLDER):
@@ -46,6 +46,10 @@ LOGGER = logging.getLogger("")
 
 ENV = None
 
+def pick_args(args, kwargs):
+    return dict([(k, kwargs[k]) for k in args])
+
+
 def application(environ, start_response):
     LOGGER.info("Connection from: %s" % environ["REMOTE_ADDR"])
     session = environ['beaker.session']
@@ -53,41 +57,34 @@ def application(environ, start_response):
     path = environ.get('PATH_INFO', '').lstrip('/')
     LOGGER.info("path: %s" % path)
 
-    interface = Interface(**ENV)
-    interface.environ = environ
-    interface.start_response = start_response
+    io = WebIO(**ENV)
+    io.environ = environ
+    io.start_response = start_response
 
-    pf = PlattForm(interface, **ENV)
-    _pfsh = pf.sh
-    
+    sh = SessionHandler(session, **ENV)
+
+    tester = WebTester(io, sh, **ENV)
+
     if path == "robots.txt":
-        return interface.static("static/robots.txt")
+        return io.static("static/robots.txt")
     elif path == "favicon.ico":
-        return interface.static("static/favicon.ico")
+        return io.static("static/favicon.ico")
     elif path.startswith("static/"):
-        return interface.static(path)
+        return io.static(path)
     elif path.startswith("export/"):
-        return interface.static(path)
+        return io.static(path)
+
 
     if path == "":  # list
-        try:
-            if _pfsh.session_init(session):
-                return interface.flow_list(session)
-            else:
-                try:
-                    resp = Redirect("%sopresult#%s" % (
-                        interface.conf.BASE, session["testid"][0]))
-                except KeyError:
-                    return interface.flow_list(session)
-                else:
-                    return resp(environ, start_response)
-        except Exception as err:
-            return interface.err_response(session, "session_setup", err)
-    elif path == "logs":
-        return interface.display_log("log", issuer="", profile="", testid="")
+        return tester.display_test_list()
+    elif "flow_names" not in session:
+        sh.session_init()
+
+    if path == "logs":
+        return io.display_log("log", issuer="", profile="", testid="")
     elif path.startswith("log"):
         if path == "log" or path == "log/":
-            _cc = interface.conf.CLIENT
+            _cc = io.conf.CLIENT
             try:
                 _iss = _cc["srv_discovery_url"]
             except KeyError:
@@ -103,200 +100,72 @@ def application(environ, start_response):
                 parts.insert(0, tail)
                 path = head
 
-        return interface.display_log("log", *parts)
+        return io.display_log("log", *parts)
     elif path.startswith("tar"):
         path = path.replace(":", "%3A")
-        return interface.static(path)
-    elif "flow_names" not in session:
-        _pfsh.session_init(session)
+        return io.static(path)
 
     if path == "reset":
-        _pfsh.reset_session(session)
-        return interface.flow_list(session)
+        sh.reset_session(sh.session)
+        return io.flow_list(session)
     elif path == "pedit":
         try:
-            return interface.profile_edit(session)
+            return io.profile_edit(session)
         except Exception as err:
-            return interface.err_response(session, "pedit", err)
+            return io.err_response(session, "pedit", err)
     elif path == "profile":
-        info = parse_qs(get_post(environ))
-        try:
-            cp = session["profile"].split(".")
-            cp[0] = info["rtype"][0]
-
-            crsu = []
-            for name, cs in list(CRYPTSUPPORT.items()):
-                try:
-                    if info[name] == ["on"]:
-                        crsu.append(cs)
-                except KeyError:
-                    pass
-
-            if len(cp) == 3:
-                if len(crsu) == 3:
-                    pass
-                else:
-                    cp.append("".join(crsu))
-            else:  # len >= 4
-                cp[3] = "".join(crsu)
-
-            try:
-                if info["extra"] == ['on']:
-                    if len(cp) == 3:
-                        cp.extend(["", "+"])
-                    elif len(cp) == 4:
-                        cp.append("+")
-                    elif len(cp) == 5:
-                        cp[4] = "+"
-                else:
-                    if len(cp) == 5:
-                        cp = cp[:-1]
-            except KeyError:
-                if len(cp) == 5:
-                    cp = cp[:-1]
-
-            # reset all test flows
-            _pfsh.reset_session(session, ".".join(cp))
-            return interface.flow_list(session)
-        except Exception as err:
-            return interface.err_response(session, "profile", err)
+        return tester.set_profile(environ)
     elif path.startswith("test_info"):
         p = path.split("/")
         try:
-            return interface.test_info(p[1], session)
+            return io.test_info(p[1], sh.session)
         except KeyError:
-            return interface.not_found()
+            return io.not_found()
     elif path == "continue":
-        try:
-            sequence_info = session["seq_info"]
-        except KeyError:  # Cookie delete broke session
-            query = parse_qs(environ["QUERY_STRING"])
-            path = query["path"][0]
-            index = int(query["index"][0])
-            conv, sequence_info, ots, trace, index = _pfsh.session_setup(
-                session, path, index)
-
-            try:
-                conv = RP_ARGS["cache"][query["ckey"][0]]
-            except KeyError:
-                pass
-            else:
-                ots.client = conv.client
-                session["conv"] = conv
-        except Exception as err:
-            return interface.err_response(session, "session_setup", err)
-        else:
-            index = session["index"]
-            ots = session["ots"]
-            conv = session["conv"]
-
-        index += 1
-        try:
-            return pf.run_sequence(sequence_info, session, conv, ots,
-                                     conv.trace, index)
-        except Exception as err:
-            return interface.err_response(session, "run_sequence", err)
+        return tester.cont(environ)
     elif path == "opresult":
+        if tester.conv is None:
+            return io.sorry_response("", "No result to report")
 
-        try:
-            conv = session["conv"]
-        except KeyError as err:
-            homepage = ""
-            return interface.sorry_response(homepage, err)
-
-        return interface.opresult(conv, session)
+        return io.opresult(tester.conv, sh.session)
     # expected path format: /<testid>[/<endpoint>]
     elif path in session["flow_names"]:
-        LOGGER.info("<=<=<=<=< %s >=>=>=>=>" % path)
-        conv, sequence_info, ots, trace, index = sh.session_setup(session,
-                                                                    path)
-        session["node"].complete = False
-        try:
-            return pf.run_sequence(sequence_info, session, conv, ots,
-                                     trace, index)
-        except Exception as err:
-            return interface.err_response(session, "run_sequence", err)
+        return tester.run(path, **ENV)
     elif path in ["authz_cb", "authz_post"]:
-        try:
-            sequence_info = session["seq_info"]
-            index = session["index"]
-            ots = session["ots"]
-            conv = session["conv"]
-        except KeyError as err:
-            # Todo: find out which port I'm listening on
-            return interface.sorry_response(interface.conf.BASE, err)
-        (req_c, resp_c), _ = sequence_info["sequence"][index]
-        try:
-            response_mode = conv.AuthorizationRequest["response_mode"]
-        except KeyError:
-            response_mode = None
-
         if path == "authz_cb":
+            _conv = session["conv"]
+            try:
+                response_mode = _conv.req.req_args["response_mode"]
+            except KeyError:
+                response_mode = ""
+
+            # Check if fragment encoded
             if response_mode == "form_post":
                 pass
-            elif session["response_type"] and not \
-                    session["response_type"] == ["code"]:
-                # but what if it's all returned as a query ?
+            else:
                 try:
-                    qs = environ["QUERY_STRING"]
+                    response_type = _conv.req.req_args["response_type"]
                 except KeyError:
-                    pass
-                else:
-                    session["conv"].trace.response("QUERY_STRING:%s" % qs)
-                    session["conv"].query_component = qs
+                    response_type = ""
 
-                return interface.opresult_fragment()
+                if response_type != ["code"]:
+                    # but what if it's all returned as a query anyway ?
+                    try:
+                        qs = environ["QUERY_STRING"]
+                    except KeyError:
+                        pass
+                    else:
+                        _conv.trace.response("QUERY_STRING:%s" % qs)
+                        _conv.query_component = qs
 
-        if resp_c:  # None in cases where no OIDC response is expected
-            _ctype = resp_c.ctype
-
-            # parse the response
-            if response_mode == "form_post":
-                info = parse_qs(get_post(environ))
-                _ctype = "dict"
-            elif path == "authz_post":
-                query = parse_qs(get_post(environ))
-                try:
-                    info = query["fragment"][0]
-                except KeyError:
-                    return interface.sorry_response(interface.conf.BASE,
-                                               "missing fragment ?!")
-                _ctype = "urlencoded"
-            elif resp_c.where == "url":
-                info = environ["QUERY_STRING"]
-                _ctype = "urlencoded"
-            else:  # resp_c.where == "body"
-                info = get_post(environ)
-
-            LOGGER.info("Response: %s" % info)
-            conv.trace.reply(info)
-            resp_cls = message_factory(resp_c.response)
-            algs = ots.client.sign_enc_algs("id_token")
-            try:
-                response = ots.client.parse_response(
-                    resp_cls, info, _ctype,
-                    conv.AuthorizationRequest["state"],
-                    keyjar=ots.client.keyjar, algs=algs)
-            except ResponseError as err:
-                return interface.err_response(session, "run_sequence", err)
-            except Exception as err:
-                return interface.err_response(session, "run_sequence", err)
-
-            LOGGER.info("Parsed response: %s" % response.to_dict())
-            conv.protocol_response.append((response, info))
-            conv.trace.response(response)
+                    return io.opresult_fragment()
 
         try:
-            post_tests(conv, req_c, resp_c)
+            tester.async_response(ENV["conf"])
         except Exception as err:
-            return interface.err_response(session, "post_test", err)
-
-        index += 1
-        try:
-            return interface.run_sequence(sequence_info, session, conv, ots,
-                                     conv.trace, index)
-        except Exception as err:
-            return interface.err_response(session, "run_sequence", err)
+            return io.err_response(session, "authz_cb", err)
+        else:
+            return io.flow_list(session)
     else:
         resp = BadRequest()
         return resp(environ, start_response)
@@ -306,13 +175,12 @@ if __name__ == '__main__':
     from beaker.middleware import SessionMiddleware
     from cherrypy import wsgiserver
     from oictest.check import factory as check_factory
-    from oidctest import oper
     from oic.oic.message import factory as oic_message_factory
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', dest='mailaddr')
-    parser.add_argument('-t', dest='testflows')
-    parser.add_argument('-c', dest='testclass')
+    parser.add_argument('-o', dest='operations')
+    parser.add_argument('-f', dest='testflows')
     parser.add_argument('-d', dest='directory')
     parser.add_argument('-p', dest='profile')
     parser.add_argument('-P', dest='profiles')
@@ -349,10 +217,10 @@ if __name__ == '__main__':
     else:
         from oidctest import profiles
 
-    if args.testclass:
-        test_class = importlib.import_module(args.testclass)
+    if args.operations:
+        operations = importlib.import_module(args.operations)
     else:
-        from oictest import testclass as test_class
+        from oidctest import oper as operations
 
     if args.directory:
         _dir = args.directory
@@ -384,9 +252,10 @@ if __name__ == '__main__':
     ENV = {"base_url": CONF.BASE, "kidd": kidd, "keyjar": keyjar,
            "jwks_uri": jwks_uri, "flows": FLOWS.FLOWS, "conf": CONF,
            "cinfo": CONF.INFO, "orddesc": FLOWS.ORDDESC,
-           "profiles": profiles, "operations": oper,
+           "profiles": profiles, "operation": operations,
            "profile": args.profile, "msg_factory": oic_message_factory,
-           "check_factory": check_factory}
+           "check_factory": check_factory, "lookup": LOOKUP,
+           "desc": FLOWS.DESC}
 
     # RP_ARGS = {"lookup": LOOKUP, "conf": CONF, "test_flows": TEST_FLOWS,
     #            "cache": {}, "test_profile": TEST_PROFILE, "profiles": PROFILES,
