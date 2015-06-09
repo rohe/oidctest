@@ -96,7 +96,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var ID_TOKEN_VALIDATION = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation", "ID Token validation");
     var IAT = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "iat");
     var AUD = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "aud");
-    var CLIENT_ID = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#RegistrationResponse", "Client ID");
+    var CLIENT_ID = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#RegistrationResponse", "client_id");
     var SUB = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "sub");
     var CLAIMS_REQUEST_PARAMETER = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ClaimsParameter", "'claims' request parameter");
     var REQUEST_OBJECT_BY_REFERENCE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RequestUriParameter", "Request Object by Reference");
@@ -407,10 +407,11 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Should do a "+ ID_TOKEN_VALIDATION +" and detect that the ID Token signature is invalid"
             },
             "rp-id_token-aud": {
-                "short_description": "Reject ID Token with invalid aud claim",
+                "short_description": "Rejects ID Token with invalid 'aud' claim",
                 "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
-                "detailed_description": "The Relying Party should request an ID token and compare its "+ AUD +" value to Relying Party's " + CLIENT_ID,
-                "expected_result": "Should do a "+ ID_TOKEN_VALIDATION +" and detect when 'aud' claim is missing or doesn't match Client ID"
+                "detailed_description": "Request an ID token and compare its "+ AUD +" value to the Relying Party's '" + CLIENT_ID + "'.",
+                "expected_result": "Identify that the 'aud' value is missing or doesn't match the 'client_id' and reject the ID Token after doing " + ID_TOKEN_VALIDATION + "."
+
             },
             "rp-id_token-sub": {
                 "short_description": "Reject ID Token without sub claim",
