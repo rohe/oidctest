@@ -487,6 +487,12 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "detailed_description": "Pass the access token as a " + FORM_ENCODED_BODY_PARAMETER + " while doing the " + USERINFO_REQUEST + ".",
                 "expected_result": "A " + USERINFO_RESPONSE + "."
             },
+            "rp-user_info-not_query":{
+                "short_description": "Does not send Access Token as URI query parameter",
+                "profiles": [BASIC, IMPLICIT, HYBRID],
+                "detailed_description": "Make a "+ USERINFO_REQUEST +" without sending the Access Token in the HTTP request URI.",
+                "expected_result": "A successful " + USERINFO_RESPONSE + " without passing the Access Token as a query parameter."
+            },
             "rp-user_info-sign":{
                 "short_description": "Can Request and Use Signed UserInfo Response",
                 "profiles": [CONFIG_OPTIONAL, DYNAMIC_OPTIONAL],
@@ -502,12 +508,6 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "short_description": "Can request and use encrypted UserInfo Response",
                 "detailed_description": "Request encrypted UserInfo (using 'userinfo_encrypted_response_alg' and 'userinfo_encrypted_response_enc' in registered " + CLIENT_METADATA + "). Decrypt the " + USERINFO_RESPONSE + ".",
                 "expected_result": "A " + USERINFO_RESPONSE + "."
-            },
-            "rp-user_info-not_query":{
-                "short_description": "Does Not Access UserInfo Endpoint with Query Parameter Method",
-                "profiles": [BASIC, IMPLICIT, HYBRID],
-                "detailed_description": "While doing a "+ USERINFO_REQUEST +" the Relying party should not send the access token as a Query Parameter, but only as a Bearer Token",
-                "expected_result": "Should receive a " + USERINFO_RESPONSE + " without using the Query Parameter method"
             },
             "rp-user_info-bad_sub_claim":{
                 "short_description": "Rejects UserInfo Response with invalid 'sub' claim",
