@@ -327,10 +327,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "A " + TOKEN_RESPONSE + ", containing an ID token."
             },
             "rp-token_endpoint-client_secret_jwt": {
-                "short_description": "Can make Access Token request with 'client_secret_jwt' authentication",
-                "detailed_description": "Tests if a client can authenticate to the authentication server " +
-                "when using the token endpoint. In order to authenticate the client should be using '" + CLIENT_SECRET_JWT + "'",
-                "expected_result": "A " + TOKEN_RESPONSE + " should be returned containing an ID token"
+                "short_description": "Can make Access Token Request with 'client_secret_jwt' authentication",
+                "detailed_description": "Use the '" + CLIENT_SECRET_JWT + "' method to authenticate at the Authorization Server " +
+                "when using the token endpoint.",
+                "expected_result": "A " + TOKEN_RESPONSE + ", containing an ID token."
             },
             "rp-token_endpoint-client_secret_post": {
                 "short_description": "Can Make Access Token Request with 'client_secret_post' Authentication",
