@@ -71,7 +71,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var CLIENT_REGISTRATION_ENDPOINT = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientRegistration", "client registration endpoint");
     var CODE_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#CodeFlowAuth", "Code Flow");
     var IMPLICIT_FLOW = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth", "Implicit Flow");
-    var BEARER_HEADER_METHOD = convert_to_link("http://tools.ietf.org/html/rfc6750#section-2.1", "Bearer header method");
+    var BEARER_AUTH_SCHEME = convert_to_link("http://tools.ietf.org/html/rfc6750#section-2.1", "\"Bearer\" authentication scheme");
     var FORM_ENCODED_BODY_PARAMETER = convert_to_link("http://tools.ietf.org/html/rfc6750#section-2.2", "form-encoded body parameter");
     var RFC7033 = convert_to_link("http://tools.ietf.org/html/rfc7033#section-7", "RFC7033");
     var URL_SYNTAX = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#URLSyntax", "URL syntax");
@@ -476,11 +476,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         }],
         ["UserInfo Endpoint", {
             "rp-user_info-bearer_header": {
-                "short_description": "Accesses UserInfo Endpoint with Header Method",
+                "short_description": "Can send Access Token in the HTTP \"Authorization\" request header",
                 "profiles": [BASIC, IMPLICIT, HYBRID],
-                "detailed_description": "While doing the " + USERINFO_REQUEST + " the the Relying Party should send the access token using the " +
-                BEARER_HEADER_METHOD,
-                "expected_result": "Receiving " + USERINFO_RESPONSE
+                "detailed_description": "Pass the access token using the " + BEARER_AUTH_SCHEME + " while doing the " + USERINFO_REQUEST + ".",
+                "expected_result": "A " + USERINFO_RESPONSE + "."
             },
             "rp-user_info-bearer_body": {
                 "short_description": "Can send Access Token as form-encoded body parameter",
