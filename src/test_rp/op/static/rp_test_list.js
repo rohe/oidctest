@@ -89,7 +89,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var CLIENT_SECRET_POST = convert_to_link(CLIENT_AUTHENTICATION_URL, "client_secret_post");
     var PRIVATE_KEY_JWT = convert_to_link(CLIENT_AUTHENTICATION_URL, "private_key_jwt");
     var ALG_VALUE_EQUAL_TO_NONE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "'alg' value equal to 'none'");
-    var AUTHORIZATION_CODE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#CodeValidation", "authorization code");
+    var AUTHORIZATION_CODE_VALIDATION = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#CodeValidation", "Authorization Code Validation");
     var C_HASH = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#HybridIDToken", "c_hash");
     var AT_HASH = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#HybridIDToken", "at_hash");
     var ACCESS_TOKEN_VALIDATION = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowTokenValidation", "Access Token validation");
@@ -125,6 +125,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#IDToken", "ID Token");
     var UNSECURED_JWS = convert_to_link("https://tools.ietf.org/html/rfc7518#section-3.6", "Unsecured JWS");
     var NONCE_IMPLMENTATION = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#NonceNotes", "'nonce' value");
+    var HYBRID_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth", "Hybrid Flow");
 
     $scope.guidlines = [
         ["Discovery", {
@@ -372,11 +373,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Retrieve an unsigned ID Token"
             },
             "rp-id_token-bad_c_hash": {
-                "short_description": "Rejects incorrect c_hash from an ID token when code flow is used",
+                "short_description": "Rejects ID Token with incorrect 'c_hash' claim when hybrid flow is used",
                 "profiles": [HYBRID],
-                "detailed_description": "Tests if the Relying Party extract an "+ C_HASH +" from an ID token presented as json. It should be used " +
-                "to validate the correctness of the " + AUTHORIZATION_CODE,
-                "expected_result": "The RP should be able to detect that the c_hash i invalid"
+                "detailed_description": "Retrieve Authorization Code and ID Token from the Authorization Endpoint, using " + HYBRID_FLOW + ". Verify the "+ C_HASH +" value in the returned ID token.",
+                "expected_result": "Identify the incorrect 'c_hash' value and reject the ID Token after doing " + AUTHORIZATION_CODE_VALIDATION + "."
             },
             "rp-id_token-bad_at_hash": {
                 "short_description": "Rejects ID Token with incorrect 'at_hash' claim when response_type='id_token token'",
