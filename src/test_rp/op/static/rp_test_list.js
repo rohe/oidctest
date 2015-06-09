@@ -61,6 +61,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     };
 
     var IMPLICIT_FLOW_ID_TOKEN_URL = "https://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitIDToken";
+    var CLIENT_AUTHENTICATION_URL = "https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication";
 
     var ISSUER_DISCOVERY_DOC = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery", "OpenID Provider Issuer Discovery");
     var CLIENT_REGISTRATION_ENDPOINT = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientRegistration", "client registration endpoint");
@@ -75,8 +76,8 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var AUTHORIZATION_CODE_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#CodeFlowAuth", "Authorization Code Flow");
     var CODE_AUTHENTICATION_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#AuthResponse", "authentication response");
     var IMPLICIT_AUTHENTICATION_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitAuthResponse", "authentication response");
-    var CLIENT_SECRET_BASIC = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication", "client_secret_basic");
-    var TOKEN_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#TokenResponse", "token response");
+    var CLIENT_SECRET_BASIC = convert_to_link(CLIENT_AUTHENTICATION_URL, "client_secret_basic");
+    var TOKEN_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#TokenResponse", "Token Response");
     var USERINFO_REQUEST = convert_to_link("https://openid.net/specs/openid-connect-standard-1_0-21.html#UserInfoRequest", "UserInfo Request");
     var USERINFO_RESPONSE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#UserInfo", "UserInfo Response");
     var OPENID_PROVIDER_ISSUER_DISCOVERY = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery", "OpenID Provider Issuer Discovery");
@@ -84,9 +85,9 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var RESPONSE_TYPE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ImplicitAuthRequest", "response_type");
     var FORM_POST = convert_to_link("https://openid.net/specs/oauth-v2-form-post-response-mode-1_0.html#FormPostResponseMode", "form_post");
     var RESPONSE_MODE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest", "response mode");
-    var CLIENT_SECRET_JWT = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication", "client_secret_jwt");
-    var CLIENT_SECRET_POST = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication", "client_secret_post");
-    var PRIVATE_KEY_JWT = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication", "private_key_jwt");
+    var CLIENT_SECRET_JWT = convert_to_link(CLIENT_AUTHENTICATION_URL, "client_secret_jwt");
+    var CLIENT_SECRET_POST = convert_to_link(CLIENT_AUTHENTICATION_URL, "client_secret_post");
+    var PRIVATE_KEY_JWT = convert_to_link(CLIENT_AUTHENTICATION_URL, "private_key_jwt");
     var ALG_VALUE_EQUAL_TO_NONE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "'alg' value equal to 'none'");
     var AUTHORIZATION_CODE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#CodeValidation", "authorization code");
     var C_HASH = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#HybridIDToken", "c_hash");
@@ -319,12 +320,11 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         }],
         ["Client Authentication", {
             "rp-token_endpoint-client_secret_basic": {
-                "short_description": "Can make Access Token request with 'client_secret_basic' authentication",
+                "short_description": "Can make Access Token Request with 'client_secret_basic' authentication",
                 "profiles": [BASIC, IMPLICIT, HYBRID],
-                "detailed_description": "Tests if a client can authenticate to the authentication server " +
-                "when using the token endpoint. In order to authenticate " +
-                "the client should be using '" + CLIENT_SECRET_BASIC + "'",
-                "expected_result": "A " + TOKEN_RESPONSE + " should be returned containing an ID token"
+                "detailed_description": "Use the '" + CLIENT_SECRET_BASIC + "' method to authenticate at the Authorization Server " +
+                "when using the token endpoint.",
+                "expected_result": "A " + TOKEN_RESPONSE + ", containing an ID token."
             },
             "rp-token_endpoint-client_secret_jwt": {
                 "short_description": "Can make Access Token request with 'client_secret_jwt' authentication",
