@@ -347,12 +347,10 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         }],
         ["ID Token", {
             "rp-id_token-bad_asym_sig_rs256": {
-                "short_description": "Reject invalid asymmetric ID Token signature, signed with RS256",
+                "short_description": "Rejects ID Token with invalid asymmetric 'RS256' signature",
                 "profiles": [BASIC_OPTIONAL, IMPLICIT, HYBRID, SELF_ISSUED],
-                "detailed_description": "Tests if the Relying Party can identify and reject an ID Token with an " +
-                "invalid signature. The ID Token has been signed using the asymmetric algorithm RS256. " +
-                "For more information see list item 6 in " + ID_TOKEN_VALIDATION,
-                "expected_result": "Identify invalid ID token"
+                "detailed_description": "Request an ID token and verify its signature using the keys provided by the Issuer.",
+                "expected_result": "Identify the invalid signature and reject the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
             "rp-id_token-bad_symmetric_sig_hs256": {
                 "short_description": "Reject invalid symmetric ID Token signature with HS256",
