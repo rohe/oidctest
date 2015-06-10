@@ -66,6 +66,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var ID_TOKEN_URL = "https://openid.net/specs/openid-connect-core-1_0.html#IDToken";
     var JWT_REQUESTS_URL = "https://openid.net/specs/openid-connect-core-1_0.html#JWTRequests";
     var AGGREGATED_DISTRIBUTED_CLAIMS_URL = "http://openid.net/specs/openid-connect-core-1_0.html#AggregatedDistributedClaims";
+    var ROTATE_SIGNING_KEY_URL = "http://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys";
 
     var ISSUER_DISCOVERY_DOC = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery", "OpenID Provider Issuer Discovery");
     var CLIENT_REGISTRATION_ENDPOINT = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientRegistration", "client registration endpoint");
@@ -118,8 +119,8 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var JSON_WEB_KEY_SET_FORMAT = convert_to_link("https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-5", "JSON Web Key Set (JWK Set) Format");
     var THIRD_PARTY_INITIATED_LOGIN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ThirdPartyInitiatedLogin", "third-party initiated login");
     var OPENID_CONFIGURATION_INFORMATION = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig", "OpenID Provider Configuration Information");
-    var SIGNING_KEY_ROLLOVER = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys", "signing key rollover");
-    var ENCRYPTION_KEY_ROLLOVER = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateEncKeys", "encryption key rollover");
+    var ROTATE_SIGNING_KEYS = convert_to_link(ROTATE_SIGNING_KEY_URL, "Rotate the signing keys");
+    var ROTATE_ENCRYPTION_KEYS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateEncKeys", "Rotate the encryption keys");
     var ID_TOKEN_IMPLICIT_FLOW = convert_to_link(IMPLICIT_FLOW_ID_TOKEN_URL, "ID Token");
     var SELF_ISSUED_AUTH_RESPONSE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedResponse", "authentication response");
     var SELF_ISSUED_ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedValidation", "self-issued ID Token");
@@ -131,7 +132,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var SYMMETRIC_SIGNATURES = convert_to_link(SIGNING_URL, "'client_secret' as MAC key");
     var MULITPLE_KEYS_JWKS = convert_to_link(SIGNING_URL, "multiple keys in its JWK Set document");
     var ENCRYPTED_REQUEST = convert_to_link(JWT_REQUESTS_URL, "encrypted authentication request");
-    var SIGNING_KEY_ROTATION = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys", "rolled over signing keys");
+    var SIGNING_KEY_ROTATION = convert_to_link(ROTATE_SIGNING_KEY_URL, "rotated signing keys");
     var SIGNED_REQUEST = convert_to_link(JWT_REQUESTS_URL, "signed authentication request");
     var USER_INFO_SUB_CLAIM = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse", "comparing it with the ID Token's 'sub' value");
 
@@ -428,32 +429,32 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Identify that the 'kid' value is missing from the JOSE header and that the Issuer publishes " + MULITPLE_KEYS_JWKS + " (referenced by 'jwks_uri'). Reject the ID Token since it can not be determined which key to use to verify the signature."
             }
         }],
-        ["Key Rollover", {
-            "rp-key_rollover-op_sign_key": {
+        ["Key Rotation", {
+            "rp-key_rotation-op_sign_key": {
                 "short_description": "Supports rotation of provider's asymmetric signing keys",
                 "profiles": [CONFIG, DYNAMIC],
                 "detailed_description": "Request an ID Token and verify its signature. Make a new authentication and retrieve another ID Token and verify its signature.",
                 "expected_result": "Successfully verify both ID Token signatures, fetching the " + SIGNING_KEY_ROTATION + " if the 'kid' claim in the JOSE header is unknown."
             },
-            "rp-key_rollover-rp_sign_key": {
+            "rp-key_rotation-rp_sign_key": {
                 "short_description": "Can rotate signing keys",
                 "profiles": [DYNAMIC],
-                "detailed_description": "Make a " + SIGNED_REQUEST + ". Do a " + SIGNING_KEY_ROLLOVER +" at the Relying Party's 'jwks_uri' after it has been used by OpenID Connect Provider. " +
+                "detailed_description": "Make a " + SIGNED_REQUEST + ". " + ROTATE_SIGNING_KEYS +" at the Relying Party's 'jwks_uri' after it has been used by OpenID Connect Provider. " +
                 "Make a new signed authentication request.",
                 "expected_result": "The OpenID Connect Provider successfully uses the rotated signing key: a successful authentication response to both authentication requests signed using the rotated signing key."
             },
-            "rp-key_rollover-op_enc_key": {
+            "rp-key_rotation-op_enc_key": {
                 "short_description": "Supports rotation of provider's asymmetric encryption keys",
                 "detailed_description": "Fetch the issuer's keys from the 'jwks_uri' and make an " + ENCRYPTED_REQUEST +  " using the issuer's encryption keys. " +
                 "Fetch the issuer's keys from the jwks_uri again, and make a new encrypted request using the rotated encryption keys.",
                 "expected_result": "A successful authentication response to both authentication requests encrypted using rotated encryption keys."
             },
-            "rp-key_rollover-rp_enc_key": {
+            "rp-key_rotation-rp_enc_key": {
                 "short_description": "Can rotate encryption keys",
                 "detailed_description": "Request an encrypted ID Token (using 'id_token_encrypted_response_alg' and 'id_token_encrypted_response_enc' in registered "
-                + CLIENT_METADATA + ") and decrypt it. Do an "+ ENCRYPTION_KEY_ROLLOVER +" at the Relying Party's 'jwks_uri' after it has been used by the OpenID Connect Provider. " +
+                + CLIENT_METADATA + ") and decrypt it. " + ROTATE_ENCRYPTION_KEYS +" at the Relying Party's 'jwks_uri' after it has been used by the OpenID Connect Provider. " +
                 "Make a new request for an encrypted ID Token and decrypt it using the rotated decryption key.",
-                "expected_result": "The OpenID Connect Provider successfully uses the rotated key: the first ID Token can decrypted using the first key and the second ID Token can be decrypted using the rolled over key."
+                "expected_result": "The OpenID Connect Provider successfully uses the rotated key: the first ID Token can decrypted using the first key and the second ID Token can be decrypted using the rotated key."
             }
         }],
         ["Claim Types", {
