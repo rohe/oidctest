@@ -35,8 +35,8 @@ class SyncRequest(Operation):
     class ErrorResponse(Exception):
         pass
 
-    def __init__(self, conv, **kwargs):
-        Operation.__init__(self, conv, **kwargs)
+    def __init__(self, conv, io, **kwargs):
+        Operation.__init__(self, conv, io, **kwargs)
         self.conv.req = self
         self.tests = copy.deepcopy(self._tests)
         self.request = self.conv.msg_factory(self.request_cls)
@@ -130,8 +130,8 @@ class AsyncRequest(Operation):
     accept = None
     _tests = {"post": [], "pre": []}
 
-    def __init__(self, conv, **kwargs):
-        Operation.__init__(self, conv, **kwargs)
+    def __init__(self, conv, io, **kwargs):
+        Operation.__init__(self, conv, io, **kwargs)
         self.conv.req = self
         self.trace = conv.trace
         self.tests = copy.deepcopy(self._tests)
