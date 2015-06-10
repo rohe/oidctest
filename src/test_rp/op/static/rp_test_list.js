@@ -244,13 +244,13 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         ["Claims Request Parameter", {
             "rp-claims_request-id_token_claims": {
                 "short_description": "Can request and use claims in ID Token using the 'claims' request parameter",
-                "detailed_description": "Ask for a specific claim using the "+ CLAIMS_REQUEST_PARAMETER +
-                ". Retrieve the claims from an ID Token, either by making a " + TOKEN_REQUEST + " or by using " + IMPLICIT_FLOW + ".",
+                "detailed_description": "Ask for the claim 'name' using the "+ CLAIMS_REQUEST_PARAMETER +
+                ". Retrieve the claim from an ID Token, either by making a " + TOKEN_REQUEST + " or by using " + IMPLICIT_FLOW + ".",
                 "expected_result": "An " + ID_TOKEN + " containing the requested claim."
             },
             "rp-claims_request-request_userinfo": {
                 "short_description": "Can request and use claims in UserInfo Response using the 'claims' request parameter",
-                "detailed_description": "Ask for a specific claim using the "+ CLAIMS_REQUEST_PARAMETER +
+                "detailed_description": "Ask for the claim 'name' using the "+ CLAIMS_REQUEST_PARAMETER +
                 ". Retrieve the claims by making a " + USERINFO_REQUEST + ".",
                 "expected_result": "A " + USERINFO_RESPONSE + " containing the requested claim."
             }
