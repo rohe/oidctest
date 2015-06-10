@@ -183,7 +183,7 @@ class AccessToken(SyncPostRequest):
         if atr["id_token"]["c_hash"] != resp_hash:
             raise ErrorResponse("c_hash mismatch {} != {}".format(atr["id_token"]["c_hash"], jws.left_hash(self.req_args["code"], "HS256")))
 
-        if not "kid" in atr["id_token"].jws_header:
+        if not "kid" in atr["id_token"].jws_header and not atr["id_token"].jws_header["alg"] == "HS256":
             for key, value in self.conv.client.keyjar.issuer_keys.iteritems():
                 if not key == "" and (len(value) > 1 or len(value[0].keys()) > 1):
                     raise PyoidcError("No 'kid' in id_token header!")

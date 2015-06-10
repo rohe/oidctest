@@ -89,20 +89,20 @@ class SyncRequest(Operation):
         if not isinstance(resp, Response):
 
             try:
-                if not "kid" in resp["id_token"].jws_header:
+                if not "kid" in resp["id_token"].jws_header and not resp["id_token"].jws_header["alg"] == "HS256":
                     for key, value in self.conv.client.keyjar.issuer_keys.iteritems():
                         if not key == "" and (len(value) > 1 or len(value[0].keys()) > 1):
                             raise PyoidcError("No 'kid' in id_token header!")
 
                 if self.req_args['nonce'] != resp["id_token"]['nonce']:
                     raise ErrorResponse("invalid nonce! {} != {}".format(self.req_args['nonce'], resp["id_token"]['nonce']))
-                self.conv.client.id_token = resp["id_token"]
             except KeyError:
                 pass
 
             try:
                 if not same_issuer(self.conv.info["issuer"], resp["id_token"]["iss"]):
                     raise IssuerMismatch(" {} != {}".format(self.conv.info["issuer"], resp["id_token"]["iss"]))
+                self.conv.client.id_token = resp["id_token"]
             except KeyError:
                 pass
 
