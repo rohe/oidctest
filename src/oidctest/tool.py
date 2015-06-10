@@ -82,7 +82,7 @@ class Tester(object):
 
             logger.info("<--<-- {} --- {} -->-->".format(index, cls))
             try:
-                _oper = cls(conv=self.conv, profile=self.profile,
+                _oper = cls(conv=self.conv, io=self.io, profile=self.profile,
                             test_id=test_id, conf=conf, funcs=funcs,
                             check_factory=self.chk_factory, cache=self.cache)
                 self.conv.operation = _oper
@@ -227,7 +227,7 @@ class WebTester(Tester):
 
             logger.info("<--<-- {} --- {} -->-->".format(index, cls))
             try:
-                _oper = cls(conv=self.conv, profile=self.profile,
+                _oper = cls(conv=self.conv, io=self.io, profile=self.profile,
                             test_id=test_id, conf=conf, funcs=funcs,
                             check_factory=self.chk_factory, cache=self.cache)
                 self.conv.operation = _oper
