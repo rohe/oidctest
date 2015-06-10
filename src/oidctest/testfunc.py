@@ -54,3 +54,11 @@ def check_endpoint(oper, args):
              "status": ERROR,
              "message": "{} not in provider configuration".format(args)})
         oper.skip = True
+
+def cache_response(oper, arg):
+    key = oper.conv.test_id
+    oper.cache[key] = oper.conv.protocol_response
+
+def restore_response(oper, arg):
+    key = oper.conv.test_id
+    oper.conv.response = oper.cache[key]
