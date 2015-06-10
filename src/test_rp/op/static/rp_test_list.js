@@ -173,12 +173,6 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "detailed_description": "Retrieve and use the " + OPENID_CONFIGURATION_INFORMATION + ".",
                 "expected_result": "Read and use the JSON object returned from the OpenID Connect Provider."
             },
-            "rp-discovery-mismatching_issuers": {
-                "short_description": "Rejects ID Token with iss Not Matching Discovered issuer",
-                "profiles": [CONFIG, DYNAMIC],
-                "detailed_description": "The Relying Party should obtain an ID token and compare iss value to issuer in the " + OPENID_PROVIDER_METADATA,
-                "expected_result": "Rejects ID Token when iss and issuer values differ"
-            },
             "rp-discovery-jwks_uri_keys": {
                 "short_description": "Uses keys discovered with jwks_uri value",
                 "profiles": [CONFIG, DYNAMIC],
