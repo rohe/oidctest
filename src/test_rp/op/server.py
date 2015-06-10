@@ -440,7 +440,8 @@ def application(environ, start_response):
         return static(environ, start_response, path)
     elif path.startswith("jwks.json"):
         try:
-            jwks = session["op"].generate_jwks()
+            mode, endpoint = extract_mode(_baseurl)
+            jwks = session["op"].generate_jwks(mode)
             resp = Response(jwks, headers=[('Content-Type', 'application/json')])
             return resp(environ, start_response)
         except KeyError:
