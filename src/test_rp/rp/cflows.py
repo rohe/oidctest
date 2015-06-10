@@ -125,13 +125,18 @@ FLOWS = {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
-            (Registration,
-             {set_request_args: {"redirect_uris": ["http://test.com"]},
-              expect_exception: PyoidcError}),
+            (Registration, {
+                set_request_args: {
+                 "redirect_uris": ["http://test.com"],
+                 "initiate_login_uri": "http://test.com",
+                 "jwks_uri": "http://test.com"
+                },
+                expect_exception: PyoidcError
+            }),
         ],
-        "profile": "I,IT,CI,CT,CIT...T",
-        "desc": "Sends a redirect_uri endpoint which does not use https. The "
-                "a valid redirect_uri is sent to the OP"
+        "profile": "...T",
+        "desc": "Sends endpoints which does not use https. Should be rejected "
+        "by the OP."
     },
     "rp-registration-well_formed_jwk": {
         "sequence": [
