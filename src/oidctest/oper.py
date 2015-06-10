@@ -3,7 +3,6 @@ import os
 from urlparse import urlparse
 from aatest import END_TAG
 from aatest.operation import Operation
-import functools
 
 from oic.oauth2 import rndstr
 from oic.oic import ProviderConfigurationResponse
@@ -37,8 +36,8 @@ def include(url, test_id):
 
 
 class Webfinger(Operation):
-    def __init__(self, conv, **kwargs):
-        Operation.__init__(self, conv, **kwargs)
+    def __init__(self, conv, io, **kwargs):
+        Operation.__init__(self, conv, io, **kwargs)
         self.resource = ""
         self.dynamic = self.profile[WEBFINGER] == "T"
 
@@ -61,8 +60,8 @@ class Webfinger(Operation):
 
 
 class Discovery(Operation):
-    def __init__(self, conv, **kwargs):
-        Operation.__init__(self, conv, **kwargs)
+    def __init__(self, conv, io, **kwargs):
+        Operation.__init__(self, conv, io, **kwargs)
 
         self.dynamic = self.profile[DISCOVER] == "T"
 
@@ -87,8 +86,8 @@ class Discovery(Operation):
 
 
 class Registration(Operation):
-    def __init__(self, conv, **kwargs):
-        Operation.__init__(self, conv, **kwargs)
+    def __init__(self, conv, io, **kwargs):
+        Operation.__init__(self, conv, io, **kwargs)
 
         self.dynamic = self.profile[REGISTER] == "T"
 
@@ -110,8 +109,8 @@ class SyncAuthn(SyncGetRequest):
     response_cls = "AuthorizationResponse"
     request_cls = "AuthorizationRequest"
 
-    def __init__(self, conv, **kwargs):
-        super(SyncAuthn, self).__init__(conv, **kwargs)
+    def __init__(self, conv, io, **kwargs):
+        super(SyncAuthn, self).__init__(conv, io, **kwargs)
         self.op_args["endpoint"] = conv.client.provider_info[
             "authorization_endpoint"]
 
@@ -130,8 +129,8 @@ class AsyncAuthn(AsyncGetRequest):
     response_cls = "AuthorizationResponse"
     request_cls = "AuthorizationRequest"
 
-    def __init__(self, conv, **kwargs):
-        super(AsyncAuthn, self).__init__(conv, **kwargs)
+    def __init__(self, conv, io, **kwargs):
+        super(AsyncAuthn, self).__init__(conv, io, **kwargs)
         self.op_args["endpoint"] = conv.client.provider_info[
             "authorization_endpoint"]
 
@@ -145,8 +144,8 @@ class AsyncAuthn(AsyncGetRequest):
 
 
 class AccessToken(SyncPostRequest):
-    def __init__(self, conv, **kwargs):
-        Operation.__init__(self, conv, **kwargs)
+    def __init__(self, conv, io, **kwargs):
+        Operation.__init__(self, conv, io, **kwargs)
         self.op_args["state"] = conv.state
         self.req_args["redirect_uri"] = conv.client.redirect_uris[0]
 
@@ -164,8 +163,8 @@ class AccessToken(SyncPostRequest):
 
 
 class UserInfo(SyncGetRequest):
-    def __init__(self, conv, **kwargs):
-        Operation.__init__(self, **kwargs)
+    def __init__(self, conv, io, **kwargs):
+        Operation.__init__(self, conv, io, **kwargs)
         self.op_args["state"] = conv.state
 
     def run(self):
