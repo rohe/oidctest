@@ -7,6 +7,7 @@ from jwkest.ecc import P256
 from jwkest.jwk import RSAKey, ECKey
 from oic.oauth2 import Message, rndstr
 from oic.oic import provider, ProviderConfigurationResponse
+from oic.oic.message import RegistrationRequest
 from oic.utils.keyio import keyjar_init
 
 
@@ -153,6 +154,29 @@ class Provider(provider.Provider):
             _response["issuer"] = "https://example.com"
 
         return _response
+
+    def registration_endpoint(self, request, authn=None, **kwargs):
+        try:
+            request = RegistrationRequest().deserialize(request, "json")
+        except ValueError:
+            request = RegistrationRequest().deserialize(request)
+
+        # Do initial verification that all endpoints from the client uses https
+        for endp in ["redirect_uris", "jwks_uri", "initiate_login_uri"]:
+            try:
+                uris = request[endp]
+            except KeyError:
+                continue
+
+            if not isinstance(uris, list):
+                uris = [uris]
+            for uri in uris:
+                if not uri.startswith("https://"):
+                    return self._error(error="invalid_configuration_parameter",
+                               descr="Non-HTTPS endpoint in '{}'".format(endp))
+
+        return provider.Provider.registration_endpoint(self, request, authn,
+                                                       **kwargs)
 
     def generate_jwks(self):
         if "rotenc" in self.behavior_type:  # Rollover encryption keys
