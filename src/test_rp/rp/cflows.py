@@ -600,8 +600,8 @@ FLOWS = {
     },
     "rp-request_uri-sig": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {set_jwks_uri: None}),
             (SyncAuthn, {set_op_args: {"request_method": "file",
                                        "request_object_signing_alg": "RS256",
@@ -614,8 +614,8 @@ FLOWS = {
     },
     "rp-request_uri-sig+enc": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {set_jwks_uri: None}),
             (SyncAuthn, {set_op_args: {"request_method": "file",
                                        "request_object_signing_alg": "RS256",
@@ -630,8 +630,8 @@ FLOWS = {
     },
     "rp-request_uri-unsigned": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             (SyncAuthn, {set_op_args: {"request_method": "file",
                                        "request_object_signing_alg": None,
@@ -646,8 +646,8 @@ FLOWS = {
     },
     "rp-id_token-aud": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             #(SyncAuthn, {expect_exception: NotForMe}),
             SyncAuthn,
@@ -658,8 +658,8 @@ FLOWS = {
     },
     "rp-id_token-bad_asym_sig_rs256": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {set_request_args: {"id_token_signed_response_alg": "RS256"}}),
             #(SyncAuthn, {expect_exception, BadSignature}),
             SyncAuthn,
@@ -672,8 +672,8 @@ FLOWS = {
     },
     "rp-id_token-bad_at_hash": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             (SyncAuthn, {expect_exception: AtHashError})
         ],
@@ -683,8 +683,8 @@ FLOWS = {
     },
     "rp-id_token-bad_es256_sig": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {set_request_args: {"id_token_signed_response_alg": "ES256"}}),
             SyncAuthn,
             AccessToken
@@ -695,8 +695,8 @@ FLOWS = {
     },
     "rp-id_token-bad_symmetric_sig_hs256": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {set_request_args: {"id_token_signed_response_alg": "HS256"}}),
             SyncAuthn,
             AccessToken
@@ -708,8 +708,8 @@ FLOWS = {
     },
     "rp-id_token-iat": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             #(SyncAuthn, {expected_exception: MissingRequiredAttribute}),
             SyncAuthn,
@@ -720,8 +720,8 @@ FLOWS = {
     },
     "rp-id_token-mismatching_issuer": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             # Registration,
             (Registration, {set_request_args: {"id_token_signed_response_alg": "HS256"}}), # TODO Need to run HS256 alg, or else badSignature error (can't find keys)
             SyncAuthn,
@@ -733,8 +733,8 @@ FLOWS = {
     },
     "rp-id_token-sig+enc": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             SyncAuthn,
             AccessToken
@@ -744,8 +744,8 @@ FLOWS = {
     },
     "rp-id_token-sig_none": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             (Registration, {set_request_args: {"id_token_signed_response_alg": "none"}}),
             SyncAuthn,
             AccessToken
@@ -756,8 +756,8 @@ FLOWS = {
     },
     "rp-id_token-sub": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             #(SyncAuthn, {expect_exception: MissingRequiredAttribute}}),
             SyncAuthn,
@@ -768,8 +768,8 @@ FLOWS = {
     },
     "rp-id_token-bad_c_hash": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             SyncAuthn,
             (AccessToken, {expect_exception: ErrorResponse})
@@ -780,9 +780,10 @@ FLOWS = {
     },
     "rp-id_token-kid_absent_multiple_jwks": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
+            # (SyncAuthn, {expect_exception: PyoidcError}),
             SyncAuthn,
             AccessToken
         ],
@@ -792,8 +793,8 @@ FLOWS = {
     },
     "rp-id_token-kid_absent_single_jwks": {
         "sequence": [
-            Webfinger,
-            Discovery,
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
             Registration,
             SyncAuthn,
             AccessToken

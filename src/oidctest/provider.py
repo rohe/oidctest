@@ -106,9 +106,15 @@ class Provider(provider.Provider):
             new_key = {"keys": [key.serialize(private=True)]}
             self.do_key_rollover(new_key, "%d")
 
-
-        # if "nokid1jwk" in self.behavior_type:
-            # self.keyjar.issuer_keys[""][0].keys()[0].kid = None
+        if "nokid1jwk" in self.behavior_type:
+            found_key = None
+            for key in self.keyjar.issuer_keys[""]:
+                issuer_key = key.keys()[0]
+                if issuer_key.use == "sig" and issuer_key.kty == "RSA":
+                    issuer_key.kid = None
+                    found_key = key
+                    break
+            self.keyjar.issuer_keys[""] = [found_key]
 
         if "nokidmuljwks" in self.behavior_type:
             for key in self.keyjar.issuer_keys[""]:
@@ -178,6 +184,14 @@ class Provider(provider.Provider):
             signing_keys = [k.to_dict() for k in self.keyjar.get_signing_key()]
             new_keys["keys"].extend(signing_keys)
             return json.dumps(new_keys)
+        elif "nokid1jwk" in self.behavior_type:
+            keys = [k.to_dict() for kb in self.keyjar[""] for k in kb.keys()]
+            for key in keys:
+                if key["use"] == "sig" and key["kty"] == "RSA":
+                    key.pop("kid", None)
+                    jwk = dict(keys=[key])
+                    return json.dumps(jwk)
+            raise Exception("Did not find sig key for nokid1jwk test")
         else:  # Return all keys
             keys = [k.to_dict() for kb in self.keyjar[""] for k in kb.keys()]
             jwks = dict(keys=keys)
