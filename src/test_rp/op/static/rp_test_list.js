@@ -116,7 +116,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var REQUEST_CLAIMS_USING_SCOPE_VALUES = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims", "Request claims using scope values");
     var OPENID_PROVIDER_METADATA = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata", "OpenID Provider Metadata");
     var CLIENT_METADATA = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata", "Client Metadata");
-    var JSON_WEB_KEY_SET_FORMAT = convert_to_link("https://tools.ietf.org/html/draft-ietf-jose-json-web-key-41#section-5", "JSON Web Key Set (JWK Set) Format");
+    var JSON_WEB_KEY_SET_FORMAT = convert_to_link("https://tools.ietf.org/html/rfc7517#section-5", "JSON Web Key Set (JWK Set) Format");
     var THIRD_PARTY_INITIATED_LOGIN = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ThirdPartyInitiatedLogin", "third-party initiated login");
     var OPENID_CONFIGURATION_INFORMATION = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig", "OpenID Provider Configuration Information");
     var ROTATE_SIGNING_KEYS = convert_to_link(ROTATE_SIGNING_KEY_URL, "Rotate the signing keys");
