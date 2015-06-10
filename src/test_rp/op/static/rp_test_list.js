@@ -382,7 +382,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             "rp-id_token-bad_at_hash": {
                 "short_description": "Rejects ID Token with incorrect 'at_hash' claim when response_type='id_token token'",
                 "profiles": [IMPLICIT, HYBRID],
-                "detailed_description": "Make an authentication request using response_type='id_token token'. Verify the 'at_hash' value in the returned " + ID_TOKEN + ".",
+                "detailed_description": "Make an authentication request using response_type='id_token token' for " + IMPLICIT_FLOW + " or response_type='code id_token token' for " + HYBRID_FLOW + ". Verify the 'at_hash' value in the returned " + ID_TOKEN + ".",
                 "expected_result": "Identify the incorrect 'at_hash' value and reject the ID Token after doing " + ACCESS_TOKEN_VALIDATION + "."
             },
             "rp-id_token-mismatching_issuer": {
