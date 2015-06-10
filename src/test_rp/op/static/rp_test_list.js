@@ -248,7 +248,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 ". Retrieve the claim from an ID Token, either by making a " + TOKEN_REQUEST + " or by using " + IMPLICIT_FLOW + ".",
                 "expected_result": "An " + ID_TOKEN + " containing the requested claim."
             },
-            "rp-claims_request-request_userinfo": {
+            "rp-claims_request-userinfo_claims": {
                 "short_description": "Can request and use claims in UserInfo Response using the 'claims' request parameter",
                 "detailed_description": "Ask for the claim 'name' using the "+ CLAIMS_REQUEST_PARAMETER +
                 ". Retrieve the claims by making a " + USERINFO_REQUEST + ".",
