@@ -35,9 +35,8 @@ class SyncRequest(Operation):
     class ErrorResponse(Exception):
         pass
 
-    def __init__(self, conv, session, test_id, conf, funcs, chk_factory):
-        Operation.__init__(self, conv, session, test_id, conf, funcs,
-                           chk_factory)
+    def __init__(self, conv, **kwargs):
+        Operation.__init__(self, conv, **kwargs)
         self.conv.req = self
         self.tests = copy.deepcopy(self._tests)
         self.request = self.conv.msg_factory(self.request_cls)
@@ -131,18 +130,16 @@ class AsyncRequest(Operation):
     accept = None
     _tests = {"post": [], "pre": []}
 
-    def __init__(self, conv, session, test_id, conf, funcs, chk_factory,
-                 comcls=None):
-        Operation.__init__(self, conv, session, test_id, conf, funcs,
-                           chk_factory)
+    def __init__(self, conv, **kwargs):
+        Operation.__init__(self, conv, **kwargs)
         self.conv.req = self
         self.trace = conv.trace
         self.tests = copy.deepcopy(self._tests)
         self.csi = None
         self.request = self.conv.msg_factory(self.request_cls)
         self.response = self.conv.msg_factory(self.response_cls)
-        if comcls:
-            self.com = comcls()
+        if "comcls" in kwargs:
+            self.com = kwargs["comcls"]()
         else:
             self.com = Log
 
