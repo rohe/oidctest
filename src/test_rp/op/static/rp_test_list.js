@@ -60,7 +60,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         return false;
     };
 
-    var IMPLICIT_FLOW_ID_TOKEN_URL = "https://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitIDToken";
+    var IMPLICIT_FLOW_ID_TOKEN_URL = "http://openid.net/specs/openid-connect-core-1_0.html#ImplicitIDToken";
     var CLIENT_AUTHENTICATION_URL = "https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication";
     var SIGNING_URL = "https://openid.net/specs/openid-connect-core-1_0.html#Signing";
     var ID_TOKEN_URL = "https://openid.net/specs/openid-connect-core-1_0.html#IDToken";
@@ -70,7 +70,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
 
     var ISSUER_DISCOVERY_DOC = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery", "OpenID Provider Issuer Discovery");
     var CLIENT_REGISTRATION_ENDPOINT = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#ClientRegistration", "client registration endpoint");
-    var CODE_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#CodeFlowAuth", "Code Flow");
+    var CODE_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth", "Code Flow");
     var IMPLICIT_FLOW = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth", "Implicit Flow");
     var BEARER_AUTH_SCHEME = convert_to_link("http://tools.ietf.org/html/rfc6750#section-2.1", "\"Bearer\" authentication scheme");
     var FORM_ENCODED_BODY_PARAMETER = convert_to_link("http://tools.ietf.org/html/rfc6750#section-2.2", "form-encoded body parameter");
@@ -78,9 +78,9 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var URL_SYNTAX = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#URLSyntax", "URL syntax");
     var ACCT_SYNTAX = convert_to_link("https://openid.net/specs/openid-connect-discovery-1_0.html#AcctURISyntax", "acct URI syntax");
     var CLIENT_REGISTRATION_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-registration-1_0.html#RegistrationResponse", "Client Registration Response");
-    var AUTHORIZATION_CODE_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#CodeFlowAuth", "Authorization Code Flow");
-    var CODE_AUTHENTICATION_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#AuthResponse", "authentication response");
-    var IMPLICIT_AUTHENTICATION_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0-17.html#ImplicitAuthResponse", "authentication response");
+    var AUTHORIZATION_CODE_FLOW = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth", "Authorization Code Flow");
+    var CODE_AUTHENTICATION_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#AuthResponse", "authentication response");
+    var IMPLICIT_AUTHENTICATION_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#ImplicitAuthResponse", "authentication response");
     var CLIENT_SECRET_BASIC = convert_to_link(CLIENT_AUTHENTICATION_URL, "client_secret_basic");
     var TOKEN_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#TokenResponse", "Token Response");
     var USERINFO_REQUEST = convert_to_link("https://openid.net/specs/openid-connect-standard-1_0-21.html#UserInfoRequest", "UserInfo Request");
@@ -110,7 +110,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var AGGREGATED_CLAIMS = convert_to_link(AGGREGATED_DISTRIBUTED_CLAIMS_URL, "Aggregated Claims");
     var DISTRIBUTED_CLAIMS = convert_to_link(AGGREGATED_DISTRIBUTED_CLAIMS_URL, "Distributed Claims");
     var SELF_ISSUED_OPENID_PROVIDERS = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#SelfIssued", "Self-Issued OpenID Provider");
-    var HYBRID_FLOW_ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0-17.html#HybridIDToken", "hybrid flow");
+    var HYBRID_FLOW_ID_TOKEN = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#HybridIDToken", "hybrid flow");
     var IMPLICIT_FLOW_ID_TOKEN = convert_to_link(IMPLICIT_FLOW_ID_TOKEN_URL, "implicit flow");
     var OPENID_SCOPE = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#AuthRequest", "openid scope");
     var REQUEST_CLAIMS_USING_SCOPE_VALUES = convert_to_link("http://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims", "Request claims using scope values");
