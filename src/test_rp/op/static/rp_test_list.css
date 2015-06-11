@@ -70,3 +70,7 @@ h3{
 .more_info_button{
     color: #63a8dd;
 }
+
+.text-nowrap {
+    white-space: nowrap;
+}
