@@ -24,7 +24,7 @@ ORDDESC = ["rp-webfinger", "rp-discovery", "rp-registration",
            "rp-response_type", "rp-response_mode",
            "rp-token_endpoint", "rp-id_token", "rp-claims_request",
            "rp-request_uri", "rp-scope", "rp-nonce",
-           "rp-key_rollover", "rp_userinfo"]
+           "rp-key_rotation", "rp_userinfo"]
 
 DESC = {
     "webfinger": "WebFinger",
@@ -38,7 +38,7 @@ DESC = {
     "request_uri": "request_uri Request Parameter",
     "scope": "scope Request Parameter",
     "nonce": "nonce Request Parameter",
-    "key_rollover": "Key Rotation",
+    "key_rotation": "Key Rotation",
     "userInfo": "Userinfo Endpoint",
     #
     "Req": "Misc Request Parameters",
@@ -602,7 +602,7 @@ FLOWS = {
         "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
                 "Encrypt the Request Object using RSA1_5 and A128CBC-HS256 algorithms"
     },
-    "rp-key_rollover-op_enc_key": {
+    "rp-key_rotation-op_enc_key": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -624,9 +624,9 @@ FLOWS = {
             }),
         ],
         "profile": "...",
-        "desc": "Support OP Encryption Key Rollover"
+        "desc": "Support OP Encryption Key Rotation"
     },
-    "rp-key_rollover-op_sign_key": {
+    "rp-key_rotation-op_sign_key": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -635,6 +635,6 @@ FLOWS = {
             SyncAuthn
         ],
         "profile": "I,IT,CI,CIT...",
-        "desc": "Support OP Encryption Key Rollover"
+        "desc": "Support OP Encryption Key Rotation"
     }
 }
