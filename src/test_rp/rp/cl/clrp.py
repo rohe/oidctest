@@ -139,7 +139,7 @@ if __name__ == '__main__':
               "cinfo": CONF.INFO, "orddesc": FLOWS.ORDDESC, "desc": FLOWS.DESC,
               "profiles": profiles, "operation": oper,
               "profile": cargs.profile, "msg_factory": oic_message_factory,
-              "check_factory": check_factory}
+              "check_factory": check_factory, "cache": {}}
 
     if cargs.testid:
         io = ClIO(**kwargs)

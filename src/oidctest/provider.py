@@ -157,14 +157,14 @@ class Provider(provider.Provider):
 
     def registration_endpoint(self, request, authn=None, **kwargs):
         try:
-            request = RegistrationRequest().deserialize(request, "json")
+            reg_req = RegistrationRequest().deserialize(request, "json")
         except ValueError:
-            request = RegistrationRequest().deserialize(request)
+            reg_req = RegistrationRequest().deserialize(request)
 
         # Do initial verification that all endpoints from the client uses https
         for endp in ["redirect_uris", "jwks_uri", "initiate_login_uri"]:
             try:
-                uris = request[endp]
+                uris = reg_req[endp]
             except KeyError:
                 continue
 
