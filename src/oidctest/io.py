@@ -334,6 +334,12 @@ class WebIO(IO):
         argv = {}
         return resp(self.environ, self.start_response, **argv)
 
+    def respond(self, resp):
+        if isinstance(resp, Response):
+            return resp(self.environ, self.start_response)
+        else:
+            return resp
+
 
 SIGN = {OK: "+", WARNING: "?", ERROR: "-", INCOMPLETE: "!"}
 

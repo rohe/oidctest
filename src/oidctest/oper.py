@@ -3,7 +3,6 @@ import os
 from urlparse import urlparse
 from aatest import END_TAG
 from aatest.operation import Operation
-import functools
 from oic.exception import IssuerMismatch, PyoidcError
 
 from oic.oauth2 import rndstr
@@ -41,9 +40,8 @@ def include(url, test_id):
 
 
 class Webfinger(Operation):
-    def __init__(self, conv, profile, test_id, conf, funcs, chk_factory):
-        Operation.__init__(self, conv, profile, test_id, conf, funcs,
-                           chk_factory)
+    def __init__(self, conv, io, sh, **kwargs):
+        Operation.__init__(self, conv, io, sh, **kwargs)
         self.resource = ""
         self.dynamic = self.profile[WEBFINGER] == "T"
 
@@ -66,9 +64,8 @@ class Webfinger(Operation):
 
 
 class Discovery(Operation):
-    def __init__(self, conv, session, test_id, conf, funcs, chk_factory):
-        Operation.__init__(self, conv, session, test_id, conf, funcs,
-                           chk_factory)
+    def __init__(self, conv, io, sh, **kwargs):
+        Operation.__init__(self, conv, io, sh, **kwargs)
 
         self.dynamic = self.profile[DISCOVER] == "T"
 
@@ -93,9 +90,8 @@ class Discovery(Operation):
 
 
 class Registration(Operation):
-    def __init__(self, conv, session, test_id, conf, funcs, chk_factory):
-        Operation.__init__(self, conv, session, test_id, conf, funcs,
-                           chk_factory)
+    def __init__(self, conv, io, sh, **kwargs):
+        Operation.__init__(self, conv, io, sh, **kwargs)
 
         self.dynamic = self.profile[REGISTER] == "T"
 
@@ -117,9 +113,8 @@ class SyncAuthn(SyncGetRequest):
     response_cls = "AuthorizationResponse"
     request_cls = "AuthorizationRequest"
 
-    def __init__(self, conv, session, test_id, conf, funcs, chk_factory):
-        super(SyncAuthn, self).__init__(conv, session, test_id, conf, funcs,
-                                        chk_factory)
+    def __init__(self, conv, io, sh, **kwargs):
+        super(SyncAuthn, self).__init__(conv, io, sh, **kwargs)
         self.op_args["endpoint"] = conv.client.provider_info[
             "authorization_endpoint"]
 
@@ -130,14 +125,6 @@ class SyncAuthn(SyncGetRequest):
         # verify that I've got a valid access code
         self.tests["post"].append("valid_code")
 
-        # Monkey-patch: make sure we use the same http session (preserving
-        # cookies) when fetching keys from issuers 'jwks_uri' as for the
-        # rest of the test sequence
-        import oic.utils.keyio
-
-        oic.utils.keyio.request = functools.partial(
-            request_with_client_http_session, self)
-
     def op_setup(self):
         self.req_args["redirect_uri"] = self.conv.callback_uris[0]
 
@@ -146,9 +133,8 @@ class AsyncAuthn(AsyncGetRequest):
     response_cls = "AuthorizationResponse"
     request_cls = "AuthorizationRequest"
 
-    def __init__(self, conv, session, test_id, conf, funcs, chk_factory):
-        super(AsyncAuthn, self).__init__(conv, session, test_id, conf, funcs,
-                                         chk_factory)
+    def __init__(self, conv, io, sh, **kwargs):
+        super(AsyncAuthn, self).__init__(conv, io, sh, **kwargs)
         self.op_args["endpoint"] = conv.client.provider_info[
             "authorization_endpoint"]
 
@@ -162,9 +148,8 @@ class AsyncAuthn(AsyncGetRequest):
 
 
 class AccessToken(SyncPostRequest):
-    def __init__(self, conv, session, test_id, conf, funcs, chk_factory):
-        Operation.__init__(self, conv, session, test_id, conf, funcs,
-                           chk_factory)
+    def __init__(self, conv, io, sh, **kwargs):
+        Operation.__init__(self, conv, io, sh, **kwargs)
         self.op_args["state"] = conv.state
         self.req_args["redirect_uri"] = conv.client.redirect_uris[0]
 
@@ -200,9 +185,8 @@ class AccessToken(SyncPostRequest):
 
 
 class UserInfo(SyncGetRequest):
-    def __init__(self, conv, session, test_id, conf, args, chk_factory):
-        Operation.__init__(self, conv, session, test_id, conf, args,
-                           chk_factory)
+    def __init__(self, conv, io, sh, **kwargs):
+        Operation.__init__(self, conv, io, sh, **kwargs)
         self.op_args["state"] = conv.state
 
     def run(self):
@@ -243,25 +227,7 @@ class Done(Operation):
 
 class UpdateProviderKeys(Operation):
     def __call__(self, *args, **kwargs):
-        # Monkey-patch: make sure we use the same http session (preserving
-        # cookies) when fetching keys from issuers 'jwks_uri' as for the
-        # rest of the test sequence
-        import oic.utils.keyio
-
-        oic.utils.keyio.request = functools.partial(
-            request_with_client_http_session, self)
-
         issuer = self.conv.client.provider_info["issuer"]
         # Update all keys
         for keybundle in self.conv.client.keyjar.issuer_keys[issuer]:
             keybundle.update()
-
-
-def request_with_client_http_session(instance, method, url, **kwargs):
-    """Use the clients http session to make http request.
-    Note: client.http_request function requires the parameters in reverse
-    order (compared to the requests library): (method, url) vs (url, method)
-    so we can't bind the instance method directly.
-    """
-    return instance.conv.client.http_request(url, method)
-

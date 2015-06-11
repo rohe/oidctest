@@ -122,7 +122,7 @@ def application(environ, start_response):
         except KeyError:
             return io.not_found()
     elif path == "continue":
-        return tester.cont(environ)
+        return tester.cont(environ, ENV)
     elif path == "opresult":
         if tester.conv is None:
             return io.sorry_response("", "No result to report")
@@ -161,11 +161,14 @@ def application(environ, start_response):
                     return io.opresult_fragment()
 
         try:
-            tester.async_response(ENV["conf"])
+            resp = tester.async_response(ENV["conf"])
         except Exception as err:
             return io.err_response(session, "authz_cb", err)
         else:
-            return io.flow_list(session)
+            if resp:
+                return resp
+            else:
+                return io.flow_list(session)
     else:
         resp = BadRequest()
         return resp(environ, start_response)
@@ -255,11 +258,7 @@ if __name__ == '__main__':
            "profiles": profiles, "operation": operations,
            "profile": args.profile, "msg_factory": oic_message_factory,
            "check_factory": check_factory, "lookup": LOOKUP,
-           "desc": FLOWS.DESC}
-
-    # RP_ARGS = {"lookup": LOOKUP, "conf": CONF, "test_flows": TEST_FLOWS,
-    #            "cache": {}, "test_profile": TEST_PROFILE, "profiles": PROFILES,
-    #            "test_class": test_class, "check_factory": check_factory}
+           "desc": FLOWS.DESC, "cache": {}}
 
     SRV = wsgiserver.CherryPyWSGIServer(('0.0.0.0', CONF.PORT),
                                         SessionMiddleware(application,

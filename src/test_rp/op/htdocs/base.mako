@@ -2,7 +2,7 @@
 <head>
     <%block name="meta"/>
 ##    <script src="/_static/angular.js"></script>
-    <script src="/_static/angular1.2.0.min.js"></script>
+    <script src="/_static/angular_1.4.0.min.js"></script>
     <script src="/_static/angular-sanitize.min.js"></script>
     <script src="/_static/jquery.min.latest.js"></script>
     <script src="/_static/bootstrap/js/bootstrap.min.js"></script>
