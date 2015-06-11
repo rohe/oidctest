@@ -363,15 +363,14 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             },
             "rp-id_token-sig+enc": {
                 "short_description": "Can request and use signed and encrypted ID Token",
-                "detailed_description": "Request an encrypted ID Token (using 'id_token_encrypted_response_alg' and 'id_token_encrypted_response_enc' in registered " + CLIENT_METADATA + "). " +
+                "detailed_description": "Request an encrypted ID Token. " +
                 "Decrypt the returned the ID Token and verify its signature using the keys published by the Issuer.",
                 "expected_result": "Accept the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
             "rp-id_token-sig_none": {
                 "short_description": "Can request and use unsigned ID Token",
                 "profiles": [BASIC_OPTIONAL, CONFIG_OPTIONAL, DYNAMIC_OPTIONAL],
-                "detailed_description": "Register with the provider specifying \"id_token_signed_response_alg='none'\" in the " +
-                CLIENT_METADATA + ". Use " + CODE_FLOW + " and retrieve an unsigned ID Token.",
+                "detailed_description": "Use " + CODE_FLOW + " and retrieve an unsigned ID Token.",
                 "expected_result": "Accept the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
             "rp-id_token-bad_c_hash": {
@@ -451,8 +450,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             },
             "rp-key_rotation-rp_enc_key": {
                 "short_description": "Can rotate encryption keys",
-                "detailed_description": "Request an encrypted ID Token (using 'id_token_encrypted_response_alg' and 'id_token_encrypted_response_enc' in registered "
-                + CLIENT_METADATA + ") and decrypt it. " + ROTATE_ENCRYPTION_KEYS +" at the Relying Party's 'jwks_uri' after it has been used by the OpenID Connect Provider. " +
+                "detailed_description": "Request an encrypted ID Token and decrypt it. " + ROTATE_ENCRYPTION_KEYS +" at the Relying Party's 'jwks_uri' after it has been used by the OpenID Connect Provider. " +
                 "Make a new request for an encrypted ID Token and decrypt it using the rotated decryption key.",
                 "expected_result": "The OpenID Connect Provider successfully uses the rotated key: the first ID Token can decrypted using the first key and the second ID Token can be decrypted using the rotated key."
             }
@@ -491,17 +489,17 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             "rp-user_info-sign":{
                 "short_description": "Can request and use signed UserInfo Response",
                 "profiles": [CONFIG_OPTIONAL, DYNAMIC_OPTIONAL],
-                "detailed_description": "Request signed UserInfo (using 'userinfo_signed_response_alg' in registered " + CLIENT_METADATA + ").",
+                "detailed_description": "Request signed UserInfo.",
                 "expected_result": "Successful signature verification of the " + USERINFO_RESPONSE + "."
             },
             "rp-user_info-sig+enc":{
                 "short_description": "Can request and use signed and encrypted UserInfo Response",
-                "detailed_description": "Request signed and encrypted UserInfo (using 'userinfo_signed_response_alg', 'userinfo_encrypted_response_alg' and 'userinfo_encrypted_response_enc' in registered " + CLIENT_METADATA + "). Decrypt the " + USERINFO_RESPONSE + " and verify its signature.",
+                "detailed_description": "Request signed and encrypted UserInfo. Decrypt the " + USERINFO_RESPONSE + " and verify its signature.",
                 "expected_result": "Successful decryption and signature verification of the " + USERINFO_RESPONSE + "."
             },
             "rp-user_info-enc":{
                 "short_description": "Can request and use encrypted UserInfo Response",
-                "detailed_description": "Request encrypted UserInfo (using 'userinfo_encrypted_response_alg' and 'userinfo_encrypted_response_enc' in registered " + CLIENT_METADATA + "). Decrypt the " + USERINFO_RESPONSE + ".",
+                "detailed_description": "Request encrypted UserInfo. Decrypt the " + USERINFO_RESPONSE + ".",
                 "expected_result": "A " + USERINFO_RESPONSE + "."
             },
             "rp-user_info-bad_sub_claim":{
