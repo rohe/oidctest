@@ -1,7 +1,9 @@
-from oper import AccessToken, Done
+from aatest.operation import Note
+from oper import AccessToken
 from oper import AsyncAuthn
 from oper import Discovery
 from oper import DisplayUserInfo
+from oper import Done
 from oper import Registration
 from oper import SyncAuthn
 from oper import UserInfo
@@ -21,6 +23,7 @@ PROFILEMAP = {
     Webfinger: {"C": {}, "I": {}, "IT": {}, "CI": {}, "CT": {}, "CIT": {}},
     Discovery: {"C": {}, "I": {}, "IT": {}, "CI": {}, "CT": {}, "CIT": {}},
     Done: {"C": {}, "I": {}, "IT": {}, "CI": {}, "CT": {}, "CIT": {}},
+    Note: {"C": {}, "I": {}, "IT": {}, "CI": {}, "CT": {}, "CIT": {}},
     SyncAuthn: {
         "C": {set_request_args: {"response_type": ["code"],
                                  "scope": ["openid"]},

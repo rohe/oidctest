@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 class Tester(object):
     def __init__(self, io, sh, profiles, profile, flows, check_factory,
-                 msg_factory, **kwargs):
+                 msg_factory, cache, **kwargs):
         self.io = io
         self.sh = sh
         self.profiles = profiles
@@ -27,6 +27,7 @@ class Tester(object):
         self.message_factory = msg_factory
         self.conv = None
         self.chk_factory = check_factory
+        self.cache = cache
         self.kwargs = kwargs
 
     def match_profile(self, test_id):
@@ -81,8 +82,9 @@ class Tester(object):
 
             logger.info("<--<-- {} --- {} -->-->".format(index, cls))
             try:
-                _oper = cls(self.conv, self.profile, test_id, conf, funcs,
-                            self.chk_factory)
+                _oper = cls(conv=self.conv, profile=self.profile,
+                            test_id=test_id, conf=conf, funcs=funcs,
+                            check_factory=self.chk_factory, cache=self.cache)
                 self.conv.operation = _oper
                 _oper.setup(self.profiles.PROFILEMAP)
                 resp = _oper()
@@ -93,7 +95,7 @@ class Tester(object):
             else:
                 resp = self.handle_response(resp, index)
                 if resp:
-                    return resp
+                    return self.io.respond(resp)
 
             index += 1
 
@@ -225,8 +227,9 @@ class WebTester(Tester):
 
             logger.info("<--<-- {} --- {} -->-->".format(index, cls))
             try:
-                _oper = cls(self.conv, self.profile, test_id, conf, funcs,
-                            self.chk_factory)
+                _oper = cls(conv=self.conv, profile=self.profile,
+                            test_id=test_id, conf=conf, funcs=funcs,
+                            check_factory=self.chk_factory, cache=self.cache)
                 self.conv.operation = _oper
                 _oper.setup(self.profiles.PROFILEMAP)
                 resp = _oper()
@@ -237,7 +240,7 @@ class WebTester(Tester):
             else:
                 rsp = self.handle_response(resp, index)
                 if rsp:
-                    return resp
+                    return self.io.respond(rsp)
 
             index += 1
 

@@ -255,11 +255,7 @@ if __name__ == '__main__':
            "profiles": profiles, "operation": operations,
            "profile": args.profile, "msg_factory": oic_message_factory,
            "check_factory": check_factory, "lookup": LOOKUP,
-           "desc": FLOWS.DESC}
-
-    # RP_ARGS = {"lookup": LOOKUP, "conf": CONF, "test_flows": TEST_FLOWS,
-    #            "cache": {}, "test_profile": TEST_PROFILE, "profiles": PROFILES,
-    #            "test_class": test_class, "check_factory": check_factory}
+           "desc": FLOWS.DESC, "cache": {}}
 
     SRV = wsgiserver.CherryPyWSGIServer(('0.0.0.0', CONF.PORT),
                                         SessionMiddleware(application,
