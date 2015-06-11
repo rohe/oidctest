@@ -122,7 +122,7 @@ def application(environ, start_response):
         except KeyError:
             return io.not_found()
     elif path == "continue":
-        return tester.cont(environ)
+        return tester.cont(environ, ENV)
     elif path == "opresult":
         if tester.conv is None:
             return io.sorry_response("", "No result to report")
@@ -161,11 +161,14 @@ def application(environ, start_response):
                     return io.opresult_fragment()
 
         try:
-            tester.async_response(ENV["conf"])
+            resp = tester.async_response(ENV["conf"])
         except Exception as err:
             return io.err_response(session, "authz_cb", err)
         else:
-            return io.flow_list(session)
+            if resp:
+                return resp
+            else:
+                return io.flow_list(session)
     else:
         resp = BadRequest()
         return resp(environ, start_response)

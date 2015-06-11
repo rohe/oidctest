@@ -1,6 +1,6 @@
 import logging
 from urlparse import parse_qs
-from oic.utils.http_util import Redirect
+from oic.utils.http_util import Redirect, Response
 from oic.utils.http_util import get_post
 
 from aatest import exception_trace, END_TAG
@@ -82,9 +82,10 @@ class Tester(object):
 
             logger.info("<--<-- {} --- {} -->-->".format(index, cls))
             try:
-                _oper = cls(conv=self.conv, io=self.io, profile=self.profile,
-                            test_id=test_id, conf=conf, funcs=funcs,
-                            check_factory=self.chk_factory, cache=self.cache)
+                _oper = cls(conv=self.conv, io=self.io, sh=self.sh,
+                            profile=self.profile, test_id=test_id, conf=conf,
+                            funcs=funcs, check_factory=self.chk_factory,
+                            cache=self.cache)
                 self.conv.operation = _oper
                 _oper.setup(self.profiles.PROFILEMAP)
                 resp = _oper()
@@ -178,19 +179,23 @@ class WebTester(Tester):
         except Exception as err:
             return self.io.err_response(self.sh.session, "profile", err)
 
-    def run(self, test_id, cinfo, **kw_args):
+    def _setup(self, test_id, cinfo, **kw_args):
         try:
             redirs = cinfo["client"]["redirect_uris"]
         except KeyError:
             redirs = cinfo["registered"]["redirect_uris"]
 
-        self.sh.session_setup(path=test_id)
         _flow = self.flows[test_id]
         _cli = make_client(**kw_args)
         self.conv = Conversation(_flow, _cli, redirs, kw_args["msg_factory"],
                                  trace_cls=Trace)
-        self.conv.sequence = self.sh.session["sequence"]
+
+        self.sh.session_setup(path=test_id)
         self.sh.session["conv"] = self.conv
+        self.conv.sequence = self.sh.session["sequence"]
+
+    def run(self, test_id, cinfo, **kw_args):
+        self._setup(test_id, cinfo, **kw_args)
 
         # noinspection PyTypeChecker
         try:
@@ -203,7 +208,10 @@ class WebTester(Tester):
     def handle_response(self, resp, index):
         if resp:
             self.sh.session["index"] = index
-            return resp(self.io.environ, self.io.start_response)
+            if isinstance(resp, Response):
+                return resp(self.io.environ, self.io.start_response)
+            else:
+                return resp
         else:
             return None
 
@@ -219,6 +227,7 @@ class WebTester(Tester):
 
         _oper = None
         for item in self.conv.sequence[index:]:
+            self.sh.session["index"] = index
             if isinstance(item, tuple):
                 cls, funcs = item
             else:
@@ -227,14 +236,14 @@ class WebTester(Tester):
 
             logger.info("<--<-- {} --- {} -->-->".format(index, cls))
             try:
-                _oper = cls(conv=self.conv, io=self.io, profile=self.profile,
+                _oper = cls(conv=self.conv, io=self.io, sh=self.sh,
+                            profile=self.profile,
                             test_id=test_id, conf=conf, funcs=funcs,
                             check_factory=self.chk_factory, cache=self.cache)
                 self.conv.operation = _oper
                 _oper.setup(self.profiles.PROFILEMAP)
                 resp = _oper()
             except Exception as err:
-                self.sh.session["index"] = index
                 return self.io.err_response(self.sh.session, "run_sequence",
                                             err)
             else:
@@ -257,32 +266,28 @@ class WebTester(Tester):
             if isinstance(_oper, Done):
                 self.conv.test_output.append(("X", END_TAG))
 
-    def cont(self, environ):
-        try:
-            sequence_info = self.sh.session["seq_info"]
-        except KeyError:  # Cookie delete broke session
-            query = parse_qs(environ["QUERY_STRING"])
-            path = query["path"][0]
-            index = int(query["index"][0])
-            conv, sequence_info, ots, trace, index = self.sh.session_setup(
-                path=path, index=index)
+    def cont(self, environ, ENV):
+        query = parse_qs(environ["QUERY_STRING"])
+        path = query["path"][0]
+        index = int(query["index"][0])
 
-            try:
-                conv = self.kwargs["cache"][query["ckey"][0]]
-            except KeyError:
-                pass
-            else:
-                ots.client = conv.client
-                self.sh.session["conv"] = conv
+        try:
+            index = self.sh.session["index"]
+        except KeyError:  # Cookie delete broke session
+            self._setup(path, **ENV)
         except Exception as err:
             return self.io.err_response(self.sh.session, "session_setup", err)
         else:
-            index = self.sh.session["index"]
-            conv = self.sh.session["conv"]
+            self.conv = self.sh.session["conv"]
 
         index += 1
 
-        return self.run_flow(self.sh.session["testid"], index)
+        try:
+            return self.run_flow(path, ENV["conf"], index)
+        except Exception as err:
+            exception_trace("", err, logger)
+            self.io.dump_log(self.sh.session, path)
+            return self.io.err_response(self.sh.session, "run", err)
 
     def async_response(self, conf):
         index = self.sh.session["index"]

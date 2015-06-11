@@ -61,4 +61,13 @@ def cache_response(oper, arg):
 
 def restore_response(oper, arg):
     key = oper.conv.test_id
-    oper.conv.response = oper.cache[key]
+    if oper.conv.protocol_response:
+        _lst = oper.cache[key][:]
+        for x in oper.conv.protocol_response:
+            if x not in _lst:
+                _lst.append(x)
+        oper.conv.protocol_response = _lst
+    else:
+        oper.conv.protocol_response = oper.cache[key]
+
+    del oper.cache[key]
