@@ -169,6 +169,9 @@ class AccessToken(SyncPostRequest):
         self.req_args["redirect_uri"] = conv.client.redirect_uris[0]
 
     def run(self):
+        self.catch_exception(self._run)
+
+    def _run(self):
         if self.skip:
             return
 

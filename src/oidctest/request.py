@@ -129,7 +129,7 @@ class SyncRequest(Operation):
             self.conv.trace.request("BODY: {}".format(body))
         response_msg = self.do_request(_client, url, body, http_args)
 
-        response = self.handle_response(response_msg, csi)
+        response = self.catch_exception(self.handle_response, r=response_msg, csi=csi)
         self.conv.trace.response(response)
         self.sequence.append((response, response_msg.text))
 
