@@ -124,21 +124,21 @@ class Provider(provider.Provider):
         ava = provider.Provider._collect_user_info(self, session,
                                                    userinfo_claims)
 
+        _src = "src1"
         if "aggregated" in self.claims_type:  # add some aggregated claims
             extra = Message(eye_color="blue", shoe_size=8)
             _jwt = extra.to_jwt(algorithm="none")
-            ava["_claim_names"] = Message(eye_color=self.baseurl,
-                                          shoe_size=self.baseurl)
-            _src = {self.baseurl: {"JWT": _jwt}}
-            ava["_claim_sources"] = Message(**_src)
-
-        if "distributed" in self.claims_type:
+            ava["_claim_names"] = Message(eye_color=_src,
+                                          shoe_size=_src)
+            a_claims = {_src: {"JWT": _jwt}}
+            ava["_claim_sources"] = Message(**a_claims)
+        elif "distributed" in self.claims_type:
             urlbase = self.name
             _tok = rndstr()
             self.claim_access_token[_tok] = {"age": 30}
-            ava["_claim_names"] = Message(age="src1")
-            ava["_claim_sources"] = Message(
-                src1={"endpoint": urlbase + "claim", "access_token": _tok})
+            ava["_claim_names"] = Message(age=_src)
+            d_claims = {_src: {"endpoint": urlbase + "claim", "access_token": _tok}}
+            ava["_claim_sources"] = Message(**d_claims)
 
         if "uisub" in self.behavior_type:
             ava["sub"] = "foobar"
