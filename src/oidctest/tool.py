@@ -48,6 +48,7 @@ class Tester(object):
         _cli = make_client(**kw_args)
         self.conv = Conversation(_flow, _cli, redirs, kw_args["msg_factory"],
                                  trace_cls=Trace)
+        _cli.conv = self.conv
         self.conv.sequence = self.sh.session["sequence"]
         self.sh.session["conv"] = self.conv
 
@@ -189,7 +190,7 @@ class WebTester(Tester):
         _cli = make_client(**kw_args)
         self.conv = Conversation(_flow, _cli, redirs, kw_args["msg_factory"],
                                  trace_cls=Trace)
-
+        _cli.conv = self.conv
         self.sh.session_setup(path=test_id)
         self.sh.session["conv"] = self.conv
         self.conv.sequence = self.sh.session["sequence"]
@@ -298,7 +299,6 @@ class WebTester(Tester):
             cls, funcs = item
         else:
             cls = item
-            funcs = {}
 
         logger.info("<--<-- {} --- {}".format(index, cls))
         self.conv.operation.parse_response(self.sh.session["testid"],

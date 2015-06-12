@@ -9,7 +9,6 @@ import time
 from urlparse import urlparse
 import aatest
 
-from oic.oic import Client
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 from oic.utils.keyio import build_keyjar
 
@@ -17,6 +16,7 @@ from aatest.verify import Verify
 from oidctest.setup import test_summation
 
 from oidctest.prof_util import map_prof
+from oidctest.client import Client
 
 __author__ = 'roland'
 

@@ -384,3 +384,13 @@ class ClIO(IO):
         }
         _state = evaluate(session, info)
         print "{} {}".format(SIGN[_state], session["node"].name)
+
+    def err_response(self, session, where, err):
+        if err:
+            exception_trace(where, err, logger)
+
+        try:
+            _tid = session["testid"]
+            self.dump_log(session, _tid)
+        except KeyError:
+            pass

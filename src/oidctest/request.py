@@ -215,7 +215,6 @@ class AsyncRequest(Operation):
             return io.err_response(_conv, "run_sequence", err)
 
         logger.info("Parsed response: %s" % response.to_dict())
-        _conv.protocol_response.append((response, info))
         _conv.trace.response(response)
 
 
