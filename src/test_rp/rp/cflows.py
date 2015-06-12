@@ -70,17 +70,6 @@ FLOWS = {
         "profile": "..T.",
         "desc": "Uses openid-configuration Discovery Information"
     },
-    "rp-discovery-issuer_not_matching_config": {
-        "sequence": [
-            (Webfinger, {set_webfinger_resource: {}}),
-            (Discovery, {expect_exception: IssuerMismatch})
-        ],
-        "profile": "..T.",
-        "desc": "Retrieve openid-configuration information for OpenID "
-                "Provider from the .well-known/openid-configuration path. Verify that"
-                "the issuer in the openid-configuration matches the one returned by"
-                "WebFinger"
-    },
     'rp-discovery-jwks_uri_keys': {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
@@ -100,7 +89,10 @@ FLOWS = {
                          expect_exception: IssuerMismatch})
         ],
         "profile": "..T.",
-        "desc": "Will detect a faulty issuer claim in OP config"
+        "desc": "Retrieve openid-configuration information for OpenID "
+                "Provider from the .well-known/openid-configuration path. Verify that"
+                "the issuer in the openid-configuration matches the one returned by"
+                "WebFinger"
     },
     "rp-registration-dynamic": {
         "sequence": [
