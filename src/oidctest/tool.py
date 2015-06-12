@@ -48,6 +48,7 @@ class Tester(object):
         _cli = make_client(**kw_args)
         self.conv = Conversation(_flow, _cli, redirs, kw_args["msg_factory"],
                                  trace_cls=Trace)
+        _cli.conv = self.conv
         self.conv.sequence = self.sh.session["sequence"]
         self.sh.session["conv"] = self.conv
 
