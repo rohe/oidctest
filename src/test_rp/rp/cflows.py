@@ -1,7 +1,7 @@
 from jwkest import BadSignature
 from oic.exception import IssuerMismatch, PyoidcError, NotForMe
 from oic.oauth2.message import MissingRequiredAttribute
-from oic.oic.message import AtHashError
+from oic.oic.message import AtHashError, CHashError
 
 from oidctest.oper import Webfinger
 from oidctest.oper import SubjectMismatch
@@ -11,7 +11,6 @@ from oidctest.oper import AccessToken
 from oidctest.oper import Discovery
 from oidctest.oper import Registration
 from oidctest.oper import SyncAuthn
-from oidctest.request import ErrorResponse
 from oidctest.testfunc import resource, conditional_expect_exception
 from oidctest.testfunc import set_jwks_uri
 from oidctest.testfunc import set_op_args
@@ -598,7 +597,7 @@ FLOWS = {
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
             Registration,
-            SyncAuthn
+            (SyncAuthn, {expect_exception: PyoidcError})
         ],
         "profile": "I,IT,CI,CIT...",
         "desc": "If a nonce value was sent in the Authentication Request the Relying Party must validate the nonce returned in the ID Token."
@@ -708,9 +707,10 @@ FLOWS = {
             Registration,
             (SyncAuthn, {expect_exception: AtHashError})
         ],
-        "profile": "IT...",
-        "desc": "Tests if the Relying Party can extract an at_hash from an ID token and it should be used in the "
-                "access_token validation. The response type should be set to 'id_token token'"
+        "profile": "IT,CIT...",
+        "desc": "Make an authentication request using response_type='id_token token' "
+                "for Implicit Flow or response_type='code id_token token' for Hybrid Flow. "
+                "Verify the 'at_hash' value in the returned ID Token."
     },
     "rp-id_token-iat": {
         "sequence": [
@@ -799,10 +799,9 @@ FLOWS = {
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
             Registration,
-            SyncAuthn,
-            (AccessToken, {expect_exception: ErrorResponse})
+            (SyncAuthn, {expect_exception: CHashError}),
         ],
-        "profile": "C,CI,CT,CIT...",
+        "profile": "CI,CIT...",
         "desc": "Tests if the Relying Party extract an c_hash from an ID token presented as json. "
                 "It should be used to validate the correctness of the authorization code"
     },

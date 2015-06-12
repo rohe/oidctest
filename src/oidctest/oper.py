@@ -12,7 +12,7 @@ from oic.oic import AccessTokenResponse
 from oidctest.prof_util import WEBFINGER
 from oidctest.prof_util import DISCOVER
 from oidctest.prof_util import REGISTER
-from oidctest.request import ErrorResponse, same_issuer
+from oidctest.request import same_issuer
 from oidctest.request import SyncGetRequest
 from oidctest.request import AsyncGetRequest
 from oidctest.request import SyncPostRequest
@@ -166,18 +166,12 @@ class AccessToken(SyncPostRequest):
         atr = self.conv.client.do_access_token_request(
             request_args=self.req_args, **self.op_args)
 
-        # Check the c_hash
-        resp_hash = jws.left_hash(self.req_args["code"], atr["id_token"].jws_header["alg"])
-        if atr["id_token"]["c_hash"] != resp_hash:
-            raise ErrorResponse("c_hash mismatch {} != {}".format(atr["id_token"]["c_hash"], jws.left_hash(self.req_args["code"], "HS256")))
-
-        if not "kid" in atr["id_token"].jws_header and not atr["id_token"].jws_header["alg"] == "HS256":
+        if "kid" not in atr["id_token"].jws_header and not atr["id_token"].jws_header["alg"] == "HS256":
             for key, value in self.conv.client.keyjar.issuer_keys.iteritems():
                 if not key == "" and (len(value) > 1 or len(value[0].keys()) > 1):
                     raise PyoidcError("No 'kid' in id_token header!")
 
         if not same_issuer(self.conv.info["issuer"], atr["id_token"]["iss"]):
-            # if self.conv.info["issuer"] != atr["id_token"]["iss"]:
             raise IssuerMismatch(" {} != {}".format(self.conv.info["issuer"], atr["id_token"]["iss"]))
 
         self.conv.trace.response(atr)
