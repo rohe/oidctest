@@ -449,7 +449,7 @@ FLOWS = {
             AccessToken,
             UserInfo
         ],
-        "profile": "IT,CT,CIT...",
+        "profile": "...",
         "desc": "The Relying Party should be able to request claims using "
                 "Scope Values",
     },
