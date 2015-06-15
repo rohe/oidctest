@@ -68,10 +68,10 @@ IDMAP = {
     "rp-scope-userinfo_claims": NORMAL,
 
     # Key Rollover
-    "rp-key_rollover-op_sign_key": "/_/_/rotsig/normal",
-    "rp-key_rollover-rp_sign_key": NORMAL,
-    "rp-key_rollover-op_enc_key": "/_/_/rotenc/normal",
-    "rp-key_rollover-rp_enc_key": NORMAL,
+    "rp-key_rotation-op_sign_key": "/_/_/rotsig/normal",
+    "rp-key_rotation-rp_sign_key": NORMAL,
+    "rp-key_rotation-op_enc_key": "/_/_/rotenc/normal",
+    "rp-key_rotation-rp_enc_key": NORMAL,
 
     # request_uri Request Parameter
     "rp-request_uri-unsigned": NORMAL,
