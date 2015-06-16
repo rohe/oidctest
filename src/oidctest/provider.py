@@ -93,6 +93,13 @@ class Provider(provider.Provider):
         self.server.behavior_type = self.behavior_type
         self.claim_access_token = {}
 
+    def sign_encrypt_id_token(self, sinfo, client_info, areq, code=None,
+                              access_token=None, user_info=None):
+        self._update_client_keys(client_info["client_id"])
+
+        return provider.Provider.sign_encrypt_id_token(self, sinfo, client_info, areq, code,
+                              access_token, user_info)
+
     def id_token_as_signed_jwt(self, session, loa="2", alg="", code=None,
                                access_token=None, user_info=None, auth_time=0,
                                exp=None, extra_claims=None):
@@ -180,11 +187,8 @@ class Provider(provider.Provider):
                                                        **kwargs)
 
     def authorization_endpoint(self, request="", cookie=None, **kwargs):
-        if "updkeys" in self.behavior_type:
-            client_id = urlparse.parse_qs(request)["client_id"][0]
-
-            for kb in self.keyjar[client_id]:
-                kb.update()
+        client_id = urlparse.parse_qs(request)["client_id"][0]
+        self._update_client_keys(client_id)
 
         return provider.Provider.authorization_endpoint(self, request, cookie, **kwargs)
 
@@ -207,6 +211,12 @@ class Provider(provider.Provider):
             keys = [k.to_dict() for kb in self.keyjar[""] for k in kb.keys()]
             jwks = dict(keys=keys)
             return json.dumps(jwks)
+
+    def _update_client_keys(self, client_id):
+        if "updkeys" in self.behavior_type:
+            for kb in self.keyjar[client_id]:
+                kb.update()
+
 
     def __setattr__(self, key, value):
         if key == "keys":
