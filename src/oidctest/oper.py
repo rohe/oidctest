@@ -1,13 +1,18 @@
+import json
 import logging
 import os
 from urlparse import urlparse
+from Crypto.PublicKey import RSA
 from aatest import END_TAG
 from aatest.operation import Operation
+from jwkest.jwk import RSAKey
 
 from oic.oauth2 import rndstr
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
 from oic.oic import AccessTokenResponse
+import time
+from oic.utils.keyio import KeyBundle, ec_init
 from oidctest.prof_util import WEBFINGER
 from oidctest.prof_util import DISCOVER
 from oidctest.prof_util import REGISTER
@@ -209,3 +214,51 @@ class UpdateProviderKeys(Operation):
         # Update all keys
         for keybundle in self.conv.client.keyjar.issuer_keys[issuer]:
             keybundle.update()
+
+
+class RotateKey(Operation):
+
+    def __call__(self):
+        keyjar = self.conv.client.keyjar
+        self.conv.client.original_keyjar = keyjar.copy()
+
+        # invalidate the old key
+        old_kid = self.op_args["old_kid"]
+        old_key = keyjar.get_key_by_kid(old_kid)
+        old_key.inactive_since = time.time()
+
+        # setup new key
+        key_spec = self.op_args["new_key"]
+        typ = key_spec["type"].upper()
+        if typ == "RSA":
+            kb = KeyBundle(keytype=typ, keyusage=key_spec["use"])
+            kb.append(RSAKey(use=key_spec["use"]).load_key(
+                RSA.generate(key_spec["bits"])))
+        elif typ == "EC":
+            kb = ec_init(key_spec)
+
+        # add new key to keyjar with
+        kb.keys()[0].kid = self.op_args["new_kid"]
+        keyjar.add_kb("", kb)
+
+        # make jwks and update file
+        keys = []
+        for kb in keyjar[""]:
+            keys.extend([k.to_dict() for k in kb.keys() if not k.inactive_since])
+        jwks = dict(keys=keys)
+        with open(self.op_args["jwks_path"], "w") as f:
+            f.write(json.dumps(jwks))
+
+
+class RestoreKeyJar(Operation):
+
+    def __call__(self):
+        self.conv.client.keyjar = self.conv.client.original_keyjar
+
+        # make jwks and update file
+        keys = []
+        for kb in self.conv.client.keyjar[""]:
+            keys.extend([k.to_dict() for k in kb.keys()])
+        jwks = dict(keys=keys)
+        with open(self.op_args["jwks_path"], "w") as f:
+            f.write(json.dumps(jwks))

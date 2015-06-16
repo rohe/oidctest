@@ -117,8 +117,8 @@ def main_setup(log):
             "profile": cargs.profile}
 
 def make_client(**kw_args):
-    _, _keyjar, _ = build_keyjar(kw_args["conf"].keys)
-    _cli = Client(client_authn_method=CLIENT_AUTHN_METHOD, keyjar=_keyjar)
+    c_keyjar = kw_args["keyjar"].copy()
+    _cli = Client(client_authn_method=CLIENT_AUTHN_METHOD, keyjar=c_keyjar)
     _cli.kid = kw_args["kidd"]
     _cli.jwks_uri = kw_args["jwks_uri"]
 

@@ -1,6 +1,7 @@
 import json
 from oic import oic
 import time
+import urlparse
 
 from Crypto.PublicKey import RSA
 from jwkest.ecc import P256
@@ -92,6 +93,13 @@ class Provider(provider.Provider):
         self.server.behavior_type = self.behavior_type
         self.claim_access_token = {}
 
+    def sign_encrypt_id_token(self, sinfo, client_info, areq, code=None,
+                              access_token=None, user_info=None):
+        self._update_client_keys(client_info["client_id"])
+
+        return provider.Provider.sign_encrypt_id_token(self, sinfo, client_info, areq, code,
+                              access_token, user_info)
+
     def id_token_as_signed_jwt(self, session, loa="2", alg="", code=None,
                                access_token=None, user_info=None, auth_time=0,
                                exp=None, extra_claims=None):
@@ -178,6 +186,12 @@ class Provider(provider.Provider):
         return provider.Provider.registration_endpoint(self, request, authn,
                                                        **kwargs)
 
+    def authorization_endpoint(self, request="", cookie=None, **kwargs):
+        client_id = urlparse.parse_qs(request)["client_id"][0]
+        self._update_client_keys(client_id)
+
+        return provider.Provider.authorization_endpoint(self, request, cookie, **kwargs)
+
     def generate_jwks(self):
         if "rotenc" in self.behavior_type:  # Rollover encryption keys
             rsa_key = RSAKey(kid="rotated_rsa_{}".format(time.time()),
@@ -198,12 +212,18 @@ class Provider(provider.Provider):
             jwks = dict(keys=keys)
             return json.dumps(jwks)
 
+    def _update_client_keys(self, client_id):
+        if "updkeys" in self.behavior_type:
+            for kb in self.keyjar[client_id]:
+                kb.update()
+
+
     def __setattr__(self, key, value):
         if key == "keys":
             # Update the keyjar instead of just storing the keys description
             keyjar_init(self, value)
         else:
-            super(Provider, self).__setattr__(key, value)
+            super(provider.Provider, self).__setattr__(key, value)
 
     def _get_keyjar(self):
         return self.server.keyjar
