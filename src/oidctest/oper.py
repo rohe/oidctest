@@ -19,6 +19,7 @@ __author__ = 'roland'
 
 logger = logging.getLogger(__name__)
 
+
 class SubjectMismatch(Exception):
     pass
 
@@ -32,7 +33,6 @@ def include(url, test_id):
             return url
 
     return "%s://%s/%s%s_/_/_/normal" % (p.scheme, p.netloc, test_id, p.path)
-
 
 
 class Webfinger(Operation):
@@ -203,9 +203,19 @@ class Done(Operation):
     def run(self, *args, **kwargs):
         self.conv.trace.info(END_TAG)
 
+
 class UpdateProviderKeys(Operation):
     def __call__(self, *args, **kwargs):
         issuer = self.conv.client.provider_info["issuer"]
         # Update all keys
         for keybundle in self.conv.client.keyjar.issuer_keys[issuer]:
             keybundle.update()
+
+
+class ReadRegistration(SyncGetRequest):
+    def op_setup(self):
+        _client = self.conv.client
+        self.req_args["access_token"] = _client.registration_access_token
+        self.op_args["authn_method"] = "bearer_header"
+        self.op_args["endpoint"] = _client.registration_response[
+            "registration_client_uri"]

@@ -125,7 +125,7 @@ class AsyncRequest(Operation):
     module = ""
     content_type = URL_ENCODED
     response_cls = ""
-    response_where = "url"
+    response_where = "url"  # if code otherwise 'body'
     response_type = "urlencoded"
     accept = None
     _tests = {"post": [], "pre": []}
@@ -181,6 +181,12 @@ class AsyncRequest(Operation):
         elif self.response_where == "url":
             info = io.environ["QUERY_STRING"]
             _ctype = "urlencoded"
+        elif self.response_where == "fragment":
+            query = parse_qs(get_post(io.environ))
+            try:
+                info = query["fragment"][0]
+            except KeyError:
+                return io.sorry_response(io.conf.BASE, "missing fragment ?!")
         else:  # resp_c.where == "body"
             info = get_post(io.environ)
 
@@ -194,9 +200,9 @@ class AsyncRequest(Operation):
                 self.csi["state"],
                 keyjar=_conv.client.keyjar, algs=algs)
         except ResponseError as err:
-            return io.err_response(_conv, "run_sequence", err)
+            return io.err_response(self.sh.session, "run_sequence", err)
         except Exception as err:
-            return io.err_response(_conv, "run_sequence", err)
+            return io.err_response(self.sh.session, "run_sequence", err)
 
         logger.info("Parsed response: %s" % response.to_dict())
         _conv.trace.response(response)
