@@ -2,6 +2,8 @@ from jwkest import BadSignature
 from oic.exception import IssuerMismatch, PyoidcError
 
 from oidctest.oper import Webfinger
+from oidctest.oper import RotateKey
+from oidctest.oper import RestoreKeyJar
 from oidctest.oper import SubjectMismatch
 from oidctest.oper import UpdateProviderKeys
 from oidctest.oper import UserInfo
@@ -636,5 +638,39 @@ FLOWS = {
         ],
         "profile": "I,IT,CI,CIT...",
         "desc": "Support OP Encryption Key Rotation"
+    },
+    "rp-key_rotation-rp_sign_key": {
+        "sequence": [
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
+            (Registration, {set_jwks_uri: None}),
+            (SyncAuthn, {
+                set_op_args: {
+                    "request_method": "request",
+                    "request_object_signing_alg": "ES256",
+                    "sig_kid": "rp2"
+                }
+            }),
+            (RotateKey, {set_op_args: {
+                "old_kid": "rp2",
+                "new_key": {
+                    "type": "EC",
+                    "crv": "P-256",
+                    "use": ["sig"]
+                },
+                "new_kid": "rotated_sig_key",
+                "jwks_path": "static/jwk.json"
+            }}),
+            (SyncAuthn, {
+                set_op_args: {
+                    "request_method": "request",
+                    "request_object_signing_alg": "ES256",
+                    "sig_kid": "rotated_sig_key"
+                }
+            }),
+            (RestoreKeyJar, {set_op_args: {"jwks_path": "static/jwk.json"}})
+        ],
+        "profile": "...",
+        "desc": "Can Request and Use Encrypted UserInfo Response"
     }
 }
