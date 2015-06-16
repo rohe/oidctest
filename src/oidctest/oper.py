@@ -2,8 +2,10 @@ import json
 import logging
 import os
 from urlparse import urlparse
+from Crypto.PublicKey import RSA
 from aatest import END_TAG
 from aatest.operation import Operation
+from jwkest.jwk import RSAKey
 
 from oic.oauth2 import rndstr
 from oic.oic import ProviderConfigurationResponse
@@ -229,9 +231,9 @@ class RotateKey(Operation):
         key_spec = self.op_args["new_key"]
         typ = key_spec["type"].upper()
         if typ == "RSA":
-            kb = KeyBundle(source="file://%s" % key_spec["key"],
-                           fileformat="der",
-                           keytype=typ, keyusage=key_spec["use"])
+            kb = KeyBundle(keytype=typ, keyusage=key_spec["use"])
+            kb.append(RSAKey(use=key_spec["use"]).load_key(
+                RSA.generate(key_spec["bits"])))
         elif typ == "EC":
             kb = ec_init(key_spec)
 
@@ -242,7 +244,7 @@ class RotateKey(Operation):
         # make jwks and update file
         keys = []
         for kb in keyjar[""]:
-            keys.extend([k.to_dict() for k in kb.keys()])
+            keys.extend([k.to_dict() for k in kb.keys() if not k.inactive_since])
         jwks = dict(keys=keys)
         with open(self.op_args["jwks_path"], "w") as f:
             f.write(json.dumps(jwks))
