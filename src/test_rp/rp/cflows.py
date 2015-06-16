@@ -672,5 +672,33 @@ FLOWS = {
         ],
         "profile": "...",
         "desc": "Can Request and Use Encrypted UserInfo Response"
+    },
+    "rp-key_rotation-rp_enc_key": {
+        "sequence": [
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
+            (Registration, {
+                set_request_args: {
+                    "id_token_encrypted_response_alg": "RSA1_5",
+                    "id_token_encrypted_response_enc": "A128CBC-HS256"
+                },
+                set_jwks_uri: None
+            }),
+            SyncAuthn,
+            (RotateKey, {set_op_args: {
+                "old_kid": "rp0",
+                "new_key": {
+                    "type": "RSA",
+                    "bits": 2048,
+                    "use": "enc"
+                },
+                "new_kid": "rotated_enc_key",
+                "jwks_path": "static/jwk.json"
+            }}),
+            SyncAuthn,
+            (RestoreKeyJar, {set_op_args: {"jwks_path": "static/jwk.json"}})
+        ],
+        "profile": "...",
+        "desc": "Can Request and Use Encrypted UserInfo Response"
     }
 }
