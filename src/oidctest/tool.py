@@ -3,7 +3,7 @@ from urlparse import parse_qs
 from oic.utils.http_util import Redirect, Response
 from oic.utils.http_util import get_post
 
-from aatest import exception_trace, END_TAG
+from aatest import exception_trace, END_TAG, Break
 from aatest.conversation import Conversation
 from aatest.verify import Verify
 from oidctest import CRYPTSUPPORT
@@ -245,6 +245,8 @@ class WebTester(Tester):
                 self.conv.operation = _oper
                 _oper.setup(self.profiles.PROFILEMAP)
                 resp = _oper()
+            except Break:
+                break
             except Exception as err:
                 return self.io.err_response(self.sh.session, "run_sequence",
                                             err)
