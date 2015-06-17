@@ -1,15 +1,17 @@
 import logging
+from aatest import Break
 import requests
 import copy
 from urlparse import parse_qs
 from bs4 import BeautifulSoup
 
 from oic.oauth2.util import URL_ENCODED
+from oic.oauth2 import ErrorResponse
 from oic.oauth2 import ResponseError
 from oic.utils.http_util import Redirect
 from oic.utils.http_util import get_post
 from oic.utils.time_util import utc_time_sans_frac
-#from oictest.check import CheckEndpoint
+# from oictest.check import CheckEndpoint
 
 from oidctest.oper import Operation
 from oidctest.log import Log
@@ -21,7 +23,21 @@ logger = logging.getLogger(__name__)
 DUMMY_URL = "https://remove.this.url/"
 
 
-class SyncRequest(Operation):
+class ParameterError(Exception):
+    pass
+
+
+class Request(Operation):
+    def expected_error_response(self, response):
+        if isinstance(response, ErrorResponse):
+            if self.expect_error["stop"]:
+                raise Break("Stop requested after received expected error")
+        else:
+            self.conv.trace.error("Expected error, didn't get it")
+            raise Break("Did not receive expected error")
+
+
+class SyncRequest(Request):
     request_cls = None
     method = ""
     module = ""
@@ -31,9 +47,6 @@ class SyncRequest(Operation):
     response_type = "urlencoded"
     accept = None
     _tests = {"post": [], "pre": []}
-
-    class ErrorResponse(Exception):
-        pass
 
     def __init__(self, conv, io, sh, **kwargs):
         Operation.__init__(self, conv, io, sh, **kwargs)
@@ -84,7 +97,8 @@ class SyncRequest(Operation):
 
         try:
             if self.req_args['nonce'] != resp["id_token"]['nonce']:
-                raise SyncRequest.ErrorResponse("invalid nonce! {} != {}".format(self.req_args['nonce'], resp["id_token"]['nonce']))
+                raise ParameterError("invalid nonce! {} != {}".format(
+                    self.req_args['nonce'], resp["id_token"]['nonce']))
             self.conv.client.id_token = resp["id_token"]
         except KeyError:
             pass
@@ -106,7 +120,8 @@ class SyncRequest(Operation):
         else:
             http_args.update(ht_args)
 
-        self.conv.trace.info(20*"="+" "+self.__class__.__name__+" "+20*"=")
+        self.conv.trace.info(
+            20 * "=" + " " + self.__class__.__name__ + " " + 20 * "=")
         self.conv.trace.request("URL: {}".format(url))
         if body:
             self.conv.trace.request("BODY: {}".format(body))
@@ -116,16 +131,22 @@ class SyncRequest(Operation):
         self.conv.trace.response(response)
         self.sequence.append((response, response_msg.text))
 
+        if self.expect_error:
+            self.expected_error_response(response)
+        else:
+            if isinstance(response, ErrorResponse):
+                raise Break("Unexpected error response")
+
         return response
 
 
-class AsyncRequest(Operation):
+class AsyncRequest(Request):
     request_cls = None
     method = ""
     module = ""
     content_type = URL_ENCODED
     response_cls = ""
-    response_where = "url"
+    response_where = "url"  # if code otherwise 'body'
     response_type = "urlencoded"
     accept = None
     _tests = {"post": [], "pre": []}
@@ -181,6 +202,12 @@ class AsyncRequest(Operation):
         elif self.response_where == "url":
             info = io.environ["QUERY_STRING"]
             _ctype = "urlencoded"
+        elif self.response_where == "fragment":
+            query = parse_qs(get_post(io.environ))
+            try:
+                info = query["fragment"][0]
+            except KeyError:
+                return io.sorry_response(io.conf.BASE, "missing fragment ?!")
         else:  # resp_c.where == "body"
             info = get_post(io.environ)
 
@@ -194,12 +221,18 @@ class AsyncRequest(Operation):
                 self.csi["state"],
                 keyjar=_conv.client.keyjar, algs=algs)
         except ResponseError as err:
-            return io.err_response(_conv, "run_sequence", err)
+            return io.err_response(self.sh.session, "run_sequence", err)
         except Exception as err:
-            return io.err_response(_conv, "run_sequence", err)
+            return io.err_response(self.sh.session, "run_sequence", err)
 
         logger.info("Parsed response: %s" % response.to_dict())
         _conv.trace.response(response)
+
+        if self.expect_error:
+            self.expected_error_response(response)
+        else:
+            if isinstance(response, ErrorResponse):
+                raise Break("Unexpected error response")
 
 
 class SyncGetRequest(SyncRequest):
