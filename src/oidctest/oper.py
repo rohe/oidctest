@@ -1,14 +1,21 @@
+import json
 import logging
 import os
 from urlparse import urlparse
+from Crypto.PublicKey import RSA
 from aatest import END_TAG
+from aatest import RequirementsNotMet
 from aatest.operation import Operation
-from oic.exception import IssuerMismatch, PyoidcError
+from jwkest.jwk import RSAKey
 
+from oic.exception import IssuerMismatch
+from oic.exception import PyoidcError
 from oic.oauth2 import rndstr
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
 from oic.oic import AccessTokenResponse
+import time
+from oic.utils.keyio import KeyBundle, ec_init, dump_jwks
 from oidctest.prof_util import WEBFINGER
 from oidctest.prof_util import DISCOVER
 from oidctest.prof_util import REGISTER
@@ -17,11 +24,10 @@ from oidctest.request import SyncGetRequest
 from oidctest.request import AsyncGetRequest
 from oidctest.request import SyncPostRequest
 
-from jwkest import jws
-
 __author__ = 'roland'
 
 logger = logging.getLogger(__name__)
+
 
 class SubjectMismatch(Exception):
     pass
@@ -36,7 +42,6 @@ def include(url, test_id):
             return url
 
     return "%s://%s/%s%s_/_/_/normal" % (p.scheme, p.netloc, test_id, p.path)
-
 
 
 class Webfinger(Operation):
@@ -219,9 +224,143 @@ class Done(Operation):
     def run(self, *args, **kwargs):
         self.conv.trace.info(END_TAG)
 
+
 class UpdateProviderKeys(Operation):
     def __call__(self, *args, **kwargs):
         issuer = self.conv.client.provider_info["issuer"]
         # Update all keys
         for keybundle in self.conv.client.keyjar.issuer_keys[issuer]:
             keybundle.update()
+
+
+class RotateKey(Operation):
+
+    def __call__(self):
+        keyjar = self.conv.client.keyjar
+        self.conv.client.original_keyjar = keyjar.copy()
+
+        # invalidate the old key
+        old_kid = self.op_args["old_kid"]
+        old_key = keyjar.get_key_by_kid(old_kid)
+        old_key.inactive_since = time.time()
+
+        # setup new key
+        key_spec = self.op_args["new_key"]
+        typ = key_spec["type"].upper()
+        if typ == "RSA":
+            kb = KeyBundle(keytype=typ, keyusage=key_spec["use"])
+            kb.append(RSAKey(use=key_spec["use"]).load_key(
+                RSA.generate(key_spec["bits"])))
+        elif typ == "EC":
+            kb = ec_init(key_spec)
+
+        # add new key to keyjar with
+        kb.keys()[0].kid = self.op_args["new_kid"]
+        keyjar.add_kb("", kb)
+
+        # make jwks and update file
+        keys = []
+        for kb in keyjar[""]:
+            keys.extend([k.to_dict() for k in kb.keys() if not k.inactive_since])
+        jwks = dict(keys=keys)
+        with open(self.op_args["jwks_path"], "w") as f:
+            f.write(json.dumps(jwks))
+
+
+class RestoreKeyJar(Operation):
+
+    def __call__(self):
+        self.conv.client.keyjar = self.conv.client.original_keyjar
+
+        # make jwks and update file
+        keys = []
+        for kb in self.conv.client.keyjar[""]:
+            keys.extend([k.to_dict() for k in kb.keys()])
+        jwks = dict(keys=keys)
+        with open(self.op_args["jwks_path"], "w") as f:
+            f.write(json.dumps(jwks))
+
+class ReadRegistration(SyncGetRequest):
+    def op_setup(self):
+        _client = self.conv.client
+        self.req_args["access_token"] = _client.registration_access_token
+        self.op_args["authn_method"] = "bearer_header"
+        self.op_args["endpoint"] = _client.registration_response[
+            "registration_client_uri"]
+
+
+class FetchKeys(Operation):
+    def __call__(self):
+        kb = KeyBundle(source=self.conv.client.provider_info["jwks_uri"])
+        kb.verify_ssl = False
+        kb.update()
+
+        try:
+            self.conv.keybundle.append(kb)
+        except AttributeError:
+            self.conv.keybundle = [kb]
+
+
+class RotateKeys(Operation):
+    def __init__(self, conv, io, sh, **kwargs):
+        Operation.__init__(self, conv, io, sh, **kwargs)
+        self.jwk_name = "export/jwk.json"
+        self.new_key = {}
+        self.kid_template = "_%d"
+        self.key_usage = ""
+
+    def __call__(self):
+        # find the name of the file to which the JWKS should be written
+        try:
+            _uri = self.conv.client.registration_response["jwks_uri"]
+        except KeyError:
+            raise RequirementsNotMet("No dynamic key handling")
+
+        r = urlparse(_uri)
+        # find the old key for this key usage and mark that as inactive
+        for kb in self.conv.client.keyjar.issuer_keys[""]:
+            for key in kb.keys():
+                if key.use in self.new_key["use"]:
+                    key.inactive = True
+
+        kid = 0
+        # only one key
+        _nk = self.new_key
+        _typ = _nk["type"].upper()
+
+        if _typ == "RSA":
+            kb = KeyBundle(source="file://%s" % _nk["key"],
+                           fileformat="der", keytype=_typ,
+                           keyusage=_nk["use"])
+        else:
+            kb = {}
+
+        for k in kb.keys():
+            k.serialize()
+            k.kid = self.kid_template % kid
+            kid += 1
+            self.conv.client.kid[k.use][k.kty] = k.kid
+        self.conv.client.keyjar.add_kb("", kb)
+
+        dump_jwks(self.conv.client.keyjar[""], r.path[1:])
+
+
+class RotateSigKeys(RotateKeys):
+    def __init__(self, conv, io, sh, **kwargs):
+        RotateKeys.__init__(self, conv, io, sh, **kwargs)
+        self.new_key = {"type": "RSA", "key": "../keys/second_sig.key",
+                        "use": ["sig"]}
+        self.kid_template = "sig%d"
+
+
+class RotateEncKeys(RotateKeys):
+    def __init__(self, conv, io, sh, **kwargs):
+        RotateKeys.__init__(self, conv, io, sh, **kwargs)
+        self.new_key = {"type": "RSA", "key": "../keys/second_enc.key",
+                        "use": ["enc"]}
+        self.kid_template = "enc%d"
+
+
+class RefreshAccessToken(SyncPostRequest):
+    request_cls = "RefreshAccessTokenRequest"
+    response_cls = "AccessTokenResponse"

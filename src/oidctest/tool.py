@@ -3,7 +3,7 @@ from urlparse import parse_qs
 from oic.utils.http_util import Redirect, Response
 from oic.utils.http_util import get_post
 
-from aatest import exception_trace, END_TAG
+from aatest import exception_trace, END_TAG, Break
 from aatest.conversation import Conversation
 from aatest.verify import Verify
 from oidctest import CRYPTSUPPORT
@@ -15,6 +15,13 @@ from oidctest.prof_util import map_prof
 __author__ = 'roland'
 
 logger = logging.getLogger(__name__)
+
+def get_redirect_uris(cinfo):
+    try:
+        return cinfo["client"]["redirect_uris"]
+    except KeyError:
+        return cinfo["registered"]["redirect_uris"]
+
 
 class Tester(object):
     def __init__(self, io, sh, profiles, profile, flows, check_factory,
@@ -38,10 +45,7 @@ class Tester(object):
         if not self.match_profile(test_id):
             return False
 
-        try:
-            redirs = cinfo["client"]["redirect_uris"]
-        except KeyError:
-            redirs = cinfo["registered"]["redirect_uris"]
+        redirs = get_redirect_uris(cinfo)
 
         self.sh.session_setup(path=test_id)
         _flow = self.flows[test_id]
@@ -181,10 +185,7 @@ class WebTester(Tester):
             return self.io.err_response(self.sh.session, "profile", err)
 
     def _setup(self, test_id, cinfo, **kw_args):
-        try:
-            redirs = cinfo["client"]["redirect_uris"]
-        except KeyError:
-            redirs = cinfo["registered"]["redirect_uris"]
+        redirs = get_redirect_uris(cinfo)
 
         _flow = self.flows[test_id]
         _cli = make_client(**kw_args)
@@ -244,6 +245,8 @@ class WebTester(Tester):
                 self.conv.operation = _oper
                 _oper.setup(self.profiles.PROFILEMAP)
                 resp = _oper()
+            except Break:
+                break
             except Exception as err:
                 return self.io.err_response(self.sh.session, "run_sequence",
                                             err)
@@ -301,8 +304,10 @@ class WebTester(Tester):
             cls = item
 
         logger.info("<--<-- {} --- {}".format(index, cls))
-        self.conv.operation.parse_response(self.sh.session["testid"],
-                                           self.io, self.message_factory)
+        resp = self.conv.operation.parse_response(self.sh.session["testid"],
+                                                  self.io, self.message_factory)
+        if resp:
+            return resp
 
         index += 1
 
