@@ -34,9 +34,9 @@ IDMAP = {
     "rp-id_token-asym_sig": "/RS256/_/_/normal",
     "rp-id_token-sym_sig": "/HS256/_/_/normal",
     "rp-id_token-ec_sig": "/ES256/_/_/normal",
-    "rp-id_token-invalid-asym_sig": "/RS256/_/idts/normal",
-    "rp-id_token-invalid-sym_sig": "/HS256/_/idts/normal",
-    "rp-id_token-invalid-ec_sig": "/ES256/_/idts/normal",
+    "rp-id_token-bad_asym_sig_rs256": "/RS256/_/idts/normal",
+    "rp-id_token-bad_symmetric_sig_hs256": "/HS256/_/idts/normal",
+    "rp-id_token-bad_es256_sig": "/ES256/_/idts/normal",
     "rp-id_token-sig+enc": "/HS256/RSA1_5:A128CBC-HS256/_/normal",
     "rp-id_token-none": "/none/_/_/normal",
     "rp-id_token-issuer": "/_/_/issi/normal",
@@ -46,8 +46,10 @@ IDMAP = {
     "rp-id_token-kid-absent": "/_/_/nokid1jwks/normal",
     "rp-id_token-kid": "/_/_/nokidjwks/normal",
     "rp-id_token-bad_at_hash": "/_/_/ath/normal",
-    "rp-id_token-bad_c_hash": "/_/_/ath/normal",
+    "rp-id_token-bad_c_hash": "/_/_/ch/normal",
     "rp-id_token-mismatching_issuer": "/_/_/issi/normal",
+    "rp-id_token-kid_absent_multiple_jwks": "/_/_/nokidmuljwks/normal",
+    "rp-id_token-kid_absent_single_jwks": "/_/_/nokid1jwk/normal",
     # "rp-idt-epk": "",
 
     # UserInfo Endpoint
@@ -78,6 +80,9 @@ IDMAP = {
     "rp-request_uri-sig": NORMAL,
     "rp-request_uri-enc": NORMAL,
     "rp-request_uri-sig+enc": NORMAL,
+
+    # Third Party Initiated Login
+    "rp-support_3rd_party_init_login": NORMAL,
 
     # Claims Request Parameter
     "rp-claims_request-id_token_claims": NORMAL,

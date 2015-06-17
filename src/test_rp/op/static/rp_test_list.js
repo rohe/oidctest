@@ -60,6 +60,13 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         return false;
     };
 
+    $scope.get_3rd_party_test = function() {
+        var test_adress = window.location.href
+        test_adress = test_adress.split("/")
+        test_adress = test_adress[0] + "//" + test_adress[2] + "/3rd_party_init_login"
+        return test_adress
+    };
+
     var IMPLICIT_FLOW_ID_TOKEN_URL = "https://openid.net/specs/openid-connect-core-1_0.html#ImplicitIDToken";
     var CLIENT_AUTHENTICATION_URL = "https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication";
     var SIGNING_URL = "https://openid.net/specs/openid-connect-core-1_0.html#Signing";
@@ -135,6 +142,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var SIGNING_KEY_ROTATION = convert_to_link(ROTATE_SIGNING_KEY_URL, "rotated signing keys");
     var SIGNED_REQUEST = convert_to_link(JWT_REQUESTS_URL, "signed authentication request");
     var USER_INFO_SUB_CLAIM = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse", "comparing it with the ID Token's 'sub' value");
+    var THIRD_PARTY_LOGIN_TEST = convert_to_link($scope.get_3rd_party_test(), "third-party initiated login test")
 
     $scope.guidlines = [
         ["Discovery", {
@@ -287,7 +295,8 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         ["Third Party Initiated Login", {
             "rp-support_3rd_party_init_login": {
                 "short_description": "Supports third-party initiated login",
-                "detailed_description": "Receive a "+ THIRD_PARTY_INITIATED_LOGIN +" request and send authentication request to the specified OpenID Connect Provider.",
+                "detailed_description": "Receive a "+ THIRD_PARTY_INITIATED_LOGIN +" request and send authentication request to the specified OpenID Connect Provider. " +
+                "Go to " + THIRD_PARTY_LOGIN_TEST + " to start the test",
                 "expected_result": "An authentication response."
             }
         }],
