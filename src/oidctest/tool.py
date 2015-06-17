@@ -37,22 +37,18 @@ class Tester(object):
         self.cache = cache
         self.kwargs = kwargs
 
-    def match_profile(self, test_id, test_index):
+    def match_profile(self, test_id):
         _spec = self.flows[test_id]
-        if isinstance(_spec, dict):
-            _spec = [_spec]
-        return map_prof(self.profile.split("."), _spec[test_index]["profile"].split("."))
+        return map_prof(self.profile.split("."), _spec["profile"].split("."))
 
-    def run(self, test_id, cinfo, test_index, **kw_args):
-        if not self.match_profile(test_id, test_index):
+    def run(self, test_id, cinfo, **kw_args):
+        if not self.match_profile(test_id):
             return False
 
         redirs = get_redirect_uris(cinfo)
 
-        self.sh.session_setup(test_index, path=test_id)
+        self.sh.session_setup(path=test_id)
         _flow = self.flows[test_id]
-        if isinstance(_flow, list):
-            _flow = _flow[test_index]
         _cli = make_client(**kw_args)
         self.conv = Conversation(_flow, _cli, redirs, kw_args["msg_factory"],
                                  trace_cls=Trace)
