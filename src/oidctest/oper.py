@@ -8,6 +8,8 @@ from aatest import RequirementsNotMet
 from aatest.operation import Operation
 from jwkest.jwk import RSAKey
 
+from oic.exception import IssuerMismatch
+from oic.exception import PyoidcError
 from oic.oauth2 import rndstr
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
@@ -17,6 +19,7 @@ from oic.utils.keyio import KeyBundle, ec_init, dump_jwks
 from oidctest.prof_util import WEBFINGER
 from oidctest.prof_util import DISCOVER
 from oidctest.prof_util import REGISTER
+from oidctest.request import same_issuer
 from oidctest.request import SyncGetRequest
 from oidctest.request import AsyncGetRequest
 from oidctest.request import SyncPostRequest
@@ -156,6 +159,9 @@ class AccessToken(SyncPostRequest):
         self.req_args["redirect_uri"] = conv.client.redirect_uris[0]
 
     def run(self):
+        self.catch_exception(self._run)
+
+    def _run(self):
         if self.skip:
             return
 
@@ -164,6 +170,15 @@ class AccessToken(SyncPostRequest):
                 self.op_args, self.req_args))
         atr = self.conv.client.do_access_token_request(
             request_args=self.req_args, **self.op_args)
+
+        if "kid" not in atr["id_token"].jws_header and not atr["id_token"].jws_header["alg"] == "HS256":
+            for key, value in self.conv.client.keyjar.issuer_keys.iteritems():
+                if not key == "" and (len(value) > 1 or len(value[0].keys()) > 1):
+                    raise PyoidcError("No 'kid' in id_token header!")
+
+        if not same_issuer(self.conv.info["issuer"], atr["id_token"]["iss"]):
+            raise IssuerMismatch(" {} != {}".format(self.conv.info["issuer"], atr["id_token"]["iss"]))
+
         self.conv.trace.response(atr)
         assert isinstance(atr, AccessTokenResponse)
 

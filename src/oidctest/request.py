@@ -5,6 +5,9 @@ import copy
 from urlparse import parse_qs
 from bs4 import BeautifulSoup
 
+from oic.exception import IssuerMismatch
+from oic.exception import PyoidcError
+from requests.models import Response
 from oic.oauth2.util import URL_ENCODED
 from oic.oauth2 import ErrorResponse
 from oic.oauth2 import ResponseError
@@ -95,13 +98,25 @@ class SyncRequest(Request):
         else:
             resp = r
 
-        try:
-            if self.req_args['nonce'] != resp["id_token"]['nonce']:
-                raise ParameterError("invalid nonce! {} != {}".format(
-                    self.req_args['nonce'], resp["id_token"]['nonce']))
-            self.conv.client.id_token = resp["id_token"]
-        except KeyError:
-            pass
+        if not isinstance(resp, Response):
+
+            try:
+                if "kid" not in resp["id_token"].jws_header and not resp["id_token"].jws_header["alg"] == "HS256":
+                    for key, value in self.conv.client.keyjar.issuer_keys.iteritems():
+                        if not key == "" and (len(value) > 1 or len(value[0].keys()) > 1):
+                            raise PyoidcError("No 'kid' in id_token header!")
+
+                if self.req_args['nonce'] != resp["id_token"]['nonce']:
+                    raise PyoidcError("invalid nonce! {} != {}".format(self.req_args['nonce'], resp["id_token"]['nonce']))
+            except KeyError:
+                pass
+
+            try:
+                if not same_issuer(self.conv.info["issuer"], resp["id_token"]["iss"]):
+                    raise IssuerMismatch(" {} != {}".format(self.conv.info["issuer"], resp["id_token"]["iss"]))
+                self.conv.client.id_token = resp["id_token"]
+            except KeyError:
+                pass
 
         return resp
 
@@ -127,7 +142,7 @@ class SyncRequest(Request):
             self.conv.trace.request("BODY: {}".format(body))
         response_msg = self.do_request(_client, url, body, http_args)
 
-        response = self.handle_response(response_msg, csi)
+        response = self.catch_exception(self.handle_response, r=response_msg, csi=csi)
         self.conv.trace.response(response)
         self.sequence.append((response, response_msg.text))
 
@@ -233,6 +248,14 @@ class AsyncRequest(Request):
         else:
             if isinstance(response, ErrorResponse):
                 raise Break("Unexpected error response")
+
+
+def same_issuer(issuer_A, issuer_B):
+    if not issuer_A.endswith("/"):
+        issuer_A += "/"
+    if not issuer_B.endswith("/"):
+        issuer_B += "/"
+    return issuer_A == issuer_B
 
 
 class SyncGetRequest(SyncRequest):

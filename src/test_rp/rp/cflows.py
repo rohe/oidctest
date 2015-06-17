@@ -1,5 +1,7 @@
 from jwkest import BadSignature
-from oic.exception import IssuerMismatch, PyoidcError
+from oic.exception import IssuerMismatch, PyoidcError, NotForMe
+from oic.oauth2.message import MissingRequiredAttribute
+from oic.oic.message import AtHashError, CHashError
 
 from oidctest.oper import Webfinger
 from oidctest.oper import RotateKey
@@ -11,7 +13,7 @@ from oidctest.oper import AccessToken
 from oidctest.oper import Discovery
 from oidctest.oper import Registration
 from oidctest.oper import SyncAuthn
-from oidctest.testfunc import resource
+from oidctest.testfunc import resource, conditional_expect_exception
 from oidctest.testfunc import set_jwks_uri
 from oidctest.testfunc import set_op_args
 from oidctest.testfunc import expect_exception
@@ -69,17 +71,6 @@ FLOWS = {
         "profile": "..T.",
         "desc": "Uses openid-configuration Discovery Information"
     },
-    # "rp-discovery-issuer_not_matching_config": {
-    #     "sequence": [
-    #         (Webfinger, {set_webfinger_resource: {}}),
-    #         (Discovery, {expect_exception: IssuerMismatch})
-    #     ],
-    #     "profile": "..T.",
-    #     "desc": "Retrieve openid-configuration information for OpenID
-    # Provider from the .well-known/openid-configuration path. Verify that
-    # the issuer in the openid-configuration matches the one returned by
-    # WebFinger"
-    # },
     'rp-discovery-jwks_uri_keys': {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
@@ -99,7 +90,10 @@ FLOWS = {
                          expect_exception: IssuerMismatch})
         ],
         "profile": "..T.",
-        "desc": "Will detect a faulty issuer claim in OP config"
+        "desc": "Retrieve openid-configuration information for OpenID "
+                "Provider from the .well-known/openid-configuration path. Verify that"
+                "the issuer in the openid-configuration matches the one returned by"
+                "WebFinger"
     },
     "rp-registration-dynamic": {
         "sequence": [
@@ -116,7 +110,6 @@ FLOWS = {
             (Discovery, {set_discovery_issuer: {}}),
             (Registration, {set_request_args: {"redirect_uris": [""]},
                             expect_exception: PyoidcError}),
-            Registration
         ],
         "profile": "...T",
         "desc": "Sends redirect_uris value which only contains a empty string "
@@ -290,7 +283,7 @@ FLOWS = {
         "profile": "I...T",
         "desc": "Accept Valid Symmetric ID Token Signature"
     },
-    "rp-id_token-invalid-asym_sig": {
+    "rp-id_token-bad_asym_sig_rs256": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -299,15 +292,28 @@ FLOWS = {
                     "id_token_signed_response_alg": "RS256"
                 }
             }),
-            (SyncAuthn, {
-                set_op_args: {"response_type": ["id_token"]},
-                expect_exception: BadSignature
-            }),
+            (SyncAuthn, {conditional_expect_exception: {
+                "condition": {
+                    "response_type": [["code"],
+                                      ["code", "token"]]},
+                "exception": BadSignature,
+                "oper": False
+            }}),
+            (AccessToken, {conditional_expect_exception: {
+                "condition": {
+                    "response_type": [["code"],
+                                      ["code", "token"]]},
+                "exception": BadSignature,
+                "oper": True
+            }}),
+
         ],
-        "profile": "I...T",
-        "desc": "Reject Invalid Asymmetric ID Token Signature"
+        "profile": "...T",
+        "desc": "Tests if the Relying Party can identify and reject an ID Token with an invalid signature. "
+                "The ID Token has been signed using the asymmetric algorithm RS256. For more information "
+                "see list item 6 in ID Token validation"
     },
-    "rp-id_token-invalid-ec_sig": {
+    "rp-id_token-bad_es256_sig": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -316,15 +322,26 @@ FLOWS = {
                     "id_token_signed_response_alg": "ES256"
                 }
             }),
-            (SyncAuthn, {
-                set_op_args: {"response_type": ["id_token"]},
-                expect_exception: BadSignature
-            })
+            (SyncAuthn, {conditional_expect_exception: {
+                "condition": {
+                    "response_type": [["code"],
+                                      ["code", "token"]]},
+                "exception": BadSignature,
+                "oper": False
+            }}),
+            (AccessToken, {conditional_expect_exception: {
+                "condition": {
+                    "response_type": [["code"],
+                                      ["code", "token"]]},
+                "exception": BadSignature,
+                "oper": True
+            }}),
         ],
-        "profile": "I...T",
-        "desc": "Reject Invalid Asymmetric ID Token Signature"
+        "profile": "...T",
+        "desc": "The Relying Party should reject invalid asymmetric ID Token signature which has been "
+                "signed using the algorithm ES256"
     },
-    "rp-id_token-invalid-sym_sig": {
+    "rp-id_token-bad_symmetric_sig_hs256": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -333,13 +350,25 @@ FLOWS = {
                     "id_token_signed_response_alg": "HS256"
                 }
             }),
-            (SyncAuthn, {
-                set_op_args: {"response_type": ["id_token"]},
-                expect_exception: BadSignature
-            })
+            (SyncAuthn, {conditional_expect_exception: {
+                "condition": {
+                    "response_type": [["code"],
+                                      ["code", "token"]]},
+                "exception": BadSignature,
+                "oper": False
+            }}),
+            (AccessToken, {conditional_expect_exception: {
+                "condition": {
+                    "response_type": [["code"],
+                                      ["code", "token"]]},
+                "exception": BadSignature,
+                "oper": True
+            }}),
         ],
-        "profile": "I...T",
-        "desc": "Reject Invalid Symmetric ID Token Signature"
+        "profile": "...T",
+        "desc": "Tests if the Relying Party can identify and reject an ID Token with an invalid signature. "
+                "The ID Token has been signed using the symmetric algorithm HS256. For more information see "
+                "list item 6 in ID Token validation"
     },
     "rp-id_token-sig+enc": {
         "sequence": [
@@ -570,7 +599,7 @@ FLOWS = {
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
             Registration,
-            SyncAuthn
+            (SyncAuthn, {expect_exception: PyoidcError})
         ],
         "profile": "I,IT,CI,CIT...",
         "desc": "If a nonce value was sent in the Authentication Request the Relying Party must validate the nonce returned in the ID Token."
@@ -603,6 +632,216 @@ FLOWS = {
         "profile": "...",
         "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
                 "Encrypt the Request Object using RSA1_5 and A128CBC-HS256 algorithms"
+    },
+    "rp-request_uri-sig": {
+        "sequence": [
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
+            (Registration, {set_jwks_uri: None}),
+            (SyncAuthn, {set_op_args: {"request_method": "file",
+                                       "request_object_signing_alg": "RS256",
+                                       "local_dir": "./request_objects",
+                                       "base_path": "http://localhost:8099/request_objects/"}})
+        ],
+        "profile": "...",
+        "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
+                "Sign the Request Object using the RS256 algorithm"
+    },
+    "rp-request_uri-sig+enc": {
+        "sequence": [
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
+            (Registration, {set_jwks_uri: None}),
+            (SyncAuthn, {set_op_args: {"request_method": "file",
+                                       "request_object_signing_alg": "RS256",
+                                       "request_object_encryption_alg": "RSA1_5",
+                                       "request_object_encryption_enc": "A128CBC-HS256",
+                                       "local_dir": "./request_objects",
+                                       "base_path": "http://localhost:8099/request_objects/"}})
+        ],
+        "profile": "...",
+        "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
+                "Encrypt the Request Object using RSA1_5 and A128CBC-HS256 algorithms and sign it using RS256 algorithm"
+    },
+    "rp-request_uri-unsigned": {
+        "sequence": [
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
+            Registration,
+            (SyncAuthn, {set_op_args: {"request_method": "file",
+                                       "request_object_signing_alg": None,
+                                       "request_object_encryption_alg": "RSA1_5",
+                                       "request_object_encryption_enc": "A128CBC-HS256",
+                                       "local_dir": "./request_objects",
+                                       "base_path": "http://localhost:8099/request_objects/"}})
+        ],
+        "profile": "...",
+        "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
+                "The Request Object should set 'alg' equal to 'none'"
+    },
+    "rp-id_token-aud": {
+        "sequence": [
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
+            Registration,
+            (SyncAuthn, {conditional_expect_exception: {
+                "condition": {
+                    "response_type": [["code"],
+                                      ["code", "token"]]},
+                "exception": NotForMe,
+                "oper": False
+            }}),
+            (AccessToken, {conditional_expect_exception: {
+                "condition": {
+                    "response_type": [["code"],
+                                      ["code", "token"]]},
+                "exception": NotForMe,
+                "oper": True
+            }}),
+        ],
+        "profile": "...",
+        "desc": "The Relying Party should request an ID token and compare its aud value to Relying Party's Client ID"
+    },
+    "rp-id_token-bad_at_hash": {
+        "sequence": [
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
+            Registration,
+            (SyncAuthn, {expect_exception: AtHashError})
+        ],
+        "profile": "IT,CIT...",
+        "desc": "Make an authentication request using response_type='id_token token' "
+                "for Implicit Flow or response_type='code id_token token' for Hybrid Flow. "
+                "Verify the 'at_hash' value in the returned ID Token."
+    },
+    "rp-id_token-iat": {
+        "sequence": [
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
+            Registration,
+            (SyncAuthn, {conditional_expect_exception: {
+                "condition": {
+                    "response_type": [["code"],
+                                      ["code", "token"]]},
+                "exception": MissingRequiredAttribute,
+                "oper": False
+            }}),
+            (AccessToken, {conditional_expect_exception: {
+                "condition": {
+                    "response_type": [["code"],
+                                      ["code", "token"]]},
+                "exception": MissingRequiredAttribute,
+                "oper": True
+            }}),
+        ],
+        "profile": "...",
+        "desc": "The Relying Party should request an ID token if it does not contain a iat claim it should be rejected"
+    },
+    "rp-id_token-mismatching_issuer": {
+        "sequence": [
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
+            (Registration, {set_request_args: {"id_token_signed_response_alg": "HS256"}}), # TODO Need to run HS256 alg, or else badSignature error (can't find keys)
+            (SyncAuthn, {conditional_expect_exception: {
+                "condition": {
+                    "response_type": [["code"],
+                                      ["code", "token"]]},
+                "exception": IssuerMismatch,
+                "oper": False
+            }}),
+            (AccessToken, {conditional_expect_exception: {
+                "condition": {
+                    "response_type": [["code"],
+                                      ["code", "token"]]},
+                "exception": IssuerMismatch,
+                "oper": True
+            }}),
+        ],
+        "profile": "...",
+        "desc": "The Relying Party should request an ID token and reject it if the issuer identifier for the "
+                "OpenID Provider isn't matching the issuer in the returned ID Token"
+    },
+    "rp-id_token-sig_none": {
+        "sequence": [
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
+            (Registration, {set_request_args: {"id_token_signed_response_alg": "none"}}),
+            SyncAuthn,
+            AccessToken
+        ],
+        "profile": "C...",
+        "desc": "Tests if the Relying Party can request and use unsigned ID Tokens. Use Code flow and "
+                "set the 'alg' value equal to 'none'"
+    },
+    "rp-id_token-sub": {
+        "sequence": [
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
+            Registration,
+            (SyncAuthn, {conditional_expect_exception: {
+                "condition": {
+                    "response_type": [["code"],
+                                      ["code", "token"]]},
+                "exception": MissingRequiredAttribute,
+                "oper": False
+            }}),
+            (AccessToken, {conditional_expect_exception: {
+                "condition": {
+                    "response_type": [["code"],
+                                      ["code", "token"]]},
+                "exception": MissingRequiredAttribute,
+                "oper": True
+            }}),
+        ],
+        "profile": "...",
+        "desc": "The Relying Party should request an ID token and reject it if the sub claim is missing"
+    },
+    "rp-id_token-bad_c_hash": {
+        "sequence": [
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
+            Registration,
+            (SyncAuthn, {expect_exception: CHashError}),
+        ],
+        "profile": "CI,CIT...",
+        "desc": "Tests if the Relying Party extract an c_hash from an ID token presented as json. "
+                "It should be used to validate the correctness of the authorization code"
+    },
+    "rp-id_token-kid_absent_multiple_jwks": {
+        "sequence": [
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
+            Registration,
+            (SyncAuthn, {conditional_expect_exception: {
+                "condition": {
+                    "response_type": [["code"],
+                                      ["code", "token"]]},
+                "exception": PyoidcError,
+                "oper": False
+            }}),
+            (AccessToken, {conditional_expect_exception: {
+                "condition": {
+                    "response_type": [["code"],
+                                      ["code", "token"]]},
+                "exception": PyoidcError,
+                "oper": True
+            }}),
+        ],
+        "profile": "...",
+        "desc": "If there are multiple keys in the referenced JWK Set document, "
+                "a kid value MUST be provided in the JOSE Header"
+    },
+    "rp-id_token-kid_absent_single_jwks": {
+        "sequence": [
+            (Webfinger, {set_webfinger_resource: {}}),
+            (Discovery, {set_discovery_issuer: {}}),
+            Registration,
+            SyncAuthn,
+            AccessToken
+        ],
+        "profile": "...",
+        "desc": "If the JWK supplied in jwks_uri only contains a single key "
+                "the ID Token does not need to contain a kid claim"
     },
     "rp-key_rotation-op_enc_key": {
         "sequence": [

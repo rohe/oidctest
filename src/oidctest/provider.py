@@ -51,7 +51,7 @@ class Server(oic.Server):
 
         if "itsub" in self.behavior_type:  # missing sub claim
             try:
-                del idt["itsub"]
+                del idt["sub"]
             except KeyError:
                 pass
 
@@ -114,6 +114,22 @@ class Provider(provider.Provider):
 
             new_key = {"keys": [key.serialize(private=True)]}
             self.do_key_rollover(new_key, "%d")
+
+        if "nokid1jwk" in self.behavior_type:
+            if not alg == "HS256":
+                found_key = None
+                for key in self.keyjar.issuer_keys[""]:
+                    issuer_key = key.keys()[0]
+                    if issuer_key.use == "sig" and issuer_key.kty.startswith(alg[:2]):
+                        issuer_key.kid = None
+                        found_key = key
+                        break
+                self.keyjar.issuer_keys[""] = [found_key]
+
+        if "nokidmuljwks" in self.behavior_type:
+            for key in self.keyjar.issuer_keys[""]:
+                for inner_key in key.keys():
+                    inner_key.kid = None
 
         _jws = provider.Provider.id_token_as_signed_jwt(
             self, session, loa=loa, alg=alg, code=code,
@@ -192,7 +208,7 @@ class Provider(provider.Provider):
 
         return provider.Provider.authorization_endpoint(self, request, cookie, **kwargs)
 
-    def generate_jwks(self):
+    def generate_jwks(self, mode):
         if "rotenc" in self.behavior_type:  # Rollover encryption keys
             rsa_key = RSAKey(kid="rotated_rsa_{}".format(time.time()),
                              use="enc").load_key(RSA.generate(2048))
@@ -207,6 +223,17 @@ class Provider(provider.Provider):
             signing_keys = [k.to_dict() for k in self.keyjar.get_signing_key()]
             new_keys["keys"].extend(signing_keys)
             return json.dumps(new_keys)
+        elif "nokid1jwk" in self.behavior_type:
+            alg = mode["sign_alg"]
+            if not alg:
+                alg = "RS256"
+            keys = [k.to_dict() for kb in self.keyjar[""] for k in kb.keys()]
+            for key in keys:
+                if key["use"] == "sig" and key["kty"].startswith(alg[:2]):
+                    key.pop("kid", None)
+                    jwk = dict(keys=[key])
+                    return json.dumps(jwk)
+            raise Exception("Did not find sig {} key for nokid1jwk test ".format(alg))
         else:  # Return all keys
             keys = [k.to_dict() for kb in self.keyjar[""] for k in kb.keys()]
             jwks = dict(keys=keys)
