@@ -146,9 +146,14 @@ def application(environ, start_response):
                 try:
                     response_type = _conv.req.req_args["response_type"]
                 except KeyError:
-                    response_type = ""
+                    response_type = [""]
 
-                if response_type != ["code"]:
+                if response_type == [""]:  # expect anything
+                    if environ["QUERY_STRING"]:
+                        pass
+                    else:
+                        return io.opresult_fragment()
+                elif response_type != ["code"]:
                     # but what if it's all returned as a query anyway ?
                     try:
                         qs = environ["QUERY_STRING"]

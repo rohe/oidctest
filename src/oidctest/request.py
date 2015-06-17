@@ -170,7 +170,7 @@ class AsyncRequest(Request):
 
         url, body, ht_args, csi = _client.request_info(
             self.request, method=self.method, request_args=self.req_args,
-            **self.op_args)
+            lax=True, **self.op_args)
 
         self.csi = csi
 
@@ -195,19 +195,37 @@ class AsyncRequest(Request):
         except KeyError:
             response_mode = None
 
+        if self.request_cls == "AuthorizationRequest":
+            try:
+                _rt = self.csi["response_type"]
+            except KeyError:
+                response_where = ""
+            else:
+                if _rt == ["code"]:
+                    response_where = "url"
+                elif _rt == [""]:
+                    response_where = ""
+                else:
+                    response_where = "fragment"
+        else:
+            response_where = self.response_where
+
         # parse the response
         if response_mode == "form_post":
             info = parse_qs(get_post(io.environ))
             _ctype = "dict"
-        elif self.response_where == "url":
+        elif response_where == "url":
             info = io.environ["QUERY_STRING"]
             _ctype = "urlencoded"
-        elif self.response_where == "fragment":
+        elif response_where == "fragment":
             query = parse_qs(get_post(io.environ))
             try:
                 info = query["fragment"][0]
             except KeyError:
                 return io.sorry_response(io.conf.BASE, "missing fragment ?!")
+        elif response_where == "":
+            info = io.environ["QUERY_STRING"]
+            _ctype = "urlencoded"
         else:  # resp_c.where == "body"
             info = get_post(io.environ)
 

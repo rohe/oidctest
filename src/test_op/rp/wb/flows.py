@@ -155,7 +155,7 @@ FLOWS = {
             (Discovery, {set_discovery_issuer: {}}),
             Registration,
             Note,
-            (AsyncAuthn, {set_request_args: {"response_type": []},
+            (AsyncAuthn, {set_request_args: {"response_type": [""]},
                           set_response_where: {}})
         ],
         "tests": {
@@ -208,7 +208,7 @@ FLOWS = {
             (AsyncAuthn, {set_response_where: {}}),
             AccessToken
         ],
-        "profile": "..F",
+        "profile": "...",
         "tests": {"is-idtoken-signed": {"alg": "RS256"},
                   "verify-response": {
                       "response_cls": [AccessTokenResponse,
@@ -224,7 +224,7 @@ FLOWS = {
             AccessToken
         ],
         "mti": {"all": "MUST"},
-        "profile": "...s",
+        "profile": "....s",
         "tests": {"verify-signed-idtoken-has-kid": {},
                   "verify-response": {
                       "response_cls": [AccessTokenResponse,
@@ -249,7 +249,7 @@ FLOWS = {
                   "verify-response": {
                       "response_cls": [AccessTokenResponse,
                                        AuthorizationResponse]}},
-        "profile": "C.T.T.n",
+        "profile": "C.T.T.T.n",
     },
     'OP-IDToken-at_hash': {
         "desc": 'ID Token has at_hash when ID Token and Access Token returned '
@@ -274,7 +274,7 @@ FLOWS = {
             (AsyncAuthn, {set_response_where: {}})
         ],
         "tests": {"verify-authn-response": {}},
-        "profile": "CI,CIT..",
+        "profile": "CI,CIT...",
         "mti": {"all": "MUST"}
     },
     'OP-IDToken-HS256': {
@@ -287,7 +287,7 @@ FLOWS = {
             (AsyncAuthn, {set_response_where: {}}),
             AccessToken
         ],
-        "profile": "..T.s.+",
+        "profile": "...T.s.+",
         "tests": {"verify-idtoken-is-signed": {"alg": "HS256"},
                   "verify-response": {
                       "response_cls": [AccessTokenResponse,
@@ -303,7 +303,7 @@ FLOWS = {
             (AsyncAuthn, {set_response_where: {}}),
             AccessToken
         ],
-        "profile": "..T.s.+",
+        "profile": "...T.s.+",
         "tests": {"verify-idtoken-is-signed": {"alg": "ES256"},
                   "verify-response": {
                       "response_cls": [AccessTokenResponse,
@@ -333,7 +333,7 @@ FLOWS = {
             (AsyncAuthn, {set_response_where: {}}),
             AccessToken
         ],
-        "profile": "..T.se.+",
+        "profile": "...T.se.+",
         "tests": {"signed-encrypted-idtoken": {"sign_alg": "RS256",
                                                "enc_alg": "RSA1_5",
                                                "enc_enc": "A128CBC-HS256"},
@@ -367,7 +367,7 @@ FLOWS = {
                 "Please submit a screen shot of any authentication user "
                 "interaction that occurred as part of your certification "
                 "application.",
-        "profile": "..",
+        "profile": "...",
         "tests": {"multiple-sign-on": {"status": WARNING},
                   "verify-response": {
                       "response_cls": [AccessTokenResponse,
@@ -391,7 +391,7 @@ FLOWS = {
                 redirect_uri_with_query_component: {"foo": "bar"},
                 set_response_where: {}})
         ],
-        "profile": "..T",
+        "profile": "...T",
         "note": "This test should result in the OpenID Provider "
                 "displaying an error message in your user agent. "
                 "You should ignore the status of this test "
@@ -423,7 +423,7 @@ FLOWS = {
                 "Please remove any cookies you may have received from the "
                 "OpenID Provider before proceeding.",
         "mti": {"all": "MUST"},
-        "profile": "..",
+        "profile": "...",
         "tests": {"verify-error-response": {
             "error": ["login_required", "interaction_required",
                       "session_selection_required", "consent_required"]}},
@@ -441,7 +441,7 @@ FLOWS = {
                 set_op_args: {"authn_method": "bearer_header",
                               "method": "GET"}})
         ],
-        "profile": "C,IT,CI,CT,CIT..",
+        "profile": "C,IT,CI,CT,CIT...",
         'tests': {"verify-response": {"response_cls": [OpenIDSchema]}},
         "mti": {"all": "SHOULD"}
     },
@@ -458,7 +458,7 @@ FLOWS = {
                 set_op_args: {"authn_method": "bearer_header",
                               "method": "POST"}})
         ],
-        "profile": "C,IT,CI,CT,CIT..",
+        "profile": "C,IT,CI,CT,CIT...",
         'tests': {"verify-response": {"response_cls": [OpenIDSchema]}},
     },
     'OP-UserInfo-Body': {
@@ -474,7 +474,7 @@ FLOWS = {
                 set_op_args: {"authn_method": "bearer_body",
                               "method": "POST"}})
         ],
-        "profile": "C,IT,CI,CT,CIT..",
+        "profile": "C,IT,CI,CT,CIT...",
         'tests': {"verify-response": {"response_cls": [OpenIDSchema],
                                       "status": WARNING}},
         "mti": {"all": "MAY"}
@@ -500,7 +500,7 @@ FLOWS = {
         ],
         "tests": {"asym-signed-userinfo": {"alg": "RS256"},
                   "verify-response": {"response_cls": [OpenIDSchema]}},
-        "profile": "C,IT,CI,CT,CIT..T.s",
+        "profile": "C,IT,CI,CT,CIT...T.s",
         "mti": {"all": "MUST"}
     },
     'OP-UserInfo-Enc': {
@@ -530,7 +530,7 @@ FLOWS = {
                     "authn_method": "bearer_header",
                     "method": "GET"}})
         ],
-        "profile": "C,IT,CI,CT,CIT...e.+",
+        "profile": "C,IT,CI,CT,CIT....e.+",
         "tests": {"encrypted-userinfo": {},
                   "verify-response": {"response_cls": [OpenIDSchema]}},
     },
@@ -557,7 +557,7 @@ FLOWS = {
                     "authn_method": "bearer_header",
                     "method": "GET"}})
         ],
-        "profile": "C,IT,CI,CT,CIT...se.+",
+        "profile": "C,IT,CI,CT,CIT....se.+",
         "tests": {
             "encrypted-userinfo": {},
             "asym-signed-userinfo": {"alg": "RS256"},
@@ -583,7 +583,7 @@ FLOWS = {
                              "client_secret_basic"}}
              }),
         ],
-        "profile": "C,CI,CIT,CT..T",
+        "profile": "C,CI,CIT,CT...T",
         'tests': {"verify-response": {"response_cls": [AuthorizationResponse,
                                                        AccessTokenResponse]}},
     },
@@ -601,7 +601,7 @@ FLOWS = {
                         "token_endpoint_auth_methods_supported":
                             "client_secret_basic"}}}),
         ],
-        "profile": "C,CI,CIT,CT..F",
+        "profile": "C,CI,CIT,CT...F",
         'tests': {"verify-response": {"response_cls": [AuthorizationResponse,
                                                        AccessTokenResponse]}},
     },
@@ -623,7 +623,7 @@ FLOWS = {
                         "token_endpoint_auth_methods_supported":
                             "client_secret_post"}}}),
         ],
-        "profile": "C,CI,CIT,CT..T",
+        "profile": "C,CI,CIT,CT...T",
         'tests': {"verify-response": {"response_cls": [AuthorizationResponse,
                                                        AccessTokenResponse]}},
     },
@@ -641,7 +641,7 @@ FLOWS = {
                         "token_endpoint_auth_methods_supported":
                             "client_secret_post"}}}),
         ],
-        "profile": "C,CI,CIT,CT..F",
+        "profile": "C,CI,CIT,CT...F",
         'tests': {"verify-response": {"response_cls": [AuthorizationResponse,
                                                        AccessTokenResponse]}},
     },
@@ -663,7 +663,7 @@ FLOWS = {
                         "token_endpoint_auth_methods_supported":
                             "private_key_jwt"}}}),
         ],
-        "profile": "C,CI,CT,CIT...s.+",
+        "profile": "C,CI,CT,CIT....s.+",
         'tests': {"verify-response": {"response_cls": [AuthorizationResponse,
                                                        AccessTokenResponse]}},
     },
@@ -685,7 +685,7 @@ FLOWS = {
                         "token_endpoint_auth_methods_supported":
                             "client_secret_jwt"}}}),
         ],
-        "profile": "C,CI,CT,CIT...s.+",
+        "profile": "C,CI,CT,CIT....s.+",
         'tests': {"verify-response": {"response_cls": [AuthorizationResponse,
                                                        AccessTokenResponse]}},
     },
@@ -710,7 +710,7 @@ FLOWS = {
         "tests": {"providerinfo-has-jwks_uri": {},
                   "bare-keys": {},
                   "check-http-response": {}},
-        "profile": ".T..s",
+        "profile": "..T..s",
         "mti": {"Dynamic": "SHOULD"}
     },
     'OP-Discovery-claims_supported': {
@@ -722,7 +722,7 @@ FLOWS = {
         ],
         "tests": {"providerinfo-has-claims_supported": {},
                   "check-http-response": {}},
-        "profile": ".T.",
+        "profile": "..T.",
         "mti": {"Dynamic": "SHOULD"}
     },
     'OP-Discovery-JWKs': {
@@ -731,14 +731,14 @@ FLOWS = {
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
         ],
-        "profile": ".T.",
+        "profile": "..T.",
         "tests": {"verify-base64url": {"err_status": ERROR},
                   "check-http-response": {}},
         "mti": {"Dynamic": "MUST"}
     },
     'OP-Discovery-WebFinger-Email': {
         "desc": 'Can discover identifiers using e-mail syntax [Dynamic]',
-        "profile": ".T...+",
+        "profile": "..T...+",
         "sequence": [
             (Webfinger, {set_principal: {"param": "webfinger_email"}})
         ],
@@ -746,7 +746,7 @@ FLOWS = {
     },
     'OP-Discovery-WebFinger': {
         "desc": 'Can discover identifiers using URL syntax [Dynamic]',
-        "profile": ".T...+",
+        "profile": "..T...+",
         "sequence": [
             (Webfinger, {set_principal: {"param": "webfinger_url"}})
         ],
@@ -758,7 +758,7 @@ FLOWS = {
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
         ],
-        "profile": ".T.T",
+        "profile": "..T.T",
         "tests": {"verify-op-has-registration-endpoint": {}},
         "mti": {"Dynamic": "MUST"}
     },
@@ -769,7 +769,7 @@ FLOWS = {
             (Discovery, {set_discovery_issuer: {}}),
             Registration
         ],
-        "profile": "..T",
+        "profile": "...T",
         "tests": {"check-http-response": {}},
         "mti": {"Dynamic": "MUST"}
     },
@@ -799,7 +799,7 @@ FLOWS = {
             (Registration, {set_uri: ["logo.uri", "static/logo.png"]}),
             (AsyncAuthn, {set_response_where: {}}),
         ],
-        "profile": "..T",
+        "profile": "...T",
         "note": "This test verifies that an OP displays the RP's logo. "
                 "To make sure you get a fresh login page, "
                 "you need to remove any cookies you may have received from "
@@ -815,7 +815,7 @@ FLOWS = {
             (Registration, {set_uri: ["tos_uri", "static/tos.html"]}),
             (AsyncAuthn, {set_response_where: {}}),
         ],
-        "profile": "..T",
+        "profile": "...T",
         "note": "This test verifies that an OP displays a link "
                 "to the RP's terms of service. "
                 "To make sure you get a fresh login page, "
@@ -842,7 +842,7 @@ FLOWS = {
                              "private_key_jwt"}}
              }),
         ],
-        "profile": "C,CI,CT,CIT..T",
+        "profile": "C,CI,CT,CIT...T",
         "tests": {"verify-response": {"response_cls": [AuthorizationResponse,
                                                        AccessTokenResponse]}},
     },
@@ -862,7 +862,7 @@ FLOWS = {
                         "token_endpoint_auth_methods_supported":
                             "private_key_jwt"}}}),
         ],
-        "profile": "C,CI,CT,CIT..T",
+        "profile": "C,CI,CT,CIT...T",
         'tests': {"verify-response": {"response_cls": [AuthorizationResponse,
                                                        AccessTokenResponse]}}
     },
@@ -893,7 +893,7 @@ FLOWS = {
             Registration,
             ReadRegistration
         ],
-        "profile": "..T..+",
+        "profile": "...T..+",
         "tests": {"check-http-response": {}},
     },
     'OP-Registration-Sub-Public': {
@@ -908,7 +908,7 @@ FLOWS = {
             (AsyncAuthn, {set_response_where: {}}),
             AccessToken
         ],
-        "profile": "..T..+",
+        "profile": "...T..+",
         "tests": {"verify-response": {"response_cls": [AuthorizationResponse,
                                                        AccessTokenResponse]}},
     },
@@ -924,7 +924,7 @@ FLOWS = {
             (AsyncAuthn, {set_response_where: {}}),
             AccessToken
         ],
-        "profile": "..T..+",
+        "profile": "...T..+",
         "tests": {"verify-response": {"response_cls": [AuthorizationResponse,
                                                        AccessTokenResponse]}},
     },
@@ -946,7 +946,7 @@ FLOWS = {
             (AsyncAuthn, {set_response_where: {}}),
             AccessToken
         ],
-        "profile": "..T..+",
+        "profile": "...T..+",
         'tests': {"different_sub": {},
                   "verify-response": {"response_cls": [AuthorizationResponse,
                                                        AccessTokenResponse]}}
@@ -963,7 +963,7 @@ FLOWS = {
             AccessToken,
             AccessToken,
         ],
-        "profile": "C,CI,CT,CIT..",
+        "profile": "C,CI,CT,CIT...",
         "tests": {
             "verify-response": {
                 "response_cls": [ErrorResponse],
@@ -989,7 +989,7 @@ FLOWS = {
                                    "stop": False}}),
             USERINFO_REQUEST_AUTH_METHOD
         ],
-        "profile": "C,CI,CT,CIT..",
+        "profile": "C,CI,CT,CIT...",
         "tests": {
             "verify-response": {
                 "response_cls": [ErrorResponse],
@@ -1012,7 +1012,7 @@ FLOWS = {
             TimeDelay,
             AccessToken,
         ],
-        "profile": "C,CI,CT,CIT..",
+        "profile": "C,CI,CT,CIT...",
         "tests": {
             "verify-response": {
                 "response_cls": [ErrorResponse],
@@ -1033,7 +1033,7 @@ FLOWS = {
             (AsyncAuthn, {set_response_where: {},
                           set_request_args: {"extra": "foobar"}})
         ],
-        "profile": "..",
+        "profile": "...",
         'tests': {"verify-authn-response": {}},
         "mti": {"all": "MUST"},
     },
@@ -1051,7 +1051,7 @@ FLOWS = {
                           id_token_hint: None}),
             AccessToken,
         ],
-        "profile": "..",
+        "profile": "...",
         'tests': {"same-authn": {},
                   "verify-response": {
                       "response_cls": [AuthorizationResponse,
@@ -1072,7 +1072,7 @@ FLOWS = {
                 "OpenID Provider before proceeding. This test requests that "
                 "you log in as "
                 "a specific user, so a fresh login page is needed.",
-        "profile": "..",
+        "profile": "...",
         'tests': {"verify-authn-response": {}},
         "mti": {"all": "No err"},
         "result": "You should be requested to log in as a predefined user"
@@ -1093,7 +1093,7 @@ FLOWS = {
                 "login page is displayed using one of the requested locales. "
                 "The use of this parameter in the request must not cause an "
                 "error at the OP.",
-        "profile": "..",
+        "profile": "...",
         'tests': {"verify-authn-response": {}},
         "mti": {"all": "No err"}
     },
@@ -1114,7 +1114,7 @@ FLOWS = {
                 "specified locale(s). "
                 "The use of this parameter in the request must not cause an "
                 "error at the OP.",
-        "profile": "..",
+        "profile": "...",
         'tests': {"check-http-response": {}},
         "mti": {"all": "No err"}
     },
@@ -1129,7 +1129,7 @@ FLOWS = {
             AccessToken,
         ],
         "mti": {"all": "No err"},
-        "profile": "..",
+        "profile": "...",
         'tests': {"used-acr-value": {},
                   "verify-response": {"response_cls": [AuthorizationResponse,
                                                        AccessTokenResponse]}}
@@ -1147,7 +1147,7 @@ FLOWS = {
                           set_request_args: {"max_age": 10000}}),
             AccessToken,
         ],
-        "profile": "..",
+        "profile": "...",
         "tests": {"same-authn": {},
                   "verify-response": {
                       "response_cls": [AccessTokenResponse,
@@ -1173,7 +1173,7 @@ FLOWS = {
                 "while running the test, then you will have to self-assert "
                 "that your deployment can do OP signing key rotation "
                 "as part of your certification application.",
-        "profile": ".T.T.s",
+        "profile": "..T.T.s",
         # "profile": ".T.T.s.+",
         "tests": {"new-signing-keys": {},
                   "check-http-response": {}}
@@ -1198,7 +1198,7 @@ FLOWS = {
             (RefreshAccessToken, {set_op_args: {
                 "authn_method": "private_key_jwt"}})
         ],
-        "profile": "C,CI,CT,CIT..T.s",
+        "profile": "C,CI,CT,CIT...T.s",
         "tests": {"check-http-response": {}}
     },
     'OP-Rotation-OP-Enc': {
@@ -1218,7 +1218,7 @@ FLOWS = {
                 "that your deployment can do OP encryption key rotation "
                 "as part of your certification application.",
         # "profile": ".T..e.+",
-        "profile": ".T..e",
+        "profile": "..T..e",
         "tests": {"new-encryption-keys": {}, "check-http-response": {}}
     },
     'OP-Rotation-RP-Enc': {
@@ -1251,7 +1251,7 @@ FLOWS = {
             RotateEncKeys,
             UserInfo
         ],
-        "profile": "C,CI,CT,CIT..T.se.+",
+        "profile": "C,CI,CT,CIT...T.se.+",
         "tests": {"check-http-response": {}}
     },
     'OP-claims-essential': {
@@ -1269,7 +1269,7 @@ FLOWS = {
             AccessToken,
             USERINFO_REQUEST_AUTH_METHOD
         ],
-        "profile": "C,IT,CI,CT,CIT..",
+        "profile": "C,IT,CI,CT,CIT...",
         'tests': {"verify-claims": {"userinfo": {"name": None}},
                   "check-http-response": {}}
     },
@@ -1292,7 +1292,7 @@ FLOWS = {
                 "does a fresh login using that sub value in a claims request. "
                 "Please remove any cookies you received from the OpenID "
                 "Provider before proceeding.",
-        "profile": "....+",
+        "profile": ".....+",
         "tests": {"verify-response": {"response_cls": [AuthorizationResponse,
                                                        AccessTokenResponse]},
                   "verify-sub-value": {}}
@@ -1309,7 +1309,7 @@ FLOWS = {
                     "claims": {"id_token": {"email": {"essential": True}}}}}),
             AccessToken
         ],
-        "profile": "....+",
+        "profile": ".....+",
         'tests': {"verify-claims": {"id_token": {"email": None}},
                   "verify-response": {
                       "response_cls": [AccessTokenResponse,
@@ -1331,7 +1331,7 @@ FLOWS = {
                     }}}),
             AccessToken,
             USERINFO_REQUEST_AUTH_METHOD],
-        "profile": "C,IT,CI,CIT,CT....+",
+        "profile": "C,IT,CI,CIT,CT.....+",
         'tests': {"verify-claims": {"userinfo": {"name": None},
                                     "id_token": {"email": None}},
                   "check-http-response": {}}
@@ -1354,7 +1354,7 @@ FLOWS = {
             AccessToken,
             USERINFO_REQUEST_AUTH_METHOD
         ],
-        "profile": "C,IT,CI,CIT,CT....+",
+        "profile": "C,IT,CI,CIT,CT.....+",
         'tests': {"verify-claims": {"userinfo": {"phone": None},
                                     "id_token": {"email": None}},
                   "check-http-response": {}}
@@ -1372,7 +1372,7 @@ FLOWS = {
                               "userinfo": {"picture": None, "email": None}}}}),
             AccessToken,
             USERINFO_REQUEST_AUTH_METHOD],
-        "profile": "C,IT,CI,CIT,CT....+",
+        "profile": "C,IT,CI,CIT,CT.....+",
         'tests': {"verify-claims": {"userinfo": {"picture": None,
                                                  "email": None}},
                   "check-http-response": {}}
@@ -1396,7 +1396,7 @@ FLOWS = {
             AccessToken,
             USERINFO_REQUEST_AUTH_METHOD
         ],
-        "profile": "C,IT,CI,CIT,CT....+",
+        "profile": "C,IT,CI,CIT,CT.....+",
         'tests': {"verify-claims": {"userinfo": {"picture": None,
                                                  "name": None,
                                                  "email": None}},
@@ -1415,7 +1415,7 @@ FLOWS = {
             }),
             AccessToken,
         ],
-        "profile": "....+",
+        "profile": ".....+",
         "mti": {"all": "MUST"},
         'tests': {"verify-claims": {"id_token": {"auth_time": None}},
                   "verify-response": {
@@ -1434,7 +1434,7 @@ FLOWS = {
                               "id_token": {"acr": {"essential": True}}}}}),
             AccessToken,
         ],
-        "profile": "....+",
+        "profile": ".....+",
         'tests': {"verify-claims": {"id_token": {"acr": None}},
                   "verify-response": {
                       "response_cls": [AccessTokenResponse,
@@ -1451,7 +1451,7 @@ FLOWS = {
                               "claims": {"id_token": {"acr": None}}}}),
             AccessToken,
         ],
-        "profile": "....+",
+        "profile": ".....+",
         'tests': {"verify-claims": {"id_token": {"acr": None}},
                   "verify-response": {
                       "response_cls": [AccessTokenResponse,
@@ -1469,7 +1469,7 @@ FLOWS = {
                 check_support: {"error": {"acr_values_supported": ["1"]}}}),
             AccessToken,
         ],
-        "profile": "....+",
+        "profile": ".....+",
         'tests': {"verify-claims": {"id_token": {"acr": None}},
                   "verify-response": {
                       "response_cls": [AccessTokenResponse,
@@ -1495,7 +1495,7 @@ FLOWS = {
                 "you may have received from the OpenID Provider before "
                 "proceeding. "
                 "You should get a normal user agent login page view.",
-        "profile": "..",
+        "profile": "...",
         'tests': {"verify-response": {"response_cls": [AuthorizationResponse]}},
         "mti": {"all": "No err"}
     },
@@ -1517,7 +1517,7 @@ FLOWS = {
                 "you may have received from the OpenID Provider before "
                 "proceeding. "
                 "You should get a popup user agent login window.",
-        "profile": "..",
+        "profile": "...",
         'tests': {"verify-response": {"response_cls": [AuthorizationResponse]}},
         "mti": {"all": "No err"}
     },
@@ -1537,7 +1537,7 @@ FLOWS = {
                 "Please submit a screen shot of any authentication user "
                 "interaction "
                 "that occurred as part of your certification application.",
-        "profile": "..",
+        "profile": "...",
         'tests': {
             "multiple-sign-on": {},
             "verify-response": {"response_cls": [AuthorizationResponse,
@@ -1561,7 +1561,7 @@ FLOWS = {
         'tests': {"same-authn": {},
                   "verify-response": {"response_cls": [AuthorizationResponse,
                                                        AccessTokenResponse]}},
-        "profile": "..",
+        "profile": "...",
         "result": "The test passed if you were not prompted to log in."
     },
     'OP-nonce-NoReq-code': {
@@ -1572,7 +1572,7 @@ FLOWS = {
             Registration,
             ('_login_', {set_request_args: {"nonce": ""}})
         ],
-        "profile": "C..",
+        "profile": "C...",
         'tests': {"verify-response": {"response_cls": [AuthorizationResponse]}},
         "mti": {"all": "MUST"}
     },
@@ -1589,7 +1589,7 @@ FLOWS = {
             "verify-response": {
                 "error": ["invalid_request"],
                 "response_cls": [ErrorResponse]}},
-        "profile": "I,IT,CI,CIT..",
+        "profile": "I,IT,CI,CIT...",
         "mti": {"all": "MUST"}
     },
     'OP-nonce-code': {
@@ -1601,7 +1601,7 @@ FLOWS = {
             ('_login_', {set_request_args: {"nonce": "godmorgon"}}),
             '_accesstoken_'],
         "mti": {"all": "MUST"},
-        "profile": "C..",
+        "profile": "C...",
         "tests": {"verify-nonce": {},
                   "verify-response": {
                       "response_cls": [AccessTokenResponse,
@@ -1615,7 +1615,7 @@ FLOWS = {
                   "verify-response": {
                       "response_cls": [AccessTokenResponse,
                                        AuthorizationResponse]}},
-        "profile": "I,IT,CI,CT,CIT..",
+        "profile": "I,IT,CI,CT,CIT...",
         "mti": {"all": "MUST"}
     },
     'OP-redirect_uri-NotReg': {
@@ -1631,7 +1631,7 @@ FLOWS = {
                 set_request_args: {
                     "redirect_uri": "https://foo.example.se/authz_cb"}})
         ],
-        "profile": "..",
+        "profile": "...",
         "note": "This test should result in the OpenID Provider "
                 "displaying an error message in your user agent. "
                 "You should ignore the status of this test "
@@ -1653,7 +1653,7 @@ FLOWS = {
                 set_response_where: {},
                 set_request_args: {"redirect_uri": ""}})
         ],
-        "profile": "..T",
+        "profile": "...T",
         'tests': {"verify-response": {"response_cls": [ErrorResponse]}},
         "note": "This test should result in the OpenID Provider "
                 "displaying an error message in your user agent. "
@@ -1676,7 +1676,7 @@ FLOWS = {
                 set_response_where: {},
                 redirect_uri_with_query_component: {"foo": "bar"}})
         ],
-        "profile": "..T",
+        "profile": "...T",
         "mti": {"all": "MUST"},
         "reference": "http://tools.ietf.org/html/draft-ietf-oauth-v2-31"
                      "#section-3.1.2",
@@ -1696,7 +1696,7 @@ FLOWS = {
                 # different from the one registered
                 redirect_uri_with_query_component: {"bar": "foo"}})
         ],
-        "profile": "..T",
+        "profile": "...T",
         "reference": "http://tools.ietf.org/html/draft-ietf-oauth-v2-31"
                      "#section-3.1.2",
         "note": "This test should result in the OpenID Provider "
@@ -1719,7 +1719,7 @@ FLOWS = {
             (Discovery, {set_discovery_issuer: {}}),
             (Registration, {redirect_uris_with_fragment: {"foo": "bar"}})
         ],
-        "profile": "..T",
+        "profile": "...T",
         'tests': {
             "verify-response": {
                 "response_cls": [ErrorResponse],
@@ -1748,7 +1748,7 @@ FLOWS = {
                 "incomplete. "
                 "It is also legal for the OP to successfully process "
                 "this authentication request.",
-        "profile": "....+",
+        "profile": ".....+",
         'tests': {
             "verify-response": {"response_cls": [AuthorizationResponse]}},
     },
@@ -1758,7 +1758,7 @@ FLOWS = {
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
         ],
-        "profile": "..T",
+        "profile": "...T",
         "tests": {"check-http-response": {},
                   "check-request_uri-parameter-supported-support": {}}
     },
@@ -1783,7 +1783,7 @@ FLOWS = {
                                         "request_object_signing_alg": "none"},
                           request_in_file: None})
         ],
-        "profile": "..F",
+        "profile": "...F",
         "tests": {"authn-response-or-error": {
             "error": ["request_uri_not_supported"]}}
     },
@@ -1808,7 +1808,7 @@ FLOWS = {
                                         "request_object_signing_alg": "none"},
                           request_in_file: None})
         ],
-        "profile": "..T",
+        "profile": "...T",
         "tests": {"verify-response": {"response_cls": [AuthorizationResponse]}}
     },
     'OP-request_uri-Sig': {
@@ -1834,7 +1834,7 @@ FLOWS = {
                               "request_object_signing_alg": "RS256"},
                           request_in_file: None})
         ],
-        "profile": "..T.s",
+        "profile": "...T.s",
         "tests": {"authn-response-or-error": {
             "error": ["request_uri_not_supported"]}}
     },
@@ -1871,7 +1871,7 @@ FLOWS = {
                               "request_object_encryption_enc": "A128CBC-HS256"},
                           request_in_file: None})
         ],
-        "profile": "..T.se.+",
+        "profile": "...T.se.+",
         "tests": {"authn-response-or-error": {
             "error": ["request_uri_not_supported"]}}
     },
@@ -1908,7 +1908,7 @@ FLOWS = {
                               "request_object_encryption_enc": "A128CBC-HS256"},
                           request_in_file: None})
         ],
-        "profile": "..T.se.+",
+        "profile": "...T.se.+",
         "tests": {"authn-response-or-error": {
             "error": ["request_uri_not_supported"]}}
     },
@@ -1923,7 +1923,7 @@ FLOWS = {
             # ((AsyncAuthn, {set_response_where: {}}), {set_op_args: {
             # "request_method": "request"}})
         ],
-        "profile": "....+",
+        "profile": ".....+",
         "tests": {"check-http-response": {},
                   "check-request-parameter-supported-support": {}}
     },
@@ -1971,7 +1971,7 @@ FLOWS = {
                               "request_method": "request",
                               "request_object_signing_alg": "RS256"}})
         ],
-        "profile": "...s.+",
+        "profile": "....s.+",
         "tests": {"authn-response-or-error": {
             "error": ["request_not_supported"]}}
     },
@@ -1991,7 +1991,7 @@ FLOWS = {
                 "method": "GET"
             })
         ],
-        "profile": "..",
+        "profile": "...",
         "mti": {"all": "No err"},
         'tests': {"verify-response": {"response_cls": [OpenIDSchema,
                                                        AuthorizationResponse]},
@@ -2015,7 +2015,7 @@ FLOWS = {
                 "method": "GET"
             })
         ],
-        "profile": "..",
+        "profile": "...",
         "mti": "No err",
         'tests': {"verify-response": {"response_cls": [OpenIDSchema,
                                                        AuthorizationResponse]},
@@ -2039,7 +2039,7 @@ FLOWS = {
                 "method": "GET"
             })
         ],
-        "profile": "..",
+        "profile": "...",
         "mti": "No err",
         'tests': {"verify-response": {"response_cls": [OpenIDSchema,
                                                        AuthorizationResponse]},
@@ -2063,7 +2063,7 @@ FLOWS = {
                 "method": "GET"
             })
         ],
-        "profile": "..",
+        "profile": "...",
         "mti": "No err",
         'tests': {"verify-response": {"response_cls": [OpenIDSchema,
                                                        AuthorizationResponse]},
@@ -2090,7 +2090,7 @@ FLOWS = {
                 "method": "GET"
             })
         ],
-        "profile": "..",
+        "profile": "...",
         "mti": "No err",
         'tests': {"verify-response": {"response_cls": [OpenIDSchema,
                                                        AuthorizationResponse]},
