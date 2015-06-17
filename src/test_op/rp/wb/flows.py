@@ -155,8 +155,11 @@ FLOWS = {
             (Discovery, {set_discovery_issuer: {}}),
             Registration,
             Note,
-            (AsyncAuthn, {set_request_args: {"response_type": [""]},
-                          set_response_where: {}})
+            (AsyncAuthn, {
+                set_request_args: {"response_type": [""]},
+                set_response_where: {},
+                set_expect_error: {"error": ["invalid_request",
+                                             "unsupported_response_type"]}})
         ],
         "tests": {
             "verify-error": {"error": ["invalid_request",
