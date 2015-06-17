@@ -153,9 +153,15 @@ if __name__ == '__main__':
         _sh.init_session({}, profile=cargs.profile)
 
         for tid in _sh.session["flow_names"]:
-            io = ClIO(**kwargs)
-            sh = SessionHandler({}, **kwargs)
-            sh.init_session({}, profile=cargs.profile)
-            tester = ClTester(io, sh, **kwargs)
-            if tester.run(tid, **kwargs):
-                io.result(sh.session)
+            test = _sh.test_flows[tid]
+            if isinstance(test, dict):
+                test = [test]
+
+            for test_index, _ in enumerate(test):
+                io = ClIO(**kwargs)
+                sh = SessionHandler({}, **kwargs)
+                sh.init_session({}, profile=cargs.profile)
+                tester = ClTester(io, sh, **kwargs)
+
+                if tester.run(tid, test_index=test_index, **kwargs):
+                    io.result(sh.session)

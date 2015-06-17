@@ -27,7 +27,7 @@ class SessionHandler(aatest.SessionHandler):
                                              operation, orddesc)
         self.session = session
 
-    def session_setup(self, session=None, path="", index=0):
+    def session_setup(self, test_index, session=None, path="", index=0):
         logger.info("session_setup")
         if session is None:
             session = self.session
@@ -42,12 +42,19 @@ class SessionHandler(aatest.SessionHandler):
                 del session[key]
 
         session["testid"] = path
+        nodes_found = 0
         for node in session["tests"]:
             if node.name == path:
-                session["node"] = node
-                break
+                if nodes_found == test_index:
+                    session["node"] = node
+                    break
+                nodes_found += 1
 
-        session["flow"] = self.test_flows[path]
+        flow = self.test_flows[path]
+        if isinstance(flow, list):
+            flow = flow[test_index]
+
+        session["flow"] = flow
         session["sequence"] = copy.deepcopy(session["flow"]["sequence"])
         session["sequence"].append(Done)
         session["index"] = index
@@ -67,11 +74,17 @@ class SessionHandler(aatest.SessionHandler):
 
         _tests =[]
         for k in session["flow_names"]:
-            try:
-                kwargs = {"mti": self.test_flows[k]["mti"]}
-            except KeyError:
-                kwargs = {}
-            _tests.append(Node(k, self.test_flows[k]["desc"], **kwargs))
+
+            flows = self.test_flows[k]
+            if isinstance(flows, dict):
+                flows = [flows]
+
+            for test in flows:
+                try:
+                    kwargs = {"mti": test["mti"]}
+                except KeyError:
+                    kwargs = {}
+                _tests.append(Node(k, test["desc"], **kwargs))
 
         session["tests"] = _tests
         session["test_info"] = {}
