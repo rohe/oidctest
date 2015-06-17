@@ -81,6 +81,9 @@ IDMAP = {
     "rp-request_uri-enc": NORMAL,
     "rp-request_uri-sig+enc": NORMAL,
 
+    # Third Party Initiated Login
+    "rp-support_3rd_party_init_login": NORMAL,
+
     # Claims Request Parameter
     "rp-claims_request-id_token_claims": NORMAL,
     "rp-claims_request-request_userinfo": NORMAL,

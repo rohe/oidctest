@@ -390,6 +390,13 @@ LOOKUP = TemplateLookup(directories=[ROOT + 'templates', ROOT + 'htdocs'],
 # ----------------------------------------------------------------------------
 
 
+def rp_support_3rd_party_init_login(environ, start_response):
+    resp = Response(mako_template="rp_support_3rd_party_init_login.mako",
+                    template_lookup=LOOKUP,
+                    headers=[])
+    return resp(environ, start_response)
+
+
 def rp_test_list(environ, start_response):
     resp = Response(mako_template="rp_test_list.mako",
                     template_lookup=LOOKUP,
@@ -476,6 +483,8 @@ def application(environ, start_response):
                 del _oas.claim_access_token[tok]
                 resp = Response(json.dumps(_claims), content='application/json')
         return resp(environ, start_response)
+    elif path == "3rd_party_init_login":
+        return rp_support_3rd_party_init_login(environ, start_response)
 
     mode, endpoint = extract_mode(path)
 
