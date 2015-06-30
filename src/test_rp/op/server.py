@@ -489,7 +489,12 @@ def application(environ, start_response):
     mode, endpoint = extract_mode(path)
 
     if endpoint == ".well-known/webfinger":
-        _p = urlparse(parameters["resource"][0])
+        try:
+            _p = urlparse(parameters["resource"][0])
+        except KeyError:
+            resp = ServiceError("No resource defined")
+            return resp(environ, start_response)
+
         if _p.scheme in ["http", "https"]:
             mode = {"test_id": _p.path[1:]}
         elif _p.scheme == "acct":
@@ -538,7 +543,7 @@ def application(environ, start_response):
                 resp = ServiceError("%s" % err)
                 return resp(environ, start_response)
 
-    LOGGER.debug("unknown side: %s" % endpoint)
+    LOGGER.debug("unknown page: '{}'".format(endpoint))
     resp = NotFound("Couldn't find the side you asked for!")
     return resp(environ, start_response)
 
