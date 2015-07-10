@@ -129,10 +129,12 @@ def display_log(environ, start_response):
         item = []
         for (dirpath, dirnames, filenames) in os.walk(path):
             if dirnames:
-                item = [(fn, os.path.join(path, fn)) for fn in dirnames]
+                #item = [(fn, os.path.join(path, fn)) for fn in dirnames]
+                item = [(fn, fn) for fn in dirnames]
                 break
             if filenames:
-                item = [(fn, os.path.join(path, fn)) for fn in filenames]
+                #item = [(fn, os.path.join(path, fn)) for fn in filenames]
+                item = [(fn, fn) for fn in filenames]
                 break
 
         item.sort()
@@ -304,7 +306,8 @@ def webfinger(environ, start_response, session, trace):
             path = pathmap.IDMAP[p.path[1:]]
 
         _url = os.path.join(OP_ARG["baseurl"], session["test_id"], path[1:])
-        resp = Response(wf.response(subject=resource, base=_url))
+        resp = Response(wf.response(subject=resource, base=_url),
+                        content="application/jrd+json")
 
         trace.reply(resp.message)
 
