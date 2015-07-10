@@ -9,11 +9,9 @@ import sys
 
 from urlparse import urlparse
 
-from oic.utils.authn.client import BearerHeader
 from oic.utils.keyio import build_keyjar
 
-from aatest import NotSupported, exception_trace
-from aatest import ConfigurationError
+from aatest import exception_trace
 from aatest.conversation import Conversation
 
 from oidctest.common import make_list
