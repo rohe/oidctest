@@ -16,3 +16,8 @@ def set_discovery_issuer(oper, args):
             _issuer = include(oper.conv.info["issuer"], oper.test_id)
 
         oper.op_args["issuer"] = _issuer
+
+def set_expect_error(oper, args):
+    oper.expect_error = args
+
+

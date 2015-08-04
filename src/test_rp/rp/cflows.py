@@ -19,7 +19,8 @@ from oidctest.testfunc import set_op_args
 from oidctest.testfunc import expect_exception
 from oidctest.testfunc import set_request_args
 
-from cl.func import set_webfinger_resource, set_discovery_issuer
+from cl.func import set_webfinger_resource, set_discovery_issuer, \
+    set_expect_error
 #from oidctest.testfunc import conditional_expect_exception
 
 __author__ = 'roland'
@@ -435,7 +436,8 @@ FLOWS = {
                 "'claims' request parameter. The claim should be returned in "
                 "an ID Token"
     },
-    "rp-claims_request-request_userinfo": {
+    #"rp-claims_request-request_userinfo": {
+    "rp-claims_request-userinfo_claims": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -464,7 +466,10 @@ FLOWS = {
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
             Registration,
-            (SyncAuthn, {set_request_args: {"scope": ["wrong"]}}),
+            (SyncAuthn, {
+                set_request_args: {"scope": ["wrong"]},
+                set_expect_error: {"error": ["invalid_request"],
+                                   "stop": False}}),
         ],
         "profile": "...",
         "desc": "The Relying Party should always add the openid scope value "
@@ -641,7 +646,7 @@ FLOWS = {
             (SyncAuthn, {set_op_args: {"request_method": "file",
                                        "request_object_signing_alg": "RS256",
                                        "local_dir": "./request_objects",
-                                       "base_path": "http://localhost:8099/request_objects/"}})
+                                       "base_path": "https://localhost:8088/request_objects/"}})
         ],
         "profile": "...",
         "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
@@ -657,7 +662,7 @@ FLOWS = {
                                        "request_object_encryption_alg": "RSA1_5",
                                        "request_object_encryption_enc": "A128CBC-HS256",
                                        "local_dir": "./request_objects",
-                                       "base_path": "http://localhost:8099/request_objects/"}})
+                                       "base_path": "https://localhost:8088/request_objects/"}})
         ],
         "profile": "...",
         "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
@@ -673,7 +678,7 @@ FLOWS = {
                                        "request_object_encryption_alg": "RSA1_5",
                                        "request_object_encryption_enc": "A128CBC-HS256",
                                        "local_dir": "./request_objects",
-                                       "base_path": "http://localhost:8099/request_objects/"}})
+                                       "base_path": "https://localhost:8088/request_objects/"}})
         ],
         "profile": "...",
         "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
@@ -814,8 +819,9 @@ FLOWS = {
             Registration,
             (SyncAuthn, {conditional_expect_exception: {
                 "condition": {
-                    "response_type": [["code"],
-                                      ["code", "token"]]},
+                    "response_type": [["id_token"],
+                                      ["id_token", "token"],
+                                      ["code", "id_token", "token"]]},
                 "exception": PyoidcError,
                 "oper": False
             }}),
@@ -887,11 +893,10 @@ FLOWS = {
                 set_op_args: {
                     "request_method": "request",
                     "request_object_signing_alg": "ES256",
-                    "sig_kid": "rp2"
                 }
             }),
             (RotateKey, {set_op_args: {
-                "old_kid": "rp2",
+                "old_kid": "a2",
                 "new_key": {
                     "type": "EC",
                     "crv": "P-256",
@@ -904,7 +909,6 @@ FLOWS = {
                 set_op_args: {
                     "request_method": "request",
                     "request_object_signing_alg": "ES256",
-                    "sig_kid": "rotated_sig_key"
                 }
             }),
             (RestoreKeyJar, {set_op_args: {"jwks_path": "static/jwk.json"}})
@@ -925,7 +929,7 @@ FLOWS = {
             }),
             SyncAuthn,
             (RotateKey, {set_op_args: {
-                "old_kid": "rp0",
+                "old_kid": "a0",
                 "new_key": {
                     "type": "RSA",
                     "bits": 2048,

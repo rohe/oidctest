@@ -6,6 +6,7 @@ IDMAP = {
     # Discovery
     "rp-discovery-webfinger_url": NORMAL,
     "rp-discovery-webfinger_acct": NORMAL,
+    "rp-discovery": NORMAL,
     "rp-discovery-openid_configuration": NORMAL,
     "rp-discovery-jwks_uri_keys": NORMAL,
     "rp-discovery-issuer_not_matching_config": "/_/_/isso/normal",
@@ -50,6 +51,8 @@ IDMAP = {
     "rp-id_token-mismatching_issuer": "/_/_/issi/normal",
     "rp-id_token-kid_absent_multiple_jwks": "/_/_/nokidmuljwks/normal",
     "rp-id_token-kid_absent_single_jwks": "/_/_/nokid1jwk/normal",
+    "rp-id_token-sig_none": "/none/_/_/normal",
+    'rp-id_token-none-code': "/none/_/_/normal",
     # "rp-idt-epk": "",
 
     # UserInfo Endpoint
@@ -87,6 +90,7 @@ IDMAP = {
     # Claims Request Parameter
     "rp-claims_request-id_token_claims": NORMAL,
     "rp-claims_request-request_userinfo": NORMAL,
+    "rp-claims_request-userinfo_claims": NORMAL,
 
     # "rp-3rd-login": "",
 

@@ -1,5 +1,8 @@
 #from oic.oic.provider import Provider
+import json
+from oic.oauth2 import rndstr
 from oic.oic import OIDCONF_PATTERN
+from oic.utils.sdb import SessionDB
 from oic.utils.webfinger import WF_URL
 from oidctest.provider import Provider
 
@@ -97,13 +100,20 @@ def mode2path(mode):
 
 
 def setup_op(mode, com_args, op_arg):
-    op = Provider(**com_args)
+    op = Provider(sdb=SessionDB(com_args["baseurl"]), **com_args)
 
     for _authn in com_args["authn_broker"]:
         _authn.srv = op
 
     for key, val in op_arg.items():
         setattr(op, key, val)
+
+    _name = "jwks_{}.json".format(rndstr())
+    filename = "./static/{}".format(_name)
+    with open(filename, "w") as f:
+        f.write(json.dumps(op_arg["jwks"]))
+    f.close()
+    op.jwks_uri = "{}static/{}".format(op_arg["baseurl"], _name)
 
     if op.baseurl.endswith("/"):
         div = ""

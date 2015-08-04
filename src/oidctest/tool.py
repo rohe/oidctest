@@ -43,6 +43,7 @@ class Tester(object):
 
     def run(self, test_id, cinfo, **kw_args):
         if not self.match_profile(test_id):
+            logger.info("Test doesn't match the profile")
             return False
 
         redirs = get_redirect_uris(cinfo)
@@ -50,8 +51,9 @@ class Tester(object):
         self.sh.session_setup(path=test_id)
         _flow = self.flows[test_id]
         _cli = make_client(**kw_args)
-        self.conv = Conversation(_flow, _cli, redirs, kw_args["msg_factory"],
-                                 trace_cls=Trace)
+        self.conv = Conversation(_flow, _cli,
+                                 msg_factory=kw_args["msg_factory"],
+                                 callback_uris=redirs, trace_cls=Trace)
         _cli.conv = self.conv
         self.conv.sequence = self.sh.session["sequence"]
         self.sh.session["conv"] = self.conv

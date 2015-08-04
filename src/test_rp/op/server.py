@@ -60,7 +60,6 @@ LOGGER.setLevel(logging.DEBUG)
 
 URLMAP = {}
 NAME = "pyoic"
-OAS = None
 
 PASSWD = {
     "diana": "krall",
@@ -75,9 +74,9 @@ HEADER = "---------- %s ----------"
 
 #noinspection PyUnusedLocal
 def safe(environ, start_response):
-    _oas = environ["oic.oas"]
-    _srv = _oas.server
-    _log_info = _oas.logger.info
+    _op = environ["oic.oas"]
+    _srv = _op.server
+    _log_info = _op.logger.info
 
     _log_info("- safe -")
     #_log_info("env: %s" % environ)
@@ -198,26 +197,26 @@ def wsgi_wrapper(environ, start_response, func, session, trace):
 #noinspection PyUnusedLocal
 def token(environ, start_response, session, trace):
     trace.info(HEADER % "AccessToken")
-    _oas = session["op"]
+    _op = session["op"]
 
-    return wsgi_wrapper(environ, start_response, _oas.token_endpoint, session,
+    return wsgi_wrapper(environ, start_response, _op.token_endpoint, session,
                         trace)
 
 
 #noinspection PyUnusedLocal
 def authorization(environ, start_response, session, trace):
     trace.info(HEADER % "Authorization")
-    _oas = session["op"]
+    _op = session["op"]
 
-    return wsgi_wrapper(environ, start_response, _oas.authorization_endpoint,
+    return wsgi_wrapper(environ, start_response, _op.authorization_endpoint,
                         session, trace)
 
 
 #noinspection PyUnusedLocal
 def userinfo(environ, start_response, session, trace):
     trace.info(HEADER % "UserInfo")
-    _oas = session["op"]
-    return wsgi_wrapper(environ, start_response, _oas.userinfo_endpoint,
+    _op = session["op"]
+    return wsgi_wrapper(environ, start_response, _op.userinfo_endpoint,
                         session, trace)
 
 
@@ -229,21 +228,21 @@ def op_info(environ, start_response, session, trace):
         trace.request("QUERY: %s" % environ["QUERY_STRING"])
     except KeyError:
         pass
-    _oas = session["op"]
-    return wsgi_wrapper(environ, start_response, _oas.providerinfo_endpoint,
+    _op = session["op"]
+    return wsgi_wrapper(environ, start_response, _op.providerinfo_endpoint,
                         session, trace)
 
 
 #noinspection PyUnusedLocal
 def registration(environ, start_response, session, trace):
     trace.info(HEADER % "ClientRegistration")
-    _oas = session["op"]
+    _op = session["op"]
 
     if environ["REQUEST_METHOD"] == "POST":
-        return wsgi_wrapper(environ, start_response, _oas.registration_endpoint,
+        return wsgi_wrapper(environ, start_response, _op.registration_endpoint,
                             session, trace)
     elif environ["REQUEST_METHOD"] == "GET":
-        return wsgi_wrapper(environ, start_response, _oas.read_registration,
+        return wsgi_wrapper(environ, start_response, _op.read_registration,
                             session, trace)
     else:
         resp = ServiceError("Method not supported")
@@ -252,16 +251,16 @@ def registration(environ, start_response, session, trace):
 
 #noinspection PyUnusedLocal
 def check_id(environ, start_response, session, trace):
-    _oas = session["op"]
+    _op = session["op"]
 
-    return wsgi_wrapper(environ, start_response, _oas.check_id_endpoint,
+    return wsgi_wrapper(environ, start_response, _op.check_id_endpoint,
                         session, trace)
 
 
 #noinspection PyUnusedLocal
 def endsession(environ, start_response, session, trace):
-    _oas = session["op"]
-    return wsgi_wrapper(environ, start_response, _oas.endsession_endpoint,
+    _op = session["op"]
+    return wsgi_wrapper(environ, start_response, _op.endsession_endpoint,
                         session=session, trace=trace)
 
 
@@ -299,15 +298,22 @@ def webfinger(environ, start_response, session, trace):
     else:
         wf = WebFinger()
         p = urlparse(resource)
+
         if p.scheme == "acct":
             l, _ = p.path.split("@")
             path = pathmap.IDMAP[l]
         else:  # scheme == http/-s
-            path = pathmap.IDMAP[p.path[1:]]
+            try:
+                path = pathmap.IDMAP[p.path[1:]]
+            except KeyError:
+                path = None
 
-        _url = os.path.join(OP_ARG["baseurl"], session["test_id"], path[1:])
-        resp = Response(wf.response(subject=resource, base=_url),
-                        content="application/jrd+json")
+        if path:
+            _url = os.path.join(OP_ARG["baseurl"], session["test_id"], path[1:])
+            resp = Response(wf.response(subject=resource, base=_url),
+                            content="application/jrd+json")
+        else:
+            resp = BadRequest("Incorrect resource specification")
 
         trace.reply(resp.message)
 
@@ -317,8 +323,9 @@ def webfinger(environ, start_response, session, trace):
 
 #noinspection PyUnusedLocal
 def verify(environ, start_response, session, trace):
-    _oas = session["op"]
-    return wsgi_wrapper(environ, start_response, _oas.verify_endpoint)
+    _op = session["op"]
+    return wsgi_wrapper(environ, start_response, _op.verify_endpoint, 
+                        session, trace)
 
 
 def static_file(path):
@@ -432,7 +439,7 @@ def application(environ, start_response):
         request is done
     :return: The response as a list of lines
     """
-    global OAS
+
     session = environ['beaker.session']
     path = environ.get('PATH_INFO', '').lstrip('/')
     response_encoder = ResponseEncoder(environ=environ,
@@ -470,7 +477,7 @@ def application(environ, start_response):
             json.dumps({"client_id": client_id,
                         "client_secret": client_secret}))
     elif path == "claim":
-        _oas = session["op"]
+        _op = session["op"]
         authz = environ["HTTP_AUTHORIZATION"]
         try:
             assert authz.startswith("Bearer")
@@ -479,11 +486,11 @@ def application(environ, start_response):
         else:
             tok = authz[7:]
             try:
-                _claims = _oas.claim_access_token[tok]
+                _claims = _op.claim_access_token[tok]
             except KeyError:
                 resp = BadRequest()
             else:
-                del _oas.claim_access_token[tok]
+                del _op.claim_access_token[tok]
                 resp = Response(json.dumps(_claims), content='application/json')
         return resp(environ, start_response)
     elif path == "3rd_party_init_login":
@@ -632,7 +639,8 @@ if __name__ == '__main__':
 
     COM_ARGS = {
         "name": config.issuer,
-        "sdb": SessionDB(config.baseurl),
+        #"sdb": SessionDB(config.baseurl),
+        "baseurl": config.baseurl,
         "cdb": cdb,
         "authn_broker": ac,
         "userinfo": userinfo,
@@ -641,6 +649,7 @@ if __name__ == '__main__':
         "symkey": config.SYM_KEY,
         "template_lookup": LOOKUP,
         "template": {"form_post": "form_response.mako"},
+        "jwks_name": "./static/jwks_{}.json"
     }
 
     OP_ARG = {}
@@ -677,17 +686,14 @@ if __name__ == '__main__':
 
     # Add own keys for signing/encrypting JWTs
     try:
-        OAS = Provider(**COM_ARGS)
-        jwks = keyjar_init(OAS, config.keys)
+        # a throw-away OP used to do the initial key setup
+        _op = Provider(sdb=SessionDB(COM_ARGS["baseurl"]), **COM_ARGS)
+        jwks = keyjar_init(_op, config.keys)
     except KeyError:
         pass
     else:
-        # export JWKS
-        name = "./static/jwks.json"
-        with open(name, "w") as f:
-            f.write(json.dumps(jwks))
-        f.close()
-        OP_ARG["jwks_uri"] = "{}jwks.json".format(_baseurl)
+        OP_ARG["jwks"] = jwks
+        #OP_ARG["jwks_uri"] = "{}jwks.json".format(_baseurl)
         OP_ARG["keys"] = config.keys
 
     # Setup the web server

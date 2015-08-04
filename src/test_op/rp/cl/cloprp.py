@@ -99,9 +99,9 @@ def main(flows, profile, profiles, **kw_args):
     for tid in test_list:
         _flow = flows[tid]
         _cli = make_client(**kw_args)
-        conversation = Conversation(_flow, _cli, redirs, kw_args["msg_factory"],
+        conversation = Conversation(_flow, _cli, kw_args["msg_factory"],
                                     interaction=kw_args["conf"].INTERACTION,
-                                    trace_cls=Trace)
+                                    trace_cls=Trace, callback_uris=redirs)
 
         # noinspection PyTypeChecker
         try:

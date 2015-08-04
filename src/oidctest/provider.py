@@ -80,7 +80,7 @@ class Provider(provider.Provider):
     def __init__(self, name, sdb, cdb, authn_broker, userinfo, authz,
                  client_authn, symkey, urlmap=None, ca_certs="", keyjar=None,
                  hostname="", template_lookup=None, template=None,
-                 verify_ssl=True, capabilities=None):
+                 verify_ssl=True, capabilities=None, **kwargs):
 
         provider.Provider.__init__(
             self, name, sdb, cdb, authn_broker, userinfo, authz, client_authn,

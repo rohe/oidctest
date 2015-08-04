@@ -1,6 +1,6 @@
 import copy
 import logging
-import aatest
+from aatest import session
 
 from oidctest.oper import Done
 
@@ -20,12 +20,7 @@ class Node(object):
         self.complete = False
 
 
-class SessionHandler(aatest.SessionHandler):
-    def __init__(self, session, profiles, profile, flows, operation, orddesc,
-                 **kwargs):
-        super(SessionHandler, self).__init__(profiles, profile, flows,
-                                             operation, orddesc)
-        self.session = session
+class SessionHandler(session.SessionHandler):
 
     def session_setup(self, session=None, path="", index=0):
         logger.info("session_setup")

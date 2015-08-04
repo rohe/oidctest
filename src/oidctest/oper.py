@@ -171,13 +171,22 @@ class AccessToken(SyncPostRequest):
         atr = self.conv.client.do_access_token_request(
             request_args=self.req_args, **self.op_args)
 
-        if "kid" not in atr["id_token"].jws_header and not atr["id_token"].jws_header["alg"] == "HS256":
-            for key, value in self.conv.client.keyjar.issuer_keys.iteritems():
-                if not key == "" and (len(value) > 1 or len(value[0].keys()) > 1):
+        try:
+            _jws_alg = atr["id_token"].jws_header["alg"]
+        except (KeyError, AttributeError):
+            pass
+        else:
+            if _jws_alg == "none":
+                pass
+            elif "kid" not in atr["id_token"].jws_header and not _jws_alg == "HS256":
+                keys = self.conv.client.keyjar.keys_by_alg_and_usage(
+                    self.conv.info["issuer"], _jws_alg, "ver")
+                if len(keys) > 1:
                     raise PyoidcError("No 'kid' in id_token header!")
 
         if not same_issuer(self.conv.info["issuer"], atr["id_token"]["iss"]):
-            raise IssuerMismatch(" {} != {}".format(self.conv.info["issuer"], atr["id_token"]["iss"]))
+            raise IssuerMismatch(" {} != {}".format(self.conv.info["issuer"],
+                                                    atr["id_token"]["iss"]))
 
         self.conv.trace.response(atr)
         assert isinstance(atr, AccessTokenResponse)

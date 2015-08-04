@@ -1,4 +1,4 @@
-import copy
+from aatest import prof_util
 
 __author__ = 'roland'
 
@@ -144,3 +144,41 @@ def extras(flow_set, profile_map):
 
     _all.sort()
     return _all
+
+RT = {"C": "code", "I": "id_token", "T": "token"}
+OC = {"T": "config", "F": "no-config"}
+REG = {"T": "dynamic", "F": "static"}
+CR = {"n": "none", "s": "sign", "e": "encrypt"}
+EX = {"+": "extras"}
+ATTR = ["response_type", "openid-configuration", "registration", "crypto",
+        "extras"]
+
+
+class ProfileHandler(prof_util.ProfileHandler):
+    def to_profile(self, representation="list"):
+        p = self.session["profile"].split(".")
+        prof = [
+            "+".join([RT[x] for x in p[0]]),
+            "%s" % OC[p[1]],
+            "%s" % REG[p[2]]]
+
+        try:
+            prof.append("%s" % "+".join([CR[x] for x in p[3]]))
+        except KeyError:
+            pass
+        else:
+            try:
+                prof.append("%s" % EX[p[4]])
+            except (KeyError, IndexError):
+                pass
+
+        if representation == "list":
+            return prof
+        elif representation == "dict":
+            ret = {}
+            for r in range(0, len(prof)):
+                ret[ATTR[r]] = prof[r]
+
+            if "extras" in ret:
+                ret["extras"] = True
+            return ret
