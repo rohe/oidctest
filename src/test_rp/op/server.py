@@ -60,6 +60,7 @@ LOGGER.setLevel(logging.DEBUG)
 
 URLMAP = {}
 NAME = "pyoic"
+OP = {}
 
 PASSWD = {
     "diana": "krall",
@@ -432,6 +433,23 @@ def generate_static_client_credentials(parameters):
     return static_client['client_id'], static_client['client_secret']
 
 
+def op_setup(environ, mode, session, path):
+    addr = environ.get("REMOTE_ADDR", '')
+    if not path:
+        path = mode2path(mode)
+
+    key = "{}:{}".format(addr, path)
+    LOGGER.debug("OP key: {}".format(key))
+    try:
+        _op = OP[key]
+    except KeyError:
+        _op = setup_op(mode, COM_ARGS, OP_ARG)
+        OP[key] = _op
+
+    session["op"] = _op
+    session["mode_path"] = path
+
+
 def application(environ, start_response):
     """
     :param environ: The HTTP application environment
@@ -441,6 +459,10 @@ def application(environ, start_response):
     """
 
     session = environ['beaker.session']
+
+    kaka = environ.get("HTTP_COOKIE", '')
+    LOGGER.debug("Cookie: {}".format(kaka))
+
     path = environ.get('PATH_INFO', '').lstrip('/')
     response_encoder = ResponseEncoder(environ=environ,
                                        start_response=start_response)
@@ -518,13 +540,13 @@ def application(environ, start_response):
         session["test_id"] = mode["test_id"]
 
     if "op" not in session:
-        session["op"] = setup_op(mode, COM_ARGS, OP_ARG)
-        session["mode_path"] = mode2path(mode)
+        LOGGER.debug("No OP")
+        op_setup(environ, mode, session, '')
     else:  # may be a new mode
         _path = mode2path(mode)
         if session["mode_path"] != _path:
-            session["op"] = setup_op(mode, COM_ARGS, OP_ARG)
-            session["mode_path"] = _path
+            LOGGER.debug("New mode")
+            op_setup(environ, mode, session, _path)
 
     for regex, callback in URLS:
         match = re.search(regex, endpoint)
