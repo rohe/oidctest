@@ -15,7 +15,6 @@ from exceptions import AttributeError
 from exceptions import KeyboardInterrupt
 from urlparse import parse_qs
 from urlparse import urlparse
-from beaker.middleware import SessionMiddleware
 
 from oic.oic.provider import EndSessionEndpoint
 from oic.utils.authn.authn_context import AuthnBroker
@@ -70,18 +69,19 @@ PASSWD = {
 
 HEADER = "---------- %s ----------"
 
+
 # ----------------------------------------------------------------------------
 
 
-#noinspection PyUnusedLocal
+# noinspection PyUnusedLocal
 def safe(environ, start_response):
     _op = environ["oic.oas"]
     _srv = _op.server
     _log_info = _op.logger.info
 
     _log_info("- safe -")
-    #_log_info("env: %s" % environ)
-    #_log_info("handle: %s" % (handle,))
+    # _log_info("env: %s" % environ)
+    # _log_info("handle: %s" % (handle,))
 
     try:
         _authz = environ["HTTP_AUTHORIZATION"]
@@ -102,8 +102,8 @@ def safe(environ, start_response):
     return resp(environ, start_response)
 
 
-#noinspection PyUnusedLocal
-def css(environ, start_response, session):
+# noinspection PyUnusedLocal
+def css(environ, start_response):
     try:
         _info = open(environ["PATH_INFO"]).read()
         resp = Response(_info)
@@ -111,6 +111,7 @@ def css(environ, start_response, session):
         resp = NotFound(environ["PATH_INFO"])
 
     return resp(environ, start_response)
+
 
 # ----------------------------------------------------------------------------
 
@@ -129,11 +130,11 @@ def display_log(environ, start_response):
         item = []
         for (dirpath, dirnames, filenames) in os.walk(path):
             if dirnames:
-                #item = [(fn, os.path.join(path, fn)) for fn in dirnames]
+                # item = [(fn, os.path.join(path, fn)) for fn in dirnames]
                 item = [(fn, fn) for fn in dirnames]
                 break
             if filenames:
-                #item = [(fn, os.path.join(path, fn)) for fn in filenames]
+                # item = [(fn, os.path.join(path, fn)) for fn in filenames]
                 item = [(fn, fn) for fn in filenames]
                 break
 
@@ -149,18 +150,15 @@ def display_log(environ, start_response):
         return resp(environ, start_response)
 
 
-def dump_log(session, trace):
-    try:
-        _path = session["path"]
-    except KeyError:
-        base = "log"
-        addr = session._environ["REMOTE_ADDR"]
-        _base = os.path.join(base, addr)
+def dump_log(session_info, trace):
+    base = "log"
+    _base = os.path.join(base, session_info["addr"])
 
-        if not os.path.isdir(_base):
-            os.makedirs(_base)
+    if not os.path.isdir(_base):
+        os.makedirs(_base)
 
-        _path = os.path.join(base, addr, session["test_id"])
+    _path = os.path.join(base, session_info["addr"],
+                         session_info["test_id"])
 
     output = "%s" % trace
     output += "\n\n"
@@ -171,7 +169,7 @@ def dump_log(session, trace):
     return _path
 
 
-def wsgi_wrapper(environ, start_response, func, session, trace):
+def wsgi_wrapper(environ, start_response, func, session_info, trace):
     kwargs = extract_from_request(environ)
     trace.request(kwargs["request"])
     args = func(**kwargs)
@@ -179,90 +177,92 @@ def wsgi_wrapper(environ, start_response, func, session, trace):
     try:
         resp, state = args
         trace.reply(resp.message)
-        dump_log(session, trace)
+        dump_log(session_info, trace)
         return resp(environ, start_response)
     except TypeError:
         resp = args
         trace.reply(resp.message)
-        dump_log(session, trace)
+        dump_log(session_info, trace)
         return resp(environ, start_response)
     except Exception as err:
         LOGGER.error("%s" % err)
         trace.error("%s" % err)
-        dump_log(session, trace)
+        dump_log(session_info, trace)
         raise
+
 
 # ----------------------------------------------------------------------------
 
 
-#noinspection PyUnusedLocal
-def token(environ, start_response, session, trace):
+# noinspection PyUnusedLocal
+def token(environ, start_response, session_info, trace):
     trace.info(HEADER % "AccessToken")
-    _op = session["op"]
+    _op = session_info["op"]
 
-    return wsgi_wrapper(environ, start_response, _op.token_endpoint, session,
+    return wsgi_wrapper(environ, start_response, _op.token_endpoint,
+                        session_info,
                         trace)
 
 
-#noinspection PyUnusedLocal
-def authorization(environ, start_response, session, trace):
+# noinspection PyUnusedLocal
+def authorization(environ, start_response, session_info, trace):
     trace.info(HEADER % "Authorization")
-    _op = session["op"]
+    _op = session_info["op"]
 
     return wsgi_wrapper(environ, start_response, _op.authorization_endpoint,
-                        session, trace)
+                        session_info, trace)
 
 
-#noinspection PyUnusedLocal
-def userinfo(environ, start_response, session, trace):
+# noinspection PyUnusedLocal
+def userinfo(environ, start_response, session_info, trace):
     trace.info(HEADER % "UserInfo")
-    _op = session["op"]
+    _op = session_info["op"]
     return wsgi_wrapper(environ, start_response, _op.userinfo_endpoint,
-                        session, trace)
+                        session_info, trace)
 
 
-#noinspection PyUnusedLocal
-def op_info(environ, start_response, session, trace):
+# noinspection PyUnusedLocal
+def op_info(environ, start_response, session_info, trace):
     trace.info(HEADER % "ProviderConfiguration")
     trace.request("PATH: %s" % environ["PATH_INFO"])
     try:
         trace.request("QUERY: %s" % environ["QUERY_STRING"])
     except KeyError:
         pass
-    _op = session["op"]
+    _op = session_info["op"]
     return wsgi_wrapper(environ, start_response, _op.providerinfo_endpoint,
-                        session, trace)
+                        session_info, trace)
 
 
-#noinspection PyUnusedLocal
-def registration(environ, start_response, session, trace):
+# noinspection PyUnusedLocal
+def registration(environ, start_response, session_info, trace):
     trace.info(HEADER % "ClientRegistration")
-    _op = session["op"]
+    _op = session_info["op"]
 
     if environ["REQUEST_METHOD"] == "POST":
         return wsgi_wrapper(environ, start_response, _op.registration_endpoint,
-                            session, trace)
+                            session_info, trace)
     elif environ["REQUEST_METHOD"] == "GET":
         return wsgi_wrapper(environ, start_response, _op.read_registration,
-                            session, trace)
+                            session_info, trace)
     else:
         resp = ServiceError("Method not supported")
         return resp(environ, start_response)
 
 
-#noinspection PyUnusedLocal
-def check_id(environ, start_response, session, trace):
-    _op = session["op"]
+# noinspection PyUnusedLocal
+def check_id(environ, start_response, session_info, trace):
+    _op = session_info["op"]
 
     return wsgi_wrapper(environ, start_response, _op.check_id_endpoint,
-                        session, trace)
+                        session_info, trace)
 
 
-#noinspection PyUnusedLocal
-def endsession(environ, start_response, session, trace):
-    _op = session["op"]
+# noinspection PyUnusedLocal
+def endsession(environ, start_response, session_info, trace):
+    _op = session_info["op"]
     return wsgi_wrapper(environ, start_response, _op.endsession_endpoint,
-                        session=session, trace=trace)
+                        session_info=session_info, trace=trace)
 
 
 def find_identifier(uri):
@@ -275,11 +275,11 @@ def find_identifier(uri):
         return l
 
 
-def webfinger(environ, start_response, session, trace):
+def webfinger(environ, start_response, session_info, trace):
     query = parse_qs(environ["QUERY_STRING"])
 
     # Find the identifier
-    session["test_id"] = find_identifier(query["resource"][0])
+    session_info["test_id"] = find_identifier(query["resource"][0])
 
     trace.info(HEADER % "WebFinger")
     trace.request(environ["QUERY_STRING"])
@@ -310,7 +310,8 @@ def webfinger(environ, start_response, session, trace):
                 path = None
 
         if path:
-            _url = os.path.join(OP_ARG["baseurl"], session["test_id"], path[1:])
+            _url = os.path.join(OP_ARG["baseurl"], session_info["test_id"],
+                                path[1:])
             resp = Response(wf.response(subject=resource, base=_url),
                             content="application/jrd+json")
         else:
@@ -318,15 +319,15 @@ def webfinger(environ, start_response, session, trace):
 
         trace.reply(resp.message)
 
-    dump_log(session, trace)
+    dump_log(session_info, trace)
     return resp(environ, start_response)
 
 
-#noinspection PyUnusedLocal
-def verify(environ, start_response, session, trace):
-    _op = session["op"]
-    return wsgi_wrapper(environ, start_response, _op.verify_endpoint, 
-                        session, trace)
+# noinspection PyUnusedLocal
+def verify(environ, start_response, session_info, trace):
+    _op = session_info["op"]
+    return wsgi_wrapper(environ, start_response, _op.verify_endpoint,
+                        session_info, trace)
 
 
 def static_file(path):
@@ -337,7 +338,7 @@ def static_file(path):
         return False
 
 
-#noinspection PyUnresolvedReferences
+# noinspection PyUnresolvedReferences
 def static(environ, start_response, path):
     LOGGER.info("[static]sending: %s" % (path,))
 
@@ -359,6 +360,7 @@ def static(environ, start_response, path):
     except IOError:
         resp = NotFound()
         return resp(environ, start_response)
+
 
 # ----------------------------------------------------------------------------
 from oic.oic.provider import AuthorizationEndpoint
@@ -390,6 +392,7 @@ def add_endpoints(extra):
     for endp in extra:
         URLS.append(("^%s" % endp.etype, endp))
 
+
 # ----------------------------------------------------------------------------
 
 ROOT = './'
@@ -397,6 +400,7 @@ ROOT = './'
 LOOKUP = TemplateLookup(directories=[ROOT + 'templates', ROOT + 'htdocs'],
                         module_directory=ROOT + 'modules',
                         input_encoding='utf-8', output_encoding='utf-8')
+
 
 # ----------------------------------------------------------------------------
 
@@ -433,10 +437,9 @@ def generate_static_client_credentials(parameters):
     return static_client['client_id'], static_client['client_secret']
 
 
-def op_setup(environ, mode, session, path):
+def op_setup(environ, mode):
     addr = environ.get("REMOTE_ADDR", '')
-    if not path:
-        path = mode2path(mode)
+    path = mode2path(mode)
 
     key = "{}:{}".format(addr, path)
     LOGGER.debug("OP key: {}".format(key))
@@ -446,8 +449,7 @@ def op_setup(environ, mode, session, path):
         _op = setup_op(mode, COM_ARGS, OP_ARG)
         OP[key] = _op
 
-    session["op"] = _op
-    session["mode_path"] = path
+    return _op, path
 
 
 def application(environ, start_response):
@@ -458,8 +460,6 @@ def application(environ, start_response):
     :return: The response as a list of lines
     """
 
-    session = environ['beaker.session']
-
     kaka = environ.get("HTTP_COOKIE", '')
     LOGGER.debug("Cookie: {}".format(kaka))
 
@@ -467,6 +467,9 @@ def application(environ, start_response):
     response_encoder = ResponseEncoder(environ=environ,
                                        start_response=start_response)
     parameters = parse_qs(environ["QUERY_STRING"])
+
+    session_info = {
+        "addr": environ.get("REMOTE_ADDR", '')}
 
     if path == "robots.txt":
         return static(environ, start_response, "static/robots.txt")
@@ -480,8 +483,10 @@ def application(environ, start_response):
     elif path.startswith("jwks.json"):
         try:
             mode, endpoint = extract_mode(_baseurl)
-            jwks = session["op"].generate_jwks(mode)
-            resp = Response(jwks, headers=[('Content-Type', 'application/json')])
+            op, path = op_setup(environ, mode)
+            jwks = op.generate_jwks(mode)
+            resp = Response(jwks,
+                            headers=[('Content-Type', 'application/json')])
             return resp(environ, start_response)
         except KeyError:
             # Try to load from static file
@@ -494,12 +499,12 @@ def application(environ, start_response):
     elif path == "":
         return registration(environ, start_response)
     elif path == "generate_client_credentials":
-        client_id, client_secret = generate_static_client_credentials(parameters)
+        client_id, client_secret = generate_static_client_credentials(
+            parameters)
         return response_encoder.return_json(
             json.dumps({"client_id": client_id,
                         "client_secret": client_secret}))
     elif path == "claim":
-        _op = session["op"]
         authz = environ["HTTP_AUTHORIZATION"]
         try:
             assert authz.startswith("Bearer")
@@ -507,6 +512,8 @@ def application(environ, start_response):
             resp = BadRequest()
         else:
             tok = authz[7:]
+            mode, endpoint = extract_mode(_baseurl)
+            _op, _ = op_setup(environ, mode)
             try:
                 _claims = _op.claim_access_token[tok]
             except KeyError:
@@ -537,16 +544,12 @@ def application(environ, start_response):
             return resp(environ, start_response)
 
     if mode:
-        session["test_id"] = mode["test_id"]
+        session_info["test_id"] = mode["test_id"]
 
-    if "op" not in session:
-        LOGGER.debug("No OP")
-        op_setup(environ, mode, session, '')
-    else:  # may be a new mode
-        _path = mode2path(mode)
-        if session["mode_path"] != _path:
-            LOGGER.debug("New mode")
-            op_setup(environ, mode, session, _path)
+    _op, path = op_setup(environ, mode)
+
+    session_info["op"] = _op
+    session_info["path"] = path
 
     for regex, callback in URLS:
         match = re.search(regex, endpoint)
@@ -566,7 +569,7 @@ def application(environ, start_response):
 
             LOGGER.info("callback: %s" % callback)
             try:
-                return callback(environ, start_response, session, trace)
+                return callback(environ, start_response, session_info, trace)
             except Exception as err:
                 print >> sys.stderr, "%s" % err
                 message = traceback.format_exception(*sys.exc_info())
@@ -601,14 +604,6 @@ if __name__ == '__main__':
     parser.add_argument('-k', dest='insecure', action='store_true')
     parser.add_argument(dest="config")
     args = parser.parse_args()
-
-    session_opts = {
-        'session.type': 'memory',
-        'session.cookie_expires': True,
-        #'session.data_dir': './data',
-        'session.auto': True,
-        'session.timeout': 900
-    }
 
     sys.path.insert(0, ".")
     config = importlib.import_module(args.config)
@@ -661,7 +656,7 @@ if __name__ == '__main__':
 
     COM_ARGS = {
         "name": config.issuer,
-        #"sdb": SessionDB(config.baseurl),
+        # "sdb": SessionDB(config.baseurl),
         "baseurl": config.baseurl,
         "cdb": cdb,
         "authn_broker": ac,
@@ -686,7 +681,7 @@ if __name__ == '__main__':
     except AttributeError:
         pass
 
-    #print URLS
+    # print URLS
     if args.debug:
         OP_ARG["debug"] = True
 
@@ -715,13 +710,10 @@ if __name__ == '__main__':
         pass
     else:
         OP_ARG["jwks"] = jwks
-        #OP_ARG["jwks_uri"] = "{}jwks.json".format(_baseurl)
         OP_ARG["keys"] = config.keys
 
     # Setup the web server
-    SRV = wsgiserver.CherryPyWSGIServer(('0.0.0.0', args.port),
-                                        SessionMiddleware(application,
-                                                          session_opts))
+    SRV = wsgiserver.CherryPyWSGIServer(('0.0.0.0', args.port), application, )
 
     if _baseurl.startswith("https"):
         import cherrypy
