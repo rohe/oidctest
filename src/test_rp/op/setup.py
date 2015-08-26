@@ -1,3 +1,4 @@
+import logging
 import shelve
 import importlib
 import sys
@@ -13,6 +14,8 @@ from oidctest.provider import Provider
 
 from endpoints import add_endpoints
 from endpoints import ENDPOINTS
+
+LOGGER = logging.getLogger(__name__)
 
 __author__ = 'roland'
 

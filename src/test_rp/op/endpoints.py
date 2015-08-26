@@ -1,3 +1,4 @@
+import logging
 import os
 from urlparse import urlparse, parse_qs
 from oic.utils.http_util import extract_from_request, Response, Unauthorized, \
@@ -9,6 +10,8 @@ from oic.utils.webfinger import OIC_ISSUER, WebFinger
 import pathmap
 
 __author__ = 'roland'
+
+LOGGER = logging.getLogger(__name__)
 
 HEADER = "---------- %s ----------"
 
