@@ -385,7 +385,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             "rp-id_token-bad_c_hash": {
                 "short_description": "Rejects ID Token with incorrect 'c_hash' claim when hybrid flow is used",
                 "profiles": [HYBRID],
-                "detailed_description": "Retrieve Authorization Code and ID Token from the Authorization Endpoint, using " + HYBRID_FLOW + ". Verify the "+ C_HASH +" value in the returned ID token.",
+                "detailed_description": "Retrieve Authorization Code and ID Token from the Authorization Endpoint, using " + HYBRID_FLOW + ". Verify the "+ C_HASH +" value in the returned ID token. 'id_token_signed_response_alg' must NOT be 'none'",
                 "expected_result": "Identify the incorrect 'c_hash' value and reject the ID Token after doing " + AUTHORIZATION_CODE_VALIDATION + "."
             },
             "rp-id_token-bad_at_hash": {

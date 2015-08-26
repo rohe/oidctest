@@ -69,7 +69,7 @@ IDMAP = {
     "rp-nonce-invalid": "/_/_/nonce/normal",
 
     # scope Request Parameter
-    "rp-scope-contains_openid_scope": NORMAL,
+    "rp-scope-contains_openid_scope": "/_/_/openid/normal",
     "rp-scope-userinfo_claims": NORMAL,
 
     # Key Rollover
