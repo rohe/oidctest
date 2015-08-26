@@ -14,8 +14,14 @@ from oic.utils.keyio import keyjar_init
 
 __author__ = 'roland'
 
+class TestError(Exception):
+    pass
+
 
 def sort_string(string):
+    if string is None:
+        return ""
+
     _l = list(string)
     _l.sort()
     return "".join(_l)
@@ -38,34 +44,25 @@ class Server(oic.Server):
             try:
                 idt["at_hash"] = sort_string(idt["at_hash"])
             except KeyError:
-                pass
+                raise TestError("Missing at_hash in id_token")
 
         if "ch" in self.behavior_type:  # modify the c_hash if available
             try:
                 idt["c_hash"] = sort_string(idt["c_hash"])
-            except KeyError:
-                pass
+            except (KeyError, TypeError):
+                raise TestError("Missing c_hash in id_token")
 
         if "issi" in self.behavior_type:  # mess with the iss value
             idt["iss"] = "https://example.org/"
 
         if "itsub" in self.behavior_type:  # missing sub claim
-            try:
-                del idt["sub"]
-            except KeyError:
-                pass
+            del idt["sub"]
 
         if "aud" in self.behavior_type:  # invalid aud claim
-            try:
-                idt["aud"] = "https://example.com/"
-            except KeyError:
-                pass
+            idt["aud"] = "https://example.com/"
 
         if "iat" in self.behavior_type:  # missing iat claim
-            try:
-                del idt["iat"]
-            except KeyError:
-                pass
+            del idt["iat"]
 
         if "nonce" in self.behavior_type:  # invalid nonce if present
             try:
@@ -196,17 +193,28 @@ class Provider(provider.Provider):
                 uris = [uris]
             for uri in uris:
                 if not uri.startswith("https://"):
-                    return self._error(error="invalid_configuration_parameter",
-                               descr="Non-HTTPS endpoint in '{}'".format(endp))
+                    return self._error(
+                        error="invalid_configuration_parameter",
+                        descr="Non-HTTPS endpoint in '{}'".format(endp))
 
         return provider.Provider.registration_endpoint(self, request, authn,
                                                        **kwargs)
 
     def authorization_endpoint(self, request="", cookie=None, **kwargs):
-        client_id = urlparse.parse_qs(request)["client_id"][0]
+        _req = urlparse.parse_qs(request)
+
+        if "openid" in self.behavior_type:
+            # verify that openid is among the scopes
+            if "openid" not in _req["scope"]:
+                return self._error(
+                    error="invalid_request",
+                    descr="Scope does not contain 'openid'"
+                )
+        client_id = _req["client_id"][0]
         self._update_client_keys(client_id)
 
-        return provider.Provider.authorization_endpoint(self, request, cookie, **kwargs)
+        return provider.Provider.authorization_endpoint(self, request, cookie,
+                                                        **kwargs)
 
     def generate_jwks(self, mode):
         if "rotenc" in self.behavior_type:  # Rollover encryption keys

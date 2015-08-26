@@ -28,47 +28,6 @@ __author__ = 'roland'
 
 logger = logging.getLogger("")
 
-#
-# def get_claims(client):
-#     resp = {}
-#     for src in client.userinfo["_claim_names"].values():
-#         spec = client.userinfo["_claim_sources"][src]
-#         ht_args = BearerHeader(client).construct(**spec)
-#
-#         try:
-#             part = client.http_request(spec["endpoint"], "GET", **ht_args)
-#         except Exception:
-#             raise
-#         resp.update(json.loads(part.content))
-#
-#     return resp
-#
-#
-# def endpoint_support(client, endpoint):
-#     if endpoint in client.provider_info:
-#         return True
-#     else:
-#         return False
-#
-#
-# def run_func(spec, conv, req_args):
-#     if isinstance(spec, tuple):
-#         func, args = spec
-#     else:
-#         func = spec
-#         args = {}
-#
-#     try:
-#         req_args = func(req_args, conv, args)
-#     except KeyError as err:
-#         conv.trace.error("function: %s failed" % func)
-#         conv.trace.error(str(err))
-#         raise NotSupported
-#     except ConfigurationError:
-#         raise
-#     else:
-#         return req_args
-
 
 def main(flows, profile, profiles, **kw_args):
     try:

@@ -66,7 +66,7 @@ def extract_mode(path):
 
 
 def mode2path(mode):
-    # test_id/<sig-alg>/<enc-alg>/<behavior>/<userinfo>
+    # test_id/<sig-alg>/<enc-alg>/<behavior>/<userinfo>[/<endpoint>]
     if mode is None:
         mode = {}
 
