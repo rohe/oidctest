@@ -11,8 +11,8 @@ from oic.oic import provider, ProviderConfigurationResponse
 from oic.oic.message import RegistrationRequest
 from oic.utils.keyio import keyjar_init
 
-
 __author__ = 'roland'
+
 
 class TestError(Exception):
     pass
@@ -94,8 +94,8 @@ class Provider(provider.Provider):
                               access_token=None, user_info=None):
         self._update_client_keys(client_info["client_id"])
 
-        return provider.Provider.sign_encrypt_id_token(self, sinfo, client_info, areq, code,
-                              access_token, user_info)
+        return provider.Provider.sign_encrypt_id_token(
+            self, sinfo, client_info, areq, code, access_token, user_info)
 
     def id_token_as_signed_jwt(self, session, loa="2", alg="", code=None,
                                access_token=None, user_info=None, auth_time=0,
@@ -105,7 +105,7 @@ class Provider(provider.Provider):
             if alg == "RS256":
                 key = RSAKey(kid="rotated_rsa_{}".format(time.time()),
                              use="sig").load_key(RSA.generate(2048))
-            elif alg == "ES256":
+            else:  # alg == "ES256"
                 key = ECKey(kid="rotated_ec_{}".format(time.time()),
                             use="sig").load_key(P256)
 
@@ -117,7 +117,8 @@ class Provider(provider.Provider):
                 found_key = None
                 for key in self.keyjar.issuer_keys[""]:
                     issuer_key = key.keys()[0]
-                    if issuer_key.use == "sig" and issuer_key.kty.startswith(alg[:2]):
+                    if issuer_key.use == "sig" and issuer_key.kty.startswith(
+                            alg[:2]):
                         issuer_key.kid = None
                         found_key = key
                         break
@@ -158,7 +159,8 @@ class Provider(provider.Provider):
             _tok = rndstr()
             self.claim_access_token[_tok] = {"age": 30}
             ava["_claim_names"] = Message(age=_src)
-            d_claims = {_src: {"endpoint": urlbase + "claim", "access_token": _tok}}
+            d_claims = {
+                _src: {"endpoint": urlbase + "claim", "access_token": _tok}}
             ava["_claim_sources"] = Message(**d_claims)
 
         if "uisub" in self.behavior_type:
@@ -249,7 +251,8 @@ class Provider(provider.Provider):
                     key.pop("kid", None)
                     jwk = dict(keys=[key])
                     return json.dumps(jwk)
-            raise Exception("Did not find sig {} key for nokid1jwk test ".format(alg))
+            raise Exception(
+                "Did not find sig {} key for nokid1jwk test ".format(alg))
         else:  # Return all keys
             keys = [k.to_dict() for kb in self.keyjar[""] for k in kb.keys()]
             jwks = dict(keys=keys)
@@ -259,7 +262,6 @@ class Provider(provider.Provider):
         if "updkeys" in self.behavior_type:
             for kb in self.keyjar[client_id]:
                 kb.update()
-
 
     def __setattr__(self, key, value):
         if key == "keys":
