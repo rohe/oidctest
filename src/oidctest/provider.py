@@ -203,13 +203,21 @@ class Provider(provider.Provider):
     def authorization_endpoint(self, request="", cookie=None, **kwargs):
         _req = urlparse.parse_qs(request)
 
-        if "openid" in self.behavior_type:
+        try:
+            _scope = _req["scope"]
+        except KeyError:
+            return self._error(
+                error="invalid_request",
+                descr="No scope parameter"
+            )
+        else:
             # verify that openid is among the scopes
-            if "openid" not in _req["scope"]:
+            if "openid" not in _scope:
                 return self._error(
                     error="invalid_request",
                     descr="Scope does not contain 'openid'"
                 )
+
         client_id = _req["client_id"][0]
         self._update_client_keys(client_id)
 
