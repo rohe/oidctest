@@ -99,8 +99,9 @@ def mode2path(mode):
     return path
 
 
-def setup_op(mode, com_args, op_arg):
+def setup_op(mode, com_args, op_arg, trace):
     op = Provider(sdb=SessionDB(com_args["baseurl"]), **com_args)
+    op.trace = trace
 
     for _authn in com_args["authn_broker"]:
         _authn.srv = op

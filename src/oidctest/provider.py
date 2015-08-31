@@ -5,7 +5,7 @@ import urlparse
 
 from Crypto.PublicKey import RSA
 from jwkest.ecc import P256
-from jwkest.jwk import RSAKey, ECKey
+from jwkest.jwk import RSAKey, ECKey, SYMKey
 from oic.oauth2 import Message, rndstr
 from oic.oic import provider, ProviderConfigurationResponse
 from oic.oic.message import RegistrationRequest
@@ -89,6 +89,9 @@ class Provider(provider.Provider):
         self.server = Server(ca_certs=ca_certs, verify_ssl=verify_ssl)
         self.server.behavior_type = self.behavior_type
         self.claim_access_token = {}
+        self.init_keys = []
+        self.update_key_use = ""
+        self.trace = None
 
     def sign_encrypt_id_token(self, sinfo, client_info, areq, code=None,
                               access_token=None, user_info=None):
@@ -209,19 +212,23 @@ class Provider(provider.Provider):
             _scope = _req["scope"]
         except KeyError:
             return self._error(
-                error="invalid_request",
+                error="incorrect_behavior",
                 descr="No scope parameter"
             )
         else:
             # verify that openid is among the scopes
             if "openid" not in _scope:
                 return self._error(
-                    error="invalid_request",
+                    error="incorrect_behavior",
                     descr="Scope does not contain 'openid'"
                 )
 
         client_id = _req["client_id"][0]
-        self._update_client_keys(client_id)
+        try:
+            self._update_client_keys(client_id)
+        except TestError:
+            return self._error(error="incorrect_behavior",
+                               descr="No change in client keys")
 
         return provider.Provider.authorization_endpoint(self, request, cookie,
                                                         **kwargs)
@@ -260,8 +267,37 @@ class Provider(provider.Provider):
 
     def _update_client_keys(self, client_id):
         if "updkeys" in self.behavior_type:
-            for kb in self.keyjar[client_id]:
-                kb.update()
+            if not self.init_keys:
+                if "rp_enc_key" in self.baseurl:
+                    self.update_key_use = "enc"
+                else:
+                    self.update_key_use = "sig"
+                self.init_keys = []
+                for kb in self.keyjar[client_id]:
+                    for key in kb.available_keys():
+                        if isinstance(key, SYMKey):
+                            pass
+                        elif key.use == self.update_key_use :
+                            self.init_keys.append(key)
+            else:
+                for kb in self.keyjar[client_id]:
+                    kb.update()
+                same = 0
+                # Verify that the new keys are not the same
+                for kb in self.keyjar[client_id]:
+                    for key in kb.available_keys():
+                        if isinstance(key, SYMKey):
+                            pass
+                        elif key.use == self.update_key_use:
+                            if key in self.init_keys:
+                                same += 1
+                if same == len(self.init_keys):  # no change
+                    self.trace.info("No change in keys")
+                    raise TestError("Keys unchanged")
+                else:
+                    self.trace.info(
+                        "{} keys changed, {} keys the same".format(
+                            len(self.init_keys)-same, same))
 
     def __setattr__(self, key, value):
         if key == "keys":

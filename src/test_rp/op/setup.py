@@ -125,4 +125,18 @@ def main_setup(args, lookup):
         op_arg["jwks"] = jwks
         op_arg["keys"] = config.keys
 
+    try:
+        op_arg["marg"] = multi_keys(com_args, config.multi_keys)
+    except AttributeError as err:
+        pass
+
     return com_args, op_arg, config
+
+
+def multi_keys(com_args, key_conf):
+    # a throw-away OP used to do the initial key setup
+    _op = Provider(sdb=SessionDB(com_args["baseurl"]), **com_args)
+    jwks = keyjar_init(_op, key_conf, "m%d")
+
+    return {"jwks": jwks, "keys": key_conf}
+

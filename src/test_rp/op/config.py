@@ -4,16 +4,19 @@ baseurl = "https://localhost"
 issuer = "%s:%%d/" % baseurl
 
 keys = [
-    {
-        "type": "RSA",
-        "key": "keys/pyoidc_enc",
-        "use": ["enc"],
-    },
-    {
-        "type": "RSA",
-        "key": "keys/pyoidc_sig",
-        "use": ["sig"],
-    },
+    {"type": "RSA", "key": "keys/pyoidc_enc", "use": ["enc"]},
+    {"type": "RSA", "key": "keys/pyoidc_sig", "use": ["sig"]},
+    {"type": "EC", "crv": "P-256", "use": ["sig"]},
+    {"type": "EC", "crv": "P-256", "use": ["enc"]}
+]
+
+multi_keys = [
+    {"type": "RSA", "use": ["enc"], "name": "rsa_enc_1"},
+    {"type": "RSA", "use": ["sig"], "name": "rsa_sig_1"},
+    {"type": "RSA", "use": ["enc"], "name": "rsa_enc_2"},
+    {"type": "RSA", "use": ["sig"], "name": "rsa_sig_2"},
+    {"type": "EC", "crv": "P-256", "use": ["sig"]},
+    {"type": "EC", "crv": "P-256", "use": ["enc"]},
     {"type": "EC", "crv": "P-256", "use": ["sig"]},
     {"type": "EC", "crv": "P-256", "use": ["enc"]}
 ]

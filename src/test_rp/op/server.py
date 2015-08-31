@@ -102,7 +102,7 @@ def generate_static_client_credentials(parameters):
     return static_client['client_id'], static_client['client_secret']
 
 
-def op_setup(environ, mode):
+def op_setup(environ, mode, trace):
     addr = environ.get("REMOTE_ADDR", '')
     path = mode2path(mode)
 
@@ -111,7 +111,15 @@ def op_setup(environ, mode):
     try:
         _op = OP[key]
     except KeyError:
-        _op = setup_op(mode, COM_ARGS, OP_ARG)
+        if mode["test_id"] == 'rp-id_token-kid_absent_multiple_jwks':
+            _op_args = {}
+            for param in ['baseurl', 'cookie_name', 'cookie_ttl', 'endpoints']:
+                _op_args[param] = OP_ARG[param]
+            for param in ["jwks", "keys"]:
+                _op_args[param] = OP_ARG["marg"][param]
+            _op = setup_op(mode, COM_ARGS, _op_args, trace)
+        else:
+            _op = setup_op(mode, COM_ARGS, OP_ARG, trace)
         OP[key] = _op
 
     return _op, path
@@ -211,7 +219,7 @@ def application(environ, start_response):
     if mode:
         session_info["test_id"] = mode["test_id"]
 
-    _op, path = op_setup(environ, mode)
+    _op, path = op_setup(environ, mode, trace)
 
     session_info["op"] = _op
     session_info["path"] = path
