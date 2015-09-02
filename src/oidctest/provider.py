@@ -217,7 +217,8 @@ class Provider(provider.Provider):
             )
         else:
             # verify that openid is among the scopes
-            if "openid" not in _scope:
+            _scopes = _scope[0].split(" ")
+            if "openid" not in _scopes:
                 return self._error(
                     error="incorrect_behavior",
                     descr="Scope does not contain 'openid'"
