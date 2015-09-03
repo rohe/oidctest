@@ -19,7 +19,7 @@ HEADER = "---------- %s ----------"
 def dump_log(session_info, trace):
     file_name = os.path.join("log", session_info["addr"],
                              session_info["test_id"])
-    fp = open(file_name, "a")
+    fp = open(file_name, "a+")
     fp.write("{0}".format(trace))
     fp.write("\n\n")
     fp.close()
