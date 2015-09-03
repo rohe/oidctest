@@ -1,6 +1,7 @@
 __author__ = 'roland'
 
 PORT = 8088
+#BASE = "https://130.239.144.143:" + str(PORT) + "/"
 BASE = "https://localhost:" + str(PORT) + "/"
 
 # If BASE is https these has to be specified
