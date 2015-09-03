@@ -247,8 +247,11 @@ class Provider(provider.Provider):
         _response = provider.Provider.authorization_endpoint(self, request,
                                                              cookie, **kwargs)
 
-        if _req["request_uri"]:
+        try:
             _resp = self.server.http_request(_req["request_uri"])
+        except KeyError:
+            pass
+        else:
             if _resp.response == "200 OK":
                 self.trace.info(
                     "Request from request_uri: {}".format(_resp.message))
