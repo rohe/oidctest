@@ -244,8 +244,16 @@ class Provider(provider.Provider):
             return self._error(error="incorrect_behavior",
                                descr="No change in client keys")
 
-        return provider.Provider.authorization_endpoint(self, request, cookie,
-                                                        **kwargs)
+        _response = provider.Provider.authorization_endpoint(self, request,
+                                                             cookie, **kwargs)
+
+        if _req["request_uri"]:
+            _resp = self.server.http_request(_req["request_uri"])
+            if _resp.response == "200 OK":
+                self.trace.info(
+                    "Request from request_uri: {}".format(_resp.message))
+
+        return _response
 
     def generate_jwks(self, mode):
         if "rotenc" in self.behavior_type:  # Rollover encryption keys
