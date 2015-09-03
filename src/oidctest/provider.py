@@ -7,9 +7,11 @@ from Crypto.PublicKey import RSA
 from jwkest.ecc import P256
 from jwkest.jwk import RSAKey, ECKey, SYMKey
 from oic.oauth2 import Message, rndstr
-from oic.oic import provider, ProviderConfigurationResponse
+from oic.oic import provider
+from oic.oic.message import ProviderConfigurationResponse
+from oic.oic.message import RegistrationResponse
 from oic.oic.message import RegistrationRequest
-from oic.utils.keyio import keyjar_init
+from oic.utils.keyio import keyjar_init, KeyBundle
 
 __author__ = 'roland'
 
@@ -202,8 +204,19 @@ class Provider(provider.Provider):
                         error="invalid_configuration_parameter",
                         descr="Non-HTTPS endpoint in '{}'".format(endp))
 
-        return provider.Provider.registration_endpoint(self, request, authn,
-                                                       **kwargs)
+        _response = provider.Provider.registration_endpoint(self, request,
+                                                            authn, **kwargs)
+
+        self.init_keys = []
+        if "jwks_uri" in reg_req:
+            if _response.status == "200 OK":
+                # find the client id
+                req_resp = RegistrationResponse().from_json(_response.message)
+                for kb in self.keyjar[req_resp["client_id"]]:
+                    if kb.imp_jwks:
+                        self.trace.info("Client JWKS: {}".format(kb.imp_jwks))
+
+        return _response
 
     def authorization_endpoint(self, request="", cookie=None, **kwargs):
         _req = urlparse.parse_qs(request)
@@ -282,7 +295,10 @@ class Provider(provider.Provider):
                             self.init_keys.append(key)
             else:
                 for kb in self.keyjar[client_id]:
+                    self.trace.info("Updating client keys")
                     kb.update()
+                    if kb.imp_jwks:
+                        self.trace.info("Client JWKS: {}".format(kb.imp_jwks))
                 same = 0
                 # Verify that the new keys are not the same
                 for kb in self.keyjar[client_id]:
