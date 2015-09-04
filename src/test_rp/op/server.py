@@ -110,6 +110,7 @@ def op_setup(environ, mode, trace):
     LOGGER.debug("OP key: {}".format(key))
     try:
         _op = OP[key]
+        _op.trace = trace
     except KeyError:
         if mode["test_id"] == 'rp-id_token-kid_absent_multiple_jwks':
             _op_args = {}

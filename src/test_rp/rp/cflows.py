@@ -29,7 +29,7 @@ ORDDESC = ["rp-webfinger", "rp-discovery", "rp-registration",
            "rp-response_type", "rp-response_mode",
            "rp-token_endpoint", "rp-id_token", "rp-claims_request",
            "rp-request_uri", "rp-scope", "rp-nonce",
-           "rp-key_rotation", "rp_userinfo"]
+           "rp-key_rotation", "rp-user_info"]
 
 DESC = {
     "webfinger": "WebFinger",
