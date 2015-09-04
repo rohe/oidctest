@@ -42,6 +42,9 @@ class SessionHandler(session.SessionHandler):
                 session["node"] = node
                 break
 
+        if "node" not in session:
+            raise Exception("Unknown node name: {}".format(path))
+
         session["flow"] = self.test_flows[path]
         session["sequence"] = copy.deepcopy(session["flow"]["sequence"])
         session["sequence"].append(Done)

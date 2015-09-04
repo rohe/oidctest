@@ -114,7 +114,9 @@ def setup_op(mode, com_args, op_arg, trace):
     with open(filename, "w") as f:
         f.write(json.dumps(op_arg["jwks"]))
     f.close()
+
     op.jwks_uri = "{}static/{}".format(op_arg["baseurl"], _name)
+    op.jwks_name = filename
 
     if op.baseurl.endswith("/"):
         div = ""
