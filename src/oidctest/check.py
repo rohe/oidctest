@@ -38,7 +38,7 @@ __author__ = 'rohe0002'
 
 import inspect
 import sys
-import urlparse
+import urllib.parse
 
 from oic.oic.message import SCOPE2CLAIMS
 from oic.oic.message import IdToken
@@ -80,7 +80,7 @@ def get_id_tokens(conv):
         except KeyError:
             pass
         else:
-            _info = urlparse.parse_qs(msg)
+            _info = urllib.parse.parse_qs(msg)
             jwt = _info["id_token"][0]
             res.append((idt, jwt))
 
@@ -101,7 +101,7 @@ class CmpIdtoken(Other):
 
         kj = conv.client.keyjar
         keys = {}
-        for issuer in kj.keys():
+        for issuer in list(kj.keys()):
             keys.update(kj.get("ver", issuer=issuer))
 
         idt = IdToken().deserialize(instance["id_token"], "jwt", key=keys)
@@ -227,7 +227,7 @@ class CheckSupported(CriticalError):
 
         try:
             required = self._requested(request_args)
-            if isinstance(required, basestring):
+            if isinstance(required, str):
                 if required not in supported:
                     return False
             else:
@@ -261,7 +261,7 @@ class CheckResponseType(CheckOPSupported):
 
         try:
             val = request_args["response_type"]
-            if isinstance(val, basestring):
+            if isinstance(val, str):
                 rt = {val}
             else:
                 rt = set(val)
@@ -426,7 +426,7 @@ class CheckClaimsSupport(CheckOPSupported):
 
     def _requested(self, request_args):
         _req = request_args[self.parameter]
-        return _req["userinfo"].keys()
+        return list(_req["userinfo"].keys())
 
 
 # class CheckRequestClaimsSupport(CheckOPSupported):
@@ -709,7 +709,7 @@ class InteractionCheck(CriticalError):
     def _func(self, conv=None):
         self._status = INTERACTION
         self._message = conv.last_content
-        parts = urlparse.urlsplit(conv.position)
+        parts = urllib.parse.urlsplit(conv.position)
         return {"url": "%s://%s%s" % parts[:3]}
 
 
@@ -749,7 +749,7 @@ class VerifyClaims(Error):
         if "request" in req:
             jso = json.loads(split_token(req["request"])[1])
             _uic = jso["userinfo"]
-            for key, val in _uic["claims"].items():
+            for key, val in list(_uic["claims"].items()):
                 userinfo_claims[key] = val
 
         try:
@@ -757,7 +757,7 @@ class VerifyClaims(Error):
         except KeyError:
             pass
         else:
-            for key, val in _userinfo_claims.items():
+            for key, val in list(_userinfo_claims.items()):
                 userinfo_claims[key] = val
 
         missing = []
@@ -766,14 +766,14 @@ class VerifyClaims(Error):
         # Get the UserInfoResponse, should only be one
         inst, txt = get_protocol_response(conv, message.OpenIDSchema)[0]
         if userinfo_claims:
-            for key, restr in userinfo_claims.items():
+            for key, restr in list(userinfo_claims.items()):
                 try:
                     if not claims_match(inst[key], restr):
                         mm.append(key)
                 except KeyError:
                     missing.append(key)
 
-        for key in inst.keys():
+        for key in list(inst.keys()):
             if key not in userinfo_claims:
                 extra.append(key)
 
@@ -794,8 +794,8 @@ class VerifyClaims(Error):
         if missing or extra or mm:
             self._message = msg
             self._status = WARNING
-            return {"returned claims": inst.keys(),
-                    "expected claims": userinfo_claims.keys()}
+            return {"returned claims": list(inst.keys()),
+                    "expected claims": list(userinfo_claims.keys())}
 
         return {}
 
@@ -814,7 +814,7 @@ class VerifyClaims(Error):
 
             mm = []
             missing = []
-            for key, val in claims.items():
+            for key, val in list(claims.items()):
                 try:
                     if not claims_match(_idt[key], val):
                         mm.append(key)
@@ -838,7 +838,7 @@ class VerifyClaims(Error):
 
                 self._message = msg
                 self._status = WARNING
-                return {"returned claims": _idt.keys(),
+                return {"returned claims": list(_idt.keys()),
                         "required claims": claims}
 
         return {}
@@ -890,7 +890,7 @@ class VerifyIDToken(CriticalError):
                 continue
 
             idtoken = _idt
-            for key, val in idtoken_claims.items():
+            for key, val in list(idtoken_claims.items()):
                 if key == "max_age":
                     if idtoken["exp"] > (time_util.utc_time_sans_frac() + val):
                         self._status = self.status
@@ -921,7 +921,7 @@ class VerifyIDToken(CriticalError):
                         break
                     else:
                         _val = idtoken[key]
-                        if isinstance(_val, basestring):
+                        if isinstance(_val, str):
                             if _val not in val["values"]:
                                 self._status = self.status
                                 self._message = "Wrong value on '%s'" % key
@@ -961,7 +961,7 @@ class UnpackAggregatedClaims(Error):
 
         try:
             _client.unpack_aggregated_claims(resp)
-        except Exception, err:
+        except Exception as err:
             self._message = "Unable to unpack aggregated claims: %s" % err
             self._status = self.status
 
@@ -1121,7 +1121,7 @@ class VerifyRedirectUriQueryComponent(Error):
         except AttributeError:
             # If code flow
             try:
-                for key, vals in self._kwargs.items():
+                for key, vals in list(self._kwargs.items()):
                     assert item[key] == vals
             except (AssertionError, KeyError):
                 self._message = "Query component that was part of the " \
@@ -1129,9 +1129,9 @@ class VerifyRedirectUriQueryComponent(Error):
                 self._status = self.status
         else:
             # If implicit or hybrid
-            qd = urlparse.parse_qs(qc)
+            qd = urllib.parse.parse_qs(qc)
             try:
-                for key, val in self._kwargs.items():
+                for key, val in list(self._kwargs.items()):
                     assert qd[key] == [val]
             except (AssertionError, KeyError):
                 self._message = "Query component that was part of the " \
@@ -1270,7 +1270,7 @@ class VerifyUserInfo(Error):
 
         response, msg = conv.protocol_response[-1]
         try:
-            for key, val in claims.items():
+            for key, val in list(claims.items()):
                 if val == OPTIONAL:
                     continue
                 elif val == REQUIRED:
@@ -1448,7 +1448,7 @@ class VerifyImplicitResponse(Error):
     msg = "Expected response in fragment"
 
     def _func(self, conv):
-        _part = urlparse.urlparse(conv.info)
+        _part = urllib.parse.urlparse(conv.info)
         # first verify there is a fragment
         try:
             assert _part.fragment
@@ -1551,7 +1551,7 @@ class VerfyMTIEncSigAlgorithms(Information):
         _pi = get_provider_info(conv)
 
         missing = []
-        for key, algs in MTI.items():
+        for key, algs in list(MTI.items()):
             for alg in algs:
                 try:
                     assert alg in _pi[key]
@@ -1655,7 +1655,7 @@ class VerifyOPEndpointsUseHTTPS(Information):
 
     def _func(self, conv):
         _pi = get_provider_info(conv)
-        for param, val in _pi.items():
+        for param, val in list(_pi.items()):
             if param.endswith("_endpoint"):
                 try:
                     assert val.startswith("https://")
@@ -2207,7 +2207,7 @@ class CheckQueryPart(Error):
     def _func(self, conv):
         (inst, msg) = get_protocol_response(conv, AuthorizationResponse)[0]
 
-        for key, val in self._kwargs.items():
+        for key, val in list(self._kwargs.items()):
             try:
                 assert inst[key] == val
             except AssertionError:
@@ -2318,7 +2318,7 @@ class ValidCode(Error):
     cid = "valid_code"
 
     def _func(self, conv):
-        _grants = conv.client.grant.keys()
+        _grants = list(conv.client.grant.keys())
         try:
             assert len(_grants) == 1
             assert conv.client.grant[_grants[0]].is_valid()
@@ -2349,4 +2349,4 @@ def factory(cid, classes=CLASS_CACHE):
 
 if __name__ == "__main__":
     chk = factory("check-http-response")
-    print chk
+    print(chk)

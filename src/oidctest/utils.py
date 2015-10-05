@@ -1,7 +1,7 @@
 import logging
 import os
 import tarfile
-from urllib import quote_plus
+from urllib.parse import quote_plus
 
 from oic.utils.time_util import in_a_while
 

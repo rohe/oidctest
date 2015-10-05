@@ -22,26 +22,26 @@ from oidctest.oper import RotateEncKeys
 from oidctest.testfunc import set_request_args
 from oidctest.testfunc import set_op_args
 
-from func import set_webfinger_resource, request_in_file
-from func import specific_acr_claims
-from func import sub_claims
-from func import multiple_return_uris
-from func import redirect_uris_with_query_component
-from func import redirect_uris_with_fragment
-from func import login_hint
-from func import ui_locales
-from func import claims_locales
-from func import acr_value
-from func import set_expect_error
-from func import id_token_hint
-from func import set_principal
-from func import set_uri
-from func import static_jwk
-from func import store_sector_redirect_uris
-from func import redirect_uri_with_query_component
-from func import set_response_where
-from func import check_support
-from func import set_discovery_issuer
+from .func import set_webfinger_resource, request_in_file
+from .func import specific_acr_claims
+from .func import sub_claims
+from .func import multiple_return_uris
+from .func import redirect_uris_with_query_component
+from .func import redirect_uris_with_fragment
+from .func import login_hint
+from .func import ui_locales
+from .func import claims_locales
+from .func import acr_value
+from .func import set_expect_error
+from .func import id_token_hint
+from .func import set_principal
+from .func import set_uri
+from .func import static_jwk
+from .func import store_sector_redirect_uris
+from .func import redirect_uri_with_query_component
+from .func import set_response_where
+from .func import check_support
+from .func import set_discovery_issuer
 
 __author__ = 'roland'
 

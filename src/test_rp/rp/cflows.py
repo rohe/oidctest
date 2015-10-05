@@ -1,5 +1,7 @@
 from jwkest import BadSignature
-from oic.exception import IssuerMismatch, PyoidcError, NotForMe
+from oic.exception import IssuerMismatch
+from oic.exception import PyoidcError
+from oic.exception import NotForMe
 from oic.oauth2.message import MissingRequiredAttribute
 from oic.oic.message import AtHashError, CHashError
 
@@ -13,15 +15,17 @@ from oidctest.oper import AccessToken
 from oidctest.oper import Discovery
 from oidctest.oper import Registration
 from oidctest.oper import SyncAuthn
-from oidctest.testfunc import resource, conditional_expect_exception
+from oidctest.testfunc import resource
+from oidctest.testfunc import conditional_expect_exception
 from oidctest.testfunc import set_jwks_uri
 from oidctest.testfunc import set_op_args
 from oidctest.testfunc import expect_exception
 from oidctest.testfunc import set_request_args
+from oidctest.testfunc import skip_operation
 
-from cl.func import set_webfinger_resource, set_discovery_issuer, \
-    set_expect_error
-#from oidctest.testfunc import conditional_expect_exception
+from cl.func import set_webfinger_resource
+from cl.func import set_discovery_issuer
+from cl.func import set_expect_error
 
 __author__ = 'roland'
 
@@ -92,8 +96,10 @@ FLOWS = {
         ],
         "profile": "..T.",
         "desc": "Retrieve openid-configuration information for OpenID "
-                "Provider from the .well-known/openid-configuration path. Verify that"
-                "the issuer in the openid-configuration matches the one returned by"
+                "Provider from the .well-known/openid-configuration path. "
+                "Verify that"
+                "the issuer in the openid-configuration matches the one "
+                "returned by"
                 "WebFinger"
     },
     "rp-registration-dynamic": {
@@ -123,16 +129,16 @@ FLOWS = {
             (Discovery, {set_discovery_issuer: {}}),
             (Registration, {
                 set_request_args: {
-                 "redirect_uris": ["http://test.com"],
-                 "initiate_login_uri": "http://test.com",
-                 "jwks_uri": "http://test.com"
+                    "redirect_uris": ["http://test.com"],
+                    "initiate_login_uri": "http://test.com",
+                    "jwks_uri": "http://test.com"
                 },
                 expect_exception: PyoidcError
             }),
         ],
         "profile": "...T",
         "desc": "Sends endpoints which does not use https. Should be rejected "
-        "by the OP."
+                "by the OP."
     },
     "rp-registration-well_formed_jwk": {
         "sequence": [
@@ -310,8 +316,10 @@ FLOWS = {
 
         ],
         "profile": "...T",
-        "desc": "Tests if the Relying Party can identify and reject an ID Token with an invalid signature. "
-                "The ID Token has been signed using the asymmetric algorithm RS256. For more information "
+        "desc": "Tests if the Relying Party can identify and reject an ID "
+                "Token with an invalid signature. "
+                "The ID Token has been signed using the asymmetric algorithm "
+                "RS256. For more information "
                 "see list item 6 in ID Token validation"
     },
     "rp-id_token-bad_es256_sig": {
@@ -339,7 +347,8 @@ FLOWS = {
             }}),
         ],
         "profile": "...T",
-        "desc": "The Relying Party should reject invalid asymmetric ID Token signature which has been "
+        "desc": "The Relying Party should reject invalid asymmetric ID Token "
+                "signature which has been "
                 "signed using the algorithm ES256"
     },
     "rp-id_token-bad_symmetric_sig_hs256": {
@@ -367,8 +376,10 @@ FLOWS = {
             }}),
         ],
         "profile": "...T",
-        "desc": "Tests if the Relying Party can identify and reject an ID Token with an invalid signature. "
-                "The ID Token has been signed using the symmetric algorithm HS256. For more information see "
+        "desc": "Tests if the Relying Party can identify and reject an ID "
+                "Token with an invalid signature. "
+                "The ID Token has been signed using the symmetric algorithm "
+                "HS256. For more information see "
                 "list item 6 in ID Token validation"
     },
     "rp-id_token-sig+enc": {
@@ -436,7 +447,7 @@ FLOWS = {
                 "'claims' request parameter. The claim should be returned in "
                 "an ID Token"
     },
-    #"rp-claims_request-request_userinfo": {
+    # "rp-claims_request-request_userinfo": {
     "rp-claims_request-userinfo_claims": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
@@ -607,7 +618,9 @@ FLOWS = {
             (SyncAuthn, {expect_exception: PyoidcError})
         ],
         "profile": "I,IT,CI,CIT...",
-        "desc": "If a nonce value was sent in the Authentication Request the Relying Party must validate the nonce returned in the ID Token."
+        "desc": "If a nonce value was sent in the Authentication Request the "
+                "Relying Party must validate the nonce returned in the ID "
+                "Token."
     },
     "rp-nonce-unless_code_flow": {
         "sequence": [
@@ -617,9 +630,12 @@ FLOWS = {
             (SyncAuthn, {set_request_args: {"nonce": None}})
         ],
         "profile": "I,IT,CI,CIT...",
-        "desc": "The Relying Party should always send a nonce as a request parameter while using implicit or hybrid flow. "
-                "Since the server is suppose to return the nonce in the ID Token return from Authorization Endpoint, "
-                "see ID Token required claims in hybrid flow or implicit flow. When using Code flow the the nonce is not "
+        "desc": "The Relying Party should always send a nonce as a request "
+                "parameter while using implicit or hybrid flow. "
+                "Since the server is suppose to return the nonce in the ID "
+                "Token return from Authorization Endpoint, "
+                "see ID Token required claims in hybrid flow or implicit "
+                "flow. When using Code flow the the nonce is not "
                 "required, see ID Token validation for code flow"
     },
     "rp-request_uri-enc": {
@@ -628,15 +644,20 @@ FLOWS = {
             (Discovery, {set_discovery_issuer: {}}),
             Registration,
             (SyncAuthn, {set_op_args: {"request_method": "file",
-                                       "request_object_encryption_alg": "RSA1_5",
-                                       "request_object_encryption_enc": "A128CBC-HS256",
+                                       "request_object_encryption_alg":
+                                           "RSA1_5",
+                                       "request_object_encryption_enc":
+                                           "A128CBC-HS256",
                                        "local_dir": "./request_objects",
-                                       "base_path": "https://localhost:8088/request_objects/"
+                                       "base_path":
+                                           "https://localhost:8088/request_objects/"
                                        }})
         ],
         "profile": "...",
-        "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
-                "Encrypt the Request Object using RSA1_5 and A128CBC-HS256 algorithms"
+        "desc": "The Relying Party can pass a Request Object by reference "
+                "using the request_uri parameter. "
+                "Encrypt the Request Object using RSA1_5 and A128CBC-HS256 "
+                "algorithms"
     },
     "rp-request_uri-sig": {
         "sequence": [
@@ -646,10 +667,12 @@ FLOWS = {
             (SyncAuthn, {set_op_args: {"request_method": "file",
                                        "request_object_signing_alg": "RS256",
                                        "local_dir": "./request_objects",
-                                       "base_path": "https://localhost:8088/request_objects/"}})
+                                       "base_path":
+                                           "https://localhost:8088/request_objects/"}})
         ],
         "profile": "...",
-        "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
+        "desc": "The Relying Party can pass a Request Object by reference "
+                "using the request_uri parameter. "
                 "Sign the Request Object using the RS256 algorithm"
     },
     "rp-request_uri-sig+enc": {
@@ -659,14 +682,19 @@ FLOWS = {
             (Registration, {set_jwks_uri: None}),
             (SyncAuthn, {set_op_args: {"request_method": "file",
                                        "request_object_signing_alg": "RS256",
-                                       "request_object_encryption_alg": "RSA1_5",
-                                       "request_object_encryption_enc": "A128CBC-HS256",
+                                       "request_object_encryption_alg":
+                                           "RSA1_5",
+                                       "request_object_encryption_enc":
+                                           "A128CBC-HS256",
                                        "local_dir": "./request_objects",
-                                       "base_path": "https://localhost:8088/request_objects/"}})
+                                       "base_path":
+                                           "https://localhost:8088/request_objects/"}})
         ],
         "profile": "...",
-        "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
-                "Encrypt the Request Object using RSA1_5 and A128CBC-HS256 algorithms and sign it using RS256 algorithm"
+        "desc": "The Relying Party can pass a Request Object by reference "
+                "using the request_uri parameter. "
+                "Encrypt the Request Object using RSA1_5 and A128CBC-HS256 "
+                "algorithms and sign it using RS256 algorithm"
     },
     "rp-request_uri-unsigned": {
         "sequence": [
@@ -675,13 +703,17 @@ FLOWS = {
             Registration,
             (SyncAuthn, {set_op_args: {"request_method": "file",
                                        "request_object_signing_alg": None,
-                                       "request_object_encryption_alg": "RSA1_5",
-                                       "request_object_encryption_enc": "A128CBC-HS256",
+                                       "request_object_encryption_alg":
+                                           "RSA1_5",
+                                       "request_object_encryption_enc":
+                                           "A128CBC-HS256",
                                        "local_dir": "./request_objects",
-                                       "base_path": "https://localhost:8088/request_objects/"}})
+                                       "base_path":
+                                           "https://localhost:8088/request_objects/"}})
         ],
         "profile": "...",
-        "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
+        "desc": "The Relying Party can pass a Request Object by reference "
+                "using the request_uri parameter. "
                 "The Request Object should set 'alg' equal to 'none'"
     },
     "rp-id_token-aud": {
@@ -705,7 +737,8 @@ FLOWS = {
             }}),
         ],
         "profile": "...",
-        "desc": "The Relying Party should request an ID token and compare its aud value to Relying Party's Client ID"
+        "desc": "The Relying Party should request an ID token and compare its "
+                "aud value to Relying Party's Client ID"
     },
     "rp-id_token-bad_at_hash": {
         "sequence": [
@@ -715,8 +748,10 @@ FLOWS = {
             (SyncAuthn, {expect_exception: AtHashError})
         ],
         "profile": "IT,CIT...",
-        "desc": "Make an authentication request using response_type='id_token token' "
-                "for Implicit Flow or response_type='code id_token token' for Hybrid Flow. "
+        "desc": "Make an authentication request using response_type='id_token "
+                "token' "
+                "for Implicit Flow or response_type='code id_token token' for "
+                "Hybrid Flow. "
                 "Verify the 'at_hash' value in the returned ID Token."
     },
     "rp-id_token-iat": {
@@ -740,13 +775,17 @@ FLOWS = {
             }}),
         ],
         "profile": "...",
-        "desc": "The Relying Party should request an ID token if it does not contain a iat claim it should be rejected"
+        "desc": "The Relying Party should request an ID token if it does not "
+                "contain a iat claim it should be rejected"
     },
     "rp-id_token-mismatching_issuer": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
-            (Registration, {set_request_args: {"id_token_signed_response_alg": "HS256"}}), # TODO Need to run HS256 alg, or else badSignature error (can't find keys)
+            (Registration,
+             {set_request_args: {"id_token_signed_response_alg": "HS256"}}),
+            # TODO Need to run HS256 alg, or else badSignature error (can't
+            # find keys)
             (SyncAuthn, {conditional_expect_exception: {
                 "condition": {
                     "response_type": [["code"],
@@ -763,19 +802,23 @@ FLOWS = {
             }}),
         ],
         "profile": "...",
-        "desc": "The Relying Party should request an ID token and reject it if the issuer identifier for the "
-                "OpenID Provider isn't matching the issuer in the returned ID Token"
+        "desc": "The Relying Party should request an ID token and reject it "
+                "if the issuer identifier for the "
+                "OpenID Provider isn't matching the issuer in the returned ID "
+                "Token"
     },
     "rp-id_token-sig_none": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
-            (Registration, {set_request_args: {"id_token_signed_response_alg": "none"}}),
+            (Registration,
+             {set_request_args: {"id_token_signed_response_alg": "none"}}),
             SyncAuthn,
             AccessToken
         ],
         "profile": "C...",
-        "desc": "Tests if the Relying Party can request and use unsigned ID Tokens. Use Code flow and "
+        "desc": "Tests if the Relying Party can request and use unsigned ID "
+                "Tokens. Use Code flow and "
                 "set the 'alg' value equal to 'none'"
     },
     "rp-id_token-sub": {
@@ -799,7 +842,8 @@ FLOWS = {
             }}),
         ],
         "profile": "...",
-        "desc": "The Relying Party should request an ID token and reject it if the sub claim is missing"
+        "desc": "The Relying Party should request an ID token and reject it "
+                "if the sub claim is missing"
     },
     "rp-id_token-bad_c_hash": {
         "sequence": [
@@ -809,8 +853,10 @@ FLOWS = {
             (SyncAuthn, {expect_exception: CHashError}),
         ],
         "profile": "CI,CIT...",
-        "desc": "Tests if the Relying Party extract an c_hash from an ID token presented as json. "
-                "It should be used to validate the correctness of the authorization code"
+        "desc": "Tests if the Relying Party extract an c_hash from an ID "
+                "token presented as json. "
+                "It should be used to validate the correctness of the "
+                "authorization code"
     },
     "rp-id_token-kid_absent_multiple_jwks": {
         "sequence": [
@@ -834,7 +880,8 @@ FLOWS = {
             }}),
         ],
         "profile": "...",
-        "desc": "If there are multiple keys in the referenced JWK Set document, "
+        "desc": "If there are multiple keys in the referenced JWK Set "
+                "document, "
                 "a kid value MUST be provided in the JOSE Header"
     },
     "rp-id_token-kid_absent_single_jwks": {
@@ -928,6 +975,8 @@ FLOWS = {
                 set_jwks_uri: None
             }),
             SyncAuthn,
+            (AccessToken, {
+                skip_operation: {"flow_type": ["I", "CI", "CIT", "IT"]}}),
             (RotateKey, {set_op_args: {
                 "old_kid": "a0",
                 "new_key": {
@@ -938,7 +987,10 @@ FLOWS = {
                 "new_kid": "rotated_enc_key",
                 "jwks_path": "static/jwk.json"
             }}),
-            SyncAuthn,
+            (SyncAuthn, {
+                skip_operation: {"flow_type": ["C"]}}),
+            (AccessToken, {
+                skip_operation: {"flow_type": ["I", "CI", "CIT", "IT"]}}),
             (RestoreKeyJar, {set_op_args: {"jwks_path": "static/jwk.json"}})
         ],
         "profile": "...",

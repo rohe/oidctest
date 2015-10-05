@@ -92,7 +92,7 @@ def application(environ, start_response):
         return flow_list(environ, start_response,
                          node_dict(_flows, session["flows"]),
                          session["done"])
-    elif path in _flows.keys():
+    elif path in list(_flows.keys()):
         try:
             redirs = KW_ARGS["cinfo"]["client"]["redirect_uris"]
         except KeyError:
@@ -150,7 +150,7 @@ if __name__ == '__main__':
             _conf.SERVER_CERT, _conf.SERVER_KEY, _conf.CA_BUNDLE)
 
     logger.info("RP server starting listening on port:%s" % _conf.PORT)
-    print "RP server starting listening on port:%s" % _conf.PORT
+    print("RP server starting listening on port:%s" % _conf.PORT)
     try:
         SRV.start()
     except KeyboardInterrupt:

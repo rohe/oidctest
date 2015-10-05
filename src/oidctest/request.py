@@ -2,7 +2,7 @@ import logging
 from aatest import Break
 import requests
 import copy
-from urlparse import parse_qs
+from urllib.parse import parse_qs
 from bs4 import BeautifulSoup
 
 from oic.exception import IssuerMismatch
@@ -102,8 +102,8 @@ class SyncRequest(Request):
 
             try:
                 if "kid" not in resp["id_token"].jws_header and not resp["id_token"].jws_header["alg"] == "HS256":
-                    for key, value in self.conv.client.keyjar.issuer_keys.iteritems():
-                        if not key == "" and (len(value) > 1 or len(value[0].keys()) > 1):
+                    for key, value in self.conv.client.keyjar.issuer_keys.items():
+                        if not key == "" and (len(value) > 1 or len(list(value[0].keys())) > 1):
                             raise PyoidcError("No 'kid' in id_token header!")
 
                 if self.req_args['nonce'] != resp["id_token"]['nonce']:

@@ -1,7 +1,7 @@
 import json
 from oic import oic
 import time
-import urlparse
+import urllib.parse
 
 from Crypto.PublicKey import RSA
 from jwkest.ecc import P256
@@ -97,7 +97,7 @@ class Provider(provider.Provider):
 
     def sign_encrypt_id_token(self, sinfo, client_info, areq, code=None,
                               access_token=None, user_info=None):
-        self._update_client_keys(client_info["client_id"])
+        # self._update_client_keys(client_info["client_id"])
 
         return provider.Provider.sign_encrypt_id_token(
             self, sinfo, client_info, areq, code, access_token, user_info)
@@ -121,7 +121,7 @@ class Provider(provider.Provider):
             if not alg == "HS256":
                 found_key = None
                 for key in self.keyjar.issuer_keys[""]:
-                    issuer_key = key.keys()[0]
+                    issuer_key = list(key.keys())[0]
                     if issuer_key.use == "sig" and issuer_key.kty.startswith(
                             alg[:2]):
                         issuer_key.kid = None
@@ -131,7 +131,7 @@ class Provider(provider.Provider):
 
         if "nokidmuljwks" in self.behavior_type:
             for key in self.keyjar.issuer_keys[""]:
-                for inner_key in key.keys():
+                for inner_key in list(key.keys()):
                     inner_key.kid = None
 
         _jws = provider.Provider.id_token_as_signed_jwt(
@@ -219,7 +219,7 @@ class Provider(provider.Provider):
         return _response
 
     def authorization_endpoint(self, request="", cookie=None, **kwargs):
-        _req = urlparse.parse_qs(request)
+        _req = urllib.parse.parse_qs(request)
 
         try:
             _scope = _req["scope"]
@@ -258,6 +258,27 @@ class Provider(provider.Provider):
 
         return _response
 
+    def token_endpoint(self, request="", authn=None, dtype='urlencoded',
+                       **kwargs):
+
+        try:
+            client_id = self.client_authn(self, request, authn)
+        except Exception as err:
+            self.trace.error("Failed to verify client due to: %s" % err)
+            return self._error(error="incorrect_behavior",
+                               descr="Failed to verify client")
+
+        try:
+            self._update_client_keys(client_id)
+        except TestError:
+            return self._error(error="incorrect_behavior",
+                               descr="No change in client keys")
+
+        _response = provider.Provider.token_endpoint(self, request,
+                                                     authn, dtype, **kwargs)
+
+        return _response
+
     def generate_jwks(self, mode):
         if "rotenc" in self.behavior_type:  # Rollover encryption keys
             rsa_key = RSAKey(kid="rotated_rsa_{}".format(time.time()),
@@ -277,7 +298,7 @@ class Provider(provider.Provider):
             alg = mode["sign_alg"]
             if not alg:
                 alg = "RS256"
-            keys = [k.to_dict() for kb in self.keyjar[""] for k in kb.keys()]
+            keys = [k.to_dict() for kb in self.keyjar[""] for k in list(kb.keys())]
             for key in keys:
                 if key["use"] == "sig" and key["kty"].startswith(alg[:2]):
                     key.pop("kid", None)
@@ -286,7 +307,7 @@ class Provider(provider.Provider):
             raise Exception(
                 "Did not find sig {} key for nokid1jwk test ".format(alg))
         else:  # Return all keys
-            keys = [k.to_dict() for kb in self.keyjar[""] for k in kb.keys()]
+            keys = [k.to_dict() for kb in self.keyjar[""] for k in list(kb.keys())]
             jwks = dict(keys=keys)
             return json.dumps(jwks)
 
@@ -302,7 +323,7 @@ class Provider(provider.Provider):
                     for key in kb.available_keys():
                         if isinstance(key, SYMKey):
                             pass
-                        elif key.use == self.update_key_use :
+                        elif key.use == self.update_key_use:
                             self.init_keys.append(key)
             else:
                 for kb in self.keyjar[client_id]:
@@ -325,7 +346,7 @@ class Provider(provider.Provider):
                 else:
                     self.trace.info(
                         "{} keys changed, {} keys the same".format(
-                            len(self.init_keys)-same, same))
+                            len(self.init_keys) - same, same))
 
     def __setattr__(self, key, value):
         if key == "keys":

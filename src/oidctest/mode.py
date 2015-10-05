@@ -106,7 +106,7 @@ def setup_op(mode, com_args, op_arg, trace):
     for _authn in com_args["authn_broker"]:
         _authn.srv = op
 
-    for key, val in op_arg.items():
+    for key, val in list(op_arg.items()):
         setattr(op, key, val)
 
     _name = "jwks_{}.json".format(rndstr())

@@ -1,7 +1,8 @@
-from urlparse import urlparse
+from urllib.parse import urlparse
 from aatest.check import ERROR
 
 __author__ = 'roland'
+
 
 def resource(oper, args):
     _p = urlparse(oper.conv.conf.ISSUER)
@@ -18,7 +19,7 @@ def conditional_expect_exception(oper, args):
     exception = args["exception"]
 
     res = True
-    for key in condition.keys():
+    for key in list(condition.keys()):
         try:
             assert oper.req_args[key] in condition[key]
         except KeyError:
@@ -45,6 +46,7 @@ def set_jwks_uri(oper, args):
 def set_op_args(oper, args):
     oper.op_args.update(args)
 
+
 def check_endpoint(oper, args):
     try:
         _ = oper.conv.client.provider_info[args]
@@ -55,9 +57,11 @@ def check_endpoint(oper, args):
              "message": "{} not in provider configuration".format(args)})
         oper.skip = True
 
+
 def cache_response(oper, arg):
     key = oper.conv.test_id
     oper.cache[key] = oper.conv.protocol_response
+
 
 def restore_response(oper, arg):
     key = oper.conv.test_id
@@ -71,3 +75,8 @@ def restore_response(oper, arg):
         oper.conv.protocol_response = oper.cache[key]
 
     del oper.cache[key]
+
+
+def skip_operation(oper, arg):
+    if oper.profile[0] in arg["flow_type"]:
+        oper.skip = True

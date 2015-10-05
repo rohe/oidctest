@@ -1,7 +1,7 @@
 import json
 import logging
 import os
-from urlparse import urlparse
+from urllib.parse import urlparse
 from Crypto.PublicKey import RSA
 from aatest import END_TAG
 from aatest import RequirementsNotMet
@@ -264,13 +264,13 @@ class RotateKey(Operation):
             kb = ec_init(key_spec)
 
         # add new key to keyjar with
-        kb.keys()[0].kid = self.op_args["new_kid"]
+        list(kb.keys())[0].kid = self.op_args["new_kid"]
         keyjar.add_kb("", kb)
 
         # make jwks and update file
         keys = []
         for kb in keyjar[""]:
-            keys.extend([k.to_dict() for k in kb.keys() if not k.inactive_since])
+            keys.extend([k.to_dict() for k in list(kb.keys()) if not k.inactive_since])
         jwks = dict(keys=keys)
         with open(self.op_args["jwks_path"], "w") as f:
             f.write(json.dumps(jwks))
@@ -284,7 +284,7 @@ class RestoreKeyJar(Operation):
         # make jwks and update file
         keys = []
         for kb in self.conv.client.keyjar[""]:
-            keys.extend([k.to_dict() for k in kb.keys()])
+            keys.extend([k.to_dict() for k in list(kb.keys())])
         jwks = dict(keys=keys)
         with open(self.op_args["jwks_path"], "w") as f:
             f.write(json.dumps(jwks))
@@ -328,7 +328,7 @@ class RotateKeys(Operation):
         r = urlparse(_uri)
         # find the old key for this key usage and mark that as inactive
         for kb in self.conv.client.keyjar.issuer_keys[""]:
-            for key in kb.keys():
+            for key in list(kb.keys()):
                 if key.use in self.new_key["use"]:
                     key.inactive = True
 
@@ -344,7 +344,7 @@ class RotateKeys(Operation):
         else:
             kb = {}
 
-        for k in kb.keys():
+        for k in list(kb.keys()):
             k.serialize()
             k.kid = self.kid_template % kid
             kid += 1

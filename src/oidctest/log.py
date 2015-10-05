@@ -1,6 +1,6 @@
 import os
 import logging
-from urllib import unquote
+from urllib.parse import unquote
 from aatest import exception_trace, Break
 from aatest.check import ERROR
 from aatest.check import WARNING
@@ -162,7 +162,7 @@ class WebLog(Log):
 
         if "conv" in session:
             if err:
-                if isinstance(err, basestring):
+                if isinstance(err, str):
                     pass
                 else:
                     session["conv"].trace.error("%s:%s" % (

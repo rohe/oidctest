@@ -1,6 +1,6 @@
 import json
-from urllib import urlencode
-from urlparse import urlparse
+from urllib.parse import urlencode
+from urllib.parse import urlparse
 from aatest import ConfigurationError
 from oidctest.tool import get_redirect_uris
 from oidctest.check import get_id_tokens
@@ -33,8 +33,8 @@ def set_response_where(oper, args):
 
 def check_support(oper, args):
     # args = { level : kwargs }
-    for level, kwargs in args.items():
-        for key, val in kwargs.items():
+    for level, kwargs in list(args.items()):
+        for key, val in list(kwargs.items()):
             try:
                 assert val in oper.conv.client.provider_info[key]
             except AssertionError:
@@ -207,7 +207,7 @@ def redirect_uris_with_query_component(oper, kwargs):
 
 def redirect_uris_with_fragment(oper, kwargs):
     ru = get_redirect_uris(oper.conv)[0]
-    ru += "#" + ".".join(["%s%s" % (x, y) for x,y in kwargs.items()])
+    ru += "#" + ".".join(["%s%s" % (x, y) for x,y in list(kwargs.items())])
     oper.req_args["redirect_uris"] = ru
 
 

@@ -6,7 +6,7 @@ import os
 import sys
 import time
 
-from urlparse import urlparse
+from urllib.parse import urlparse
 import aatest
 
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
@@ -127,14 +127,14 @@ def make_client(**kw_args):
     except KeyError:
         pass
     else:
-        for arg, val in _cli_info.items():
+        for arg, val in list(_cli_info.items()):
             setattr(_cli, arg, val)
 
     return _cli
 
 
 def make_list(flows, profile, **kw_args):
-    f_names = flows.keys()
+    f_names = list(flows.keys())
     f_names.sort()
     flow_names = []
     for k in kw_args["orddesc"]:
@@ -157,7 +157,7 @@ def node_dict(flows, lst):
 
 
 def run_flow(profiles, conv, test_id, conf, profile, chk_factory, index=0):
-    print("=="+test_id)
+    print(("=="+test_id))
     conv.test_id = test_id
     conv.conf = conf
 

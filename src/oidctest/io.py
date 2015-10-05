@@ -1,6 +1,6 @@
 import logging
 import os
-from urlparse import unquote
+from urllib.parse import unquote
 from aatest import exception_trace
 from aatest import Break
 
@@ -98,7 +98,7 @@ class WebIO(IO):
         argv = {
             "flows": session["tests"],
             "profile": session["profile"],
-            "test_info": session["test_info"].keys(),
+            "test_info": list(session["test_info"].keys()),
             "base": self.conf.BASE,
             "headlines": self.desc,
             "testresults": TEST_RESULTS
@@ -288,7 +288,7 @@ class WebIO(IO):
 
         if "conv" in session:
             if err:
-                if isinstance(err, basestring):
+                if isinstance(err, str):
                     pass
                 else:
                     session["conv"].trace.error("%s:%s" % (
@@ -383,7 +383,7 @@ class ClIO(IO):
             "trace": _conv.trace
         }
         _state = evaluate(session, info)
-        print "{} {}".format(SIGN[_state], session["node"].name)
+        print("{} {}".format(SIGN[_state], session["node"].name))
 
     def err_response(self, session, where, err):
         if err:

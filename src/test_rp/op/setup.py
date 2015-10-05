@@ -30,7 +30,7 @@ def main_setup(args, lookup):
 
     ac = AuthnBroker()
 
-    for authkey, value in config.AUTHENTICATION.items():
+    for authkey, value in list(config.AUTHENTICATION.items()):
         authn = None
         # if "UserPassword" == authkey:
         #     from oic.utils.authn.user import UsernamePasswordMako

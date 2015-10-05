@@ -1,11 +1,16 @@
 import logging
 import os
-from urlparse import urlparse, parse_qs
-from oic.utils.http_util import extract_from_request, Response, Unauthorized, \
-    NotFound
+
+from urllib.parse import parse_qs, urlparse
+
+from oic.utils.http_util import extract_from_request
+from oic.utils.http_util import Response
+from oic.utils.http_util import Unauthorized
+from oic.utils.http_util import NotFound
 from oic.utils.http_util import ServiceError
 from oic.utils.http_util import BadRequest
-from oic.utils.webfinger import OIC_ISSUER, WebFinger
+from oic.utils.webfinger import OIC_ISSUER
+from oic.utils.webfinger import WebFinger
 
 import pathmap
 
@@ -327,4 +332,4 @@ def add_endpoints(extra):
     global URLS
 
     for endp in extra:
-        URLS.append(("^%s" % endp.etype, endp))
+        URLS.append(("^%s" % endp.etype, endp.func))

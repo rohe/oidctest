@@ -1,5 +1,5 @@
 import logging
-from urlparse import parse_qs
+from urllib.parse import parse_qs
 from oic.utils.http_util import Redirect, Response
 from oic.utils.http_util import get_post
 

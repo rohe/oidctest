@@ -7,7 +7,7 @@ import os
 import argparse
 import sys
 
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 from oic.utils.authn.client import BearerHeader
 from oic.utils.keyio import build_keyjar
@@ -29,7 +29,7 @@ logger = logging.getLogger("")
 
 def get_claims(client):
     resp = {}
-    for src in client.userinfo["_claim_names"].values():
+    for src in list(client.userinfo["_claim_names"].values()):
         spec = client.userinfo["_claim_sources"][src]
         ht_args = BearerHeader(client).construct(**spec)
 
@@ -85,7 +85,7 @@ def run_one(test_id, flows, profile, profiles, **kw_args):
                  profile, kw_args["check_factory"])
     except Exception as err:
         exception_trace("", err, logger)
-        print conversation.trace
+        print(conversation.trace)
 
 
 def main(flows, profile, profiles, **kw_args):
@@ -109,7 +109,7 @@ def main(flows, profile, profiles, **kw_args):
                      profile, kw_args["check_factory"])
         except Exception as err:
             exception_trace("", err, logger)
-            print conversation.trace
+            print(conversation.trace)
 
 
 if __name__ == '__main__':

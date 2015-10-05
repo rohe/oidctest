@@ -18,7 +18,7 @@ def inputs(form_args):
     Creates list of input elements
     """
     element = ""
-    for name, value in form_args.items():
+    for name, value in list(form_args.items()):
         element += "<input type=\"hidden\" name=\"%s\" value=\"%s\"/>" % (name,
                                                                           value)
     return element
@@ -31,11 +31,11 @@ def render_body(context,**pageargs):
         action = context.get('action', UNDEFINED)
         form_args = context.get('form_args', UNDEFINED)
         __M_writer = context.writer()
-        __M_writer(u'\n\n<html>\n  <head>\n    <title>Submit This Form</title>\n  </head>\n  <body onload="javascript:document.forms[0].submit()">\n    <form method="post" action=')
-        __M_writer(unicode(action))
-        __M_writer(u'>\n        ')
-        __M_writer(unicode(inputs(form_args)))
-        __M_writer(u'\n    </form>\n  </body>\n</html>\n')
+        __M_writer('\n\n<html>\n  <head>\n    <title>Submit This Form</title>\n  </head>\n  <body onload="javascript:document.forms[0].submit()">\n    <form method="post" action=')
+        __M_writer(str(action))
+        __M_writer('>\n        ')
+        __M_writer(str(inputs(form_args)))
+        __M_writer('\n    </form>\n  </body>\n</html>\n')
         return ''
     finally:
         context.caller_stack._pop_frame()

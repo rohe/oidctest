@@ -24,7 +24,7 @@ def op_choice(base, node, done):
     #    "CRITICAL":'<img src="static/red.png" alt="Red">'
     #}
 
-    keys = node.keys()
+    keys = list(node.keys())
     keys.sort()
     element = "<ul>"
     for key in keys:
@@ -43,9 +43,9 @@ def render_body(context,**pageargs):
         done = context.get('done', UNDEFINED)
         flows = context.get('flows', UNDEFINED)
         __M_writer = context.writer()
-        __M_writer(u'\n\n<!DOCTYPE html>\n\n<html>\n  <head>\n    <title>OpenID Certification RP Test</title>\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <!-- Bootstrap -->\n    <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">\n      <link href="static/style.css" rel="stylesheet" media="all">\n\n    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->\n    <!--[if lt IE 9]>\n      <script src="../../assets/js/html5shiv.js"></script>\n      <script src="../../assets/js/respond.min.js"></script>\n    <![endif]-->\n  </head>\n  <body>\n    <div class="container">\n     <!-- Main component for a primary marketing message or call to action -->\n      <div class="jumbotron">\n        <h1>RPTEST</h1>\n          <h3>Chose the next test flow you want to run from this list: </h3>\n            ')
-        __M_writer(unicode(op_choice(base, flows, done)))
-        __M_writer(u'\n      </div>\n\n    </div> <!-- /container -->\n    <!-- jQuery (necessary for Bootstrap\'s JavaScript plugins) -->\n    <script src="/static/jquery.min.1.9.1.js"></script>\n    <!-- Include all compiled plugins (below), or include individual files as needed -->\n    <script src="/static/bootstrap/js/bootstrap.min.js"></script>\n\n  </body>\n</html>')
+        __M_writer('\n\n<!DOCTYPE html>\n\n<html>\n  <head>\n    <title>OpenID Certification RP Test</title>\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <!-- Bootstrap -->\n    <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">\n      <link href="static/style.css" rel="stylesheet" media="all">\n\n    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->\n    <!--[if lt IE 9]>\n      <script src="../../assets/js/html5shiv.js"></script>\n      <script src="../../assets/js/respond.min.js"></script>\n    <![endif]-->\n  </head>\n  <body>\n    <div class="container">\n     <!-- Main component for a primary marketing message or call to action -->\n      <div class="jumbotron">\n        <h1>RPTEST</h1>\n          <h3>Chose the next test flow you want to run from this list: </h3>\n            ')
+        __M_writer(str(op_choice(base, flows, done)))
+        __M_writer('\n      </div>\n\n    </div> <!-- /container -->\n    <!-- jQuery (necessary for Bootstrap\'s JavaScript plugins) -->\n    <script src="/static/jquery.min.1.9.1.js"></script>\n    <!-- Include all compiled plugins (below), or include individual files as needed -->\n    <script src="/static/bootstrap/js/bootstrap.min.js"></script>\n\n  </body>\n</html>')
         return ''
     finally:
         context.caller_stack._pop_frame()

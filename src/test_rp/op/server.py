@@ -6,14 +6,6 @@ import sys
 import traceback
 import logging
 
-from exceptions import KeyError
-from exceptions import Exception
-from exceptions import IndexError
-from exceptions import AttributeError
-from exceptions import KeyboardInterrupt
-from urlparse import parse_qs
-from urlparse import urlparse
-
 from oic.utils.client_management import CDB
 from oic.utils.http_util import BadRequest
 from oic.utils.http_util import Response
@@ -157,7 +149,8 @@ def application(environ, start_response):
     elif path.startswith("jwks.json"):
         try:
             mode, endpoint = extract_mode(OP_ARG["baseurl"])
-            op, path = op_setup(environ, mode)
+            trace = Trace(absolut_start=True)
+            op, path = op_setup(environ, mode, trace)
             jwks = op.generate_jwks(mode)
             resp = Response(jwks,
                             headers=[('Content-Type', 'application/json')])
@@ -246,9 +239,9 @@ def application(environ, start_response):
                 return callback(environ, start_response, session_info, trace,
                                 op_arg=OP_ARG)
             except Exception as err:
-                print >> sys.stderr, "%s" % err
+                print("%s" % err)
                 message = traceback.format_exception(*sys.exc_info())
-                print >> sys.stderr, message
+                print(message)
                 LOGGER.exception("%s" % err)
                 resp = ServiceError("%s" % err)
                 return resp(environ, start_response)
@@ -266,7 +259,7 @@ if __name__ == '__main__':
     import argparse
 
     from cherrypy import wsgiserver
-    from cherrypy.wsgiserver import ssl_pyopenssl
+    from cherrypy.wsgiserver.ssl_builtin import BuiltinSSLAdapter
 
     from setup import main_setup
 
@@ -284,25 +277,15 @@ if __name__ == '__main__':
     SRV = wsgiserver.CherryPyWSGIServer(('0.0.0.0', args.port), application, )
 
     if OP_ARG["baseurl"].startswith("https"):
-        import cherrypy
-        from cherrypy.wsgiserver import ssl_pyopenssl
-        # from OpenSSL import SSL
-
-        SRV.ssl_adapter = ssl_pyopenssl.pyOpenSSLAdapter(
-            config.SERVER_CERT, config.SERVER_KEY, config.CA_BUNDLE)
-        # SRV.ssl_adapter.context = SSL.Context(SSL.SSLv23_METHOD)
-        # SRV.ssl_adapter.context.set_options(SSL.OP_NO_SSLv3)
-        try:
-            cherrypy.server.ssl_certificate_chain = config.CERT_CHAIN
-        except AttributeError:
-            pass
+        SRV.ssl_adapter = BuiltinSSLAdapter(config.SERVER_CERT,
+                                            config.SERVER_KEY)
         extra = " using SSL/TLS"
     else:
         extra = ""
 
     txt = "RP server starting listening on port:%s%s" % (args.port, extra)
     LOGGER.info(txt)
-    print txt
+    print(txt)
     try:
         SRV.start()
     except KeyboardInterrupt:

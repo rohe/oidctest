@@ -26,7 +26,7 @@ class SessionHandler(session.SessionHandler):
         logger.info("session_setup")
         if session is None:
             session = self.session
-        _keys = session.keys()
+        _keys = list(session.keys())
         for key in _keys:
             if key.startswith("_"):
                 continue
@@ -55,7 +55,7 @@ class SessionHandler(session.SessionHandler):
         if profile is None:
             profile = self.profile
 
-        f_names = self.test_flows.keys()
+        f_names = list(self.test_flows.keys())
         f_names.sort()
         session["flow_names"] = []
         for k in self.orddesc:
@@ -81,7 +81,7 @@ class SessionHandler(session.SessionHandler):
         if not session:
             session = self.session
 
-        _keys = session.keys()
+        _keys = list(session.keys())
         for key in _keys:
             if key.startswith("_"):
                 continue

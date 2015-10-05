@@ -7,7 +7,7 @@ import os
 import argparse
 import sys
 
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 from oic.utils.keyio import build_keyjar
 
@@ -48,7 +48,7 @@ def main(flows, profile, profiles, **kw_args):
                      profile, kw_args["check_factory"])
         except Exception as err:
             exception_trace("", err, logger)
-            print conversation.trace
+            print(conversation.trace)
 
 
 if __name__ == '__main__':

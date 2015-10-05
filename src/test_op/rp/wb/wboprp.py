@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-from __future__ import absolute_import
-from __future__ import print_function
+
+
 import importlib
 import json
 import os
-from urllib import quote_plus
-from urlparse import urlparse
+from urllib.parse import quote_plus
+from urllib.parse import urlparse
 import argparse
 import logging
 import sys
