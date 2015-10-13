@@ -472,14 +472,14 @@ FLOWS = {
                 "'claims' request parameter. The claim should be returned in "
                 "a UserInfo response",
     },
-    "rp-scope-contains_openid_scope": {
+    "rp-scope-without_openid_scope": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
             Registration,
             (SyncAuthn, {
                 set_request_args: {"scope": ["wrong"]},
-                set_expect_error: {"error": ["invalid_request"],
+                set_expect_error: {"error": ["incorrect_behavior"],
                                    "stop": False}}),
         ],
         "profile": "...",
@@ -869,7 +869,7 @@ FLOWS = {
                                       ["id_token", "token"],
                                       ["code", "id_token", "token"]]},
                 "exception": PyoidcError,
-                "oper": False
+                "oper": True
             }}),
             (AccessToken, {conditional_expect_exception: {
                 "condition": {
@@ -987,8 +987,7 @@ FLOWS = {
                 "new_kid": "rotated_enc_key",
                 "jwks_path": "static/jwk.json"
             }}),
-            (SyncAuthn, {
-                skip_operation: {"flow_type": ["C"]}}),
+            SyncAuthn,
             (AccessToken, {
                 skip_operation: {"flow_type": ["I", "CI", "CIT", "IT"]}}),
             (RestoreKeyJar, {set_op_args: {"jwks_path": "static/jwk.json"}})

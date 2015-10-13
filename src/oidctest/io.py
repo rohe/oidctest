@@ -1,6 +1,6 @@
 import logging
 import os
-from urllib.parse import unquote
+from six.moves.urllib.parse import unquote
 from aatest import exception_trace
 from aatest import Break
 

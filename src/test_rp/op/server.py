@@ -5,6 +5,7 @@ import re
 import sys
 import traceback
 import logging
+from future.backports.urllib.parse import parse_qs, urlparse
 
 from oic.utils.client_management import CDB
 from oic.utils.http_util import BadRequest

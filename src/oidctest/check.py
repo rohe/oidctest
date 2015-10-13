@@ -1,5 +1,9 @@
 import calendar
 import json
+import time
+
+from aatest import check
+from aatest import Unknown
 
 from jwkest import b64d
 #from jwkest import unpack
@@ -12,13 +16,10 @@ from oic.oic import OpenIDSchema
 from oic.oic import claims_match
 from oic.oic import message
 # from oic.utils.time_util import utc_time_sans_frac
-import time
 from oidctest.regalg import MTI
 from oidctest.regalg import REGISTERED_JWS_ALGORITHMS
 from oidctest.regalg import REGISTERED_JWE_alg_ALGORITHMS
 from oidctest.regalg import REGISTERED_JWE_enc_ALGORITHMS
-from aatest import check
-from aatest import Unknown
 
 from aatest.check import Check, OK, Warnings
 from aatest.check import Information
@@ -38,7 +39,9 @@ __author__ = 'rohe0002'
 
 import inspect
 import sys
-import urllib.parse
+from six.moves.urllib.parse import urlsplit
+from six.moves.urllib.parse import parse_qs
+from six.moves.urllib.parse import urlparse
 
 from oic.oic.message import SCOPE2CLAIMS
 from oic.oic.message import IdToken
@@ -709,7 +712,7 @@ class InteractionCheck(CriticalError):
     def _func(self, conv=None):
         self._status = INTERACTION
         self._message = conv.last_content
-        parts = urllib.parse.urlsplit(conv.position)
+        parts = urlsplit(conv.position)
         return {"url": "%s://%s%s" % parts[:3]}
 
 
@@ -1129,7 +1132,7 @@ class VerifyRedirectUriQueryComponent(Error):
                 self._status = self.status
         else:
             # If implicit or hybrid
-            qd = urllib.parse.parse_qs(qc)
+            qd = parse_qs(qc)
             try:
                 for key, val in list(self._kwargs.items()):
                     assert qd[key] == [val]
@@ -1448,7 +1451,7 @@ class VerifyImplicitResponse(Error):
     msg = "Expected response in fragment"
 
     def _func(self, conv):
-        _part = urllib.parse.urlparse(conv.info)
+        _part = urlparse(conv.info)
         # first verify there is a fragment
         try:
             assert _part.fragment

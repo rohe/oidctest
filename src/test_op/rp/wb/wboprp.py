@@ -4,8 +4,10 @@
 import importlib
 import json
 import os
-from urllib.parse import quote_plus
-from urllib.parse import urlparse
+from six.moves.urllib.parse import quote_plus
+from six.moves.urllib.parse import urlparse
+#from urllib.parse import quote_plus
+#from urllib.parse import urlparse
 import argparse
 import logging
 import sys

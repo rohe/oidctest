@@ -1,3 +1,4 @@
+from urlparse import urlparse
 import argparse
 import importlib
 import json
@@ -6,7 +7,7 @@ import os
 import sys
 import time
 
-from urllib.parse import urlparse
+#from urllib.parse import urlparse
 import aatest
 
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD

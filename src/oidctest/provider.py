@@ -1,14 +1,16 @@
 import json
+import urllib
+from urlparse import parse_qs
 from oic import oic
 import time
-import urllib.parse
+#import urllib.parse
 
 from Crypto.PublicKey import RSA
 from jwkest.ecc import P256
 from jwkest.jwk import RSAKey, ECKey, SYMKey
 from oic.oauth2 import Message, rndstr
 from oic.oic import provider
-from oic.oic.message import ProviderConfigurationResponse
+from oic.oic.message import ProviderConfigurationResponse, AccessTokenRequest
 from oic.oic.message import RegistrationResponse
 from oic.oic.message import RegistrationRequest
 from oic.utils.keyio import keyjar_init, KeyBundle
@@ -219,7 +221,7 @@ class Provider(provider.Provider):
         return _response
 
     def authorization_endpoint(self, request="", cookie=None, **kwargs):
-        _req = urllib.parse.parse_qs(request)
+        _req = parse_qs(request)
 
         try:
             _scope = _req["scope"]
@@ -238,23 +240,25 @@ class Provider(provider.Provider):
                 )
 
         client_id = _req["client_id"][0]
-        try:
-            self._update_client_keys(client_id)
-        except TestError:
-            return self._error(error="incorrect_behavior",
-                               descr="No change in client keys")
+        if 'id_token' in _scopes:
+            try:
+                self._update_client_keys(client_id)
+            except TestError:
+                return self._error(error="incorrect_behavior",
+                                   descr="No change in client keys")
 
         _response = provider.Provider.authorization_endpoint(self, request,
                                                              cookie, **kwargs)
 
+        # This is just for logging purposes
         try:
-            _resp = self.server.http_request(_req["request_uri"])
+            _resp = self.server.http_request(_req["request_uri"][0])
         except KeyError:
             pass
         else:
-            if _resp.response == "200 OK":
+            if _resp.status_code == 200:
                 self.trace.info(
-                    "Request from request_uri: {}".format(_resp.message))
+                    "Request from request_uri: {}".format(_resp.text))
 
         return _response
 
@@ -262,7 +266,8 @@ class Provider(provider.Provider):
                        **kwargs):
 
         try:
-            client_id = self.client_authn(self, request, authn)
+            req = AccessTokenRequest().deserialize(request, dtype)
+            client_id = self.client_authn(self, req, authn)
         except Exception as err:
             self.trace.error("Failed to verify client due to: %s" % err)
             return self._error(error="incorrect_behavior",
@@ -340,6 +345,8 @@ class Provider(provider.Provider):
                         elif key.use == self.update_key_use:
                             if key in self.init_keys:
                                 same += 1
+                            else:
+                                self.trace.info("New key: {}".format(key))
                 if same == len(self.init_keys):  # no change
                     self.trace.info("No change in keys")
                     raise TestError("Keys unchanged")

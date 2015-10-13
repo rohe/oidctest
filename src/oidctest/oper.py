@@ -1,7 +1,8 @@
 import json
 import logging
 import os
-from urllib.parse import urlparse
+#from urllib.parse import urlparse
+from urlparse import urlparse
 from Crypto.PublicKey import RSA
 from aatest import END_TAG
 from aatest import RequirementsNotMet
@@ -42,6 +43,21 @@ def include(url, test_id):
             return url
 
     return "%s://%s/%s%s_/_/_/normal" % (p.scheme, p.netloc, test_id, p.path)
+
+
+def get_id_token(responses):
+    """
+    Find the id_tokens issued, last one first in the list
+    :param responses: A list of Response instance, text message tuples
+    :return: list of IdTokens instances
+    """
+    res = []
+    for resp, txt in responses:
+        try:
+            res.insert(0, resp["id_token"])
+        except KeyError:
+            pass
+    return res
 
 
 class Webfinger(Operation):
@@ -171,6 +187,10 @@ class AccessToken(SyncPostRequest):
         atr = self.conv.client.do_access_token_request(
             request_args=self.req_args, **self.op_args)
 
+        if "error" in atr:
+            self.conv.trace.response("Access Token response: {}".format(atr))
+            return False
+
         try:
             _jws_alg = atr["id_token"].jws_header["alg"]
         except (KeyError, AttributeError):
@@ -217,10 +237,11 @@ class UserInfo(SyncGetRequest):
 
     @staticmethod
     def _verify_subject_identifier(client, user_info):
-        if client.id_token:
-            if user_info["sub"] != client.id_token["sub"]:
+        id_tokens = get_id_token(client.conv.protocol_response)
+        if id_tokens:
+            if user_info["sub"] != id_tokens[0]["sub"]:
                 msg = "user_info['sub'] != id_token['sub']: '{}!={}'".format(
-                    user_info["sub"], client.id_token["sub"])
+                    user_info["sub"], id_tokens[0]["sub"])
                 raise SubjectMismatch(msg)
         return "Subject identifier ok!"
 

@@ -1,4 +1,5 @@
-from urllib.parse import urlparse
+from six.moves.urllib.parse import urlparse
+#from urllib.parse import urlparse
 from aatest.check import ERROR
 
 __author__ = 'roland'

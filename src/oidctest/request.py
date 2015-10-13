@@ -2,15 +2,16 @@ import logging
 from aatest import Break
 import requests
 import copy
-from urllib.parse import parse_qs
+from six.moves.urllib.parse import parse_qs
+# from urllib.parse import parse_qs
 from bs4 import BeautifulSoup
 
 from oic.exception import IssuerMismatch
 from oic.exception import PyoidcError
 from requests.models import Response
-from oic.oauth2.util import URL_ENCODED
 from oic.oauth2 import ErrorResponse
 from oic.oauth2 import ResponseError
+from oic.oauth2.util import URL_ENCODED
 from oic.utils.http_util import Redirect
 from oic.utils.http_util import get_post
 from oic.utils.time_util import utc_time_sans_frac
@@ -32,7 +33,13 @@ class ParameterError(Exception):
 
 class Request(Operation):
     def expected_error_response(self, response):
+        if isinstance(response, Response):  # requests response
+            response = ErrorResponse().from_json(response.content)
+
         if isinstance(response, ErrorResponse):
+            if response["error"] not in self.expect_error["error"]:
+                raise Break("Wrong error, got {} expected {}".format(
+                    response["error"], self.expect_error["error"]))
             if self.expect_error["stop"]:
                 raise Break("Stop requested after received expected error")
         else:
@@ -99,24 +106,35 @@ class SyncRequest(Request):
             resp = r
 
         if not isinstance(resp, Response):
-
             try:
-                if "kid" not in resp["id_token"].jws_header and not resp["id_token"].jws_header["alg"] == "HS256":
-                    for key, value in self.conv.client.keyjar.issuer_keys.items():
-                        if not key == "" and (len(value) > 1 or len(list(value[0].keys())) > 1):
-                            raise PyoidcError("No 'kid' in id_token header!")
+                try:
+                    _id_token = resp["id_token"]
+                except KeyError:
+                    pass
+                else:
+                    if "kid" not in _id_token.jws_header and not \
+                                    _id_token.jws_header["alg"] == "HS256":
+                        for key, value in \
+                                self.conv.client.keyjar.issuer_keys.items():
+                            if not key == "" and (len(value) > 1 or len(
+                                    list(value[0].keys())) > 1):
+                                raise PyoidcError(
+                                    "No 'kid' in id_token header!")
 
-                if self.req_args['nonce'] != resp["id_token"]['nonce']:
-                    raise PyoidcError("invalid nonce! {} != {}".format(self.req_args['nonce'], resp["id_token"]['nonce']))
+                    if self.req_args['nonce'] != _id_token['nonce']:
+                        raise PyoidcError(
+                            "invalid nonce! {} != {}".format(
+                                self.req_args['nonce'], _id_token['nonce']))
+
+                    if not same_issuer(self.conv.info["issuer"],
+                                       _id_token["iss"]):
+                        raise IssuerMismatch(
+                            " {} != {}".format(self.conv.info["issuer"],
+                                               _id_token["iss"]))
+                    self.conv.client.id_token = _id_token
             except KeyError:
                 pass
 
-            try:
-                if not same_issuer(self.conv.info["issuer"], resp["id_token"]["iss"]):
-                    raise IssuerMismatch(" {} != {}".format(self.conv.info["issuer"], resp["id_token"]["iss"]))
-                self.conv.client.id_token = resp["id_token"]
-            except KeyError:
-                pass
 
         return resp
 
@@ -142,7 +160,8 @@ class SyncRequest(Request):
             self.conv.trace.request("BODY: {}".format(body))
         response_msg = self.do_request(_client, url, body, http_args)
 
-        response = self.catch_exception(self.handle_response, r=response_msg, csi=csi)
+        response = self.catch_exception(self.handle_response, r=response_msg,
+                                        csi=csi)
         self.conv.trace.response(response)
         self.sequence.append((response, response_msg.text))
 

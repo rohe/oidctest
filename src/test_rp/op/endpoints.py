@@ -1,7 +1,7 @@
 import logging
 import os
 
-from urllib.parse import parse_qs, urlparse
+from six.moves.urllib.parse import parse_qs, urlparse
 
 from oic.utils.http_util import extract_from_request
 from oic.utils.http_util import Response

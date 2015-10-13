@@ -19,5 +19,6 @@ def set_discovery_issuer(oper, args):
 
 def set_expect_error(oper, args):
     oper.expect_error = args
+    oper.tests['post'] = []
 
 

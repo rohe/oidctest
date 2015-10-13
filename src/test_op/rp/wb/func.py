@@ -1,6 +1,8 @@
 import json
-from urllib.parse import urlencode
-from urllib.parse import urlparse
+from six.moves.urllib.parse import urlencode
+from six.moves.urllib.parse import urlparse
+#from urllib.parse import urlencode
+#from urllib.parse import urlparse
 from aatest import ConfigurationError
 from oidctest.tool import get_redirect_uris
 from oidctest.check import get_id_tokens

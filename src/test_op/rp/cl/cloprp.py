@@ -7,7 +7,8 @@ import os
 import argparse
 import sys
 
-from urllib.parse import urlparse
+from six.moves.urllib.parse import urlparse
+#from urllib.parse import urlparse
 
 from oic.utils.authn.client import BearerHeader
 from oic.utils.keyio import build_keyjar

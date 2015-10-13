@@ -71,6 +71,7 @@ IDMAP = {
     # scope Request Parameter
     "rp-scope-contains_openid_scope": "/_/_/openid/normal",
     "rp-scope-userinfo_claims": NORMAL,
+    "rp-scope-without_openid_scope": "/_/_/openid/normal",
 
     # Key Rollover
     "rp-key_rotation-op_sign_key": "/_/_/rotsig/normal",

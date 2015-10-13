@@ -1,5 +1,6 @@
 import logging
-from urllib.parse import parse_qs
+#from urllib.parse import parse_qs
+from six.moves.urllib.parse import parse_qs
 from oic.utils.http_util import Redirect, Response
 from oic.utils.http_util import get_post
 
