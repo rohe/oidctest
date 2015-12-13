@@ -70,6 +70,7 @@ class SyncRequest(Request):
         response = client.http_request(url, method=self.method, data=body,
                                        **ht_args)
 
+        self.conv.events.store("http_response", response)
         _trace.reply("RESPONSE: %s" % response)
         _trace.reply("CONTENT: %s" % response.text)
         try:
@@ -91,7 +92,7 @@ class SyncRequest(Request):
         if 300 < r.status_code < 400:
             resp = self.conv.parse_request_response(
                 r, self.response, body_type=self.response_type,
-                state=self.conv.state, keyjar=self.conv.client.keyjar)
+                state=self.conv.state, keyjar=self.conv.entity.keyjar)
         elif r.status_code == 200:
             resp = self.response()
             if "response_mode" in csi and csi["response_mode"] == "form_post":
@@ -101,11 +102,11 @@ class SyncRequest(Request):
             else:
                 r = self.conv.intermit(r)
 
-            resp.verify(keyjar=self.conv.client.keyjar)
+            resp.verify(keyjar=self.conv.entity.keyjar)
         else:
             resp = r
 
-        if not isinstance(resp, Response):
+        if not isinstance(resp, Response):  # Not a HTTP response
             try:
                 try:
                     _id_token = resp["id_token"]
@@ -115,7 +116,7 @@ class SyncRequest(Request):
                     if "kid" not in _id_token.jws_header and not \
                                     _id_token.jws_header["alg"] == "HS256":
                         for key, value in \
-                                self.conv.client.keyjar.issuer_keys.items():
+                                self.conv.entity.keyjar.issuer_keys.items():
                             if not key == "" and (len(value) > 1 or len(
                                     list(value[0].keys())) > 1):
                                 raise PyoidcError(
@@ -131,15 +132,14 @@ class SyncRequest(Request):
                         raise IssuerMismatch(
                             " {} != {}".format(self.conv.info["issuer"],
                                                _id_token["iss"]))
-                    self.conv.client.id_token = _id_token
+                    self.conv.entity.id_token = _id_token
             except KeyError:
                 pass
-
 
         return resp
 
     def run(self):
-        _client = self.conv.client
+        _client = self.conv.entity
 
         url, body, ht_args, csi = _client.request_info(
             self.request, method=self.method, request_args=self.req_args,
@@ -158,12 +158,13 @@ class SyncRequest(Request):
         self.conv.trace.request("URL: {}".format(url))
         if body:
             self.conv.trace.request("BODY: {}".format(body))
-        response_msg = self.do_request(_client, url, body, http_args)
+        http_response = self.do_request(_client, url, body, http_args)
 
-        response = self.catch_exception(self.handle_response, r=response_msg,
+        response = self.catch_exception(self.handle_response, r=http_response,
                                         csi=csi)
         self.conv.trace.response(response)
-        self.sequence.append((response, response_msg.text))
+        self.conv.events.store('response', response)
+        #self.sequence.append((response, http_response.text))
 
         if self.expect_error:
             self.expected_error_response(response)
@@ -199,7 +200,7 @@ class AsyncRequest(Request):
             self.com = Log
 
     def run(self):
-        _client = self.conv.client
+        _client = self.conv.entity
         _trace = self.conv.trace
 
         url, body, ht_args, csi = _client.request_info(
@@ -210,7 +211,7 @@ class AsyncRequest(Request):
 
         _trace.info("redirect.url: %s" % url)
         _trace.info("redirect.header: %s" % ht_args)
-        self.conv.timestamp.append((url, utc_time_sans_frac()))
+        self.conv.events.store('url', url)
         return Redirect(str(url))
 
     def parse_response(self, path, io, message_factory):
@@ -218,7 +219,7 @@ class AsyncRequest(Request):
         _conv = self.conv
 
         if self.csi is None:
-            url, body, ht_args, csi = _conv.client.request_info(
+            url, body, ht_args, csi = _conv.entity.request_info(
                 self.request, method=self.method, request_args=self.req_args,
                 **self.op_args)
 
@@ -264,21 +265,26 @@ class AsyncRequest(Request):
             info = get_post(io.environ)
 
         logger.info("Response: %s" % info)
+
         _conv.trace.reply(info)
+        ev_index = _conv.events.store('reply', info)
+
         resp_cls = message_factory(self.response_cls)
-        algs = _conv.client.sign_enc_algs("id_token")
+        algs = _conv.entity.sign_enc_algs("id_token")
         try:
-            response = _conv.client.parse_response(
+            response = _conv.entity.parse_response(
                 resp_cls, info, _ctype,
                 self.csi["state"],
-                keyjar=_conv.client.keyjar, algs=algs)
+                keyjar=_conv.entity.keyjar, algs=algs)
         except ResponseError as err:
             return io.err_response(self.sh.session, "run_sequence", err)
         except Exception as err:
             return io.err_response(self.sh.session, "run_sequence", err)
 
         logger.info("Parsed response: %s" % response.to_dict())
+
         _conv.trace.response(response)
+        _conv.events.store('response', response, ref=ev_index)
 
         if self.expect_error:
             self.expected_error_response(response)

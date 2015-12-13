@@ -71,7 +71,7 @@ class WebLog(Log):
     def store_test_info(self, session, profile_info=None):
         _info = {
             "trace": session["conv"].trace,
-            "test_output": session["conv"].test_output,
+            "test_output": session["conv"].events.get('test_output'),
             "index": session["index"],
             "seqlen": len(session["seq_info"]["sequence"]),
             "descr": session["node"].desc
@@ -171,7 +171,7 @@ class WebLog(Log):
                 session["conv"].test_output.append(
                     {"id": "-", "status": err_type, "message": "%s" % err})
             else:
-                session["conv"].test_output.append(
+                session["conv"].events.store('test_output',
                     {"id": "-", "status": err_type,
                      "message": "Error in %s" % where})
 

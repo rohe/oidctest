@@ -99,8 +99,7 @@ FLOWS = {
                 "Provider from the .well-known/openid-configuration path. "
                 "Verify that"
                 "the issuer in the openid-configuration matches the one "
-                "returned by"
-                "WebFinger"
+                "returned by WebFinger"
     },
     "rp-registration-dynamic": {
         "sequence": [
@@ -680,15 +679,15 @@ FLOWS = {
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
             (Registration, {set_jwks_uri: None}),
-            (SyncAuthn, {set_op_args: {"request_method": "file",
-                                       "request_object_signing_alg": "RS256",
-                                       "request_object_encryption_alg":
-                                           "RSA1_5",
-                                       "request_object_encryption_enc":
-                                           "A128CBC-HS256",
-                                       "local_dir": "./request_objects",
-                                       "base_path":
-                                           "https://localhost:8088/request_objects/"}})
+            (SyncAuthn, {
+                set_op_args: {
+                    "request_method": "file",
+                    "request_object_signing_alg": "RS256",
+                    "request_object_encryption_alg": "RSA1_5",
+                    "request_object_encryption_enc": "A128CBC-HS256",
+                    "local_dir": "./request_objects",
+                    "base_path":
+                        "https://localhost:8088/request_objects/"}})
         ],
         "profile": "...",
         "desc": "The Relying Party can pass a Request Object by reference "
@@ -701,15 +700,15 @@ FLOWS = {
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
             Registration,
-            (SyncAuthn, {set_op_args: {"request_method": "file",
-                                       "request_object_signing_alg": None,
-                                       "request_object_encryption_alg":
-                                           "RSA1_5",
-                                       "request_object_encryption_enc":
-                                           "A128CBC-HS256",
-                                       "local_dir": "./request_objects",
-                                       "base_path":
-                                           "https://localhost:8088/request_objects/"}})
+            (SyncAuthn, {
+                set_op_args: {
+                    "request_method": "file",
+                    "request_object_signing_alg": None,
+                    "request_object_encryption_alg": "RSA1_5",
+                    "request_object_encryption_enc": "A128CBC-HS256",
+                    "local_dir": "./request_objects",
+                    "base_path":
+                        "https://localhost:8088/request_objects/"}})
         ],
         "profile": "...",
         "desc": "The Relying Party can pass a Request Object by reference "

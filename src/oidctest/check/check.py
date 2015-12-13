@@ -1,9 +1,4 @@
-import calendar
 import json
-import time
-
-from aatest import check
-from aatest import Unknown
 
 from jwkest import b64d
 #from jwkest import unpack
@@ -16,12 +11,15 @@ from oic.oic import OpenIDSchema
 from oic.oic import claims_match
 from oic.oic import message
 # from oic.utils.time_util import utc_time_sans_frac
+
+from oidctest.check import get_protocol_response
+
 from oidctest.regalg import MTI
 from oidctest.regalg import REGISTERED_JWS_ALGORITHMS
 from oidctest.regalg import REGISTERED_JWE_alg_ALGORITHMS
 from oidctest.regalg import REGISTERED_JWE_enc_ALGORITHMS
 
-from aatest.check import Check, OK, Warnings
+from aatest.check import Check, OK, Warnings, get_protocol_response
 from aatest.check import Information
 from aatest.check import WARNING
 from aatest.check import CONT_JSON
@@ -48,48 +46,6 @@ from oic.oic.message import IdToken
 from oic.utils import time_util
 
 
-def utc_time_sans_frac():
-    return int("%d" % calendar.timegm(time.gmtime()))
-
-
-def get_provider_info(conv):
-    _pi = conv.client.provider_info
-    if not _pi:
-        _pi = conv.provider_info
-    return _pi
-
-
-def get_protocol_response(conv, cls):
-    res = []
-    for instance, msg in conv.protocol_response:
-        if isinstance(instance, cls):
-            res.append((instance, msg))
-    return res
-
-
-def get_id_tokens(conv):
-    res = []
-    # In access token responses
-    for inst, msg in get_protocol_response(conv, message.AccessTokenResponse):
-        _dict = json.loads(msg)
-        jwt = _dict["id_token"]
-        idt = inst["id_token"]
-        res.append((idt, jwt))
-
-    # implicit, id_token in authorization response
-    for inst, msg in get_protocol_response(conv, message.AuthorizationResponse):
-        try:
-            idt = inst["id_token"]
-        except KeyError:
-            pass
-        else:
-            _info = urllib.parse.parse_qs(msg)
-            jwt = _info["id_token"][0]
-            res.append((idt, jwt))
-
-    return res
-
-
 class CmpIdtoken(Other):
     """
     Compares the JSON received as a CheckID response with my own
@@ -102,19 +58,19 @@ class CmpIdtoken(Other):
         instance, msg = get_protocol_response(conv,
                                               message.AuthorizationResponse)[0]
 
-        kj = conv.client.keyjar
+        kj = conv.entity.keyjar
         keys = {}
         for issuer in list(kj.keys()):
             keys.update(kj.get("ver", issuer=issuer))
 
         idt = IdToken().deserialize(instance["id_token"], "jwt", key=keys)
-        if idt.to_dict() == conv.protocol_response[-1][0].to_dict():
+        if idt.to_dict() == conv.events.last_item('response').to_dict():
             pass
         else:
             self._status = self.status
             res["message"] = " ".join([
                 "My deserialization of the IDToken differs from what the",
-                "checkID response"])
+                "checkID response returned"])
         return res
 
 
@@ -130,17 +86,17 @@ class VerifyPromptNoneResponse(Check):
     msg = "OP error"
 
     def _func(self, conv):
-        _response = conv.last_response
-        _content = conv.last_content
-        _client = conv.client
+        _reply, _response = conv.events.last_item('response_tuple')
+        _client = conv.entity
+
         res = {}
         if _response.status_code == 400:
-            err = ErrorResponse().deserialize(_content, "json")
+            err = ErrorResponse().deserialize(_reply, "json")
             err.verify()
+            conv.events.store('response', err)
             if err["error"] in ["consent_required", "interaction_required"]:
                 # This is OK
                 res["content"] = err.to_json()
-                conv.protocol_response.append((err, _content))
             else:
                 self._message = "Not an expected error"
                 self._status = CRITICAL
@@ -172,7 +128,8 @@ class VerifyPromptNoneResponse(Check):
                                     "login_required"]:
                     # This is OK
                     res["content"] = err.to_json()
-                    conv.protocol_response.append((err, _query))
+                    conv.events.store('response', err)
+                    conv.events.store('response_tuple', (err, _query))
                 else:
                     self._message = "Not an expected error '%s'" % err[
                         "error"]
@@ -181,7 +138,8 @@ class VerifyPromptNoneResponse(Check):
                 resp = AuthorizationResponse().deserialize(_query, "urlencoded")
                 resp.verify()
                 res["content"] = resp.to_json()
-                conv.protocol_response.append((resp, _query))
+                conv.events.store('response', resp)
+                conv.events.store('response_tuple', (resp, _query))
         else:  # should not get anything else
             self._message = "Not an expected response"
             self._status = CRITICAL
@@ -544,7 +502,7 @@ class CheckContentTypeHeader(Error):
 
     def _func(self, conv=None):
         res = {}
-        _response = conv.last_response
+        _response = conv.events.last_item('response')
         try:
             ctype = _response.headers["content-type"]
             if conv.response_spec.ctype == "json":
@@ -571,7 +529,7 @@ class CheckEndpoint(CriticalError):
     def _func(self, conv=None):
         cls = conv.req.request
         try:
-            endpoint = conv.client.request2endpoint[cls]
+            endpoint = conv.entity.request2endpoint[cls]
         except KeyError:
             pass
         else:
@@ -665,7 +623,7 @@ class LoginRequired(Error):
     cid = "login-required"
 
     def _func(self, conv=None):
-        resp = conv.last_content
+        resp = conv.events.last_item('response')
         try:
             assert resp.type() == "AuthorizationErrorResponse"
         except AssertionError:
@@ -711,7 +669,7 @@ class InteractionCheck(CriticalError):
 
     def _func(self, conv=None):
         self._status = INTERACTION
-        self._message = conv.last_content
+        self._message = conv.events.last_item('reply')
         parts = urlsplit(conv.position)
         return {"url": "%s://%s%s" % parts[:3]}
 
@@ -881,7 +839,7 @@ class VerifyIDToken(CriticalError):
         else:
             idtoken_claims = id_claims.copy()
 
-        for item, msg in conv.protocol_response:
+        for item in conv.events['response']:
             if self._status == self.status or done:
                 break
 
@@ -959,8 +917,8 @@ class UnpackAggregatedClaims(Error):
     cid = "unpack-aggregated-claims"
 
     def _func(self, conv=None):
-        resp = conv.response_message
-        _client = conv.client
+        resp = conv.events.last_item('response')
+        _client = conv.entity
 
         try:
             _client.unpack_aggregated_claims(resp)
@@ -975,8 +933,8 @@ class ChangedSecret(Error):
     cid = "changed-client-secret"
 
     def _func(self, conv=None):
-        resp = conv.response_message
-        _client = conv.client
+        resp = conv.events.last_item('response')
+        _client = conv.entity
         old_sec = _client.client_secret
 
         if old_sec == resp["client_secret"]:
@@ -1117,7 +1075,7 @@ class VerifyRedirectUriQueryComponent(Error):
     cid = "verify-redirect_uri-query_component"
 
     def _func(self, conv):
-        item, msg = conv.protocol_response[-1]
+        item = conv.events.last_item('response')
 
         try:
             qc = conv.query_component
@@ -1151,7 +1109,7 @@ class CheckKeys(CriticalError):
 
     def _func(self, conv=None):
         # cls = conv.request_spec"].request
-        client = conv.client
+        client = conv.entity
         # key type
         keys = client.keyjar.get_signing_key("rsa")
         try:
@@ -1271,7 +1229,7 @@ class VerifyUserInfo(Error):
             for param in SCOPE2CLAIMS[scope]:
                 claims[param] = REQUIRED
 
-        response, msg = conv.protocol_response[-1]
+        response = conv.events.last_item('response')
         try:
             for key, val in list(claims.items()):
                 if val == OPTIONAL:
@@ -1460,7 +1418,7 @@ class VerifyImplicitResponse(Error):
             assert _resp
             # Can't do this check since in the response_message the id_token is
             # unpacked
-            # assert _resp == conv.response_message
+            # assert _resp == conv.events.last_item('response')
         except AssertionError:
             self._status = self.status
 
@@ -1878,7 +1836,7 @@ class CheckSubConfig(Error):
 
     def _func(self, conv):
         try:
-            _ = conv.client_config["sub"]
+            _ = conv.entity_config["sub"]
         except KeyError:
             self._status = self.status
 
@@ -1962,7 +1920,7 @@ class VerifyBase64URL(Check):
 
     def _func(self, conv):
         pi = get_provider_info(conv)
-        resp = conv.client.http_request(pi["jwks_uri"], verify=False,
+        resp = conv.entity.http_request(pi["jwks_uri"], verify=False,
                                         allow_redirects=True)
 
         try:
@@ -2010,7 +1968,7 @@ class DiscoveryConfig(Error):
 
     def _func(self, conv):
         try:
-            conv.client_config["srv_discovery_url"]
+            conv.entity_config["srv_discovery_url"]
         except KeyError:
             self._status = ERROR
 
@@ -2175,7 +2133,7 @@ class BareKeys(Information):
 
     def _func(self, conv):
         pi = get_provider_info(conv)
-        resp = conv.client.http_request(pi["jwks_uri"], verify=False,
+        resp = conv.entity.http_request(pi["jwks_uri"], verify=False,
                                         allow_redirects=True)
 
         if resp.status_code == 200:
@@ -2265,7 +2223,7 @@ class VerifyScopes(Warnings):
 def request_times(conv, endpoint):
     res = []
 
-    where = conv.client.provider_info[endpoint]
+    where = conv.entity.provider_info[endpoint]
 
     for url, when in conv.timestamp:
         if url.startswith(where):
@@ -2321,33 +2279,27 @@ class ValidCode(Error):
     cid = "valid_code"
 
     def _func(self, conv):
-        _grants = list(conv.client.grant.keys())
+        _grants = list(conv.entity.grant.keys())
         try:
             assert len(_grants) == 1
-            assert conv.client.grant[_grants[0]].is_valid()
+            assert conv.entity.grant[_grants[0]].is_valid()
         except AssertionError:
             self._status = ERROR
             self._message = "No valid access code"
 
         return {}
 
-CLASS_CACHE = {}
 
+def factory(cid):
+    for name, obj in inspect.getmembers(sys.modules[__name__]):
+        if inspect.isclass(obj) and issubclass(obj, Check):
+            try:
+                if obj.cid == cid:
+                    return obj
+            except AttributeError:
+                pass
 
-def factory(cid, classes=CLASS_CACHE):
-    if len(classes) == 0:
-        check.factory(cid, classes)
-        for name, obj in inspect.getmembers(sys.modules[__name__]):
-            if inspect.isclass(obj):
-                try:
-                    classes[obj.cid] = obj
-                except AttributeError:
-                    pass
-
-    if cid in classes:
-        return classes[cid]
-    else:
-        raise Unknown("Couldn't find the check: '%s'" % cid)
+    return None
 
 
 if __name__ == "__main__":

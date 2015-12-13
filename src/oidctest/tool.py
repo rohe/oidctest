@@ -1,17 +1,22 @@
 import logging
-#from urllib.parse import parse_qs
 from six.moves.urllib.parse import parse_qs
-from oic.utils.http_util import Redirect, Response
-from oic.utils.http_util import get_post
 
-from aatest import exception_trace, END_TAG, Break
+from aatest import exception_trace
+from aatest import END_TAG
+from aatest import Break
 from aatest.conversation import Conversation
 from aatest.verify import Verify
+from aatest.session import Done
+
+from oic.utils.http_util import Redirect
+from oic.utils.http_util import Response
+from oic.utils.http_util import get_post
+
 from oidctest import CRYPTSUPPORT
 
 from oidctest.common import make_client, Trace
-from oidctest.oper import Done
 from oidctest.prof_util import map_prof
+from oidctest.utils import get_check
 
 __author__ = 'roland'
 
@@ -25,18 +30,18 @@ def get_redirect_uris(cinfo):
 
 
 class Tester(object):
-    def __init__(self, io, sh, profiles, profile, flows, check_factory,
-                 msg_factory, cache, **kwargs):
+    def __init__(self, io, sh, profiles, profile, flows,
+                 msg_factory=None, cache=None, **kwargs):
         self.io = io
         self.sh = sh
         self.profiles = profiles
         self.profile = profile
         self.flows = flows
+        self.check_factory = get_check
         self.message_factory = msg_factory
-        self.conv = None
-        self.chk_factory = check_factory
         self.cache = cache
         self.kwargs = kwargs
+        self.conv = None
 
     def match_profile(self, test_id):
         _spec = self.flows[test_id]
@@ -92,7 +97,7 @@ class Tester(object):
             try:
                 _oper = cls(conv=self.conv, io=self.io, sh=self.sh,
                             profile=self.profile, test_id=test_id, conf=conf,
-                            funcs=funcs, check_factory=self.chk_factory,
+                            funcs=funcs, check_factory=self.check_factory,
                             cache=self.cache)
                 self.conv.operation = _oper
                 _oper.setup(self.profiles.PROFILEMAP)
@@ -110,7 +115,7 @@ class Tester(object):
 
         try:
             if self.conv.flow["tests"]:
-                _ver = Verify(self.chk_factory, self.conv.msg_factory,
+                _ver = Verify(self.check_factory, self.conv.msg_factory,
                               self.conv)
                 _ver.test_sequence(self.conv.flow["tests"])
         except KeyError:
@@ -119,7 +124,7 @@ class Tester(object):
             raise
 
         if isinstance(_oper, Done):
-            self.conv.test_output.append(("X", END_TAG))
+            self.conv.events.store('test_output', END_TAG)
         return True
 
 
@@ -192,8 +197,8 @@ class WebTester(Tester):
 
         _flow = self.flows[test_id]
         _cli = make_client(**kw_args)
-        self.conv = Conversation(_flow, _cli, redirs, kw_args["msg_factory"],
-                                 trace_cls=Trace)
+        self.conv = Conversation(_flow, _cli, kw_args["msg_factory"],
+                                 trace_cls=Trace, callback_uris=redirs)
         _cli.conv = self.conv
         self.sh.session_setup(path=test_id)
         self.sh.session["conv"] = self.conv
@@ -207,13 +212,14 @@ class WebTester(Tester):
             return self.run_flow(test_id, kw_args["conf"])
         except Exception as err:
             exception_trace("", err, logger)
-            self.io.dump_log(self.sh.session, test_id)
+            #self.io.dump_log(self.sh.session, test_id)
             return self.io.err_response(self.sh.session, "run", err)
 
     def handle_response(self, resp, index):
         if resp:
             self.sh.session["index"] = index
             if isinstance(resp, Response):
+                self.conv.events.store('http_response', resp)
                 return resp(self.io.environ, self.io.start_response)
             else:
                 return resp
@@ -244,7 +250,7 @@ class WebTester(Tester):
                 _oper = cls(conv=self.conv, io=self.io, sh=self.sh,
                             profile=self.profile,
                             test_id=test_id, conf=conf, funcs=funcs,
-                            check_factory=self.chk_factory, cache=self.cache)
+                            check_factory=self.check_factory, cache=self.cache)
                 self.conv.operation = _oper
                 _oper.setup(self.profiles.PROFILEMAP)
                 resp = _oper()
@@ -262,7 +268,8 @@ class WebTester(Tester):
 
         try:
             if self.conv.flow["tests"]:
-                _ver = Verify(self.chk_factory, self.conv.msg_factory,
+                print(">>", self.check_factory)
+                _ver = Verify(self.check_factory, self.conv.msg_factory,
                               self.conv)
                 _ver.test_sequence(self.conv.flow["tests"])
         except KeyError:
@@ -271,7 +278,7 @@ class WebTester(Tester):
             raise
         else:
             if isinstance(_oper, Done):
-                self.conv.test_output.append(("X", END_TAG))
+                self.conv.events.store('test_output', END_TAG)
 
     def cont(self, environ, ENV):
         query = parse_qs(environ["QUERY_STRING"])

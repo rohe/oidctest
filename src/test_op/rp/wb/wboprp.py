@@ -4,17 +4,22 @@
 import importlib
 import json
 import os
-from six.moves.urllib.parse import quote_plus
-from six.moves.urllib.parse import urlparse
-#from urllib.parse import quote_plus
-#from urllib.parse import urlparse
 import argparse
 import logging
 import sys
+
+from six.moves.urllib.parse import quote_plus
+from six.moves.urllib.parse import urlparse
+
 from oic.utils.keyio import build_keyjar
+from oic.oic.message import factory as oic_message_factory
+
 from oidctest.utils import setup_logging
 from oidctest.io import WebIO
 from oidctest.tool import WebTester
+from oidctest.utils import get_check
+
+
 
 SERVER_LOG_FOLDER = "server_log"
 if not os.path.isdir(SERVER_LOG_FOLDER):
@@ -46,7 +51,6 @@ except Exception as ex:
 
 LOGGER = logging.getLogger("")
 
-ENV = None
 
 def pick_args(args, kwargs):
     return dict([(k, kwargs[k]) for k in args])
@@ -59,13 +63,17 @@ def application(environ, start_response):
     path = environ.get('PATH_INFO', '').lstrip('/')
     LOGGER.info("path: %s" % path)
 
-    io = WebIO(**ENV)
+    webenv = session._params['webenv']
+
+    io = WebIO(**webenv)
     io.environ = environ
     io.start_response = start_response
 
-    sh = SessionHandler(session, **ENV)
+    sh = SessionHandler(session, **webenv)
 
-    tester = WebTester(io, sh, **ENV)
+    tester = WebTester(io, sh, **webenv)
+    tester.check_factory = get_check
+    #print(tester.check_factory)
 
     if path == "robots.txt":
         return io.static("static/robots.txt")
@@ -75,7 +83,6 @@ def application(environ, start_response):
         return io.static(path)
     elif path.startswith("export/"):
         return io.static(path)
-
 
     if path == "":  # list
         return tester.display_test_list()
@@ -124,7 +131,7 @@ def application(environ, start_response):
         except KeyError:
             return io.not_found()
     elif path == "continue":
-        return tester.cont(environ, ENV)
+        return tester.cont(environ, webenv)
     elif path == "opresult":
         if tester.conv is None:
             return io.sorry_response("", "No result to report")
@@ -132,7 +139,7 @@ def application(environ, start_response):
         return io.opresult(tester.conv, sh.session)
     # expected path format: /<testid>[/<endpoint>]
     elif path in session["flow_names"]:
-        return tester.run(path, **ENV)
+        return tester.run(path, **webenv)
     elif path in ["authz_cb", "authz_post"]:
         if path == "authz_cb":
             _conv = session["conv"]
@@ -168,7 +175,7 @@ def application(environ, start_response):
                     return io.opresult_fragment()
 
         try:
-            resp = tester.async_response(ENV["conf"])
+            resp = tester.async_response(webenv["conf"])
         except Exception as err:
             return io.err_response(session, "authz_cb", err)
         else:
@@ -184,8 +191,6 @@ def application(environ, start_response):
 if __name__ == '__main__':
     from beaker.middleware import SessionMiddleware
     from cherrypy import wsgiserver
-    from oictest.check import factory as check_factory
-    from oic.oic.message import factory as oic_message_factory
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', dest='mailaddr')
@@ -264,26 +269,17 @@ if __name__ == '__main__':
            "cinfo": CONF.INFO, "orddesc": FLOWS.ORDDESC,
            "profiles": profiles, "operation": operations,
            "profile": args.profile, "msg_factory": oic_message_factory,
-           "check_factory": check_factory, "lookup": LOOKUP,
-           "desc": FLOWS.DESC, "cache": {}}
+           "lookup": LOOKUP, "desc": FLOWS.DESC, "cache": {}}
 
     SRV = wsgiserver.CherryPyWSGIServer(('0.0.0.0', CONF.PORT),
                                         SessionMiddleware(application,
-                                                          session_opts))
+                                                          session_opts,
+                                                          webenv=ENV))
 
     if CONF.BASE.startswith("https"):
-        import cherrypy
-        from cherrypy.wsgiserver import ssl_pyopenssl
-        # from OpenSSL import SSL
-
-        SRV.ssl_adapter = ssl_pyopenssl.pyOpenSSLAdapter(
-            CONF.SERVER_CERT, CONF.SERVER_KEY, CONF.CA_BUNDLE)
-        # SRV.ssl_adapter.context = SSL.Context(SSL.SSLv23_METHOD)
-        # SRV.ssl_adapter.context.set_options(SSL.OP_NO_SSLv3)
-        try:
-            cherrypy.server.ssl_certificate_chain = CONF.CERT_CHAIN
-        except AttributeError:
-            pass
+        from cherrypy.wsgiserver.ssl_builtin import BuiltinSSLAdapter
+        SRV.ssl_adapter = BuiltinSSLAdapter(CONF.SERVER_CERT, CONF.SERVER_KEY,
+                                            CONF.CERT_CHAIN)
         extra = " using SSL/TLS"
     else:
         extra = ""

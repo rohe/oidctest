@@ -1,8 +1,7 @@
 import copy
 import logging
 from aatest import session
-
-from oidctest.oper import Done
+from aatest.session import Done
 
 __author__ = 'roland'
 

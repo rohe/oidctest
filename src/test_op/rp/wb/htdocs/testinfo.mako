@@ -1,28 +1,10 @@
 <%!
 
-from rrtest.check import STATUSCODE
+from aatest.check import STATUSCODE
+from aatest import summation
 
-def test_output(out):
-    """
-
-    """
-    element = ["<h3>Test output</h3>", "<pre><code>"]
-    for item in out:
-        if isinstance(item, tuple):
-            element.append("__%s:%s__" % item)
-        else:
-            element.append("[%s]" % item["id"])
-            element.append("\tstatus: %s" % STATUSCODE[item["status"]])
-            try:
-                element.append("\tdescription: %s" % (item["name"]))
-            except KeyError:
-                pass
-            try:
-                element.append("\tinfo: %s" % (item["message"]))
-            except KeyError:
-                pass
-    element.append("</code></pre>")
-    return "\n".join(element)
+def do_assertions(out):
+  return summation.do_assertions(out, True)
 %>
 
 <%!
@@ -69,7 +51,7 @@ def profile_output(pinfo):
         <h2>Test info</h2>
         ${profile_output(profile)}
         <hr>
-        ${test_output(output)}
+        ${do_assertions(events)}
         <hr>
         ${trace_output(trace)}
         <hr>

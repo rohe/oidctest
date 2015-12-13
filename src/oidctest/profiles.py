@@ -1,16 +1,17 @@
+from aatest.func import set_request_args
 from aatest.operation import Note
-from .oper import AccessToken
-from .oper import AsyncAuthn
-from .oper import Discovery
-from .oper import DisplayUserInfo
-from .oper import Done
-from .oper import Registration
-from .oper import SyncAuthn
-from .oper import UserInfo
-from .oper import Webfinger
+from aatest.session import Done
 
-from .testfunc import set_request_args
-from .testfunc import check_endpoint
+from oidctest.oper import AccessToken
+from oidctest.oper import AsyncAuthn
+from oidctest.oper import Discovery
+from oidctest.oper import DisplayUserInfo
+from oidctest.oper import Registration
+from oidctest.oper import SyncAuthn
+from oidctest.oper import UserInfo
+from oidctest.oper import Webfinger
+
+from oidctest.testfunc import check_endpoint
 
 __author__ = 'roland'
 

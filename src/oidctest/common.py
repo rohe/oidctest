@@ -1,4 +1,3 @@
-from urlparse import urlparse
 import argparse
 import importlib
 import json
@@ -7,8 +6,8 @@ import os
 import sys
 import time
 
-#from urllib.parse import urlparse
 import aatest
+from future.backports.urllib.parse import urlparse
 
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 from oic.utils.keyio import build_keyjar
@@ -117,6 +116,7 @@ def main_setup(log):
             "profiles": profiles, "operations": oper,
             "profile": cargs.profile}
 
+
 def make_client(**kw_args):
     c_keyjar = kw_args["keyjar"].copy()
     _cli = Client(client_authn_method=CLIENT_AUTHN_METHOD, keyjar=c_keyjar)
@@ -157,7 +157,7 @@ def node_dict(flows, lst):
     return dict([(l,flows[l]) for l in lst])
 
 
-def run_flow(profiles, conv, test_id, conf, profile, chk_factory, index=0):
+def run_flow(profiles, conv, test_id, conf, profile, check_factory, index=0):
     print(("=="+test_id))
     conv.test_id = test_id
     conv.conf = conf
@@ -174,7 +174,7 @@ def run_flow(profiles, conv, test_id, conf, profile, chk_factory, index=0):
             cls = item
             funcs = {}
 
-        _oper = cls(conv, profile, test_id, conf, funcs, chk_factory)
+        _oper = cls(conv, profile, test_id, conf, funcs, check_factory)
         conv.operation = _oper
         _oper.setup(profiles.PROFILEMAP)
         _oper()
@@ -183,7 +183,7 @@ def run_flow(profiles, conv, test_id, conf, profile, chk_factory, index=0):
 
     try:
         if conv.flow["tests"]:
-            _ver = Verify(chk_factory, conv.msg_factory, conv)
+            _ver = Verify(check_factory, conv.msg_factory, conv)
             _ver.test_sequence(conv.flow["tests"])
     except KeyError:
         pass

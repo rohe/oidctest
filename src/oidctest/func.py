@@ -38,16 +38,16 @@ def check_support(oper, args):
     for level, kwargs in list(args.items()):
         for key, val in list(kwargs.items()):
             try:
-                assert val in oper.conv.client.provider_info[key]
+                assert val in oper.conv.entity.provider_info[key]
             except AssertionError:
-                oper.conv.test_output(
+                oper.conv.events.store('test_output',
                     {"status": level, "id": "Check support",
                      "message": "No support for: {}={}".format(key, val)})
 
 
 def set_principal(oper, args):
     try:
-        oper.req_args["principal"] = oper.conv.client_config[args["param"]]
+        oper.req_args["principal"] = oper.conv.entity_config[args["param"]]
     except KeyError:
         raise ConfigurationError("Missing parameter: %s" % args["param"])
 
@@ -59,7 +59,7 @@ def set_uri(oper, param, tail):
 
 
 def static_jwk(oper, args):
-    _client = oper.conv.client
+    _client = oper.conv.entity
     oper.req_args["jwks_uri"] = None
     oper.req_args["jwks"] = {"keys": _client.keyjar.dump_issuer_keys("")}
 
@@ -86,7 +86,7 @@ def get_base(cconf=None):
 
 
 def store_sector_redirect_uris(oper, args):
-    _base = get_base(oper.conv.client_config)
+    _base = get_base(oper.conv.entity_config)
 
     try:
         ruris = args["other_uris"]
@@ -94,7 +94,7 @@ def store_sector_redirect_uris(oper, args):
         try:
             ruris = oper.req_args["redirect_uris"]
         except KeyError:
-            ruris = oper.conv.client.redirect_uris
+            ruris = oper.conv.entity.redirect_uris
 
         try:
             ruris.append("%s%s" % (_base, args["extra"]))
@@ -126,10 +126,10 @@ def id_token_hint(oper, kwargs):
 
 
 def login_hint(oper, args):
-    _iss = oper.conv.client.provider_info["issuer"]
+    _iss = oper.conv.entity.provider_info["issuer"]
     p = urlparse(_iss)
     try:
-        hint = oper.conv.client_config["login_hint"]
+        hint = oper.conv.entity_config["login_hint"]
     except KeyError:
         hint = "buffy@%s" % p.netloc
     else:
@@ -141,10 +141,10 @@ def login_hint(oper, args):
 
 def ui_locales(oper, args):
     try:
-        uil = oper.conv.client_config["ui_locales"]
+        uil = oper.conv.entity_config["ui_locales"]
     except KeyError:
         try:
-            uil = oper.conv.client_config["locales"]
+            uil = oper.conv.entity_config["locales"]
         except KeyError:
             uil = ["se"]
 
@@ -153,10 +153,10 @@ def ui_locales(oper, args):
 
 def claims_locales(oper, args):
     try:
-        loc = oper.conv.client_config["claims_locales"]
+        loc = oper.conv.entity_config["claims_locales"]
     except KeyError:
         try:
-            loc = oper.conv.client_config["locales"]
+            loc = oper.conv.entity_config["locales"]
         except KeyError:
             loc = ["se"]
 
@@ -165,10 +165,10 @@ def claims_locales(oper, args):
 
 def acr_value(oper, args):
     try:
-        acr = oper.conv.client_config["acr_value"]
+        acr = oper.conv.entity_config["acr_value"]
     except KeyError:
         try:
-            acr = oper.conv.client.provider_info["acr_values_supported"]
+            acr = oper.conv.entity.provider_info["acr_values_supported"]
         except (KeyError, AttributeError):
             acr = ["1", "2"]
 
@@ -177,7 +177,7 @@ def acr_value(oper, args):
 
 def specific_acr_claims(oper, args):
     try:
-        _acrs = oper.conv.client_config["acr_values"]
+        _acrs = oper.conv.entity_config["acr_values"]
     except KeyError:
         _acrs = ["2"]
 
@@ -197,7 +197,7 @@ def sub_claims(oper, args):
 
 def multiple_return_uris(oper, args):
     redirects = get_redirect_uris(oper.conv)
-    redirects.append("%scb" % get_base(oper.conv.client_config))
+    redirects.append("%scb" % get_base(oper.conv.entity_config))
     oper.req_args["redirect_uris"] = redirects
 
 
@@ -214,4 +214,4 @@ def redirect_uris_with_fragment(oper, kwargs):
 
 
 def request_in_file(oper, kwargs):
-    oper.opargs["base_path"] = get_base(oper.conv.client_config) + "export/"
+    oper.opargs["base_path"] = get_base(oper.conv.entity_config) + "export/"

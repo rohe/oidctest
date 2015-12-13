@@ -8,6 +8,7 @@ SERVER_CERT = "../certs/server.crt"
 SERVER_KEY = "../certs/server.key"
 CA_BUNDLE = None
 VERIFY_SSL = False
+CERT_CHAIN = None
 
 ISSUER = "https://localhost:8092/"
 #ISSUER = "https://oictest.umdc.umu.se:8051/"

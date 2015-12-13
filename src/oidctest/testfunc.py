@@ -1,6 +1,7 @@
+import inspect
 from six.moves.urllib.parse import urlparse
-#from urllib.parse import urlparse
 from aatest.check import ERROR
+import sys
 
 __author__ = 'roland'
 
@@ -36,23 +37,15 @@ def conditional_expect_exception(oper, args):
             oper.expect_exception = exception
 
 
-def set_request_args(oper, args):
-    oper.req_args.update(args)
-
-
 def set_jwks_uri(oper, args):
-    oper.req_args["jwks_uri"] = oper.conv.client.jwks_uri
-
-
-def set_op_args(oper, args):
-    oper.op_args.update(args)
+    oper.req_args["jwks_uri"] = oper.conv.entity.jwks_uri
 
 
 def check_endpoint(oper, args):
     try:
-        _ = oper.conv.client.provider_info[args]
+        _ = oper.conv.entity.provider_info[args]
     except KeyError:
-        oper.conv.test_output.append(
+        oper.conv.events.store('test_output',
             {"id": "check_endpoint",
              "status": ERROR,
              "message": "{} not in provider configuration".format(args)})
@@ -61,19 +54,18 @@ def check_endpoint(oper, args):
 
 def cache_response(oper, arg):
     key = oper.conv.test_id
-    oper.cache[key] = oper.conv.protocol_response
+    oper.cache[key] = oper.conv.events.last_item('response')
 
 
 def restore_response(oper, arg):
     key = oper.conv.test_id
-    if oper.conv.protocol_response:
+    if oper.conv.events['response']:
         _lst = oper.cache[key][:]
-        for x in oper.conv.protocol_response:
+        for x in oper.conv.events['response']:
             if x not in _lst:
-                _lst.append(x)
-        oper.conv.protocol_response = _lst
+                oper.conv.events.append(_lst)
     else:
-        oper.conv.protocol_response = oper.cache[key]
+        oper.conv.events.extend(oper.cache[key])
 
     del oper.cache[key]
 
@@ -81,3 +73,14 @@ def restore_response(oper, arg):
 def skip_operation(oper, arg):
     if oper.profile[0] in arg["flow_type"]:
         oper.skip = True
+
+
+def factory(name):
+    for fname, obj in inspect.getmembers(sys.modules[__name__]):
+        if inspect.isfunction(obj):
+            if fname == name:
+                return obj
+
+    from aatest.func import factory as aafactory
+
+    return aafactory(name)

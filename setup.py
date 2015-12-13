@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 __author__ = 'rohe0002'
 
@@ -27,7 +27,7 @@ setup(
     author="Roland Hedberg",
     author_email="roland.hedberg@umu.se",
     license="Apache 2.0",
-    packages=["oidctest"],
+    packages=find_packages('src'),
     package_dir={"": "src"},
     classifiers=[
         "Development Status :: 4 - Beta",

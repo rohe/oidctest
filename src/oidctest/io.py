@@ -12,12 +12,14 @@ from aatest.check import OK
 from aatest.check import WARNING
 from aatest.check import INCOMPLETE
 from aatest.summation import represent_result, evaluate
-from aatest.summation import test_output
+from aatest.summation import do_assertions
 from aatest.summation import trace_output
 from aatest.summation import create_tar_archive
 
-from oidctest.utils import get_profile_info, log_path, with_or_without_slash, \
-    get_test_info
+from oidctest.utils import get_profile_info, get_check
+from oidctest.utils import log_path
+from oidctest.utils import with_or_without_slash
+from oidctest.utils import get_test_info
 
 __author__ = 'roland'
 
@@ -29,14 +31,14 @@ TEST_RESULTS = {OK: "OK", ERROR: "ERROR", WARNING: "WARNING",
 
 class IO(object):
     def __init__(self, conf, flows, profile, profiles, operation,
-                 check_factory, desc, cache=None, **kwargs):
+                 desc, cache=None):
         self.conf = conf
         self.flows = flows
         self.cache = cache
         self.test_profile = profile
         self.profiles = profiles
         self.operation = operation
-        self.check_factory = check_factory
+        self.check_factory = get_check
         self.desc = desc
 
     def dump_log(self, session, test_id):
@@ -48,10 +50,10 @@ class IO(object):
 
 class WebIO(IO):
     def __init__(self, conf, flows, profile, profiles, operation,
-                 check_factory, desc, lookup, cache=None, environ=None,
+                 desc, lookup, cache=None, environ=None,
                  start_response=None, **kwargs):
         IO.__init__(self, conf, flows, profile, profiles, operation,
-            check_factory, desc, cache, **kwargs)
+                    desc, cache)
         self.lookup = lookup
         self.environ = environ
         self.start_response = start_response
@@ -61,7 +63,7 @@ class WebIO(IO):
         _conv = session["conv"]
         _info = {
             "trace": _conv.trace,
-            "test_output": _conv.test_output,
+            "events": _conv.events,
             "index": session["index"],
             "seqlen": len(session["sequence"]),
             "descr": session["node"].desc
@@ -126,7 +128,7 @@ class WebIO(IO):
                 output.extend(["", sline, ""])
                 output.extend(trace_output(_conv.trace))
                 output.extend(["", sline, ""])
-                output.extend(test_output(_conv.test_output))
+                output.extend(do_assertions(_conv.events))
                 output.extend(["", sline, ""])
                 # and lastly the result
                 self.store_test_info(session, _pi)
@@ -164,7 +166,7 @@ class WebIO(IO):
         argv = {
             "profile": info["profile_info"],
             "trace": info["trace"],
-            "output": info["test_output"],
+            "events": info["events"],
             "result": represent_result(
                 info, session).replace("\n", "<br>\n")
         }
@@ -180,7 +182,7 @@ class WebIO(IO):
         logger.info("[static]sending: %s" % (path,))
 
         try:
-            text = open(path).read()
+            text = open(path, 'rb').read()
             if path.endswith(".ico"):
                 self.start_response('200 OK', [('Content-Type',
                                                 "image/x-icon")])
@@ -293,10 +295,10 @@ class WebIO(IO):
                 else:
                     session["conv"].trace.error("%s:%s" % (
                         err.__class__.__name__, str(err)))
-                session["conv"].test_output.append(
+                session["conv"].events.store('fault',
                     {"id": "-", "status": err_type, "message": "%s" % err})
             else:
-                session["conv"].test_output.append(
+                session["conv"].events.store('fault',
                     {"id": "-", "status": err_type,
                      "message": "Error in %s" % where})
 
@@ -343,6 +345,7 @@ class WebIO(IO):
 
 SIGN = {OK: "+", WARNING: "?", ERROR: "-", INCOMPLETE: "!"}
 
+
 class ClIO(IO):
     def flow_list(self, session):
         pass
@@ -362,11 +365,11 @@ class ClIO(IO):
                 output.extend(["", sline, ""])
                 output.extend(trace_output(_conv.trace))
                 output.extend(["", sline, ""])
-                output.extend(test_output(_conv.test_output))
+                output.extend(do_assertions(_conv.events))
                 output.extend(["", sline, ""])
                 # and lastly the result
                 info = {
-                    "test_output": _conv.test_output,
+                    "events": _conv.events,
                     "trace": _conv.trace
                 }
                 output.append("RESULT: %s" % represent_result(info, session))
@@ -379,7 +382,7 @@ class ClIO(IO):
     def result(self, session):
         _conv = session["conv"]
         info = {
-            "test_output": _conv.test_output,
+            "events": _conv.events,
             "trace": _conv.trace
         }
         _state = evaluate(session, info)

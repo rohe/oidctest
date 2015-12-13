@@ -1,6 +1,6 @@
 def test_summation(conv, sid):
     status = 0
-    for item in conv.test_output:
+    for item in conv.events.get_data('test_output'):
         if item["status"] > status:
             status = item["status"]
 

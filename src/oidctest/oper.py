@@ -1,13 +1,14 @@
 import json
 import logging
 import os
-#from urllib.parse import urlparse
-from urlparse import urlparse
+import time
 from Crypto.PublicKey import RSA
-from aatest import END_TAG
+from future.backports.urllib.parse import urlparse
+
+from jwkest.jwk import RSAKey
+
 from aatest import RequirementsNotMet
 from aatest.operation import Operation
-from jwkest.jwk import RSAKey
 
 from oic.exception import IssuerMismatch
 from oic.exception import PyoidcError
@@ -15,7 +16,6 @@ from oic.oauth2 import rndstr
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
 from oic.oic import AccessTokenResponse
-import time
 from oic.utils.keyio import KeyBundle, ec_init, dump_jwks
 from oidctest.prof_util import WEBFINGER
 from oidctest.prof_util import DISCOVER
@@ -70,11 +70,13 @@ class Webfinger(Operation):
         if not self.dynamic:
             self.conv["issuer"] = self.conf.INFO["srv_discovery_url"]
         else:
-            self.conv.trace.info(
+            _conv = self.conv
+            _conv.trace.info(
                 "Discovery of resource: {}".format(self.resource))
-            issuer = self.conv.client.discover(self.resource)
-            self.conv.trace.reply(issuer)
-            self.conv.info["issuer"] = issuer
+            issuer = _conv.entity.discover(self.resource)
+            _conv.trace.reply(issuer)
+            _conv.info["issuer"] = issuer
+            _conv.events.store('issuer', issuer)
 
     def op_setup(self):
         # try:
@@ -92,10 +94,10 @@ class Discovery(Operation):
 
     def run(self):
         if self.dynamic:
-            self.catch_exception(self.conv.client.provider_config,
+            self.catch_exception(self.conv.entity.provider_config,
                                  **self.op_args)
         else:
-            self.conv.client.provider_info = ProviderConfigurationResponse(
+            self.conv.entity.provider_info = ProviderConfigurationResponse(
                 **self.conf.INFO["provider_info"]
             )
 
@@ -118,15 +120,15 @@ class Registration(Operation):
 
     def run(self):
         if self.dynamic:
-            self.catch_exception(self.conv.client.register, **self.req_args)
+            self.catch_exception(self.conv.entity.register, **self.req_args)
         else:
-            self.conv.client.store_registration_info(
+            self.conv.entity.store_registration_info(
                 RegistrationResponse(**self.conf.INFO["registered"]))
 
     def op_setup(self):
         if self.dynamic:
             self.req_args.update(self.conf.INFO["client"])
-            self.req_args["url"] = self.conv.client.provider_info[
+            self.req_args["url"] = self.conv.entity.provider_info[
                 "registration_endpoint"]
 
 
@@ -136,7 +138,7 @@ class SyncAuthn(SyncGetRequest):
 
     def __init__(self, conv, io, sh, **kwargs):
         super(SyncAuthn, self).__init__(conv, io, sh, **kwargs)
-        self.op_args["endpoint"] = conv.client.provider_info[
+        self.op_args["endpoint"] = conv.entity.provider_info[
             "authorization_endpoint"]
 
         conv.state = rndstr()
@@ -156,7 +158,7 @@ class AsyncAuthn(AsyncGetRequest):
 
     def __init__(self, conv, io, sh, **kwargs):
         super(AsyncAuthn, self).__init__(conv, io, sh, **kwargs)
-        self.op_args["endpoint"] = conv.client.provider_info[
+        self.op_args["endpoint"] = conv.entity.provider_info[
             "authorization_endpoint"]
 
         conv.state = rndstr()
@@ -165,14 +167,14 @@ class AsyncAuthn(AsyncGetRequest):
         self.req_args["nonce"] = conv.nonce
 
     def op_setup(self):
-        self.req_args["redirect_uri"] = self.conv.callback_uris[0]
+        self.req_args["redirect_uri"] = self.conv.extra_args['callback_uris'][0]
 
 
 class AccessToken(SyncPostRequest):
     def __init__(self, conv, io, sh, **kwargs):
         Operation.__init__(self, conv, io, sh, **kwargs)
         self.op_args["state"] = conv.state
-        self.req_args["redirect_uri"] = conv.client.redirect_uris[0]
+        self.req_args["redirect_uri"] = conv.entity.redirect_uris[0]
 
     def run(self):
         self.catch_exception(self._run)
@@ -184,7 +186,7 @@ class AccessToken(SyncPostRequest):
         self.conv.trace.info(
             "Access Token Request with op_args: {}, req_args: {}".format(
                 self.op_args, self.req_args))
-        atr = self.conv.client.do_access_token_request(
+        atr = self.conv.entity.do_access_token_request(
             request_args=self.req_args, **self.op_args)
 
         if "error" in atr:
@@ -199,7 +201,7 @@ class AccessToken(SyncPostRequest):
             if _jws_alg == "none":
                 pass
             elif "kid" not in atr["id_token"].jws_header and not _jws_alg == "HS256":
-                keys = self.conv.client.keyjar.keys_by_alg_and_usage(
+                keys = self.conv.entity.keyjar.keys_by_alg_and_usage(
                     self.conv.info["issuer"], _jws_alg, "ver")
                 if len(keys) > 1:
                     raise PyoidcError("No 'kid' in id_token header!")
@@ -221,23 +223,23 @@ class UserInfo(SyncGetRequest):
         args = self.op_args.copy()
         args.update(self.req_args)
 
-        user_info = self.conv.client.do_user_info_request(**args)
+        user_info = self.conv.entity.do_user_info_request(**args)
         assert user_info
 
         self.catch_exception(self._verify_subject_identifier,
-                             client=self.conv.client,
+                             client=self.conv.entity,
                              user_info=user_info)
 
         if "_claim_sources" in user_info:
-            user_info = self.conv.client.unpack_aggregated_claims(user_info)
-            user_info = self.conv.client.fetch_distributed_claims(user_info)
+            user_info = self.conv.entity.unpack_aggregated_claims(user_info)
+            user_info = self.conv.entity.fetch_distributed_claims(user_info)
 
-        self.conv.client.userinfo = user_info
+        self.conv.entity.userinfo = user_info
         self.conv.trace.response(user_info)
 
     @staticmethod
     def _verify_subject_identifier(client, user_info):
-        id_tokens = get_id_token(client.conv.protocol_response)
+        id_tokens = get_id_token(client.conv.last_item('response'))
         if id_tokens:
             if user_info["sub"] != id_tokens[0]["sub"]:
                 msg = "user_info['sub'] != id_token['sub']: '{}!={}'".format(
@@ -250,24 +252,19 @@ class DisplayUserInfo(Operation):
     pass
 
 
-class Done(Operation):
-    def run(self, *args, **kwargs):
-        self.conv.trace.info(END_TAG)
-
-
 class UpdateProviderKeys(Operation):
     def __call__(self, *args, **kwargs):
-        issuer = self.conv.client.provider_info["issuer"]
+        issuer = self.conv.entity.provider_info["issuer"]
         # Update all keys
-        for keybundle in self.conv.client.keyjar.issuer_keys[issuer]:
+        for keybundle in self.conv.entity.keyjar.issuer_keys[issuer]:
             keybundle.update()
 
 
 class RotateKey(Operation):
 
     def __call__(self):
-        keyjar = self.conv.client.keyjar
-        self.conv.client.original_keyjar = keyjar.copy()
+        keyjar = self.conv.entity.keyjar
+        self.conv.entity.original_keyjar = keyjar.copy()
 
         # invalidate the old key
         old_kid = self.op_args["old_kid"]
@@ -300,11 +297,11 @@ class RotateKey(Operation):
 class RestoreKeyJar(Operation):
 
     def __call__(self):
-        self.conv.client.keyjar = self.conv.client.original_keyjar
+        self.conv.entity.keyjar = self.conv.entity.original_keyjar
 
         # make jwks and update file
         keys = []
-        for kb in self.conv.client.keyjar[""]:
+        for kb in self.conv.entity.keyjar[""]:
             keys.extend([k.to_dict() for k in list(kb.keys())])
         jwks = dict(keys=keys)
         with open(self.op_args["jwks_path"], "w") as f:
@@ -312,7 +309,7 @@ class RestoreKeyJar(Operation):
 
 class ReadRegistration(SyncGetRequest):
     def op_setup(self):
-        _client = self.conv.client
+        _client = self.conv.entity
         self.req_args["access_token"] = _client.registration_access_token
         self.op_args["authn_method"] = "bearer_header"
         self.op_args["endpoint"] = _client.registration_response[
@@ -321,7 +318,7 @@ class ReadRegistration(SyncGetRequest):
 
 class FetchKeys(Operation):
     def __call__(self):
-        kb = KeyBundle(source=self.conv.client.provider_info["jwks_uri"])
+        kb = KeyBundle(source=self.conv.entity.provider_info["jwks_uri"])
         kb.verify_ssl = False
         kb.update()
 
@@ -342,13 +339,13 @@ class RotateKeys(Operation):
     def __call__(self):
         # find the name of the file to which the JWKS should be written
         try:
-            _uri = self.conv.client.registration_response["jwks_uri"]
+            _uri = self.conv.entity.registration_response["jwks_uri"]
         except KeyError:
             raise RequirementsNotMet("No dynamic key handling")
 
         r = urlparse(_uri)
         # find the old key for this key usage and mark that as inactive
-        for kb in self.conv.client.keyjar.issuer_keys[""]:
+        for kb in self.conv.entity.keyjar.issuer_keys[""]:
             for key in list(kb.keys()):
                 if key.use in self.new_key["use"]:
                     key.inactive = True
@@ -369,10 +366,10 @@ class RotateKeys(Operation):
             k.serialize()
             k.kid = self.kid_template % kid
             kid += 1
-            self.conv.client.kid[k.use][k.kty] = k.kid
-        self.conv.client.keyjar.add_kb("", kb)
+            self.conv.entity.kid[k.use][k.kty] = k.kid
+        self.conv.entity.keyjar.add_kb("", kb)
 
-        dump_jwks(self.conv.client.keyjar[""], r.path[1:])
+        dump_jwks(self.conv.entity.keyjar[""], r.path[1:])
 
 
 class RotateSigKeys(RotateKeys):
