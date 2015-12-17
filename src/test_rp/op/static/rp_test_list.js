@@ -163,7 +163,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "An issuer location should be returned."
             },
             "rp-discovery": {
-                "short_description": "Uses \"OpenID Connect Discovery\"",
+                "short_description": "Uses OpenID Connect Discovery",
                 "profiles": [DYNAMIC],
                 "detailed_description": "The Relying Party should be able to determine the OpenID Provider location by using " +
                 OPENID_PROVIDER_ISSUER_DISCOVERY + ".",
@@ -177,7 +177,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Identify that the issuers are not matching and reject the provider configuration."
             },
             "rp-discovery-openid_configuration": {
-                "short_description": "Uses \"Provider Configuration Information\"",
+                "short_description": "Uses Provider Configuration Information",
                 "profiles": [CONFIG, DYNAMIC],
                 "detailed_description": "Retrieve and use the " + OPENID_CONFIGURATION_INFORMATION + ".",
                 "expected_result": "Read and use the JSON object returned from the OpenID Connect Provider."
@@ -478,7 +478,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         }],
         ["UserInfo Endpoint", {
             "rp-user_info-bearer_header": {
-                "short_description": "Can send Access Token in the HTTP \"Authorization\" request header",
+                "short_description": "Can send Access Token in the HTTP Authorization request header",
                 "profiles": [BASIC, IMPLICIT, HYBRID],
                 "detailed_description": "Pass the access token using the " + BEARER_AUTH_SCHEME + " while doing the " + USERINFO_REQUEST + ".",
                 "expected_result": "A " + USERINFO_RESPONSE + "."
