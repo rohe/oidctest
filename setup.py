@@ -32,12 +32,12 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: Apache Software License",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.4",
         "Topic :: Software Development :: Libraries :: Python Modules"],
     install_requires=[
         "argparse",
         "requests >= 2.0.0",
-        "beautifulsoup4",
-        "mechanize>=0.2.6.dev-20121117"
     ],
     zip_safe=False,
 )
