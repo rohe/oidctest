@@ -1,4 +1,0 @@
-git+https://github.com/rohe/pyoidc
-git+https://github.com/rohe/pyjwkest
-git+https://github.com/rohe/aatest
-cherrypy==3.7.0

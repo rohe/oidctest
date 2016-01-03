@@ -71,11 +71,15 @@ def map_prof(a, b):
         if a[RESPONSE] not in b[RESPONSE].split(','):
             return False
 
-    # dynamic discovery & registry
-    for n in [WEBFINGER, DISCOVER, REGISTER]:
-        if b[n] != "":
-            if a[n] != b[n]:
-                return False
+    try:
+        # dynamic discovery & registry
+        for n in [WEBFINGER, DISCOVER, REGISTER]:
+            if b[n] != "":
+                if a[n] != b[n]:
+                    return False
+    except IndexError:
+        print("Too short a:{}, b:{}".format(a,b))
+        raise
 
     if len(a) > CRYPTO:
         if len(b) > CRYPTO:

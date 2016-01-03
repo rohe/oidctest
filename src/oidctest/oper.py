@@ -1,3 +1,4 @@
+import inspect
 import json
 import logging
 import os
@@ -7,7 +8,7 @@ from future.backports.urllib.parse import urlparse
 
 from jwkest.jwk import RSAKey
 
-from aatest import RequirementsNotMet
+from aatest import RequirementsNotMet, Unknown
 from aatest.operation import Operation
 
 from oic.exception import IssuerMismatch
@@ -24,6 +25,7 @@ from oidctest.request import same_issuer
 from oidctest.request import SyncGetRequest
 from oidctest.request import AsyncGetRequest
 from oidctest.request import SyncPostRequest
+import sys
 
 __author__ = 'roland'
 
@@ -391,3 +393,21 @@ class RotateEncKeys(RotateKeys):
 class RefreshAccessToken(SyncPostRequest):
     request_cls = "RefreshAccessTokenRequest"
     response_cls = "AccessTokenResponse"
+
+
+class Cache(Operation):
+    pass
+
+
+def factory(name):
+    for fname, obj in inspect.getmembers(sys.modules[__name__]):
+        if inspect.isclass(obj):
+            if name == fname:
+                return obj
+
+    from aatest import operation
+
+    obj = operation.factory(name)
+    if not obj:
+        raise Unknown("Couldn't find the operation: '{}'".format(name))
+    return obj

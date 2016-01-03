@@ -138,7 +138,7 @@ def make_list(flows, profile, **kw_args):
     f_names = list(flows.keys())
     f_names.sort()
     flow_names = []
-    for k in kw_args["orddesc"]:
+    for k in kw_args["order"]:
         k += '-'
         l = [z for z in f_names if z.startswith(k)]
         flow_names.extend(l)
@@ -157,7 +157,8 @@ def node_dict(flows, lst):
     return dict([(l,flows[l]) for l in lst])
 
 
-def run_flow(profiles, conv, test_id, conf, profile, check_factory, index=0):
+def run_flow(profiles, conv, test_id, conf, profile, check_factory, io, sh,
+             index=0):
     print(("=="+test_id))
     conv.test_id = test_id
     conv.conf = conf
@@ -174,7 +175,8 @@ def run_flow(profiles, conv, test_id, conf, profile, check_factory, index=0):
             cls = item
             funcs = {}
 
-        _oper = cls(conv, profile, test_id, conf, funcs, check_factory)
+        _oper = cls(conv, io, sh, profile=profile, test_id=test_id, conf=conf,
+                    funcs=funcs)
         conv.operation = _oper
         _oper.setup(profiles.PROFILEMAP)
         _oper()

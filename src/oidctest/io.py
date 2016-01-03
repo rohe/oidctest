@@ -3,6 +3,7 @@ import os
 from six.moves.urllib.parse import unquote
 from aatest import exception_trace
 from aatest import Break
+from aatest.io import IO
 
 from oic.utils.http_util import Response, NotFound
 from oic.utils.time_util import in_a_while
@@ -11,8 +12,9 @@ from aatest.check import ERROR
 from aatest.check import OK
 from aatest.check import WARNING
 from aatest.check import INCOMPLETE
-from aatest.summation import represent_result, evaluate
-from aatest.summation import do_assertions
+from aatest.summation import represent_result
+from aatest.summation import evaluate
+from aatest.summation import condition
 from aatest.summation import trace_output
 from aatest.summation import create_tar_archive
 
@@ -29,23 +31,23 @@ TEST_RESULTS = {OK: "OK", ERROR: "ERROR", WARNING: "WARNING",
                 INCOMPLETE: "INCOMPLETE"}
 
 
-class IO(object):
-    def __init__(self, conf, flows, profile, profiles, operation,
-                 desc, cache=None):
-        self.conf = conf
-        self.flows = flows
-        self.cache = cache
-        self.test_profile = profile
-        self.profiles = profiles
-        self.operation = operation
-        self.check_factory = get_check
-        self.desc = desc
-
-    def dump_log(self, session, test_id):
-        pass
-
-    def err_response(self, session, where, err):
-        pass
+# class IO(object):
+#     def __init__(self, conf, flows, profile, profiles, operation,
+#                  desc, cache=None):
+#         self.conf = conf
+#         self.flows = flows
+#         self.cache = cache
+#         self.test_profile = profile
+#         self.profiles = profiles
+#         self.operation = operation
+#         self.check_factory = get_check
+#         self.desc = desc
+#
+#     def dump_log(self, session, test_id):
+#         pass
+#
+#     def err_response(self, session, where, err):
+#         pass
 
 
 class WebIO(IO):
@@ -53,10 +55,11 @@ class WebIO(IO):
                  desc, lookup, cache=None, environ=None,
                  start_response=None, **kwargs):
         IO.__init__(self, conf, flows, profile, profiles, operation,
-                    desc, cache)
+                    desc)
         self.lookup = lookup
         self.environ = environ
         self.start_response = start_response
+        self.cache = cache
 
     @staticmethod
     def store_test_info(session, profile_info=None):
@@ -128,7 +131,7 @@ class WebIO(IO):
                 output.extend(["", sline, ""])
                 output.extend(trace_output(_conv.trace))
                 output.extend(["", sline, ""])
-                output.extend(do_assertions(_conv.events))
+                output.extend(condition(_conv.events))
                 output.extend(["", sline, ""])
                 # and lastly the result
                 self.store_test_info(session, _pi)
@@ -365,7 +368,7 @@ class ClIO(IO):
                 output.extend(["", sline, ""])
                 output.extend(trace_output(_conv.trace))
                 output.extend(["", sline, ""])
-                output.extend(do_assertions(_conv.events))
+                output.extend(condition(_conv.events))
                 output.extend(["", sline, ""])
                 # and lastly the result
                 info = {
