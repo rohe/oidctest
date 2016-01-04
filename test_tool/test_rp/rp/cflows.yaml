@@ -1,0 +1,967 @@
+Flows:
+  RP-claims-aggregated:
+    desc: Can handle aggregated user information
+    profile: C,CI,CT,CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn
+      - AccessToken
+      - UserInfo
+  RP-claims-distributed:
+    desc: Handles distributed user information
+    profile: C,CI,CT,CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn
+      - AccessToken
+      - UserInfo
+  RP-claims_request-id_token_claims:
+    desc: The Relying Party can ask for a specific claim using the 'claims' request
+      parameter. The claim should be returned in an ID Token
+    profile: '...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn:
+          set_request_args:
+            claims:
+              id_token:
+                auth_time: {essential: true}
+                email: {essential: true}
+      - AccessToken
+  RP-claims_request-userinfo_claims:
+    desc: The Relying Party can ask for a specific claim using the 'claims' request
+      parameter. The claim should be returned in a UserInfo response
+    profile: C,IT,CI,CT,CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn:
+          set_request_args:
+            claims:
+              userinfo:
+                email: {essential: true}
+      - AccessToken
+      - UserInfo
+  RP-discovery-issuer_not_matching_config:
+    desc: Retrieve openid-configuration information for OpenID Provider from the .well-known/openid-configuration
+      path. Verify thatthe issuer in the openid-configuration matches the one returned
+      by WebFinger
+    profile: ..T.
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          expect_exception: IssuerMismatch
+          set_discovery_issuer: none
+  RP-discovery-jwks_uri_keys:
+    desc: Can read and understand jwks_uri
+    profile: ..T.
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+    assert:
+      bare-keys: none
+      providerinfo-has-jwks_uri: none
+  RP-discovery-openid_configuration:
+    desc: Uses openid-configuration Discovery Information
+    profile: ..T.
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+  RP-discovery-webfinger_acct:
+    desc: Can Discover Identifiers using acct Syntax
+    profile: .T..
+    sequence:
+      - Webfinger:
+          resource:
+            pattern: 'acct:{}@{}'
+          set_webfinger_resource: none
+  RP-discovery-webfinger_url:
+    desc: Can Discover Identifiers using URL Syntax
+    profile: .T..
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+  RP-id_token-asym_sig:
+    desc: Accept Valid Asymmetric ID Token Signature
+    profile: I...T
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: RS256
+      - SyncAuthn:
+          set_op_args:
+            response_type:
+              - id_token
+  RP-id_token-aud:
+    desc: The Relying Party should request an ID token and compare its aud value to
+      Relying Partys Client ID
+    profile: '...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                - code
+                - code, token
+            exception: NotForMe
+            oper: false
+      - AccessToken:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                - code
+                - code, token
+            exception: NotForMe
+            oper: true
+  RP-id_token-bad_asym_sig_rs256:
+    desc: Tests if the Relying Party can identify and reject an ID Token with an invalid
+      signature. The ID Token has been signed using the asymmetric algorithm RS256.
+      For more information see list item 6 in ID Token validation
+    profile: '...T'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: RS256
+      - SyncAuthn:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                - code
+                - code, token
+            exception: BadSignature
+            oper: false
+      - AccessToken:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                - code
+                - code, token
+            exception: BadSignature
+            oper: true
+  RP-id_token-bad_at_hash:
+    desc: Make an authentication request using response_type=[id_token token] for Implicit
+      Flow or response_type=[code id_token token] for Hybrid Flow. Verify the at_hash
+      value in the returned ID Token.
+    profile: IT,CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn:
+          expect_exception: AtHashError
+  RP-id_token-bad_c_hash:
+    desc: Tests if the Relying Party extract an c_hash from an ID token presented as
+      json. It should be used to validate the correctness of the authorization code
+    profile: CI,CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn:
+          expect_exception: CHashError
+  RP-id_token-bad_es256_sig:
+    desc: The Relying Party should reject invalid asymmetric ID Token signature which
+      has been signed using the algorithm ES256
+    profile: '...T'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: ES256
+      - SyncAuthn:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                - code
+                - code, token
+            exception: BadSignature
+            oper: false
+      - AccessToken:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                - code
+                - code, token
+            exception: BadSignature
+            oper: true
+  RP-id_token-bad_symmetric_sig_hs256:
+    desc: Tests if the Relying Party can identify and reject an ID Token with an invalid
+      signature. The ID Token has been signed using the symmetric algorithm HS256. For
+      more information see list item 6 in ID Token validation
+    profile: '...T'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: HS256
+      - SyncAuthn:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                - code
+                - code, token
+            exception: BadSignature
+            oper: false
+      - AccessToken:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                - code
+                - code, token
+            exception: BadSignature
+            oper: true
+  RP-id_token-iat:
+    desc: The Relying Party should request an ID token if it does not contain a iat
+      claim it should be rejected
+    profile: '...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                - code
+                - code, token
+            exception: MissingRequiredAttribute
+            oper: false
+      - AccessToken:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                - code
+                - code, token
+            exception: MissingRequiredAttribute
+            oper: true
+  RP-id_token-kid_absent_multiple_jwks:
+    desc: If there are multiple keys in the referenced JWK Set document, a kid value
+      MUST be provided in the JOSE Header
+    profile: '...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                - id_token
+                - id_token, token
+                - code, id_token, token
+            exception: PyoidcError
+            oper: true
+      - AccessToken:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                - id_token
+                - id_token, token
+                - code, id_token, token
+            exception: PyoidcError
+            oper: true
+  RP-id_token-kid_absent_single_jwks:
+    desc: If the JWK supplied in jwks_uri only contains a single key the ID Token does
+      not need to contain a kid claim
+    profile: '...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn
+      - AccessToken
+  RP-id_token-mismatching_issuer:
+    desc: The Relying Party should request an ID token and reject it if the issuer identifier
+      for the OpenID Provider is not matching the issuer in the returned ID Token
+    profile: '...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: HS256
+      - SyncAuthn:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                - code
+                - code, token
+            exception: IssuerMismatch
+            oper: false
+      - AccessToken:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                - code
+                - code, token
+            exception: IssuerMismatch
+            oper: true
+  RP-id_token-none:
+    desc: Can Request and Use unSigned ID Token Response
+    profile: C,CT,CIT...T
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: none
+      - SyncAuthn:
+          set_op_args:
+            response_type: code
+      - AccessToken
+  RP-id_token-sig+enc:
+    desc: Can Request and Use Signed and Encrypted ID Token Response
+    profile: I...T
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_jwks_uri: null
+          set_request_args:
+            id_token_encrypted_response_alg: RSA1_5
+            id_token_encrypted_response_enc: A128CBC-HS256,
+            id_token_signed_response_alg: HS256
+      - SyncAuthn:
+          set_op_args:
+            response_type:
+              - id_token
+  RP-id_token-sig_none:
+    desc: Tests if the Relying Party can request and use unsigned ID Tokens. Use Code
+      flow and set alg=none
+    profile: C...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: none
+      - SyncAuthn
+      - AccessToken
+  RP-id_token-sub:
+    desc: The Relying Party should request an ID token and reject it if the sub claim
+      is missing
+    profile: '...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                - code
+                - code, token
+            exception: MissingRequiredAttribute
+            oper: false
+      - AccessToken:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                - code
+                - code, token
+            exception: MissingRequiredAttribute
+            oper: true
+  RP-id_token-sym_sig:
+    desc: Accept Valid Symmetric ID Token Signature
+    profile: I...T
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: HS256
+      - SyncAuthn:
+          set_op_args:
+            response_type:
+              - id_token
+  RP-key_rotation-op_enc_key:
+    desc: Support OP Encryption Key Rotation
+    profile: '...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn:
+          set_op_args:
+            request_method: request
+            request_object_encryption_alg: RSA1_5
+            request_object_encryption_enc: A128CBC-HS256
+      - UpdateProviderKeys
+      - SyncAuthn:
+          set_op_args:
+            request_method: request
+            request_object_encryption_alg: RSA1_5
+            request_object_encryption_enc: A128CBC-HS256
+  RP-key_rotation-op_sign_key:
+    desc: Support OP Encryption Key Rotation
+    profile: I,IT,CI,CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn
+      - SyncAuthn
+  RP-key_rotation-rp_enc_key:
+    desc: Can Request and Use Encrypted UserInfo Response
+    profile: '...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_jwks_uri: null
+          set_request_args:
+            id_token_encrypted_response_alg: RSA1_5
+            id_token_encrypted_response_enc: A128CBC-HS256
+      - SyncAuthn
+      - AccessToken:
+          skip_operation:
+            flow_type:
+              - I
+              - CI
+              - CIT
+              - IT
+      - RotateKey:
+          set_op_args:
+            jwks_path: static/jwk.json
+            new_key:
+              bits: 2048
+              type: RSA
+              use:
+                - enc
+            new_kid: rotated_enc_key
+            old_kid: a0
+      - SyncAuthn
+      - AccessToken:
+          skip_operation:
+            flow_type:
+              - I
+              - CI
+              - CIT
+              - IT
+      - RestoreKeyJar:
+          set_op_args:
+            jwks_path: static/jwk.json
+  RP-key_rotation-rp_sign_key:
+    desc: Can Request and Use Encrypted UserInfo Response
+    profile: '...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_jwks_uri: null
+      - SyncAuthn:
+          set_op_args:
+            request_method: request
+            request_object_signing_alg: ES256
+      - RotateKey:
+          set_op_args:
+            jwks_path: static/jwk.json
+            new_key:
+              crv: P-256
+              type: EC
+              use:
+                - sig
+            new_kid: rotated_sig_key
+            old_kid: a2
+      - SyncAuthn:
+          set_op_args:
+            request_method: request
+            request_object_signing_alg: ES256
+      - RestoreKeyJar:
+          set_op_args:
+            jwks_path: static/jwk.json
+  RP-nonce-invalid:
+    desc: If a nonce value was sent in the Authentication Request the Relying Party
+      must validate the nonce returned in the ID Token.
+    profile: I,IT,CI,CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn:
+          expect_exception: PyoidcError
+  RP-nonce-unless_code_flow:
+    desc: The Relying Party should always send a nonce as a request parameter while
+      using implicit or hybrid flow. Since the server is suppose to return the nonce
+      in the ID Token return from Authorization Endpoint, see ID Token required claims
+      in hybrid flow or implicit flow. When using Code flow the the nonce is not required,
+      see ID Token validation for code flow
+    profile: I,IT,CI,CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn:
+          set_request_args:
+            nonce: null
+  RP-registration-dynamic:
+    desc: Uses Dynamic Registration
+    profile: '...T'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+  RP-registration-redirect_uris:
+    desc: Sends redirect_uris value which only contains a empty string while doing a
+      registration request. Then send a valid redirect_uris list
+    profile: '...T'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          expect_exception: PyoidcError
+          set_request_args:
+            redirect_uris:
+              - ''
+  RP-registration-uses_https_endpoints:
+    desc: Sends endpoints which does not use https. Should be rejected by the OP.
+    profile: '...T'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          expect_exception: PyoidcError
+          set_request_args:
+            initiate_login_uri: http://test.com
+            jwks_uri: http://test.com
+            redirect_uris:
+              - 'http://test.com'
+  RP-registration-well_formed_jwk:
+    desc: ''
+    profile: '...T'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: RS256
+            jwks:
+              keys:
+                -
+                    e: AQAB
+                    kid: a1
+                    kty: RSA
+                    n: tAAzYdbiWDAKI8Q3s1crQRuVp0QXpyGgnzx_sGItC2rhdug68gE9v5mfK-7SJCBpuZXzX1YevJ25B0LhNQSWqvb6gYwlNHs33G8VmSzjpqFazItnhKMPnEehCXmPl7iFi8VV0NCC5_uH9xP61TClWsE8B7i4CV6y9B0hZI22p2M
+                    use: sig
+
+      - SyncAuthn:
+          set_op_args:
+            response_type:
+              - id_token
+  RP-request_uri-enc:
+    desc: The Relying Party can pass a Request Object by reference using the request_uri
+      parameter. Encrypt the Request Object using RSA1_5 and A128CBC-HS256 algorithms
+    profile: '...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn:
+          set_op_args:
+            base_path: 'https://localhost:8088/request_objects/'
+            local_dir: ./request_objects
+            request_method: file
+            request_object_encryption_alg: RSA1_5
+            request_object_encryption_enc: A128CBC-HS256
+  RP-request_uri-sig:
+    desc: The Relying Party can pass a Request Object by reference using the request_uri
+      parameter. Sign the Request Object using the RS256 algorithm
+    profile: '...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_jwks_uri: null
+      - SyncAuthn:
+          set_op_args:
+            base_path: 'https://localhost:8088/request_objects/'
+            local_dir: ./request_objects
+            request_method: file
+            request_object_signing_alg: RS256
+  RP-request_uri-sig+enc:
+    desc: The Relying Party can pass a Request Object by reference using the request_uri
+      parameter. Encrypt the Request Object using RSA1_5 and A128CBC-HS256 algorithms
+      and sign it using RS256 algorithm
+    profile: '...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_jwks_uri: null
+      - SyncAuthn:
+          set_op_args:
+            base_path: 'https://localhost:8088/request_objects/'
+            local_dir: ./request_objects
+            request_method: file
+            request_object_encryption_alg: RSA1_5
+            request_object_encryption_enc: A128CBC-HS256
+            request_object_signing_alg: RS256
+  RP-request_uri-unsigned:
+    desc: The Relying Party can pass a Request Object by reference using the request_uri
+      parameter. The Request Object should set alg=none
+    profile: '...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn:
+          set_op_args:
+            base_path: 'https://localhost:8088/request_objects/'
+            local_dir: ./request_objects
+            request_method: file
+            request_object_encryption_alg: RSA1_5
+            request_object_encryption_enc: A128CBC-HS256
+            request_object_signing_alg: null
+  RP-response_mode-form_post:
+    desc: Can Make Request with response_mode=form_post
+    profile: I,IT,CI,CT,CIT,...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: RS256
+      - SyncAuthn:
+          set_request_args:
+            response_mode:
+              - form_post
+  RP-response_type-code:
+    desc: Can Make Request with 'code' Response Type
+    profile: C...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn
+  RP-response_type-id_token:
+    desc: Can Make Request with 'id_token' Response Type
+    profile: I...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: RS256
+      - SyncAuthn
+  RP-response_type-id_token+token:
+    desc: Can Make Request with 'id_token token' Response Type
+    profile: IT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: RS256
+      - SyncAuthn
+  RP-scope-userinfo_claims:
+    desc: The Relying Party should be able to request claims using Scope Values
+    profile: '...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn:
+          set_request_args:
+            scope:
+              - openid
+              - email
+              - profile
+      - AccessToken
+      - UserInfo
+  RP-scope-without_openid_scope:
+    desc: The Relying Party should always add the openid scope value while sending an
+      Authorization Request.
+    profile: '...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn:
+          set_expect_error:
+            error:
+              - incorrect_behavior
+            stop: false
+          set_request_args:
+            scope:
+              - wrong
+  RP-token_endpoint-client_secret_basic:
+    desc: Can Make Access Token Request with 'client_secret_basic' Authentication
+    profile: C,CI,CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn
+      - AccessToken:
+          set_op_args:
+            authn_method: client_secret_basic
+  RP-token_endpoint-client_secret_jwt:
+    desc: Can Make Access Token Request with 'client_secret_jwt' Authentication
+    profile: C,CI,CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_request_args:
+            token_endpoint_auth_method: client_secret_jwt
+      - SyncAuthn
+      - AccessToken:
+          set_op_args:
+            authn_method: client_secret_jwt
+  RP-token_endpoint-client_secret_post:
+    desc: Can Make Access Token Request with 'client_secret_post' Authentication
+    profile: C,CI,CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_request_args:
+            token_endpoint_auth_method: client_secret_post
+      - SyncAuthn
+      - AccessToken:
+          set_op_args:
+            authn_method: client_secret_post
+  RP-token_endpoint-private_key_jwt:
+    desc: Can Make Access Token Request with 'private_key_jwt' Authentication
+    profile: C,CI,CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_jwks_uri: null
+          set_request_args:
+            token_endpoint_auth_method: private_key_jwt
+      - SyncAuthn
+      - AccessToken:
+          set_request_args:
+            authn_method: private_key_jwt
+  RP-user_info-bad_sub_claim:
+    desc: Reject UserInfo with Invalid Sub claim
+    profile: C,CI,CT,CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn
+      - AccessToken
+      - UserInfo:
+          expect_exception: SubjectMismatch
+  RP-user_info-bearer_body:
+    desc: Accesses UserInfo Endpoint with form-encoded body method
+    profile: C,CI,CT,CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn
+      - AccessToken
+      - UserInfo:
+          set_request_args:
+            behavior: token_in_message_body
+  RP-user_info-bearer_header:
+    desc: 'Accesses UserInfo Endpoint with Header Method '
+    profile: C,CI,CT,CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - SyncAuthn
+      - AccessToken
+      - UserInfo:
+          set_request_args:
+            behavior: use_authorization_header
+  RP-user_info-enc:
+    desc: 'Can Request and Use Encrypted UserInfo Response '
+    profile: C,CI,CT,CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_jwks_uri: null
+          set_request_args:
+            userinfo_encrypted_response_alg: RSA1_5
+            userinfo_encrypted_response_enc: A128CBC-HS256
+      - SyncAuthn
+      - AccessToken
+      - UserInfo
+  RP-user_info-sig+enc:
+    desc: Can Request and Use Signed and Encrypted UserInfo Response
+    profile: C,CI,CT,CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_jwks_uri: null
+          set_request_args:
+            userinfo_encrypted_response_alg: RSA1_5
+            userinfo_encrypted_response_enc: A128CBC-HS256
+            userinfo_signed_response_alg: RS256
+      - SyncAuthn
+      - AccessToken
+      - UserInfo
+  RP-user_info-sign:
+    desc: Can Request and Use Signed UserInfo Response
+    profile: C,CI,CT,CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration:
+          set_jwks_uri: null
+          set_request_args:
+            userinfo_signed_response_alg: RS256
+      - SyncAuthn
+      - AccessToken
+      - UserInfo
+Order:
+  - rp-webfinger
+  - rp-discovery
+  - rp-registration
+  - rp-response_type
+  - rp-response_mode
+  - rp-token_endpoint
+  - rp-id_token
+  - rp-claims_request
+  - rp-request_uri
+  - rp-scope
+  - rp-nonce
+  - rp-key_rotation
+  - rp-user_info
+Desc:
+  rp-webfinger: WebFinger
+  rp-discovery: Discovery
+  rp-registration: Dynamic Client Registration
+  rp-response_type: Response Type
+  rp-response_mode: Response Mode
+  rp-token_endpoint: Token Endpoint
+  rp-id_token: ID Token
+  rp-claims_request: claims Request Parameter
+  rp-request_uri: request_uri Request Parameter
+  rp-scope: scope Request Parameter
+  rp-nonce: nonce Request Parameter
+  rp-key_rotation: Key Rotation
+  rp-user_info: Userinfo Endpoint
+  Req: Misc Request Parameters
+  OAuth: OAuth behaviors
+  ClientAuth: Client Authentication
+  request: request Request Parameter
