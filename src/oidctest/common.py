@@ -184,7 +184,7 @@ def run_flow(profiles, conv, test_id, conf, profile, check_factory, io, sh,
         conv.index += 1
 
     try:
-        if conv.flow["tests"]:
+        if conv.flow["assert"]:
             _ver = Verify(check_factory, conv.msg_factory, conv)
             _ver.test_sequence(conv.flow["tests"])
     except KeyError:

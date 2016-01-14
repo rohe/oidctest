@@ -202,7 +202,8 @@ class AccessToken(SyncPostRequest):
         else:
             if _jws_alg == "none":
                 pass
-            elif "kid" not in atr["id_token"].jws_header and not _jws_alg == "HS256":
+            elif "kid" not in atr[
+                "id_token"].jws_header and not _jws_alg == "HS256":
                 keys = self.conv.entity.keyjar.keys_by_alg_and_usage(
                     self.conv.info["issuer"], _jws_alg, "ver")
                 if len(keys) > 1:
@@ -241,7 +242,8 @@ class UserInfo(SyncGetRequest):
 
     @staticmethod
     def _verify_subject_identifier(client, user_info):
-        id_tokens = get_id_token(client.conv.last_item('response'))
+        id_tokens = get_id_token(
+            client.conv.events.get_data('protocol_response'))
         if id_tokens:
             if user_info["sub"] != id_tokens[0]["sub"]:
                 msg = "user_info['sub'] != id_token['sub']: '{}!={}'".format(
@@ -263,7 +265,6 @@ class UpdateProviderKeys(Operation):
 
 
 class RotateKey(Operation):
-
     def __call__(self):
         keyjar = self.conv.entity.keyjar
         self.conv.entity.original_keyjar = keyjar.copy()
@@ -290,14 +291,14 @@ class RotateKey(Operation):
         # make jwks and update file
         keys = []
         for kb in keyjar[""]:
-            keys.extend([k.to_dict() for k in list(kb.keys()) if not k.inactive_since])
+            keys.extend(
+                [k.to_dict() for k in list(kb.keys()) if not k.inactive_since])
         jwks = dict(keys=keys)
         with open(self.op_args["jwks_path"], "w") as f:
             f.write(json.dumps(jwks))
 
 
 class RestoreKeyJar(Operation):
-
     def __call__(self):
         self.conv.entity.keyjar = self.conv.entity.original_keyjar
 
@@ -308,6 +309,7 @@ class RestoreKeyJar(Operation):
         jwks = dict(keys=keys)
         with open(self.op_args["jwks_path"], "w") as f:
             f.write(json.dumps(jwks))
+
 
 class ReadRegistration(SyncGetRequest):
     def op_setup(self):

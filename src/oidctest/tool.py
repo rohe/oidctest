@@ -4,7 +4,9 @@ from six.moves.urllib.parse import parse_qs
 from aatest import exception_trace
 from aatest import END_TAG
 from aatest import Break
+from aatest.check import State, ERROR
 from aatest.conversation import Conversation
+from aatest.io import eval_state
 from aatest.verify import Verify
 from aatest.session import Done
 
@@ -13,6 +15,7 @@ from oic.utils.http_util import Response
 from oic.utils.http_util import get_post
 
 from oidctest import CRYPTSUPPORT
+from oidctest.check.oidc_check import OK
 
 from oidctest.common import make_client, Trace
 from oidctest.prof_util import map_prof
@@ -50,7 +53,7 @@ class Tester(object):
     def run(self, test_id, cinfo, **kw_args):
         if not self.match_profile(test_id):
             logger.info("Test doesn't match the profile")
-            return False
+            return True
 
         redirs = get_redirect_uris(cinfo)
 
@@ -103,6 +106,11 @@ class Tester(object):
                 _oper.setup(self.profiles.PROFILEMAP)
                 resp = _oper()
             except Exception as err:
+                self.conv.events.store(
+                    'condition',
+                    State(test_id=test_id, status=ERROR, message=err,
+                          context=cls.__name__))
+                exception_trace(cls.__name__, err, logger)
                 self.sh.session["index"] = index
                 return self.io.err_response(self.sh.session, "run_sequence",
                                             err)
@@ -124,8 +132,13 @@ class Tester(object):
             raise
 
         if isinstance(_oper, Done):
-            self.conv.events.store('test_output', END_TAG)
-        return True
+            self.conv.events.store('condition',
+                                   State(test_id='done', status=OK))
+
+        if eval_state(self.conv.events) == OK:
+            return True
+        else:
+            return False
 
 
 class ClTester(Tester):

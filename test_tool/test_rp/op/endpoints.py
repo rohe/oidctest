@@ -26,7 +26,7 @@ def dump_log(session_info, trace):
                              session_info["test_id"])
     try:
         fp = open(file_name, "a+")
-    except IOError:
+    except IOError as err:
         os.makedirs(os.path.join("log", session_info["addr"]))
         fp = open(file_name, "a+")
 

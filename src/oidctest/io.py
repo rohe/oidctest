@@ -3,7 +3,7 @@ import os
 from six.moves.urllib.parse import unquote
 from aatest import exception_trace
 from aatest import Break
-from aatest.io import IO
+from aatest.io import IO, eval_state
 
 from oic.utils.http_util import Response, NotFound
 from oic.utils.time_util import in_a_while
@@ -136,7 +136,8 @@ class WebIO(IO):
                 # and lastly the result
                 self.store_test_info(session, _pi)
                 _info = session["test_info"][_tid]
-                output.append("RESULT: %s" % represent_result(_info, session))
+                output.append("RESULT: %s" % represent_result(
+                    _info, eval_state(_conv.events)))
                 output.append("")
 
                 f = open(path, "w")
@@ -375,7 +376,8 @@ class ClIO(IO):
                     "events": _conv.events,
                     "trace": _conv.trace
                 }
-                output.append("RESULT: %s" % represent_result(info, session))
+                output.append("RESULT: %s" % represent_result(
+                    info, eval_state(_conv.events)))
                 output.append("")
 
                 txt = "\n".join(output)

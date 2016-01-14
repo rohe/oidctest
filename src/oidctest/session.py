@@ -57,7 +57,7 @@ class SessionHandler(session.SessionHandler):
         f_names = list(self.test_flows.keys())
         f_names.sort()
         session["flow_names"] = []
-        for k in self.orddesc:
+        for k in self.order:
             k += '-'
             l = [z for z in f_names if z.startswith(k)]
             session["flow_names"].extend(l)

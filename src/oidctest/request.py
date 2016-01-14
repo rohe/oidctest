@@ -34,9 +34,12 @@ class ParameterError(Exception):
 class Request(Operation):
     def expected_error_response(self, response):
         if isinstance(response, Response):  # requests response
-            response = ErrorResponse().from_json(response.content)
+            # don't want bytes
+            _txt = response.content.decode('utf8')
+            response = ErrorResponse().from_json(_txt)
 
         if isinstance(response, ErrorResponse):
+            self.conv.events.store("protocol_response", response)
             if response["error"] not in self.expect_error["error"]:
                 raise Break("Wrong error, got {} expected {}".format(
                     response["error"], self.expect_error["error"]))
@@ -45,6 +48,8 @@ class Request(Operation):
         else:
             self.conv.trace.error("Expected error, didn't get it")
             raise Break("Did not receive expected error")
+
+        return response
 
 
 class SyncRequest(Request):
@@ -153,6 +158,7 @@ class SyncRequest(Request):
         else:
             http_args.update(ht_args)
 
+        self.conv.events.store('request', csi)
         self.conv.trace.info(
             20 * "=" + " " + self.__class__.__name__ + " " + 20 * "=")
         self.conv.trace.request("URL: {}".format(url))
@@ -167,7 +173,7 @@ class SyncRequest(Request):
         #self.sequence.append((response, http_response.text))
 
         if self.expect_error:
-            self.expected_error_response(response)
+            response = self.expected_error_response(response)
         else:
             if isinstance(response, ErrorResponse):
                 raise Break("Unexpected error response")

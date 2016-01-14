@@ -4,14 +4,14 @@ Flows:
     profile: C,CI,CIT,CT...T
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             token_endpoint_auth_method: client_secret_basic
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken:
           check_support:
             WARNING:
@@ -28,9 +28,9 @@ Flows:
     profile: C,CI,CIT,CT...F
     sequence:
       - Discovery:
-          set_discovery_issuer: none
-      - AsyncAuthn:
-          set_response_where: none
+          set_discovery_issuer: null
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken:
           check_support:
             WARNING:
@@ -47,16 +47,16 @@ Flows:
     profile: C,CI,CT,CIT....s.+
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
-      - AsyncAuthn:
-          set_response_where: none
+          set_discovery_issuer: null
+      - SyncAuthn:
+          set_response_where: null
       - Registration:
           set_request_args:
             token_endpoint_auth_method: private_key_jwt
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken:
           check_support:
               WARNING:
@@ -73,16 +73,16 @@ Flows:
     profile: C,CI,CT,CIT....s.+
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
-      - AsyncAuthn:
-          set_response_where: none
+          set_discovery_issuer: null
+      - SyncAuthn:
+          set_response_where: null
       - Registration:
           set_request_args:
             token_endpoint_auth_method: client_secret_jwt
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken:
           check_support:
               WARNING:
@@ -99,14 +99,14 @@ Flows:
     profile: C,CI,CIT,CT...T
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             token_endpoint_auth_method: client_secret_post
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken:
           check_support:
             WARNING:
@@ -123,9 +123,9 @@ Flows:
     profile: C,CI,CIT,CT...F
     sequence:
       - Discovery:
-          set_discovery_issuer: none
-      - AsyncAuthn:
-          set_response_where: none
+          set_discovery_issuer: null
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken:
           check_support:
               WARNING:
@@ -144,11 +144,11 @@ Flows:
     profile: ..T.
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
     assert:
-      check-http-response: none
+      check-http-response: null
   OP-Discovery-JWKs:
     desc: Keys in OP JWKs well formed [Config, Dynamic]
     mti:
@@ -156,11 +156,11 @@ Flows:
     profile: ..T.
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
     assert:
-      check-http-response: none
+      check-http-response: null
       verify-base64url:
         err_status: 3
   OP-Discovery-WebFinger:
@@ -170,7 +170,7 @@ Flows:
       - Webfinger:
           set_principal:
             param: webfinger_url
-    assert: none
+    assert: null
   OP-Discovery-WebFinger-Email:
     desc: Can discover identifiers using e-mail syntax [Dynamic]
     profile: ..T...+
@@ -178,7 +178,7 @@ Flows:
       - Webfinger:
           set_principal:
             param: webfinger_email
-    assert: none
+    assert: null
   OP-Discovery-claims_supported:
     desc: Verify that claims_supported is published [Config, Dynamic]
     mti:
@@ -186,12 +186,12 @@ Flows:
     profile: ..T.
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
     assert:
-      check-http-response: none
-      providerinfo-has-claims_supported: none
+      check-http-response: null
+      providerinfo-has-claims_supported: null
   OP-Discovery-jwks_uri:
     desc: Verify that jwks_uri is published [Config, Dynamic]
     mti:
@@ -199,26 +199,26 @@ Flows:
     profile: ..T..s
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
     assert:
-      bare-keys: none
-      check-http-response: none
-      providerinfo-has-jwks_uri: none
+      bare-keys: null
+      check-http-response: null
+      providerinfo-has-jwks_uri: null
   OP-IDToken-ES256:
     desc: Asymmetric ID Token signature with ES256 [Extra]
     profile: '...T.s.+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             id_token_signed_response_alg: ES256
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
     assert:
       verify-idtoken-is-signed:
@@ -232,14 +232,14 @@ Flows:
     profile: '...T.s.+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             id_token_signed_response_alg: HS256
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
     assert:
       verify-idtoken-is-signed:
@@ -255,14 +255,14 @@ Flows:
     profile: ..T.s
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             id_token_signed_response_alg: RS256
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
     assert:
       verify-idtoken-is-signed:
@@ -276,9 +276,9 @@ Flows:
     profile: '...T.se.+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             id_token_encrypted_response_alg: RSA1_5
@@ -289,8 +289,8 @@ Flows:
               id_token_encryption_alg_values_supported: RSA1_5
               id_token_encryption_enc_values_supported: A128CBC-HS256
               id_token_signing_alg_values_supported: RS256
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
     assert:
       signed-encrypted-idtoken:
@@ -306,11 +306,11 @@ Flows:
     profile: '...'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
-      - AsyncAuthn:
-          set_response_where: none
+          set_discovery_issuer: null
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
     assert:
       is-idtoken-signed: {alg: RS256}
@@ -326,14 +326,14 @@ Flows:
     profile: IT,CIT..
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
     assert:
-      verify-authn-response: none
+      verify-authn-response: null
   OP-IDToken-c_hash:
     desc: ID Token has c_hash when ID Token and Authorization Code returned from Authorization
       Endpoint [Hybrid]
@@ -342,14 +342,14 @@ Flows:
     profile: CI,CIT...
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
     assert:
-      verify-authn-response: none
+      verify-authn-response: null
   OP-IDToken-kid:
     desc: 'IDToken has kid [Basic, Implicit, Hybrid]'
     mti:
@@ -357,38 +357,38 @@ Flows:
     profile: '....s'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
     assert:
       verify-response:
         response_cls:
           - AccessTokenResponse
           - AuthorizationResponse
-      verify-signed-idtoken-has-kid: none
-  OP-IDToken-none:
-    desc: Unsecured ID Token signature with none [Basic]
+      verify-signed-idtoken-has-kid: null
+  OP-IDToken-null:
+    desc: Unsecured ID Token signature with null [Basic]
     profile: C.T.T.T.n
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
-            id_token_signed_response_alg: none
+            id_token_signed_response_alg: null
             check_support:
               ERROR:
-                id_token_signing_alg_values_supported: none
-      - AsyncAuthn:
-          set_response_where: none
+                id_token_signing_alg_values_supported: null
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
     assert:
-      unsigned-idtoken: none
+      unsigned-idtoken: null
       verify-response:
         response_cls:
           - AccessTokenResponse
@@ -401,12 +401,12 @@ Flows:
     reference: http://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-4.1
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
       - AccessToken
     assert:
@@ -428,12 +428,12 @@ Flows:
     reference: http://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-4.1
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
       - TimeDelay:
           set_time_delay: 30
@@ -455,12 +455,12 @@ Flows:
     reference: http://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-4.1
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
       - AccessToken:
           set_expect_error:
@@ -487,12 +487,12 @@ Flows:
     profile: '...T'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
     assert:
-      check-http-response: none
+      check-http-response: null
   OP-Registration-Endpoint:
     desc: Verify that registration_endpoint is published [Dynamic]
     mti:
@@ -500,33 +500,33 @@ Flows:
     profile: ..T.T
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
     assert:
-      verify-op-has-registration-endpoint: none
+      verify-op-has-registration-endpoint: null
   OP-Registration-Read:
     desc: Registrationing and then reading the registered client metadata [Extra]
     profile: '...T..+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
       - ReadRegistration
     assert:
-      check-http-response: none
+      check-http-response: null
   OP-Registration-Sector-Bad:
     desc: Incorrect registration of sector_identifier_uri [Dynamic]
     profile: ..T.
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
-          set_request_args: none
+          set_request_args: null
           check_support:
             ERROR:
               subject_types_supported: pairwise
@@ -534,7 +534,7 @@ Flows:
                 other_uris:
                   - 'https://example.com/op'
     assert:
-      verify-bad-request-response: none
+      verify-bad-request-response: null
       verify-error:
         error:
           - invalid_configuration_parameter
@@ -544,17 +544,17 @@ Flows:
     profile: '...T..+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             subject_type: public
           check_support:
             ERROR:
               subject_types_supported: public
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
       - Registration:
           set_request_args:
@@ -562,11 +562,11 @@ Flows:
           check_support:
             ERROR:
               subject_types_supported: pairwise
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
     assert:
-      different_sub: none
+      different_sub: null
       verify-response:
         response_cls:
           - AuthorizationResponse
@@ -576,17 +576,17 @@ Flows:
     profile: '...T..+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             subject_type: pairwise
           check_support:
             ERROR:
               subject_types_supported: pairwise
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
     assert:
       verify-response:
@@ -598,17 +598,17 @@ Flows:
     profile: '...T..+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             subject_type: public
           check_support:
             ERROR:
               subject_types_supported: public
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
     assert:
       verify-response:
@@ -620,15 +620,15 @@ Flows:
     profile: C,CI,CT,CIT...T
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             token_endpoint_auth_method: private_key_jwt
           static_jwk: null
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken:
           check_support:
             WARNING:
@@ -645,14 +645,14 @@ Flows:
     profile: C,CI,CT,CIT...T
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             token_endpoint_auth_method: private_key_jwt
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken:
           check_support:
             WARNING:
@@ -672,19 +672,19 @@ Flows:
     profile: '...T'
     sequence:
       - Operation:
-          clear_cookies: none
+          clear_cookies: null
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_uri:
             - logo.uri
             - static/logo.png
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
     assert:
-      verify-authn-response: none
+      verify-authn-response: null
   OP-Registration-policy_uri:
     desc: Registration with policy_uri [Dynamic]
     note: This test verifies that an OP displays a link to the RP's policy document.
@@ -693,19 +693,19 @@ Flows:
     profile: ..T.
     sequence:
       - Operation:
-          clear_cookies: none
+          clear_cookies: null
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_uri:
             - policy_uri
             - static/policy.html
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
     assert:
-      verify-authn-response: none
+      verify-authn-response: null
   OP-Registration-tos_uri:
     desc: Registration with tos_uri [Dynamic]
     note: This test verifies that an OP displays a link to the RP's terms of service.
@@ -714,36 +714,36 @@ Flows:
     profile: '...T'
     sequence:
       - Operation:
-          clear_cookies: none
+          clear_cookies: null
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_uri:
             - tos_uri
             - static/tos.html
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
     assert:
-      verify-authn-response: none
+      verify-authn-response: null
   OP-Req-NotUnderstood:
     desc: Request with extra query component [Basic, Implicit, Hybrid]
     mti: {all: MUST}
     profile: '...'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           set_request_args:
             ERROR:
               extra: foobar
     assert:
-      verify-authn-response: none
+      verify-authn-response: null
   OP-Req-acr_values:
     desc: Providing acr_values [Basic, Implicit, Hybrid]
     mti:
@@ -751,16 +751,16 @@ Flows:
     profile: '...'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
+      - SyncAuthn:
           acr_value: null
-          set_response_where: none
+          set_response_where: null
       - AccessToken
     assert:
-      used-acr-value: none
+      used-acr-value: null
       verify-response:
         response_cls:
           - AuthorizationResponse
@@ -774,13 +774,13 @@ Flows:
     profile: '...'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
+      - SyncAuthn:
           claims_locales: null
-          set_response_where: none
+          set_response_where: null
       - AccessToken
       - UserInfo:
           set_op_args:
@@ -788,29 +788,29 @@ Flows:
             method: GET
       - DisplayUserInfo
     assert:
-      check-http-response: none
+      check-http-response: null
   OP-Req-id_token_hint:
-    desc: Using prompt=none with user hint through id_token_hint [Basic, Implicit, Hybrid]
+    desc: Using prompt=null with user hint through id_token_hint [Basic, Implicit, Hybrid]
     mti:
       all: SHOULD
     profile: '...'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           set_request_args:
-            prompt: none
+            prompt: null
           id_token_hint: null
       - AccessToken
     assert:
-      same-authn: none
+      same-authn: null
       verify-response:
         response_cls:
           - AuthorizationResponse
@@ -826,17 +826,17 @@ Flows:
     result: You should be requested to log in as a predefined user
     sequence:
       - Operation:
-          clear_cookies: none
+          clear_cookies: null
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
+      - SyncAuthn:
           login_hint: null
-          set_response_where: none
+          set_response_where: null
     assert:
-      verify-authn-response: none
+      verify-authn-response: null
   OP-Req-max_age=1:
     desc: Requesting ID Token with max_age=1 seconds restriction [Basic, Implicit, Hybrid]
     mti:
@@ -849,19 +849,19 @@ Flows:
     result: The test passed if you were prompted to log in.
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn
+      - SyncAuthn
       - AccessToken
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           set_request_args:
             max_age: 1
       - AccessToken
@@ -886,15 +886,15 @@ Flows:
     profile: '...'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           set_request_args:
             max_age: 10000
       - AccessToken
@@ -905,7 +905,7 @@ Flows:
         id_token:
           - auth_time
       required: true
-      same-authn: none
+      same-authn: null
       verify-response:
         response_cls:
           - AccessTokenResponse
@@ -921,17 +921,17 @@ Flows:
     profile: '...'
     sequence:
       - Operation:
-          clear_cookies: none
+          clear_cookies: null
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
+      - SyncAuthn:
           ui_locales: null
-          set_response_where: none
+          set_response_where: null
     assert:
-      verify-authn-response: none
+      verify-authn-response: null
   OP-Response-Missing:
     desc: Authorization request missing the response_type parameter [Basic, Implicit,
       Hybrid]
@@ -942,12 +942,14 @@ Flows:
     profile: '...'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
+          set_op_args:
+            lax: true
           set_request_args:
             response_type:
               - ''
@@ -955,6 +957,8 @@ Flows:
             error:
               - invalid_request
               - unsupported_response_type
+            stop: false
+          remove_post_test: valid_code
     assert:
       verify-error:
         error: [invalid_request, unsupported_response_type]
@@ -965,70 +969,70 @@ Flows:
     profile: C...
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
     assert:
-      verify-authn-response: none
+      verify-authn-response: null
   OP-Response-code+id_token:
     desc: Request with response_type=code id_token [Hybrid]
     profile: CI...
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
     assert:
-      check-idtoken-nonce: none
-      verify-authn-response: none
+      check-idtoken-nonce: null
+      verify-authn-response: null
   OP-Response-code+id_token+token:
     desc: Request with response_type=code id_token token [Hybrid]
     profile: CIT...
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
     assert:
-      verify-authn-response: none
+      verify-authn-response: null
   OP-Response-code+token:
     desc: Request with response_type=code token [Hybrid]
     profile: CT...
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
     assert:
-      verify-authn-response: none
+      verify-authn-response: null
   OP-Response-form_post:
     desc: Request with response_mode=form_post [Extra]
     profile: '....+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           set_request_args:
             response_mode:
               - form_post
     assert:
-      verify-authn-response: none
+      verify-authn-response: null
   OP-Response-id_token:
     desc: Request with response_type=id_token [Implicit]
     mti:
@@ -1036,14 +1040,14 @@ Flows:
     profile: I...
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
     assert:
-      verify-authn-response: none
+      verify-authn-response: null
   OP-Response-id_token+token:
     desc: Request with response_type=id_token token [Implicit]
     mti:
@@ -1051,81 +1055,35 @@ Flows:
     profile: IT...
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
     assert:
-      verify-authn-response: none
-  OP-Rotation-OP-Enc:
-    desc: Can rotate OP encryption keys [Extra]
-    note: Please make your OP rotate its encryption keys now.If you are not able to
-      cause the server to rotate the keys while running the test, then you will have
-      to self-assert that your deployment can do OP encryption key rotation as part
-      of your certification application.
-    profile: ..T..e
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: none
-      - Discovery:
-          set_discovery_issuer: none
-      - FetchKeys
-      - TimeDelay:
-          set_time_delay: 300
-      - Webfinger:
-          set_webfinger_resource: none
-      - Discovery:
-          set_discovery_issuer: none
-      - FetchKeys
-    assert:
-      check-http-response: none
-      new-encryption-keys: none
-  OP-Rotation-OP-Sig:
-    desc: Can rotate OP signing keys [Dynamic]
-    note: Please make your OP rotate its signing keys now. If you are not able to cause
-      the server to rotate the keys while running the test, then you will have to self-assert
-      that your deployment can do OP signing key rotation as part of your certification
-      application.
-    profile: ..T.T.s
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: none
-      - Discovery:
-          set_discovery_issuer: none
-      - FetchKeys
-      - TimeDelay:
-          set_time_delay: 300
-      - Webfinger:
-          set_webfinger_resource: none
-      - Discovery:
-          set_discovery_issuer: none
-      - FetchKeys
-    assert:
-      check-http-response: none
-      new-signing-keys: none
+      verify-authn-response: null
   OP-Rotation-RP-Enc:
     desc: Request encrypted UserInfo, change RSA encryption key and request UserInfo
       again [Extra]
     profile: C,CI,CT,CIT...T.se.+
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             userinfo_encrypted_response_alg: RSA1_5
             userinfo_encrypted_response_enc: A128CBC-HS256,
-            userinfo_signed_response_alg: none
+            userinfo_signed_response_alg: null
           check_support:
             WARNING:
               userinfo_encryption_alg_values_supported: RSA1_5
               userinfo_encryption_enc_values_supported: A128CBC-HS256,
-              userinfo_signing_alg_values_supported: none
-      - AsyncAuthn:
-          set_response_where: none
+              userinfo_signing_alg_values_supported: null
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
       - RotateEncKeys
       - UserInfo:
@@ -1133,24 +1091,24 @@ Flows:
             authn_method: bearer_header
             method: GET
     assert:
-      check-http-response: none
+      check-http-response: null
   OP-Rotation-RP-Sig:
     desc: Request access token, change RSA signing key and request another access token
       [Dynamic]
     profile: C,CI,CT,CIT...T.s
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             token_endpoint_auth_method: private_key_jwt
           check_support:
             ERROR:
               token_endpoint_auth_methods_supported: private_key_jwt
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken:
           set_op_args:
             authn_method: private_key_jwt
@@ -1159,7 +1117,7 @@ Flows:
           set_op_args:
             authn_method: private_key_jwt
     assert:
-      check-http-response: none
+      check-http-response: null
   OP-UserInfo-Body:
     desc: UserInfo Endpoint access with POST and bearer body [Basic, Implicit, Hybrid]
     mti:
@@ -1167,12 +1125,12 @@ Flows:
     profile: C,IT,CI,CT,CIT...
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
       - UserInfo:
           set_op_args:
@@ -1188,28 +1146,28 @@ Flows:
     profile: C,IT,CI,CT,CIT....e.+
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             userinfo_encrypted_response_alg: RSA1_5
             userinfo_encrypted_response_enc: A128CBC-HS256
-            userinfo_signed_response_alg: none
+            userinfo_signed_response_alg: null
           check_support:
             ERROR:
               userinfo_encryption_alg_values_supported: RSA1_5
               userinfo_encryption_enc_values_supported: A128CBC-HS256
-              userinfo_signing_alg_values_supported: none
-      - AsyncAuthn:
-          set_response_where: none
+              userinfo_signing_alg_values_supported: null
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
       - UserInfo:
           set_op_args:
             authn_method: bearer_header
             method: GET
     assert:
-      encrypted-userinfo: none
+      encrypted-userinfo: null
       verify-response:
         response_cls:
           - OpenIDSchema
@@ -1220,12 +1178,12 @@ Flows:
     profile: C,IT,CI,CT,CIT...
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
       - UserInfo:
           set_op_args:
@@ -1240,12 +1198,12 @@ Flows:
     profile: C,IT,CI,CT,CIT...
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
       - UserInfo:
           set_op_args:
@@ -1263,17 +1221,17 @@ Flows:
     profile: C,IT,CI,CT,CIT...T.s
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             userinfo_signed_response_alg: RS256
           check_support:
             WARNING:
               userinfo_signing_alg_values_supported: RS256
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
       - UserInfo:
           set_op_args:
@@ -1291,9 +1249,9 @@ Flows:
     profile: C,IT,CI,CT,CIT....se.+
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             userinfo_encrypted_response_alg: RSA1_5
@@ -1304,8 +1262,8 @@ Flows:
               userinfo_encryption_alg_values_supported: RSA1_5
               userinfo_encryption_enc_values_supported: A128CBC-HS256
               userinfo_signing_alg_values_supported: RS256
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
       - UserInfo:
           set_op_args:
@@ -1314,7 +1272,7 @@ Flows:
     assert:
       asym-signed-userinfo:
         alg: RS256
-      encrypted-userinfo: none
+      encrypted-userinfo: null
       verify-response:
         response_cls:
           - OpenIDSchema
@@ -1324,16 +1282,16 @@ Flows:
     profile: C,IT,CI,CIT,CT.....+
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
+      - SyncAuthn:
           check_support:
             WARNING:
               scopes_supported:
                 - phone
-          set_response_where: none
+          set_response_where: null
           set_request_args:
             claims:
               id_token:
@@ -1348,7 +1306,7 @@ Flows:
             authn_method: bearer_header
             method: GET
     assert:
-      check-http-response: none
+      check-http-response: null
       verify-claims:
         id_token:
           email: null
@@ -1359,12 +1317,12 @@ Flows:
     profile: '.....+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           set_request_args:
             claims:
               id_token:
@@ -1384,12 +1342,12 @@ Flows:
     profile: C,IT,CI,CIT,CT.....+
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           set_request_args:
             claims:
               id_token:
@@ -1404,7 +1362,7 @@ Flows:
             authn_method: bearer_header
             method: GET
     assert:
-      check-http-response: none
+      check-http-response: null
       verify-claims:
         id_token:
           email: null
@@ -1415,12 +1373,12 @@ Flows:
     profile: '.....+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           set_request_args:
             claims:
               id_token:
@@ -1440,12 +1398,12 @@ Flows:
     profile: '.....+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           set_request_args:
             claims:
               id_token:
@@ -1464,13 +1422,13 @@ Flows:
     profile: '.....+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          specific_acr_claims: none
-          set_response_where: none
+      - SyncAuthn:
+          specific_acr_claims: null
+          set_response_where: null
           check_support:
             error:
               acr_values_supported:
@@ -1494,12 +1452,12 @@ Flows:
     profile: '.....+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           set_request_args:
             claims:
               id_token:
@@ -1519,12 +1477,12 @@ Flows:
     profile: C,IT,CI,CT,CIT...
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           set_request_args:
             claims:
               userinfo:
@@ -1536,7 +1494,7 @@ Flows:
             authn_method: bearer_header
             method: GET
     assert:
-      check-http-response: none
+      check-http-response: null
       verify-claims:
         userinfo:
           name: null
@@ -1546,12 +1504,12 @@ Flows:
     profile: C,IT,CI,CIT,CT.....+
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           set_request_args:
             claims:
               userinfo:
@@ -1565,7 +1523,7 @@ Flows:
             authn_method: bearer_header
             method: GET
     assert:
-      check-http-response: none
+      check-http-response: null
       verify-claims:
         userinfo:
           email: null
@@ -1579,37 +1537,37 @@ Flows:
     profile: '.....+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
       - Cache
       - Operation:
-          clear_cookies: none
-      - AsyncAuthn:
-          sub_claims: none
-          set_response_where: none
+          clear_cookies: null
+      - SyncAuthn:
+          sub_claims: null
+          set_response_where: null
       - AccessToken
     assert:
       verify-response:
         response_cls:
           - AuthorizationResponse
           - AccessTokenResponse
-      verify-sub-value: none
+      verify-sub-value: null
   OP-claims-voluntary:
     desc: Claims request with voluntary email and picture claims [Extra]
     profile: C,IT,CI,CIT,CT.....+
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           set_request_args:
             claims:
               userinfo:
@@ -1621,7 +1579,7 @@ Flows:
             authn_method: bearer_header
             method: GET
     assert:
-      check-http-response: none
+      check-http-response: null
       verify-claims:
         userinfo:
           email: null
@@ -1636,13 +1594,13 @@ Flows:
     profile: '...'
     sequence:
       - Operation:
-          clear_cookies: none
+          clear_cookies: null
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
+      - SyncAuthn:
           set_request_args:
             display: page
           check_support:
@@ -1662,13 +1620,13 @@ Flows:
     profile: '...'
     sequence:
       - Operation:
-          clear_cookies
+          clear_cookies: null
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
+      - SyncAuthn:
           set_request_args:
             display: popup
           check_support:
@@ -1685,11 +1643,11 @@ Flows:
     profile: C...
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
+      - SyncAuthn:
           set_request_args:
             nonce: ''
     assert:
@@ -1703,11 +1661,11 @@ Flows:
     profile: I,IT,CI,CIT...
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
+      - SyncAuthn:
           set_request_args:
             nonce: ''
     assert:
@@ -1722,16 +1680,16 @@ Flows:
     profile: C...
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
+      - SyncAuthn:
           set_request_args:
             nonce: godmorgon
       - AccessToken
     assert:
-      verify-nonce: none
+      verify-nonce: null
       verify-response:
         response_cls:
           - AccessTokenResponse
@@ -1744,10 +1702,10 @@ Flows:
     sequence:
       - Discovery
       - Registration
-      - AsyncAuthn
+      - SyncAuthn
       - AccessToken
     assert:
-      check-idtoken-nonce: none
+      check-idtoken-nonce: null
       verify-response:
         response_cls:
           - AccessTokenResponse
@@ -1762,50 +1720,50 @@ Flows:
     profile: '...'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
       - AccessToken
       - Note
-      - AsyncAuthn:
+      - SyncAuthn:
           set_request_args:
             prompt: login
       - AccessToken
     assert:
-      multiple-sign-on: none
+      multiple-sign-on: null
       verify-response:
         response_cls:
           - AuthorizationResponse
           - AccessTokenResponse
-  OP-prompt-none-LoggedIn:
-    desc: Request with prompt=none when logged in [Basic, Implicit, Hybrid]
+  OP-prompt-null-LoggedIn:
+    desc: Request with prompt=null when logged in [Basic, Implicit, Hybrid]
     mti:
       all: MUST
     profile: '...'
     result: The test passed if you were not prompted to log in.
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn
+      - SyncAuthn
       - AccessToken
-      - AsyncAuthn:
+      - SyncAuthn:
           set_request_args:
-            prompt: none
+            prompt: null
       - AccessToken
     assert:
-      same-authn: none
+      same-authn: null
       verify-response:
         response_cls:
           - AuthorizationResponse
           - AccessTokenResponse
-  OP-prompt-none-NotLoggedIn:
-    desc: Request with prompt=none when not logged in [Basic, Implicit, Hybrid]
+  OP-prompt-null-NotLoggedIn:
+    desc: Request with prompt=null when not logged in [Basic, Implicit, Hybrid]
     mti:
       all: MUST
     note: This tests what happens if the authentication request specifies that no interaction
@@ -1815,16 +1773,16 @@ Flows:
     profile: '...'
     sequence:
       - Operation:
-          clear_cookies: none
+          clear_cookies: null
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           set_request_args:
-            prompt: none
+            prompt: null
     assert:
       verify-error-response:
         error:
@@ -1843,14 +1801,14 @@ Flows:
     profile: '...T'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           multiple_return_uris: null
       - Note
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           set_request_args:
             redirect_uri: ''
     assert:
@@ -1866,13 +1824,13 @@ Flows:
     profile: '.....+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
       - Note
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           set_request_args:
             redirect_uri: ''
     assert:
@@ -1891,12 +1849,12 @@ Flows:
     profile: '...'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
       - Note
-      - AsyncAuthn:
+      - SyncAuthn:
           set_response_where: null
           set_request_args:
             redirect_uri: 'https://foo.example.se/authz_cb'
@@ -1916,13 +1874,13 @@ Flows:
     profile: '...T'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
       - Note
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           redirect_uris_with_query_component:
             foo: bar
     assert:
@@ -1942,17 +1900,17 @@ Flows:
     reference: http://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-3.1.2
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           redirect_uris_with_query_component:
             foo: bar
       - Note
-      - AsyncAuthn:
+      - SyncAuthn:
           redirect_uris_with_query_component:
             bar: foo
-          set_response_where: none
+          set_response_where: null
     assert:
       verify-response:
         error:
@@ -1968,16 +1926,16 @@ Flows:
     reference: http://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-3.1.2
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           redirect_uris_with_query_component:
             foo: bar
-      - AsyncAuthn:
+      - SyncAuthn:
           redirect_uris_with_query_component:
             foo: bar
-          set_response_where: none
+          set_response_where: null
     assert:
       check-query-part:
         foo: bar
@@ -1992,9 +1950,9 @@ Flows:
     reference: http://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-3.1.2
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           redirect_uris_with_fragment:
             foo: bar
@@ -2011,9 +1969,9 @@ Flows:
     profile: '....s.+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             request_object_signing_alg: RS256
@@ -2021,8 +1979,8 @@ Flows:
             WARNING:
               request_object_signing_alg_values_supported: RS256
               request_parameter_supported: true
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           set_op_args:
             request_method: request
             request_object_signing_alg: RS256
@@ -2035,33 +1993,33 @@ Flows:
     profile: '.....+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
     assert:
-      check-http-response: none
-      check-request-parameter-supported-support: none
+      check-http-response: null
+      check-request-parameter-supported-support: null
   OP-request-Unsigned:
     desc: Support request request parameter with unsigned request [Basic, Implicit,
       Hybrid, Dynamic]
     profile: '...'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
-            request_object_signing_alg: none
+            request_object_signing_alg: null
           check_support:
             WARNING:
-              request_object_signing_alg_values_supported: none
+              request_object_signing_alg_values_supported: null
               request_parameter_supported: true
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           set_op_args:
             request_method: request
-            request_object_signing_alg: none
+            request_object_signing_alg: null
     assert:
       authn-response-or-error:
         error:
@@ -2071,29 +2029,29 @@ Flows:
     profile: '...T.se.+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             request_object_encryption_alg: RSA1_5
             request_object_encryption_enc: A128CBC-HS256
-            request_object_signing_alg: none
+            request_object_signing_alg: null
           check_support:
             WARNING:
               request_object_encryption_alg_values_supported: RSA1_5
               request_object_encryption_enc_values_supported: A128CBC-HS256,
-              request_object_signing_alg_values_supported: none
+              request_object_signing_alg_values_supported: null
               request_uri_parameter_supported: true
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           request_in_file: null
           set_op_args:
             local_dir: export
             request_method: file
             request_object_encryption_alg: RSA1_5
             request_object_encryption_enc: A128CBC-HS256
-            request_object_signing_alg: none
+            request_object_signing_alg: null
     assert:
       authn-response-or-error:
         error:
@@ -2103,9 +2061,9 @@ Flows:
     profile: '...T.s'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             request_object_signing_alg: RS256
@@ -2113,8 +2071,8 @@ Flows:
             warning:
               request_object_signing_alg_values_supported: RS256
               request_uri_parameter_supported: true
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           request_in_file: null
           set_op_args:
             local_dir: export
@@ -2129,9 +2087,9 @@ Flows:
     profile: '...T.se.+'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
             request_object_encryption_alg: RSA1_5
@@ -2143,8 +2101,8 @@ Flows:
               request_object_encryption_enc_values_supported: A128CBC-HS256,
               request_object_signing_alg_values_supported: RS256
               request_uri_parameter_supported: true
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           request_in_file: null
           set_op_args:
             local_dir: export
@@ -2161,35 +2119,35 @@ Flows:
     profile: '...T'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
     assert:
-      check-http-response: none
-      check-request_uri-parameter-supported-support: none
+      check-http-response: null
+      check-request_uri-parameter-supported-support: null
   OP-request_uri-Unsigned:
     desc: Support request_uri request parameter with unsigned request [Basic, Implicit,
       Hybrid]
     profile: '...F'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
-            request_object_signing_alg: none
+            request_object_signing_alg: null
           check_support:
             WARNING:
-              request_object_signing_alg_values_supported: none
+              request_object_signing_alg_values_supported: null
               request_uri_parameter_supported: true
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           request_in_file: null
           set_op_args:
             local_dir: export
             request_method: file
-            request_object_signing_alg: none
+            request_object_signing_alg: null
     assert:
       authn-response-or-error:
         error:
@@ -2200,23 +2158,23 @@ Flows:
     profile: '...T'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration:
           set_request_args:
-            request_object_signing_alg: none
+            request_object_signing_alg: null
           check_support:
             ERROR:
-              request_object_signing_alg_values_supported: none
+              request_object_signing_alg_values_supported: null
               request_uri_parameter_supported: true
-      - AsyncAuthn:
-          set_response_where: none
+      - SyncAuthn:
+          set_response_where: null
           request_in_file: null
           set_op_args:
             local_dir: export
             request_method: file
-            request_object_signing_alg: none
+            request_object_signing_alg: null
     assert:
       verify-response:
         response_cls:
@@ -2227,15 +2185,15 @@ Flows:
     profile: '...'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
+      - SyncAuthn:
           check_support:
             WARNING:
               scopes_supported: [profile, email, address, phone]
-          set_response_where: none
+          set_response_where: null
           set_request_args:
             scope:
               - openid
@@ -2249,28 +2207,28 @@ Flows:
             authn_method: bearer_header
             method: GET
     assert:
-      check-http-response: none
+      check-http-response: null
       verify-response:
         response_cls:
           - OpenIDSchema
           - AuthorizationResponse
-      verify-scopes: none
+      verify-scopes: null
   OP-scope-address:
     desc: Scope requesting address claims [Basic, Implicit, Hybrid]
     mti: No err
     profile: '...'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
+      - SyncAuthn:
           check_support:
             WARNING:
               scopes_supported:
                 - address
-          set_response_where: none
+          set_response_where: null
           set_request_args:
             scope:
               - openid
@@ -2281,28 +2239,28 @@ Flows:
             authn_method: bearer_header
             method: GET
     assert:
-      check-http-response: none
+      check-http-response: null
       verify-response:
         response_cls:
           - OpenIDSchema
           - AuthorizationResponse
-      verify-scopes: none
+      verify-scopes: null
   OP-scope-email:
     desc: Scope requesting email claims [Basic, Implicit, Hybrid]
     mti: No err
     profile: '...'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
+      - SyncAuthn:
           check_support:
             WARNING:
               scopes_supported:
                 - email
-          set_response_where: none
+          set_response_where: null
           set_request_args:
             scope:
               - openid
@@ -2313,28 +2271,28 @@ Flows:
             authn_method: bearer_header
             method: GET
     assert:
-      check-http-response: none
+      check-http-response: null
       verify-response:
         response_cls:
           - OpenIDSchema
           - AuthorizationResponse
-      verify-scopes: none
+      verify-scopes: null
   OP-scope-phone:
     desc: Scope requesting phone claims [Basic, Implicit, Hybrid]
     mti: No err
     profile: '...'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
+      - SyncAuthn:
           check_support:
             WARNING:
               scopes_supported:
                 - phone
-          set_response_where: none
+          set_response_where: null
           set_request_args:
             scope:
               - openid
@@ -2345,12 +2303,12 @@ Flows:
             authn_method: bearer_header
             method: GET
     assert:
-      check-http-response: none
+      check-http-response: null
       verify-response:
         response_cls:
           - OpenIDSchema
           - AuthorizationResponse
-      verify-scopes: none
+      verify-scopes: null
   OP-scope-profile:
     desc: Scope requesting profile claims [Basic, Implicit, Hybrid]
     mti:
@@ -2358,16 +2316,16 @@ Flows:
     profile: '...'
     sequence:
       - Webfinger:
-          set_webfinger_resource: none
+          set_webfinger_resource: null
       - Discovery:
-          set_discovery_issuer: none
+          set_discovery_issuer: null
       - Registration
-      - AsyncAuthn:
+      - SyncAuthn:
           check_support:
             warning:
               scopes_supported:
                 - profile
-          set_response_where: none
+          set_response_where: null
           set_request_args:
             scope:
               - openid
@@ -2378,12 +2336,12 @@ Flows:
             authn_method: bearer_header
             method: GET
     assert:
-      check-http-response: none
+      check-http-response: null
       verify-response:
         response_cls:
           - OpenIDSchema
           - AuthorizationResponse
-      verify-scopes: none
+      verify-scopes: null
 Order:
   - OP-Response
   - OP-IDToken

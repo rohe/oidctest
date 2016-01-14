@@ -1,6 +1,6 @@
 import inspect
 from six.moves.urllib.parse import urlparse
-from aatest.check import ERROR
+from aatest.check import ERROR, State
 import sys
 
 __author__ = 'roland'
@@ -45,10 +45,10 @@ def check_endpoint(oper, args):
     try:
         _ = oper.conv.entity.provider_info[args]
     except KeyError:
-        oper.conv.events.store('test_output',
-            {"id": "check_endpoint",
-             "status": ERROR,
-             "message": "{} not in provider configuration".format(args)})
+        oper.conv.events.store(
+            'condition',
+            State(test_id="check_endpoint", status=ERROR,
+                  message="{} not in provider configuration".format(args)))
         oper.skip = True
 
 

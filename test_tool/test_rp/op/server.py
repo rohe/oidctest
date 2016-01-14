@@ -105,7 +105,8 @@ def op_setup(environ, mode, trace):
         _op = OP[key]
         _op.trace = trace
     except KeyError:
-        if mode["test_id"] == 'rp-id_token-kid_absent_multiple_jwks':
+        if mode["test_id"] in ['RP-id_token-C_kid_absent_multiple_jwks',
+                               'RP-id_token-I_kid_absent_multiple_jwks']:
             _op_args = {}
             for param in ['baseurl', 'cookie_name', 'cookie_ttl', 'endpoints']:
                 _op_args[param] = OP_ARG[param]
@@ -181,7 +182,7 @@ def application(environ, start_response):
         else:
             tok = authz[7:]
             mode, endpoint = extract_mode(OP_ARG["baseurl"])
-            _op, _ = op_setup(environ, mode)
+            _op, _ = op_setup(environ, mode, trace)
             try:
                 _claims = _op.claim_access_token[tok]
             except KeyError:

@@ -4,6 +4,7 @@ import importlib
 import json
 import logging
 import os
+from aatest.check import OK
 from aatest.operation import Note
 import argparse
 import sys
@@ -116,12 +117,19 @@ def main(flows, profile, profiles, **kw_args):
         _cli.conv = conversation
         # noinspection PyTypeChecker
         try:
-            run_flow(profiles, conversation, tid, kw_args["conf"],
-                     profile, kw_args["check_factory"], io, sh)
+            info = run_flow(profiles, conversation, tid, kw_args["conf"],
+                            profile, kw_args["check_factory"], io, sh)
+            if info['status'] == OK:
+                print('+{}'.format(tid))
+            else:
+                print('!{}'.format(tid))
+                for ev in conversation.events:
+                    print(ev)
+                break
         except Exception as err:
             exception_trace("", err, logger)
             print(conversation.trace)
-
+            break
 
 if __name__ == '__main__':
     from oidctest import profiles

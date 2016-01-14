@@ -3,7 +3,7 @@ import logging
 from six.moves.urllib.parse import unquote
 #from urllib.parse import unquote
 from aatest import exception_trace, Break
-from aatest.check import ERROR
+from aatest.check import ERROR, State
 from aatest.check import WARNING
 from oic.utils.http_util import Response
 
@@ -71,7 +71,7 @@ class WebLog(Log):
     def store_test_info(self, session, profile_info=None):
         _info = {
             "trace": session["conv"].trace,
-            "test_output": session["conv"].events.get('test_output'),
+            "assert": session["conv"].events.get('condition'),
             "index": session["index"],
             "seqlen": len(session["seq_info"]["sequence"]),
             "descr": session["node"].desc
@@ -171,9 +171,9 @@ class WebLog(Log):
                 session["conv"].test_output.append(
                     {"id": "-", "status": err_type, "message": "%s" % err})
             else:
-                session["conv"].events.store('test_output',
-                    {"id": "-", "status": err_type,
-                     "message": "Error in %s" % where})
+                session["conv"].events.store(
+                    'condition', State(test_id="-", status=err_type,
+                                       message="Error in %s" % where))
 
     def err_response(self, session, where, err):
         if err:

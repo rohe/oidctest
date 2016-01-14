@@ -8,6 +8,7 @@ from six.moves.urllib.parse import urlparse
 #from urllib.parse import urlparse
 
 from aatest import ConfigurationError
+from aatest.check import State
 from oidctest.oidc_check import ERROR
 from oidctest.tool import get_redirect_uris
 from oidctest.check import get_id_tokens
@@ -17,9 +18,12 @@ __author__ = 'roland'
 
 def set_webfinger_resource(oper, args):
     try:
-        oper.resource = oper.op_args["resource"]
+        _base = oper.op_args["resource"]
     except KeyError:
-        oper.resource = oper.conf.ISSUER
+        _base = oper.conf.ISSUER
+    if not _base.endswith('/'):
+        _base += '/'
+    oper.resource = '{}{}'.format(_base, oper.conv.test_id)
 
 
 def set_discovery_issuer(oper, args):
@@ -45,9 +49,10 @@ def check_support(oper, args):
             try:
                 assert val in oper.conv.entity.provider_info[key]
             except AssertionError:
-                oper.conv.events.store('test_output',
-                    {"status": level, "id": "Check support",
-                     "message": "No support for: {}={}".format(key, val)})
+                oper.conv.events.store(
+                    'condition',
+                    State(status=level, test_id="Check support",
+                          message="No support for: {}={}".format(key, val)))
 
 
 def set_principal(oper, args):
@@ -261,10 +266,10 @@ def check_endpoint(oper, args):
     try:
         _ = oper.conv.entity.provider_info[args]
     except KeyError:
-        oper.conv.events.store('test_output',
-            {"id": "check_endpoint",
-             "status": ERROR,
-             "message": "{} not in provider configuration".format(args)})
+        oper.conv.events.store(
+            'condition',
+            State(test_id="check_endpoint", status=ERROR,
+                  message="{} not in provider configuration".format(args)))
         oper.skip = True
 
 
@@ -289,6 +294,17 @@ def restore_response(oper, arg):
 def skip_operation(oper, arg):
     if oper.profile[0] in arg["flow_type"]:
         oper.skip = True
+
+
+def remove_post_test(oper, arg):
+    try:
+        oper.tests['post'].remove(arg)
+    except ValueError:
+        pass
+
+
+def remove_grant(oper, arg):
+    oper.conv.entity.grant = {}
 
 
 def factory(name):
