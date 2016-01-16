@@ -301,22 +301,40 @@ Flows:
         response_cls:
           - AuthorizationResponse
           - AccessTokenResponse
-  OP-IDToken-Signature:
+  OP-IDToken-C-Signature:
     desc: Does the OP sign the ID Token and with what [Basic, Implicit, Hybrid]
-    profile: '...'
+    profile: 'C,CI,CT...'
     sequence:
       - Webfinger:
           set_webfinger_resource: none
       - Discovery:
           set_discovery_issuer: none
+      - Registration
       - AsyncAuthn:
           set_response_where: none
       - AccessToken
     assert:
-      is-idtoken-signed: {alg: RS256}
+      is-idtoken-signed:
+        alg: RS256
       verify-response:
         response_cls:
           - AccessTokenResponse
+  OP-IDToken-I-Signature:
+    desc: Does the OP sign the ID Token and with what [Basic, Implicit, Hybrid]
+    profile: 'CIT,IT,I...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: none
+      - Discovery:
+          set_discovery_issuer: none
+      - Registration
+      - AsyncAuthn:
+          set_response_where: none
+    assert:
+      is-idtoken-signed:
+        alg: RS256
+      verify-response:
+        response_cls:
           - AuthorizationResponse
   OP-IDToken-at_hash:
     desc: ID Token has at_hash when ID Token and Access Token returned from Authorization
@@ -472,6 +490,10 @@ Flows:
           set_op_args:
             authn_method: bearer_header
             method: GET
+          set_expect_error:
+            error:
+              - access_denied
+            stop: false
     assert:
       verify-response:
         error:
@@ -2395,20 +2417,20 @@ Order:
   - OP-request
   - OP-claims
 Desc:
-  OP-Response: "Response Type & Response Mode"
-  OP-IDToken: "ID Token"
-  OP-UserInfo: "Userinfo Endpoint"
-  OP-nonce: "nonce Request Parameter"
-  OP-scope: "scope Request Parameter"
-  OP-display: "display Request Parameter"
-  OP-prompt: "prompt Request Parameter"
-  OP-Req: "Misc Request Parameters"
-  OP-OAuth: "OAuth behaviors"
-  OP-redirect_uri: "redirect_uri"
-  OP-ClientAuth: "Client Authentication"
-  OP-Discovery: "Discovery"
-  OP-Registration: "Dynamic Client Registration"
-  OP-Rotation: "Key Rotation"
-  OP-request_uri: "request_uri Request Parameter"
-  OP-request: "request Request Parameter"
-  OP-claims: "claims Request Parameter"
+  Response: "Response Type & Response Mode"
+  IDToken: "ID Token"
+  UserInfo: "Userinfo Endpoint"
+  nonce: "nonce Request Parameter"
+  scope: "scope Request Parameter"
+  display: "display Request Parameter"
+  prompt: "prompt Request Parameter"
+  Req: "Misc Request Parameters"
+  OAuth: "OAuth behaviors"
+  redirect_uri: "redirect_uri"
+  ClientAuth: "Client Authentication"
+  Discovery: "Discovery"
+  Registration: "Dynamic Client Registration"
+  Rotation: "Key Rotation"
+  request_uri: "request_uri Request Parameter"
+  request: "request Request Parameter"
+  claims: "claims Request Parameter"

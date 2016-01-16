@@ -10,3 +10,4 @@ class Client(oic.Client):
 
     def store_response(self, clinst, text):
         self.conv.events.store('protocol_response', (clinst, text))
+        self.conv.trace.response(clinst)

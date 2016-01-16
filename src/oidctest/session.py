@@ -2,6 +2,7 @@ import copy
 import logging
 from aatest import session
 from aatest.session import Done
+from oidctest.prof_util import map_prof
 
 __author__ = 'roland'
 
@@ -63,12 +64,15 @@ class SessionHandler(session.SessionHandler):
             session["flow_names"].extend(l)
 
         _tests =[]
+        _sprof = self.profile.split(".")
         for k in session["flow_names"]:
-            try:
-                kwargs = {"mti": self.test_flows[k]["mti"]}
-            except KeyError:
-                kwargs = {}
-            _tests.append(Node(k, self.test_flows[k]["desc"], **kwargs))
+            _test = self.test_flows[k]
+            if map_prof(_sprof, _test["profile"].split(".")):
+                try:
+                    kwargs = {"mti": _test["mti"]}
+                except KeyError:
+                    kwargs = {}
+                _tests.append(Node(k, _test["desc"], **kwargs))
 
         session["tests"] = _tests
         session["test_info"] = {}

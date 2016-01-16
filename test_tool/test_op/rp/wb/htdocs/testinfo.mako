@@ -1,10 +1,11 @@
 <%!
 
-from aatest.check import STATUSCODE
-from aatest import summation
-
-def do_assertions(out):
-  return summation.do_assertions(out, True)
+def do_assertions(events):
+    element = ['<h3>Assertions</h3>','<ul>']
+    for ev in events.get_data('condition'):
+      element.append('<li>{}'.format(ev))
+    element.append('</ul>')
+    return "\n".join(element)
 %>
 
 <%!

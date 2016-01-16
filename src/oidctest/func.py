@@ -9,6 +9,7 @@ from six.moves.urllib.parse import urlparse
 
 from aatest import ConfigurationError
 from aatest.check import State
+from aatest.check import STATUSCODE_TRANSL
 from oidctest.oidc_check import ERROR
 from oidctest.tool import get_redirect_uris
 from oidctest.check import get_id_tokens
@@ -46,13 +47,25 @@ def check_support(oper, args):
     # args = { level : kwargs }
     for level, kwargs in list(args.items()):
         for key, val in list(kwargs.items()):
-            try:
-                assert val in oper.conv.entity.provider_info[key]
-            except AssertionError:
-                oper.conv.events.store(
-                    'condition',
-                    State(status=level, test_id="Check support",
-                          message="No support for: {}={}".format(key, val)))
+            if isinstance(val, list):
+                missing = []
+                for v in val:
+                    if not v in oper.conv.entity.provider_info[key]:
+                        missing.append(v)
+                if missing:
+                    oper.conv.events.store(
+                        'condition',
+                        State(status=STATUSCODE_TRANSL[level],
+                              test_id="Check support",
+                              message="No support for: {}={}".format(key,
+                                                                     missing)))
+            else:
+                if not val in oper.conv.entity.provider_info[key]:
+                    oper.conv.events.store(
+                        'condition',
+                        State(status=STATUSCODE_TRANSL[level],
+                              test_id="Check support",
+                              message="No support for: {}={}".format(key, val)))
 
 
 def set_principal(oper, args):

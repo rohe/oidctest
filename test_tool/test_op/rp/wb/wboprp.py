@@ -73,8 +73,6 @@ def application(environ, start_response):
     sh = SessionHandler(session, **webenv)
 
     tester = WebTester(io, sh, **webenv)
-    tester.check_factory = get_check
-    #print(tester.check_factory)
 
     if path == "robots.txt":
         return io.static("static/robots.txt")
@@ -196,7 +194,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-m', dest='mailaddr')
     parser.add_argument('-o', dest='operations')
-    parser.add_argument('-f', dest='flows')
+    parser.add_argument('-f', dest='flows', action='append')
     parser.add_argument('-d', dest='directory')
     parser.add_argument('-p', dest='profile')
     parser.add_argument('-P', dest='profiles')
@@ -218,18 +216,15 @@ if __name__ == '__main__':
 
     setup_logging("%s/rp_%s.log" % (SERVER_LOG_FOLDER, CONF.PORT), LOGGER)
 
-    fdef = {'Flows': {}, 'Order': [], 'Desc': []}
+    fdef = {'Flows': {}, 'Order': [], 'Desc': {}}
     cls_factories = {'': oper.factory}
     func_factory = func.factory
 
     for flow_def in args.flows:
         spec = parse_yaml_conf(flow_def, cls_factories, func_factory)
         fdef['Flows'].update(spec['Flows'])
-        for param in ['Order', 'Desc']:
-            try:
-                fdef[param].extend(spec[param])
-            except KeyError:
-                pass
+        fdef['Desc'].update(spec['Desc'])
+        fdef['Order'].extend(spec['Order'])
 
     if args.profiles:
         profiles = importlib.import_module(args.profiles)
@@ -270,10 +265,11 @@ if __name__ == '__main__':
 
     ENV = {"base_url": CONF.BASE, "kidd": kidd, "keyjar": keyjar,
            "jwks_uri": jwks_uri, "flows": fdef['Flows'], "conf": CONF,
-           "cinfo": CONF.INFO, "orddesc": fdef['Order'],
+           "cinfo": CONF.INFO, "order": fdef['Order'],
            "profiles": profiles, "operation": operations,
            "profile": args.profile, "msg_factory": oic_message_factory,
-           "lookup": LOOKUP, "desc": fdef['Desc'], "cache": {}}
+           "lookup": LOOKUP, "desc": fdef['Desc'], "cache": {},
+           'check_factory': get_check}
 
     SRV = wsgiserver.CherryPyWSGIServer(('0.0.0.0', CONF.PORT),
                                         SessionMiddleware(application,

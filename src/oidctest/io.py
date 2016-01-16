@@ -8,7 +8,7 @@ from aatest.io import IO, eval_state
 from oic.utils.http_util import Response, NotFound
 from oic.utils.time_util import in_a_while
 
-from aatest.check import ERROR
+from aatest.check import ERROR, State
 from aatest.check import OK
 from aatest.check import WARNING
 from aatest.check import INCOMPLETE
@@ -51,15 +51,17 @@ TEST_RESULTS = {OK: "OK", ERROR: "ERROR", WARNING: "WARNING",
 
 
 class WebIO(IO):
-    def __init__(self, conf, flows, profile, profiles, operation,
-                 desc, lookup, cache=None, environ=None,
+    def __init__(self, conf=None, flows=None, profile='', desc=None,
+                 lookup=None, check_factory=None, cache=None, environ=None,
                  start_response=None, **kwargs):
-        IO.__init__(self, conf, flows, profile, profiles, operation,
-                    desc)
+        IO.__init__(self, flows=flows, profile=profile, desc=desc,
+                    check_factory=check_factory)
+        self.conf = conf
         self.lookup = lookup
         self.environ = environ
         self.start_response = start_response
         self.cache = cache
+        self.kwargs = kwargs
 
     @staticmethod
     def store_test_info(session, profile_info=None):
@@ -124,7 +126,7 @@ class WebIO(IO):
                 if not path:
                     return
 
-                sline = 60*"="
+                sline = 60 * "="
                 output = ["%s: %s" % (k, _pi[k]) for k in ["Issuer", "Profile",
                                                            "Test ID"]]
                 output.append("Timestamp: %s" % in_a_while())
@@ -172,8 +174,10 @@ class WebIO(IO):
             "trace": info["trace"],
             "events": info["events"],
             "result": represent_result(
-                info, session).replace("\n", "<br>\n")
+                info, eval_state(session['conv'].events)).replace("\n", "<br>\n")
         }
+
+        logger.debug(argv)
 
         return resp(self.environ, self.start_response, **argv)
 
@@ -256,7 +260,8 @@ class WebIO(IO):
 
     def display_log(self, root, issuer="", profile="", testid=""):
         logger.info(
-            "display_log root: '%s' issuer: '%s', profile: '%s' testid: '%s'" % (
+            "display_log root: '%s' issuer: '%s', profile: '%s' testid: '%s'"
+            % (
                 root, issuer, profile, testid))
         if testid:
             path = os.path.join(root, issuer, profile, testid).replace(":",
@@ -299,12 +304,13 @@ class WebIO(IO):
                 else:
                     session["conv"].trace.error("%s:%s" % (
                         err.__class__.__name__, str(err)))
-                session["conv"].events.store('fault',
-                    {"id": "-", "status": err_type, "message": "%s" % err})
+                session["conv"].events.store(
+                    'fault', State(test_id="-", status=err_type,
+                                   message="{}".format(err)))
             else:
-                session["conv"].events.store('fault',
-                    {"id": "-", "status": err_type,
-                     "message": "Error in %s" % where})
+                session["conv"].events.store(
+                    'fault', State(test_id="-", status=err_type,
+                                   message="Error in {}".format(where)))
 
     def err_response(self, session, where, err):
         if err:
@@ -347,7 +353,7 @@ class WebIO(IO):
             return resp
 
 
-SIGN = {OK: "+", WARNING: "?", ERROR: "-", INCOMPLETE: "!"}
+SIGN = {OK: "+", WARNING: "!", ERROR: "-", INCOMPLETE: "?"}
 
 
 class ClIO(IO):
@@ -362,7 +368,7 @@ class ClIO(IO):
         else:
             _pi = get_profile_info(session, test_id)
             if _pi:
-                sline = 60*"="
+                sline = 60 * "="
                 output = ["%s: %s" % (k, _pi[k]) for k in ["Issuer", "Profile",
                                                            "Test ID"]]
                 output.append("Timestamp: %s" % in_a_while())

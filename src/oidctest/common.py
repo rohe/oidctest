@@ -131,7 +131,7 @@ def make_client(**kw_args):
         for arg, val in list(_cli_info.items()):
             setattr(_cli, arg, val)
 
-    return _cli
+    return _cli, _cli_info
 
 
 def make_list(flows, profile, **kw_args):

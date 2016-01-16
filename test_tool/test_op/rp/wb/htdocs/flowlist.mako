@@ -18,28 +18,27 @@ def op_choice(base, nodes, test_info, headlines):
              '<img src="static/qmark.jpg" alt="QuestionMark">',
              '<img src="static/greybutton" alt="Grey">',
              ]
-    element = "<ul>"
+    element = ["<ul>"]
 
     for node in nodes:
         p, grp, spec = node.name.split("-", 2)
         if not grp == _grp:
             _grp = grp
-            element += "<hr size=2><h3 id='%s'>%s</h3>" % (_grp, headlines[_grp])
-        element += "<li><a href='%s%s'>%s</a>%s (%s) " % (base,
-            node.name, color[node.state], node.desc, node.name)
+            element.append("<hr size=2><h3 id='%s'>%s</h3>" % (_grp, headlines[_grp]))
+        element.append("<li><a href='%s%s'>%s</a>%s (%s) " % (base,
+            node.name, color[node.state], node.desc, node.name))
 
         if node.rmc:
-            element += '<img src="static/delete-icon.png">'
+            element.append('<img src="static/delete-icon.png">')
         if node.experr:
-            element += '<img src="static/beware.png">'
+            element.append('<img src="static/beware.png">')
         if node.name in test_info:
-            element += "<a href='%stest_info/%s'><img src='static/info32.png'></a>" % (
-                    base, node.name)
+            element.append("<a href='%stest_info/%s'><img src='static/info32.png'></a>" % (
+                    base, node.name))
         #if node.mti == "MUST":
         #    element += '<img src="static/must.jpeg">'
 
-    element += "</select>"
-    return element
+    return "\n".join(element)
 %>
 
 <%!
@@ -57,11 +56,11 @@ ICONS = [
     ]
 
 def legends():
-    element = "<table border='1' id='legends'>"
+    element = ["<table border='1' id='legends'>"]
     for icon, txt in ICONS:
-        element += "<tr><td>%s</td><td>%s</td></tr>" % (icon, txt)
-    element += '</table>'
-    return element
+        element.append("<tr><td>%s</td><td>%s</td></tr>" % (icon, txt))
+    element.append('</table>')
+    return "\n".join(element)
 %>
 
 <%

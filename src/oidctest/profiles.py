@@ -148,7 +148,4 @@ PROFILEMAP = {
 }
 
 CRYPT = {"n": "none", "s": "signing", "e": "encryption"}
-
-
-
 SUBPROF = {"n": "none", "s": "sign", "e": "encrypt"}

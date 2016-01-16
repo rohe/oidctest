@@ -8,12 +8,13 @@ from future.backports.urllib.parse import urlparse
 
 from jwkest.jwk import RSAKey
 
-from aatest import RequirementsNotMet, Unknown
+from aatest import RequirementsNotMet, Unknown, Break
 from aatest.operation import Operation
 
 from oic.exception import IssuerMismatch
 from oic.exception import PyoidcError
 from oic.oauth2 import rndstr
+from oic.oauth2.message import ErrorResponse
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
 from oic.oic import AccessTokenResponse
@@ -226,19 +227,20 @@ class UserInfo(SyncGetRequest):
         args = self.op_args.copy()
         args.update(self.req_args)
 
-        user_info = self.conv.entity.do_user_info_request(**args)
-        assert user_info
+        response = self.conv.entity.do_user_info_request(**args)
+        if self.expect_error:
+            response = self.expected_error_response(response)
+        else:
+            if isinstance(response, ErrorResponse):
+                raise Break("Unexpected error response")
 
-        self.catch_exception(self._verify_subject_identifier,
-                             client=self.conv.entity,
-                             user_info=user_info)
+            if "_claim_sources" in response:
+                user_info = self.conv.entity.unpack_aggregated_claims(response)
+                user_info = self.conv.entity.fetch_distributed_claims(user_info)
 
-        if "_claim_sources" in user_info:
-            user_info = self.conv.entity.unpack_aggregated_claims(user_info)
-            user_info = self.conv.entity.fetch_distributed_claims(user_info)
+            self.conv.entity.userinfo = response
 
-        self.conv.entity.userinfo = user_info
-        self.conv.trace.response(user_info)
+        self.conv.trace.response(response)
 
     @staticmethod
     def _verify_subject_identifier(client, user_info):

@@ -209,9 +209,10 @@ class WebTester(Tester):
         redirs = get_redirect_uris(cinfo)
 
         _flow = self.flows[test_id]
-        _cli = make_client(**kw_args)
+        _cli, _cli_conf = make_client(**kw_args)
         self.conv = Conversation(_flow, _cli, kw_args["msg_factory"],
                                  trace_cls=Trace, callback_uris=redirs)
+        self.conv.entity_config = _cli_conf
         _cli.conv = self.conv
         self.sh.session_setup(path=test_id)
         self.sh.session["conv"] = self.conv
@@ -289,9 +290,13 @@ class WebTester(Tester):
             pass
         except Exception as err:
             raise
-        else:
-            if isinstance(_oper, Done):
-                self.conv.events.store('test_output', END_TAG)
+
+        if isinstance(_oper, Done):
+            self.conv.events.store('condition',
+                                   State(test_id='done', status=OK))
+
+        self.sh.session['node'].complete = True
+        self.sh.session['node'].state = eval_state(self.conv.events)
 
     def cont(self, environ, ENV):
         query = parse_qs(environ["QUERY_STRING"])

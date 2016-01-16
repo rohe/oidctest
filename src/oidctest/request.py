@@ -43,8 +43,11 @@ class Request(Operation):
             if response["error"] not in self.expect_error["error"]:
                 raise Break("Wrong error, got {} expected {}".format(
                     response["error"], self.expect_error["error"]))
-            if self.expect_error["stop"]:
-                raise Break("Stop requested after received expected error")
+            try:
+                if self.expect_error["stop"]:
+                    raise Break("Stop requested after received expected error")
+            except KeyError:
+                pass
         else:
             self.conv.trace.error("Expected error, didn't get it")
             raise Break("Did not receive expected error")
