@@ -131,20 +131,20 @@ The configuration for the RP certification service.
 |                                                        |pairwise|
 |request_parameter_supported                             |true|
 |userinfo_signing_alg_values_supported                   |ES512|
-                                                        ||PS521|
-                                                        ||ES512|
-                                                        ||PS521|
-                                                        ||RS512|
-                                                        ||HS512|
-                                                        ||PS384|
-                                                        ||RS256|
-                                                        ||ES384|
-                                                        ||HS256|
-                                                        ||HS384|
-                                                        ||PS256|
-                                                        ||none|
-                                                        ||ES256|
-                                                        ||RS384|
+|                                                        |PS521|
+|                                                        |ES512|
+|                                                        |PS521|
+|                                                        |RS512|
+|                                                        |HS512|
+|                                                        |PS384|
+|                                                        |RS256|
+|                                                        |ES384|
+|                                                        |HS256|
+|                                                        |HS384|
+|                                                        |PS256|
+|                                                        |none|
+|                                                        |ES256|
+|                                                        |RS384|
 |claims_supported                                        |profile|
                                                         ||family_name|
                                                         ||phone_number|
