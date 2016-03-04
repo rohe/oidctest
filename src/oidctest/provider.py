@@ -120,8 +120,10 @@ class Provider(provider.Provider):
                 key = ECKey(kid="rotated_ec_{}".format(time.time()),
                             use="sig").load_key(P256)
 
-            new_key = {"keys": [key.serialize(private=True)]}
-            self.do_key_rollover(new_key, "%d")
+            new_keys = {"keys": [key.serialize(private=True)]}
+            self.trace.info("New signing keys: {}".format(new_keys))
+            self.do_key_rollover(new_keys, "%d")
+            self.trace.info("Rotated signing keys")
 
         if "nokid1jwk" in self.behavior_type:
             if not alg == "HS256":
@@ -263,6 +265,7 @@ class Provider(provider.Provider):
             keys = [rsa_key.serialize(private=True),
                     ec_key.serialize(private=True)]
             new_keys = {"keys": keys}
+            self.trace.info("New encryption keys: {}".format(new_keys))
             self.do_key_rollover(new_keys, "%d")
             self.trace.info("Rotated encryption keys")
 
