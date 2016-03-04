@@ -254,6 +254,18 @@ class Provider(provider.Provider):
         _response = provider.Provider.authorization_endpoint(self, request,
                                                              cookie, **kwargs)
 
+        if "rotenc" in self.behavior_type:  # Rollover encryption keys
+            rsa_key = RSAKey(kid="rotated_rsa_{}".format(time.time()),
+                             use="enc").load_key(RSA.generate(2048))
+            ec_key = ECKey(kid="rotated_ec_{}".format(time.time()),
+                           use="enc").load_key(P256)
+
+            keys = [rsa_key.serialize(private=True),
+                    ec_key.serialize(private=True)]
+            new_keys = {"keys": keys}
+            self.do_key_rollover(new_keys, "%d")
+            self.trace.info("Rotated encryption keys")
+
         # This is just for logging purposes
         try:
             _resp = self.server.http_request(_req["request_uri"][0])
@@ -289,21 +301,7 @@ class Provider(provider.Provider):
         return _response
 
     def generate_jwks(self, mode):
-        if "rotenc" in self.behavior_type:  # Rollover encryption keys
-            rsa_key = RSAKey(kid="rotated_rsa_{}".format(time.time()),
-                             use="enc").load_key(RSA.generate(2048))
-            ec_key = ECKey(kid="rotated_ec_{}".format(time.time()),
-                           use="enc").load_key(P256)
-
-            keys = [rsa_key.serialize(private=True),
-                    ec_key.serialize(private=True)]
-            new_keys = {"keys": keys}
-            self.do_key_rollover(new_keys, "%d")
-
-            signing_keys = [k.to_dict() for k in self.keyjar.get_signing_key()]
-            new_keys["keys"].extend(signing_keys)
-            return json.dumps(new_keys)
-        elif "nokid1jwk" in self.behavior_type:
+        if "nokid1jwk" in self.behavior_type:
             alg = mode["sign_alg"]
             if not alg:
                 alg = "RS256"

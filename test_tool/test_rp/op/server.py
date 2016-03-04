@@ -22,6 +22,9 @@ from oidctest.endpoints import display_log
 from oidctest.endpoints import URLS
 from oidctest.response_encoder import ResponseEncoder
 
+from requests.packages import urllib3
+urllib3.disable_warnings()
+
 __author__ = 'rohe0002'
 
 from mako.lookup import TemplateLookup
