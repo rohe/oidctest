@@ -6,14 +6,15 @@ import os
 import sys
 import time
 
-import aatest
 from future.backports.urllib.parse import urlparse
 
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 from oic.utils.keyio import build_keyjar
 
+import aatest
+
+from aatest.summation import assert_summation
 from aatest.verify import Verify
-from oidctest.setup import test_summation
 
 from oidctest.prof_util import map_prof
 from oidctest.client import Client
@@ -21,6 +22,7 @@ from oidctest.client import Client
 __author__ = 'roland'
 
 logger = logging.getLogger(__name__)
+
 
 class Trace(aatest.Trace):
     @staticmethod
@@ -64,7 +66,7 @@ class Trace(aatest.Trace):
 
 
 def setup_logger(log, log_file_name="rp.log"):
-    #logger = logging.getLogger("")
+    # logger = logging.getLogger("")
     hdlr = logging.FileHandler(log_file_name)
     base_formatter = logging.Formatter(
         "%(asctime)s %(name)s:%(levelname)s %(message)s")
@@ -72,6 +74,7 @@ def setup_logger(log, log_file_name="rp.log"):
     hdlr.setFormatter(base_formatter)
     log.addHandler(hdlr)
     log.setLevel(logging.DEBUG)
+
 
 def main_setup(log):
     from oidctest import profiles
@@ -123,6 +126,7 @@ def make_client(**kw_args):
     _cli.kid = kw_args["kidd"]
     _cli.jwks_uri = kw_args["jwks_uri"]
 
+    _cli_info = {}
     try:
         _cli_info = kw_args["conf"].INFO["client"]
     except KeyError:
@@ -153,13 +157,14 @@ def make_list(flows, profile, **kw_args):
 
     return res
 
+
 def node_dict(flows, lst):
-    return dict([(l,flows[l]) for l in lst])
+    return dict([(l, flows[l]) for l in lst])
 
 
 def run_flow(profiles, conv, test_id, conf, profile, check_factory, io, sh,
              index=0):
-    print(("=="+test_id))
+    print(("==" + test_id))
     conv.test_id = test_id
     conv.conf = conf
 
@@ -185,13 +190,14 @@ def run_flow(profiles, conv, test_id, conf, profile, check_factory, io, sh,
 
     try:
         if conv.flow["assert"]:
-            _ver = Verify(check_factory, conv.msg_factory, conv)
+            _ver = Verify(check_factory, conv)
             _ver.test_sequence(conv.flow["tests"])
     except KeyError:
         pass
     except Exception as err:
+        aatest.exception_trace('run_flow', err, logger)
         raise
 
-    info = test_summation(conv, test_id)
+    info = assert_summation(conv.events, test_id)
 
     return info

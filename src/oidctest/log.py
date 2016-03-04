@@ -5,6 +5,7 @@ from six.moves.urllib.parse import unquote
 from aatest import exception_trace, Break
 from aatest.check import ERROR, State
 from aatest.check import WARNING
+from aatest.events import EV_CONDITION
 from oic.utils.http_util import Response
 
 __author__ = 'roland'
@@ -172,8 +173,9 @@ class WebLog(Log):
                     {"id": "-", "status": err_type, "message": "%s" % err})
             else:
                 session["conv"].events.store(
-                    'condition', State(test_id="-", status=err_type,
-                                       message="Error in %s" % where))
+                    EV_CONDITION, State(test_id="Fault", status=ERROR,
+                                           name=err_type,
+                                           message="Error in %s" % where))
 
     def err_response(self, session, where, err):
         if err:

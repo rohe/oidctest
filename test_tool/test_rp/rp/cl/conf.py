@@ -35,8 +35,8 @@ INFO = {
         "redirect_uris": ["%sauthz_cb" % BASE],
         "application_type": "web",
         "contact": ["foo@example.com"]
-    }
+    },
     # registered
-    # srv_discovery_url
+    # 'srv_discovery_url': ISSUER
     # provider_info
 }

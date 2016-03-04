@@ -3,53 +3,27 @@
 import importlib
 import json
 import logging
-import os
 import argparse
-import sys
+
 from future.backports.urllib.parse import urlparse
 
 from oic.utils.keyio import build_keyjar
 
-from aatest import exception_trace
-from aatest.conversation import Conversation
-from aatest.yamlcnf import parse_yaml_conf
+from aatest.parse_cnf import parse_yaml_conf
 
 from oidctest import func
-from oidctest.common import make_list
-from oidctest.common import make_client
 from oidctest.common import setup_logger
-from oidctest.common import run_flow
-from oidctest.common import Trace
 from oidctest.io import ClIO
 from oidctest.tool import ClTester
 from oidctest.session import SessionHandler
+
+from requests.packages import urllib3
+urllib3.disable_warnings()
 
 __author__ = 'roland'
 
 
 logger = logging.getLogger("")
-
-
-def main(flows, profile, profiles, **kw_args):
-    try:
-        redirs = kw_args["cinfo"]["client"]["redirect_uris"]
-    except KeyError:
-        redirs = kw_args["cinfo"]["registered"]["redirect_uris"]
-
-    test_list = make_list(flows, profile, **kw_args)
-
-    for tid in test_list:
-        _flow = flows[tid]
-        _cli = make_client(**kw_args)
-        conversation = Conversation(_flow, _cli, redirs, kw_args["msg_factory"],
-                                    trace_cls=Trace)
-        # noinspection PyTypeChecker
-        try:
-            run_flow(profiles, conversation, tid, kw_args["conf"],
-                     profile, kw_args["check_factory"])
-        except Exception as err:
-            exception_trace("", err, logger)
-            print(conversation.trace)
 
 
 if __name__ == '__main__':
@@ -97,25 +71,28 @@ if __name__ == '__main__':
 
     if cargs.testid:
         io = ClIO(**kwargs)
-        sh = SessionHandler({}, **kwargs)
-        sh.init_session({}, profile=cargs.profile)
+        sh = SessionHandler(**kwargs)
+        sh.init_session(profile=cargs.profile)
+        io.session = sh
         tester = ClTester(io, sh, **kwargs)
         tester.run(cargs.testid, **kwargs)
-        io.dump_log(sh.session, cargs.testid)
+        io.store_test_info()
+        io.print_info(cargs.testid)
     else:
-        _sh = SessionHandler({}, **kwargs)
-        _sh.init_session({}, profile=cargs.profile)
+        _sh = SessionHandler(**kwargs)
+        _sh.init_session(profile=cargs.profile)
 
-        for tid in _sh.session["flow_names"]:
+        for tid in _sh["flow_names"]:
             io = ClIO(**kwargs)
-            sh = SessionHandler({}, **kwargs)
-            sh.init_session({}, profile=cargs.profile)
+            sh = SessionHandler(**kwargs)
+            sh.init_session(profile=cargs.profile)
+            io.session = sh
             tester = ClTester(io, sh, **kwargs)
             if not tester.match_profile(tid):
                 continue
             elif tester.run(tid, **kwargs):
                 print('+ {}'.format(tid))
             else:
-                io.result(sh.session)
+                io.result()
                 if cargs.exit:
                     break

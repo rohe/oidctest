@@ -1,6 +1,7 @@
 #from oic.oic.provider import Provider
 import json
-from oic.oauth2 import rndstr
+
+from oic import rndstr
 from oic.oic import OIDCONF_PATTERN
 from oic.utils.sdb import SessionDB
 from oic.utils.webfinger import WF_URL

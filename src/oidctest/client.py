@@ -1,4 +1,5 @@
 from oic import oic
+from aatest.events import EV_RESPONSE
 
 __author__ = 'roland'
 
@@ -9,5 +10,5 @@ class Client(oic.Client):
         self.conv = None
 
     def store_response(self, clinst, text):
-        self.conv.events.store('protocol_response', (clinst, text))
+        self.conv.events.store(EV_RESPONSE, (clinst, text))
         self.conv.trace.response(clinst)

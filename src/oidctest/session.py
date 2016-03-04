@@ -22,11 +22,10 @@ class Node(object):
 
 class SessionHandler(session.SessionHandler):
 
-    def session_setup(self, session=None, path="", index=0):
+    def session_setup(self, path="", index=0):
         logger.info("session_setup")
-        if session is None:
-            session = self.session
-        _keys = list(session.keys())
+
+        _keys = list(self.keys())
         for key in _keys:
             if key.startswith("_"):
                 continue
@@ -34,38 +33,38 @@ class SessionHandler(session.SessionHandler):
                          "test_info", "profile"]:  # don't touch !
                 continue
             else:
-                del session[key]
+                del self[key]
 
-        session["testid"] = path
-        for node in session["tests"]:
+        self["testid"] = path
+        for node in self["tests"]:
             if node.name == path:
-                session["node"] = node
+                self["node"] = node
                 break
 
-        if "node" not in session:
+        if "node" not in self:
             raise Exception("Unknown node name: {}".format(path))
 
-        session["flow"] = self.test_flows[path]
-        session["sequence"] = copy.deepcopy(session["flow"]["sequence"])
-        session["sequence"].append(Done)
-        session["index"] = index
+        self["flow"] = self.test_flows[path]
+        self["sequence"] = copy.deepcopy(self["flow"]["sequence"])
+        self["sequence"].append(Done)
+        self["index"] = index
         self.session = session
 
-    def init_session(self, session, profile=None):
+    def init_session(self, profile=None):
         if profile is None:
             profile = self.profile
 
         f_names = list(self.test_flows.keys())
         f_names.sort()
-        session["flow_names"] = []
+        self["flow_names"] = []
         for k in self.order:
             k += '-'
             l = [z for z in f_names if z.startswith(k)]
-            session["flow_names"].extend(l)
+            self["flow_names"].extend(l)
 
         _tests =[]
         _sprof = self.profile.split(".")
-        for k in session["flow_names"]:
+        for k in self["flow_names"]:
             _test = self.test_flows[k]
             if map_prof(_sprof, _test["profile"].split(".")):
                 try:
@@ -74,30 +73,8 @@ class SessionHandler(session.SessionHandler):
                     kwargs = {}
                 _tests.append(Node(k, _test["desc"], **kwargs))
 
-        session["tests"] = _tests
-        session["test_info"] = {}
-        session["profile"] = profile
+        self["tests"] = _tests
+        self["test_info"] = {}
+        self["profile"] = profile
         self.session = session
         return session
-
-    def reset_session(self, session=None, profile=None):
-        if not session:
-            session = self.session
-
-        _keys = list(session.keys())
-        for key in _keys:
-            if key.startswith("_"):
-                continue
-            else:
-                del session[key]
-        self.init_session(session, profile)
-
-    def session_init(self, session=None):
-        if not session:
-            session = self.session
-
-        if "tests" not in session:
-            self.init_session(session)
-            return True
-        else:
-            return False

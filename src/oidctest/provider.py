@@ -1,19 +1,23 @@
 import json
-import urllib
-from urlparse import parse_qs
-from oic import oic
 import time
-#import urllib.parse
 
 from Crypto.PublicKey import RSA
+from future.backports.urllib.parse import parse_qs
+
 from jwkest.ecc import P256
-from jwkest.jwk import RSAKey, ECKey, SYMKey
-from oic.oauth2 import Message, rndstr
+from jwkest.jwk import RSAKey
+from jwkest.jwk import ECKey
+from jwkest.jwk import SYMKey
+
+from oic import oic
+from oic import rndstr
+from oic.oauth2 import Message
 from oic.oic import provider
-from oic.oic.message import ProviderConfigurationResponse, AccessTokenRequest
+from oic.oic.message import AccessTokenRequest
+from oic.oic.message import ProviderConfigurationResponse
 from oic.oic.message import RegistrationResponse
 from oic.oic.message import RegistrationRequest
-from oic.utils.keyio import keyjar_init, KeyBundle
+from oic.utils.keyio import keyjar_init
 
 __author__ = 'roland'
 

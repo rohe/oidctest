@@ -17,11 +17,10 @@ from aatest import Trace
 from oidctest.mode import extract_mode
 from oidctest.mode import setup_op
 from oidctest.mode import mode2path
-
-from response_encoder import ResponseEncoder
-from endpoints import static
-from endpoints import display_log
-from endpoints import URLS
+from oidctest.endpoints import static
+from oidctest.endpoints import display_log
+from oidctest.endpoints import URLS
+from oidctest.response_encoder import ResponseEncoder
 
 __author__ = 'rohe0002'
 

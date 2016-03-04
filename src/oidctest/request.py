@@ -1,10 +1,16 @@
 import logging
-from aatest import Break
 import requests
 import copy
 from six.moves.urllib.parse import parse_qs
 # from urllib.parse import parse_qs
 from bs4 import BeautifulSoup
+
+from aatest import Break
+from aatest.events import EV_PROTOCOL_RESPONSE
+from aatest.events import EV_HTTP_RESPONSE
+from aatest.events import EV_RESPONSE
+from aatest.events import EV_REDIRECT_URL
+from aatest.events import EV_REQUEST
 
 from oic.exception import IssuerMismatch
 from oic.exception import PyoidcError
@@ -14,7 +20,6 @@ from oic.oauth2 import ResponseError
 from oic.oauth2.util import URL_ENCODED
 from oic.utils.http_util import Redirect
 from oic.utils.http_util import get_post
-from oic.utils.time_util import utc_time_sans_frac
 # from oictest.check import CheckEndpoint
 
 from oidctest.oper import Operation
@@ -39,7 +44,7 @@ class Request(Operation):
             response = ErrorResponse().from_json(_txt)
 
         if isinstance(response, ErrorResponse):
-            self.conv.events.store("protocol_response", response)
+            self.conv.events.store(EV_PROTOCOL_RESPONSE, response)
             if response["error"] not in self.expect_error["error"]:
                 raise Break("Wrong error, got {} expected {}".format(
                     response["error"], self.expect_error["error"]))
@@ -78,7 +83,7 @@ class SyncRequest(Request):
         response = client.http_request(url, method=self.method, data=body,
                                        **ht_args)
 
-        self.conv.events.store("http_response", response)
+        self.conv.events.store(EV_HTTP_RESPONSE, response)
         _trace.reply("RESPONSE: %s" % response)
         _trace.reply("CONTENT: %s" % response.text)
         try:
@@ -96,19 +101,23 @@ class SyncRequest(Request):
         return response
 
     def handle_response(self, r, csi):
-        r = self.conv.intermit(r)
+        data = self.conv.events.last_item(EV_REQUEST)
+        state = data['state']
+
         if 300 < r.status_code < 400:
-            resp = self.conv.parse_request_response(
-                r, self.response, body_type=self.response_type,
-                state=self.conv.state, keyjar=self.conv.entity.keyjar)
+            resp = self.conv.entity.parse_response(
+                self.response, info=r.headers['location'],
+                sformat="urlencoded", state=state)
         elif r.status_code == 200:
-            resp = self.response()
             if "response_mode" in csi and csi["response_mode"] == "form_post":
+                resp = self.response()
                 forms = BeautifulSoup(r.content).findAll('form')
                 for inp in forms[0].find_all("input"):
                     resp[inp.attrs["name"]] = inp.attrs["value"]
             else:
-                r = self.conv.intermit(r)
+                resp = self.conv.entity.parse_response(
+                    self.response, info=r.headers['location'],
+                    sformat="urlencoded", state=state)
 
             resp.verify(keyjar=self.conv.entity.keyjar)
         else:
@@ -161,7 +170,7 @@ class SyncRequest(Request):
         else:
             http_args.update(ht_args)
 
-        self.conv.events.store('request', csi)
+        self.conv.events.store(EV_REQUEST, csi)
         self.conv.trace.info(
             20 * "=" + " " + self.__class__.__name__ + " " + 20 * "=")
         self.conv.trace.request("URL: {}".format(url))
@@ -172,7 +181,7 @@ class SyncRequest(Request):
         response = self.catch_exception(self.handle_response, r=http_response,
                                         csi=csi)
         self.conv.trace.response(response)
-        self.conv.events.store('response', response)
+        self.conv.events.store(EV_RESPONSE, response)
         #self.sequence.append((response, http_response.text))
 
         if self.expect_error:
@@ -220,7 +229,7 @@ class AsyncRequest(Request):
 
         _trace.info("redirect.url: %s" % url)
         _trace.info("redirect.header: %s" % ht_args)
-        self.conv.events.store('url', url)
+        self.conv.events.store(EV_REDIRECT_URL, url)
         return Redirect(str(url))
 
     def parse_response(self, path, io, message_factory):
@@ -276,7 +285,7 @@ class AsyncRequest(Request):
         logger.info("Response: %s" % info)
 
         _conv.trace.reply(info)
-        ev_index = _conv.events.store('reply', info)
+        ev_index = _conv.events.store(EV_RESPONSE, info)
 
         resp_cls = message_factory(self.response_cls)
         algs = _conv.entity.sign_enc_algs("id_token")
@@ -286,14 +295,14 @@ class AsyncRequest(Request):
                 self.csi["state"],
                 keyjar=_conv.entity.keyjar, algs=algs)
         except ResponseError as err:
-            return io.err_response(self.sh.session, "run_sequence", err)
+            return io.err_response("run_sequence", err)
         except Exception as err:
-            return io.err_response(self.sh.session, "run_sequence", err)
+            return io.err_response("run_sequence", err)
 
         logger.info("Parsed response: %s" % response.to_dict())
 
         _conv.trace.response(response)
-        _conv.events.store('response', response, ref=ev_index)
+        _conv.events.store(EV_PROTOCOL_RESPONSE, response, ref=ev_index)
 
         if self.expect_error:
             self.expected_error_response(response)

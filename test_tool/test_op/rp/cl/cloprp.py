@@ -76,11 +76,14 @@ def run_func(spec, conv, req_args):
         return req_args
 
 
-def run_one(test_id, flows, profile, profiles, **kw_args):
+def run_one(test_id, flows, profile, profiles, io, sh, **kw_args):
     try:
         redirs = kw_args["cinfo"]["client"]["redirect_uris"]
     except KeyError:
         redirs = kw_args["cinfo"]["registered"]["redirect_uris"]
+
+    io = ClIO(flows=flows, profile=profile, **kw_args)
+    sh = SessionHandler(None, profile, flows, **kw_args)
 
     _flow = flows[test_id]
     _cli = make_client(**kw_args)
@@ -90,7 +93,7 @@ def run_one(test_id, flows, profile, profiles, **kw_args):
     # noinspection PyTypeChecker
     try:
         run_flow(profiles, conversation, test_id, kw_args["conf"],
-                 profile, kw_args["check_factory"])
+                 profile, kw_args["check_factory"], io, sh)
     except Exception as err:
         exception_trace("", err, logger)
         print(conversation.trace)

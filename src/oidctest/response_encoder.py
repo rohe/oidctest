@@ -1,5 +1,7 @@
 import json
-from oic.utils.http_util import Response, ServiceError
+from oic.utils.http_util import Response
+from oic.utils.http_util import ServiceError
+
 
 class ResponseEncoder:
     def __init__(self, environ=None, start_response=None):

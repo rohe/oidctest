@@ -4,21 +4,26 @@ import logging
 import os
 import time
 from Crypto.PublicKey import RSA
+
 from future.backports.urllib.parse import urlparse
 
 from jwkest.jwk import RSAKey
 
 from aatest import RequirementsNotMet, Unknown, Break
+from aatest.events import EV_PROTOCOL_RESPONSE
 from aatest.operation import Operation
+
+from oic import rndstr
 
 from oic.exception import IssuerMismatch
 from oic.exception import PyoidcError
-from oic.oauth2 import rndstr
 from oic.oauth2.message import ErrorResponse
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
 from oic.oic import AccessTokenResponse
-from oic.utils.keyio import KeyBundle, ec_init, dump_jwks
+from oic.utils.keyio import KeyBundle
+from oic.utils.keyio import ec_init
+from oic.utils.keyio import dump_jwks
 from oidctest.prof_util import WEBFINGER
 from oidctest.prof_util import DISCOVER
 from oidctest.prof_util import REGISTER
@@ -64,14 +69,15 @@ def get_id_token(responses):
 
 
 class Webfinger(Operation):
-    def __init__(self, conv, io, sh, **kwargs):
-        Operation.__init__(self, conv, io, sh, **kwargs)
+    def __init__(self, conv, inut, sh, **kwargs):
+        Operation.__init__(self, conv, inut, sh, **kwargs)
         self.resource = ""
+        self.profile = self.profile.split('.')
         self.dynamic = self.profile[WEBFINGER] == "T"
 
     def run(self):
         if not self.dynamic:
-            self.conv["issuer"] = self.conf.INFO["srv_discovery_url"]
+            self.conv.info["issuer"] = self.conf.INFO["srv_discovery_url"]
         else:
             _conv = self.conv
             _conv.trace.info(
@@ -90,9 +96,9 @@ class Webfinger(Operation):
 
 
 class Discovery(Operation):
-    def __init__(self, conv, io, sh, **kwargs):
-        Operation.__init__(self, conv, io, sh, **kwargs)
-
+    def __init__(self, conv, inut, sh, **kwargs):
+        Operation.__init__(self, conv, inut, sh, **kwargs)
+        self.profile = self.profile.split('.')
         self.dynamic = self.profile[DISCOVER] == "T"
 
     def run(self):
@@ -116,9 +122,9 @@ class Discovery(Operation):
 
 
 class Registration(Operation):
-    def __init__(self, conv, io, sh, **kwargs):
-        Operation.__init__(self, conv, io, sh, **kwargs)
-
+    def __init__(self, conv, inut, sh, **kwargs):
+        Operation.__init__(self, conv, inut, sh, **kwargs)
+        self.profile = self.profile.split('.')
         self.dynamic = self.profile[REGISTER] == "T"
 
     def run(self):
@@ -139,8 +145,8 @@ class SyncAuthn(SyncGetRequest):
     response_cls = "AuthorizationResponse"
     request_cls = "AuthorizationRequest"
 
-    def __init__(self, conv, io, sh, **kwargs):
-        super(SyncAuthn, self).__init__(conv, io, sh, **kwargs)
+    def __init__(self, conv, inut, sh, **kwargs):
+        super(SyncAuthn, self).__init__(conv, inut, sh, **kwargs)
         self.op_args["endpoint"] = conv.entity.provider_info[
             "authorization_endpoint"]
 
@@ -148,19 +154,24 @@ class SyncAuthn(SyncGetRequest):
         self.req_args["state"] = conv.state
         conv.nonce = rndstr()
         self.req_args["nonce"] = conv.nonce
+
+        # defaults
+        self.req_args['scope'] = ['openid']
+        self.req_args['response_type'] = 'code'
+
         # verify that I've got a valid access code
         self.tests["post"].append("valid_code")
 
     def op_setup(self):
-        self.req_args["redirect_uri"] = self.conv.callback_uris[0]
+        self.req_args["redirect_uri"] = self.conv.extra_args['callback_uris'][0]
 
 
 class AsyncAuthn(AsyncGetRequest):
     response_cls = "AuthorizationResponse"
     request_cls = "AuthorizationRequest"
 
-    def __init__(self, conv, io, sh, **kwargs):
-        super(AsyncAuthn, self).__init__(conv, io, sh, **kwargs)
+    def __init__(self, conv, inut, sh, **kwargs):
+        super(AsyncAuthn, self).__init__(conv, inut, sh, **kwargs)
         self.op_args["endpoint"] = conv.entity.provider_info[
             "authorization_endpoint"]
 
@@ -174,8 +185,8 @@ class AsyncAuthn(AsyncGetRequest):
 
 
 class AccessToken(SyncPostRequest):
-    def __init__(self, conv, io, sh, **kwargs):
-        Operation.__init__(self, conv, io, sh, **kwargs)
+    def __init__(self, conv, inut, sh, **kwargs):
+        Operation.__init__(self, conv, inut, sh, **kwargs)
         self.op_args["state"] = conv.state
         self.req_args["redirect_uri"] = conv.entity.redirect_uris[0]
 
@@ -219,8 +230,8 @@ class AccessToken(SyncPostRequest):
 
 
 class UserInfo(SyncGetRequest):
-    def __init__(self, conv, io, sh, **kwargs):
-        Operation.__init__(self, conv, io, sh, **kwargs)
+    def __init__(self, conv, inut, sh, **kwargs):
+        Operation.__init__(self, conv, inut, sh, **kwargs)
         self.op_args["state"] = conv.state
 
     def run(self):
@@ -245,7 +256,7 @@ class UserInfo(SyncGetRequest):
     @staticmethod
     def _verify_subject_identifier(client, user_info):
         id_tokens = get_id_token(
-            client.conv.events.get_data('protocol_response'))
+            client.conv.events.get_data(EV_PROTOCOL_RESPONSE))
         if id_tokens:
             if user_info["sub"] != id_tokens[0]["sub"]:
                 msg = "user_info['sub'] != id_token['sub']: '{}!={}'".format(
@@ -272,8 +283,9 @@ class RotateKey(Operation):
         self.conv.entity.original_keyjar = keyjar.copy()
 
         # invalidate the old key
-        old_kid = self.op_args["old_kid"]
-        old_key = keyjar.get_key_by_kid(old_kid)
+        old_key_spec = self.op_args["old_key"]
+        old_key = keyjar.keys_by_alg_and_usage('', old_key_spec['alg'],
+                                               old_key_spec['use'])[0]
         old_key.inactive_since = time.time()
 
         # setup new key
@@ -335,8 +347,8 @@ class FetchKeys(Operation):
 
 
 class RotateKeys(Operation):
-    def __init__(self, conv, io, sh, **kwargs):
-        Operation.__init__(self, conv, io, sh, **kwargs)
+    def __init__(self, conv, inut, sh, **kwargs):
+        Operation.__init__(self, conv, inut, sh, **kwargs)
         self.jwk_name = "export/jwk.json"
         self.new_key = {}
         self.kid_template = "_%d"
@@ -379,16 +391,16 @@ class RotateKeys(Operation):
 
 
 class RotateSigKeys(RotateKeys):
-    def __init__(self, conv, io, sh, **kwargs):
-        RotateKeys.__init__(self, conv, io, sh, **kwargs)
+    def __init__(self, conv, inut, sh, **kwargs):
+        RotateKeys.__init__(self, conv, inut, sh, **kwargs)
         self.new_key = {"type": "RSA", "key": "../keys/second_sig.key",
                         "use": ["sig"]}
         self.kid_template = "sig%d"
 
 
 class RotateEncKeys(RotateKeys):
-    def __init__(self, conv, io, sh, **kwargs):
-        RotateKeys.__init__(self, conv, io, sh, **kwargs)
+    def __init__(self, conv, inut, sh, **kwargs):
+        RotateKeys.__init__(self, conv, inut, sh, **kwargs)
         self.new_key = {"type": "RSA", "key": "../keys/second_enc.key",
                         "use": ["enc"]}
         self.kid_template = "enc%d"

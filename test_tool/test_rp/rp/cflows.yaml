@@ -176,7 +176,7 @@ Flows:
     desc: Make an authentication request using response_type=[id_token token] for Implicit
       Flow or response_type=[code id_token token] for Hybrid Flow. Verify the at_hash
       value in the returned ID Token.
-    profile: IT,CIT...
+    profile: 'IT,CIT...'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -188,7 +188,7 @@ Flows:
   RP-id_token-bad_c_hash:
     desc: Tests if the Relying Party extract an c_hash from an ID token presented as
       json. It should be used to validate the correctness of the authorization code
-    profile: CI,CIT...
+    profile: 'CI,CIT...'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -491,7 +491,9 @@ Flows:
               use:
                 - enc
             new_kid: rotated_enc_key
-            old_kid: a0
+            old_key:
+              alg: RSA1_5
+              use: enc
       - SyncAuthn
       - AccessToken
       - RestoreKeyJar:
@@ -520,7 +522,9 @@ Flows:
               use:
                 - enc
             new_kid: rotated_enc_key
-            old_kid: a0
+            old_key:
+              alg: RSA1_5
+              use: enc
       - SyncAuthn
       - RestoreKeyJar:
           set_op_args:
@@ -548,7 +552,9 @@ Flows:
               use:
                 - sig
             new_kid: rotated_sig_key
-            old_kid: a2
+            old_key:
+              alg: ES256
+              use: sig
       - SyncAuthn:
           set_op_args:
             request_method: request

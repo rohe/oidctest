@@ -1,7 +1,7 @@
 import logging
 import os
-
-from six.moves.urllib.parse import parse_qs, urlparse
+from future.backports.urllib.parse import parse_qs
+from future.backports.urllib.parse import urlparse
 
 from oic.utils.http_util import extract_from_request
 from oic.utils.http_util import Response
@@ -12,7 +12,7 @@ from oic.utils.http_util import BadRequest
 from oic.utils.webfinger import OIC_ISSUER
 from oic.utils.webfinger import WebFinger
 
-import pathmap
+from oidctest import pathmap
 
 __author__ = 'roland'
 

@@ -1,25 +1,24 @@
 import logging
 import os
-from six.moves.urllib.parse import unquote
+
 from aatest import exception_trace
 from aatest import Break
-from aatest.io import IO, eval_state
+from aatest.events import EV_CONDITION
+from aatest.io import IO
+from future.backports.urllib.parse import unquote
 
-from oic.utils.http_util import Response, NotFound
-from oic.utils.time_util import in_a_while
+from oic.utils.http_util import Response
+from oic.utils.http_util import NotFound
 
-from aatest.check import ERROR, State
+from aatest.check import ERROR
+from aatest.check import State
 from aatest.check import OK
 from aatest.check import WARNING
 from aatest.check import INCOMPLETE
-from aatest.summation import represent_result
-from aatest.summation import evaluate
-from aatest.summation import condition
-from aatest.summation import trace_output
-from aatest.summation import create_tar_archive
+from aatest.summation import represent_result, eval_state
+from aatest.summation import store_test_state
 
-from oidctest.utils import get_profile_info, get_check
-from oidctest.utils import log_path
+from oidctest.utils import get_profile_info
 from oidctest.utils import with_or_without_slash
 from oidctest.utils import get_test_info
 
@@ -29,25 +28,6 @@ logger = logging.getLogger(__name__)
 
 TEST_RESULTS = {OK: "OK", ERROR: "ERROR", WARNING: "WARNING",
                 INCOMPLETE: "INCOMPLETE"}
-
-
-# class IO(object):
-#     def __init__(self, conf, flows, profile, profiles, operation,
-#                  desc, cache=None):
-#         self.conf = conf
-#         self.flows = flows
-#         self.cache = cache
-#         self.test_profile = profile
-#         self.profiles = profiles
-#         self.operation = operation
-#         self.check_factory = get_check
-#         self.desc = desc
-#
-#     def dump_log(self, session, test_id):
-#         pass
-#
-#     def err_response(self, session, where, err):
-#         pass
 
 
 class WebIO(IO):
@@ -63,19 +43,18 @@ class WebIO(IO):
         self.cache = cache
         self.kwargs = kwargs
 
-    @staticmethod
-    def store_test_info(session, profile_info=None):
-        _conv = session["conv"]
+    def store_test_info(self, profile_info=None):
+        _conv = self.session["conv"]
         _info = {
             "trace": _conv.trace,
             "events": _conv.events,
-            "index": session["index"],
-            "seqlen": len(session["sequence"]),
-            "descr": session["node"].desc
+            "index": self.session["index"],
+            "seqlen": len(self.session["sequence"]),
+            "descr": self.session["node"].desc
         }
 
         try:
-            _info["node"] = session["node"]
+            _info["node"] = self.session["node"]
         except KeyError:
             pass
 
@@ -83,29 +62,29 @@ class WebIO(IO):
             _info["profile_info"] = profile_info
         else:
             try:
-                _info["profile_info"] = get_profile_info(session,
-                                                         session["testid"])
+                _info["profile_info"] = get_profile_info(self.session,
+                                                         self.session["testid"])
             except KeyError:
                 pass
 
-        session["test_info"][session["testid"]] = _info
+        self.session["test_info"][self.session["testid"]] = _info
 
-    def flow_list(self, session):
+    def flow_list(self):
         resp = Response(mako_template="flowlist.mako",
                         template_lookup=self.lookup,
                         headers=[])
 
         try:
-            _tid = session["testid"]
+            _tid = self.session["testid"]
         except KeyError:
             _tid = None
 
-        self.dump_log(session, _tid)
+        self.print_info(_tid)
 
         argv = {
-            "flows": session["tests"],
-            "profile": session["profile"],
-            "test_info": list(session["test_info"].keys()),
+            "flows": self.session["tests"],
+            "profile": self.session["profile"],
+            "test_info": list(self.session["test_info"].keys()),
             "base": self.conf.BASE,
             "headlines": self.desc,
             "testresults": TEST_RESULTS
@@ -113,68 +92,26 @@ class WebIO(IO):
 
         return resp(self.environ, self.start_response, **argv)
 
-    def dump_log(self, session, test_id=None):
-        try:
-            _conv = session["conv"]
-        except KeyError:
-            pass
-        else:
-            _pi = get_profile_info(session, test_id)
-            if _pi:
-                _tid = _pi["Test ID"]
-                path = log_path(session, _tid)
-                if not path:
-                    return
-
-                sline = 60 * "="
-                output = ["%s: %s" % (k, _pi[k]) for k in ["Issuer", "Profile",
-                                                           "Test ID"]]
-                output.append("Timestamp: %s" % in_a_while())
-                output.extend(["", sline, ""])
-                output.extend(trace_output(_conv.trace))
-                output.extend(["", sline, ""])
-                output.extend(condition(_conv.events))
-                output.extend(["", sline, ""])
-                # and lastly the result
-                self.store_test_info(session, _pi)
-                _info = session["test_info"][_tid]
-                output.append("RESULT: %s" % represent_result(
-                    _info, eval_state(_conv.events)))
-                output.append("")
-
-                f = open(path, "w")
-                txt = "\n".join(output)
-
-                try:
-                    f.write(txt)
-                except UnicodeEncodeError:
-                    f.write(txt.encode("utf8"))
-
-                f.close()
-                pp = path.split("/")
-                create_tar_archive(pp[1], pp[2])
-                return path
-
-    def profile_edit(self, session):
+    def profile_edit(self):
         resp = Response(mako_template="profile.mako",
                         template_lookup=self.lookup,
                         headers=[])
-        argv = {"profile": session["profile"]}
+        argv = {"profile": self.session["profile"]}
         return resp(self.environ, self.start_response, **argv)
 
-    def test_info(self, testid, session):
+    def test_info(self, testid):
         resp = Response(mako_template="testinfo.mako",
                         template_lookup=self.lookup,
                         headers=[])
 
-        info = get_test_info(session, testid)
+        info = get_test_info(self.session, testid)
 
         argv = {
             "profile": info["profile_info"],
             "trace": info["trace"],
             "events": info["events"],
             "result": represent_result(
-                info, eval_state(session['conv'].events)).replace("\n", "<br>\n")
+                self.session['conv'].events).replace("\n", "<br>\n")
         }
 
         logger.debug(argv)
@@ -274,58 +211,59 @@ class WebIO(IO):
                 resp = Response("No saved logs")
                 return resp(self.environ, self.start_response)
 
-    @staticmethod
-    def get_err_type(session):
+    def get_err_type(self):
         errt = WARNING
         try:
-            if session["node"].mti == {"all": "MUST"}:
+            if self.session["node"].mti == {"all": "MUST"}:
                 errt = ERROR
         except KeyError:
             pass
         return errt
 
-    def log_fault(self, session, err, where, err_type=0):
+    def log_fault(self, err, where, err_type=0):
         if err_type == 0:
-            err_type = self.get_err_type(session)
+            err_type = self.get_err_type()
 
-        if "node" in session:
+        if "node" in self.session:
             if err:
                 if isinstance(err, Break):
-                    session["node"].state = WARNING
+                    self.session["node"].state = WARNING
                 else:
-                    session["node"].state = err_type
+                    self.session["node"].state = err_type
             else:
-                session["node"].state = err_type
+                self.session["node"].state = err_type
 
-        if "conv" in session:
+        if "conv" in self.session:
             if err:
                 if isinstance(err, str):
                     pass
                 else:
-                    session["conv"].trace.error("%s:%s" % (
+                    self.session["conv"].trace.error("%s:%s" % (
                         err.__class__.__name__, str(err)))
-                session["conv"].events.store(
-                    'fault', State(test_id="-", status=err_type,
-                                   message="{}".format(err)))
+                self.session["conv"].events.store(
+                    EV_CONDITION, State(test_id="Fault", status=ERROR,
+                                           name=err_type,
+                                           message="{}".format(err)))
             else:
-                session["conv"].events.store(
-                    'fault', State(test_id="-", status=err_type,
-                                   message="Error in {}".format(where)))
+                self.session["conv"].events.store(
+                    EV_CONDITION, State(test_id="-", status=ERROR,
+                                           name=err_type,
+                                           message="Error in {}".format(where)))
 
-    def err_response(self, session, where, err):
+    def err_response(self, where, err):
         if err:
             exception_trace(where, err, logger)
 
-        self.log_fault(session, err, where)
+        self.log_fault(self.session, err, where)
 
         try:
-            _tid = session["testid"]
-            self.dump_log(session, _tid)
-            self.store_test_info(session)
+            _tid = self.session["testid"]
+            self.print_info(_tid)
+            self.store_test_info()
         except KeyError:
             pass
 
-        return self.flow_list(session)
+        return self.flow_list()
 
     def sorry_response(self, homepage, err):
         resp = Response(mako_template="sorry.mako",
@@ -335,9 +273,10 @@ class WebIO(IO):
                 "error": str(err)}
         return resp(self.environ, self.start_response, **argv)
 
-    def opresult(self, conv, session):
-        evaluate(session, session["test_info"][conv.test_id])
-        return self.flow_list(session)
+    def opresult(self, conv):
+        store_test_state(self.session, conv.events)
+        self.store_test_info()
+        return self.flow_list()
 
     def opresult_fragment(self):
         resp = Response(mako_template="opresult_repost.mako",
@@ -357,54 +296,51 @@ SIGN = {OK: "+", WARNING: "!", ERROR: "-", INCOMPLETE: "?"}
 
 
 class ClIO(IO):
-    def flow_list(self, session):
+    def flow_list(self):
         pass
 
-    def dump_log(self, session, test_id):
-        try:
-            _conv = session["conv"]
-        except KeyError:
-            pass
-        else:
-            _pi = get_profile_info(session, test_id)
-            if _pi:
-                sline = 60 * "="
-                output = ["%s: %s" % (k, _pi[k]) for k in ["Issuer", "Profile",
-                                                           "Test ID"]]
-                output.append("Timestamp: %s" % in_a_while())
-                output.extend(["", sline, ""])
-                output.extend(trace_output(_conv.trace))
-                output.extend(["", sline, ""])
-                output.extend(condition(_conv.events))
-                output.extend(["", sline, ""])
-                # and lastly the result
-                info = {
-                    "events": _conv.events,
-                    "trace": _conv.trace
-                }
-                output.append("RESULT: %s" % represent_result(
-                    info, eval_state(_conv.events)))
-                output.append("")
-
-                txt = "\n".join(output)
-
-                print(txt)
-
-    def result(self, session):
-        _conv = session["conv"]
+    def result(self):
+        _conv = self.session["conv"]
         info = {
             "events": _conv.events,
             "trace": _conv.trace
         }
-        _state = evaluate(session, info)
-        print("{} {}".format(SIGN[_state], session["node"].name))
+        _state = eval_state(info)
+        print("{} {}".format(SIGN[_state], self.session["node"].name))
 
-    def err_response(self, session, where, err):
+    def err_response(self, where, err):
         if err:
             exception_trace(where, err, logger)
 
         try:
-            _tid = session["testid"]
-            self.dump_log(session, _tid)
+            _tid = self.session["testid"]
+            self.print_info(_tid)
         except KeyError:
             pass
+
+    def store_test_info(self, profile_info=None):
+        _conv = self.session["conv"]
+        _info = {
+            "trace": _conv.trace,
+            "events": _conv.events,
+            "index": self.session["index"],
+            "seqlen": len(self.session["sequence"]),
+            "descr": self.session["node"].desc
+        }
+
+        try:
+            _info["node"] = self.session["node"]
+        except KeyError:
+            pass
+
+        if profile_info:
+            _info["profile_info"] = profile_info
+        else:
+            try:
+                _info["profile_info"] = get_profile_info(self.session,
+                                                         self.session["testid"])
+            except KeyError:
+                pass
+
+        self.session["test_info"][self.session["testid"]] = _info
+

@@ -1,4 +1,9 @@
 import json
+import inspect
+import sys
+from six.moves.urllib.parse import urlsplit
+from six.moves.urllib.parse import parse_qs
+from six.moves.urllib.parse import urlparse
 
 from jwkest import b64d
 #from jwkest import unpack
@@ -10,16 +15,20 @@ from oic.oic import AuthorizationResponse
 from oic.oic import OpenIDSchema
 from oic.oic import claims_match
 from oic.oic import message
-# from oic.utils.time_util import utc_time_sans_frac
+from oic.utils.time_util import utc_time_sans_frac
 
 from oidctest.check import get_protocol_response
+from oidctest.check import get_provider_info
+from oidctest.check import get_id_tokens
 
 from oidctest.regalg import MTI
 from oidctest.regalg import REGISTERED_JWS_ALGORITHMS
 from oidctest.regalg import REGISTERED_JWE_alg_ALGORITHMS
 from oidctest.regalg import REGISTERED_JWE_enc_ALGORITHMS
 
-from aatest.check import Check, OK, Warnings, get_protocol_response
+from aatest.check import Check
+from aatest.check import OK
+from aatest.check import Warnings
 from aatest.check import Information
 from aatest.check import WARNING
 from aatest.check import CONT_JSON
@@ -32,14 +41,12 @@ from aatest.check import CRITICAL
 from aatest.check import ERROR
 from aatest.check import INTERACTION
 from aatest.check import INFORMATION
+from aatest.events import EV_RESPONSE
+from aatest.events import EV_PROTOCOL_RESPONSE
+from aatest.events import EV_HTTP_RESPONSE
 
 __author__ = 'rohe0002'
 
-import inspect
-import sys
-from six.moves.urllib.parse import urlsplit
-from six.moves.urllib.parse import parse_qs
-from six.moves.urllib.parse import urlparse
 
 from oic.oic.message import SCOPE2CLAIMS
 from oic.oic.message import IdToken
@@ -64,7 +71,7 @@ class CmpIdtoken(Other):
             keys.update(kj.get("ver", issuer=issuer))
 
         idt = IdToken().deserialize(instance["id_token"], "jwt", key=keys)
-        if idt.to_dict() == conv.events.last_item('response').to_dict():
+        if idt.to_dict() == conv.events.last_item(EV_RESPONSE).to_dict():
             pass
         else:
             self._status = self.status
@@ -86,14 +93,15 @@ class VerifyPromptNoneResponse(Check):
     msg = "OP error"
 
     def _func(self, conv):
-        _reply, _response = conv.events.last_item('response_tuple')
+        _response = conv.events.last_item(EV_HTTP_RESPONSE)
+        _reply = conv.events.last_item(EV_RESPONSE)
         _client = conv.entity
 
         res = {}
         if _response.status_code == 400:
             err = ErrorResponse().deserialize(_reply, "json")
             err.verify()
-            conv.events.store('response', err)
+            conv.events.store(EV_RESPONSE, err)
             if err["error"] in ["consent_required", "interaction_required"]:
                 # This is OK
                 res["content"] = err.to_json()
@@ -121,6 +129,8 @@ class VerifyPromptNoneResponse(Check):
                 self._message = "Expected info in the redirect"
                 self._status = CRITICAL
                 return res
+
+            conv.events.store(EV_RESPONSE, _query)
             try:
                 err = ErrorResponse().deserialize(_query, "urlencoded")
                 err.verify()
@@ -128,8 +138,7 @@ class VerifyPromptNoneResponse(Check):
                                     "login_required"]:
                     # This is OK
                     res["content"] = err.to_json()
-                    conv.events.store('response', err)
-                    conv.events.store('response_tuple', (err, _query))
+                    conv.events.store(EV_PROTOCOL_RESPONSE, err)
                 else:
                     self._message = "Not an expected error '%s'" % err[
                         "error"]
@@ -138,8 +147,7 @@ class VerifyPromptNoneResponse(Check):
                 resp = AuthorizationResponse().deserialize(_query, "urlencoded")
                 resp.verify()
                 res["content"] = resp.to_json()
-                conv.events.store('response', resp)
-                conv.events.store('response_tuple', (resp, _query))
+                conv.events.store(EV_PROTOCOL_RESPONSE, resp)
         else:  # should not get anything else
             self._message = "Not an expected response"
             self._status = CRITICAL
@@ -502,7 +510,7 @@ class CheckContentTypeHeader(Error):
 
     def _func(self, conv=None):
         res = {}
-        _response = conv.events.last_item('response')
+        _response = conv.events.last_item(EV_HTTP_RESPONSE)
         try:
             ctype = _response.headers["content-type"]
             if conv.response_spec.ctype == "json":
@@ -623,7 +631,7 @@ class LoginRequired(Error):
     cid = "login-required"
 
     def _func(self, conv=None):
-        resp = conv.events.last_item('response')
+        resp = conv.events.last_item(EV_PROTOCOL_RESPONSE)
         try:
             assert resp.type() == "AuthorizationErrorResponse"
         except AssertionError:
@@ -669,7 +677,7 @@ class InteractionCheck(CriticalError):
 
     def _func(self, conv=None):
         self._status = INTERACTION
-        self._message = conv.events.last_item('reply')
+        self._message = conv.events.last_item(EV_RESPONSE)
         parts = urlsplit(conv.position)
         return {"url": "%s://%s%s" % parts[:3]}
 
@@ -839,7 +847,7 @@ class VerifyIDToken(CriticalError):
         else:
             idtoken_claims = id_claims.copy()
 
-        for item in conv.events['response']:
+        for item in conv.events[EV_PROTOCOL_RESPONSE]:
             if self._status == self.status or done:
                 break
 
@@ -917,7 +925,7 @@ class UnpackAggregatedClaims(Error):
     cid = "unpack-aggregated-claims"
 
     def _func(self, conv=None):
-        resp = conv.events.last_item('response')
+        resp = conv.events.last_item(EV_PROTOCOL_RESPONSE)
         _client = conv.entity
 
         try:
@@ -933,7 +941,7 @@ class ChangedSecret(Error):
     cid = "changed-client-secret"
 
     def _func(self, conv=None):
-        resp = conv.events.last_item('response')
+        resp = conv.events.last_item(EV_PROTOCOL_RESPONSE)
         _client = conv.entity
         old_sec = _client.client_secret
 
@@ -1075,7 +1083,7 @@ class VerifyRedirectUriQueryComponent(Error):
     cid = "verify-redirect_uri-query_component"
 
     def _func(self, conv):
-        item = conv.events.last_item('response')
+        item = conv.events.last_item(EV_PROTOCOL_RESPONSE)
 
         try:
             qc = conv.query_component
@@ -1229,7 +1237,7 @@ class VerifyUserInfo(Error):
             for param in SCOPE2CLAIMS[scope]:
                 claims[param] = REQUIRED
 
-        response = conv.events.last_item('response')
+        response = conv.events.last_item(EV_PROTOCOL_RESPONSE)
         try:
             for key, val in list(claims.items()):
                 if val == OPTIONAL:

@@ -10,6 +10,8 @@ from six.moves.urllib.parse import urlparse
 from aatest import ConfigurationError
 from aatest.check import State
 from aatest.check import STATUSCODE_TRANSL
+from aatest.events import EV_CONDITION
+from aatest.events import EV_RESPONSE
 from oidctest.oidc_check import ERROR
 from oidctest.tool import get_redirect_uris
 from oidctest.check import get_id_tokens
@@ -54,7 +56,7 @@ def check_support(oper, args):
                         missing.append(v)
                 if missing:
                     oper.conv.events.store(
-                        'condition',
+                        EV_CONDITION,
                         State(status=STATUSCODE_TRANSL[level],
                               test_id="Check support",
                               message="No support for: {}={}".format(key,
@@ -62,7 +64,7 @@ def check_support(oper, args):
             else:
                 if not val in oper.conv.entity.provider_info[key]:
                     oper.conv.events.store(
-                        'condition',
+                        EV_CONDITION,
                         State(status=STATUSCODE_TRANSL[level],
                               test_id="Check support",
                               message="No support for: {}={}".format(key, val)))
@@ -280,7 +282,7 @@ def check_endpoint(oper, args):
         _ = oper.conv.entity.provider_info[args]
     except KeyError:
         oper.conv.events.store(
-            'condition',
+            EV_CONDITION,
             State(test_id="check_endpoint", status=ERROR,
                   message="{} not in provider configuration".format(args)))
         oper.skip = True
@@ -288,14 +290,14 @@ def check_endpoint(oper, args):
 
 def cache_response(oper, arg):
     key = oper.conv.test_id
-    oper.cache[key] = oper.conv.events.last_item('response')
+    oper.cache[key] = oper.conv.events.last_item(EV_RESPONSE)
 
 
 def restore_response(oper, arg):
     key = oper.conv.test_id
-    if oper.conv.events['response']:
+    if oper.conv.events[EV_RESPONSE]:
         _lst = oper.cache[key][:]
-        for x in oper.conv.events['response']:
+        for x in oper.conv.events[EV_RESPONSE]:
             if x not in _lst:
                 oper.conv.events.append(_lst)
     else:

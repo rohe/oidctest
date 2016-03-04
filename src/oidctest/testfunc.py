@@ -2,6 +2,8 @@ import inspect
 from six.moves.urllib.parse import urlparse
 from aatest.check import ERROR, State
 import sys
+from aatest.events import EV_CONDITION
+from aatest.events import EV_RESPONSE
 
 __author__ = 'roland'
 
@@ -46,7 +48,7 @@ def check_endpoint(oper, args):
         _ = oper.conv.entity.provider_info[args]
     except KeyError:
         oper.conv.events.store(
-            'condition',
+            EV_CONDITION,
             State(test_id="check_endpoint", status=ERROR,
                   message="{} not in provider configuration".format(args)))
         oper.skip = True
@@ -54,14 +56,14 @@ def check_endpoint(oper, args):
 
 def cache_response(oper, arg):
     key = oper.conv.test_id
-    oper.cache[key] = oper.conv.events.last_item('response')
+    oper.cache[key] = oper.conv.events.last_item(EV_RESPONSE)
 
 
 def restore_response(oper, arg):
     key = oper.conv.test_id
-    if oper.conv.events['response']:
+    if oper.conv.events[EV_RESPONSE]:
         _lst = oper.cache[key][:]
-        for x in oper.conv.events['response']:
+        for x in oper.conv.events[EV_RESPONSE]:
             if x not in _lst:
                 oper.conv.events.append(_lst)
     else:

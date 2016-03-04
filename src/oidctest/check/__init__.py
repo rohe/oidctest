@@ -3,6 +3,7 @@ import json
 import time
 
 from six.moves.urllib.parse import parse_qs
+from aatest.events import EV_PROTOCOL_RESPONSE
 
 from oic.oic import message
 
@@ -22,7 +23,7 @@ def get_provider_info(conv):
 
 def get_protocol_response(conv, cls):
     res = []
-    for msg in conv.events.get_messages('response'):
+    for msg in conv.events.get_messages(EV_PROTOCOL_RESPONSE):
         if isinstance(msg, cls):
             reply = conv.events.by_ref(msg.timestamp)
             if reply:

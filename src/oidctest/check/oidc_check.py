@@ -2,6 +2,9 @@ import inspect
 import json
 import traceback
 import sys
+from aatest.events import EV_RESPONSE
+from aatest.events import EV_PROTOCOL_RESPONSE
+from aatest.events import EV_HTTP_RESPONSE
 
 from oic.oauth2 import SUCCESSFUL
 from oic.oauth2.message import ErrorResponse
@@ -245,7 +248,7 @@ class VerifyErrorResponse(ExpectedError):
     def _func(self, conv):
         res = {}
 
-        response = conv.last_response
+        response = conv.events.last_item(EV_HTTP_RESPONSE)
         if response.status_code == 302:
             _loc = response.headers["location"]
             if "?" in _loc:
@@ -282,7 +285,7 @@ class CheckRedirectErrorResponse(ExpectedError):
     msg = "OP error"
 
     def _func(self, conv):
-        _response = conv.events.last_item('response')
+        _response = conv.events.last_item(EV_HTTP_RESPONSE)
 
         res = {}
         try:
@@ -295,7 +298,7 @@ class CheckRedirectErrorResponse(ExpectedError):
                 self._message = "Expected a redirect"
                 self._status = CRITICAL
                 return res
-            env_id = conv.events.store('reply', query)
+            env_id = conv.events.store(EV_RESPONSE, query)
         except (KeyError, AttributeError):
             self._message = "Expected a redirect"
             self._status = CRITICAL
@@ -306,7 +309,7 @@ class CheckRedirectErrorResponse(ExpectedError):
             try:
                 err.verify()
                 res["content"] = err.to_json()
-                conv.events.store('response', err, env_id)
+                conv.events.store(EV_PROTOCOL_RESPONSE, err, env_id)
             except MissingRequiredAttribute:
                 self._message = "Expected an error message"
                 self._status = CRITICAL
@@ -326,8 +329,8 @@ class VerifyBadRequestResponse(ExpectedError):
     msg = "OP error"
 
     def _func(self, conv):
-        _response = conv.events.last_item('response')
-        _content = conv.events.last_item('reply')
+        _response = conv.events.last_item(EV_HTTP_RESPONSE)
+        _content = conv.events.last_item(EV_RESPONSE)
         res = {}
         if _response.status_code == 400:
             err = ErrorResponse().deserialize(_content, "json")
@@ -355,7 +358,7 @@ class VerifyBadRequestResponse(ExpectedError):
                 self._message = "Expected an error message"
             else:
                 res["content"] = err.to_json()
-            conv.events.store('response', err)
+            conv.events.store(EV_PROTOCOL_RESPONSE, err)
         else:
             self._message = "Expected an error message"
             try:
@@ -371,14 +374,14 @@ class VerifyRandomRequestResponse(ExpectedError):
     msg = "OP error"
 
     def _func(self, conv):
-        _response = conv.events.last_item('response')
-        _content = conv.events.last_item('reply')
+        _response = conv.events.last_item(EV_HTTP_RESPONSE)
+        _content = conv.events.last_item(EV_RESPONSE)
         res = {}
         if _response.status_code == 400:
             err = ErrorResponse().deserialize(_content, "json")
             err.verify()
             res["content"] = err.to_json()
-            conv.events.store('response', err)
+            conv.events.store(EV_PROTOCOL_RESPONSE, err)
             pass
         elif _response.status_code in [301, 302, 303]:
             pass
@@ -386,7 +389,7 @@ class VerifyRandomRequestResponse(ExpectedError):
             err = ErrorResponse().deserialize(_content, "json")
             err.verify()
             res["content"] = err.to_json()
-            conv.events.store('response', err)
+            conv.events.store(EV_PROTOCOL_RESPONSE, err)
         else:
             self._message = "Expected a 400 error message"
             self._status = CRITICAL
@@ -399,22 +402,22 @@ class VerifyUnknownClientIdResponse(ExpectedError):
     msg = "OP error"
 
     def _func(self, conv):
-        _response = conv.events.last_item('http_response')
-        _content = conv.events.last_item('reply')
+        _response = conv.events.last_item(EV_HTTP_RESPONSE)
+        _content = conv.events.last_item(EV_RESPONSE)
         res = {}
 
         if _response.status_code == 400:
             err = ErrorResponse().deserialize(_content, "json")
             err.verify()
             res["content"] = err.to_json()
-            conv.events.store('response', err)
+            conv.events.store(EV_PROTOCOL_RESPONSE, err)
         elif _response.status_code in [301, 302, 303]:
             pass
         elif _response.status_code in SUCCESSFUL:
             err = ErrorResponse().deserialize(_content, "json")
             err.verify()
             res["content"] = err.to_json()
-            conv.events.store('response', err)
+            conv.events.store(EV_PROTOCOL_RESPONSE, err)
         else:
             self._message = "Expected a 400 error message"
             self._status = CRITICAL
@@ -430,7 +433,7 @@ class VerifyError(Error):
     cid = "verify-error"
 
     def _func(self, conv):
-        response = conv.events.last_item('http_response')
+        response = conv.events.last_item(EV_HTTP_RESPONSE)
 
         if response.status_code == 400:
             try:
@@ -441,7 +444,7 @@ class VerifyError(Error):
                 return {}
         else:
             try:
-                item = conv.events.last_item('response')
+                item = conv.events.last_item(EV_PROTOCOL_RESPONSE)
             except IndexError:
                 self._message = "Expected a message"
                 self._status = CRITICAL
@@ -481,7 +484,7 @@ class CheckErrorResponse(ExpectedError):
         else:
             return res
 
-        _response = conv.events.last_item('http_response')
+        _response = conv.events.last_item(EV_HTTP_RESPONSE)
         _content = conv.last_content
 
         if _response.status_code >= 400:
@@ -522,7 +525,7 @@ class VerifyErrorMessage(ExpectedError):
     msg = "OP error"
 
     def _func(self, conv):
-        inst = conv.events.last_item('response')
+        inst = conv.events.last_item(EV_PROTOCOL_RESPONSE)
 
         try:
             assert isinstance(inst, ErrorResponse)
@@ -552,7 +555,7 @@ class VerifyAuthnResponse(ExpectedError):
     msg = "OP error"
 
     def _func(self, conv):
-        inst = conv.events.last_item('response')
+        inst = conv.events.last_item(EV_PROTOCOL_RESPONSE)
 
         try:
             assert isinstance(inst, AuthorizationResponse)
@@ -572,7 +575,7 @@ class VerifyAuthnOrErrorResponse(ExpectedError):
     msg = "Expected authentication response or error message"
 
     def _func(self, conv):
-        inst = conv.events.last_item('response')
+        inst = conv.events.last_item(EV_PROTOCOL_RESPONSE)
 
         try:
             assert isinstance(inst, AuthorizationResponse)
@@ -604,7 +607,7 @@ class VerifyResponse(ExpectedError):
     msg = "Expected OpenID Connect response"
 
     def _func(self, conv):
-        inst = conv.events.last_item('response')
+        inst = conv.events.last_item(EV_PROTOCOL_RESPONSE)
 
         ok = False
         try:

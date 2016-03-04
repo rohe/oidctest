@@ -114,19 +114,19 @@ def application(environ, start_response):
         return io.static(path)
 
     if path == "reset":
-        sh.reset_session(sh.session)
-        return io.flow_list(session)
+        sh.reset_session()
+        return io.flow_list()
     elif path == "pedit":
         try:
-            return io.profile_edit(session)
+            return io.profile_edit()
         except Exception as err:
-            return io.err_response(session, "pedit", err)
+            return io.err_response("pedit", err)
     elif path == "profile":
         return tester.set_profile(environ)
     elif path.startswith("test_info"):
         p = path.split("/")
         try:
-            return io.test_info(p[1], sh.session)
+            return io.test_info(p[1])
         except KeyError:
             return io.not_found()
     elif path == "continue":
@@ -135,7 +135,7 @@ def application(environ, start_response):
         if tester.conv is None:
             return io.sorry_response("", "No result to report")
 
-        return io.opresult(tester.conv, sh.session)
+        return io.opresult(tester.conv)
     # expected path format: /<testid>[/<endpoint>]
     elif path in session["flow_names"]:
         return tester.run(path, **webenv)
