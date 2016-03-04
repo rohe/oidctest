@@ -101,21 +101,6 @@ Flows:
     sequence:
       - Webfinger:
           set_webfinger_resource: null
-  RP-id_token-asym_sig:
-    desc: Accept Valid Asymmetric ID Token Signature
-    profile: I...T
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration:
-          set_request_args:
-            id_token_signed_response_alg: RS256
-      - SyncAuthn:
-          set_op_args:
-            response_type:
-              - id_token
   RP-id_token-C_aud:
     desc: The Relying Party should request an ID token and compare its aud value to
       Relying Partys Client ID
@@ -172,31 +157,6 @@ Flows:
       - SyncAuthn
       - AccessToken:
           expect_exception: BadSignature
-  RP-id_token-bad_at_hash:
-    desc: Make an authentication request using response_type=[id_token token] for Implicit
-      Flow or response_type=[code id_token token] for Hybrid Flow. Verify the at_hash
-      value in the returned ID Token.
-    profile: 'IT,CIT...'
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration
-      - SyncAuthn:
-          expect_exception: AtHashError
-  RP-id_token-bad_c_hash:
-    desc: Tests if the Relying Party extract an c_hash from an ID token presented as
-      json. It should be used to validate the correctness of the authorization code
-    profile: 'CI,CIT...'
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration
-      - SyncAuthn:
-          expect_exception: CHashError
   RP-id_token-C_bad_es256_sig:
     desc: The Relying Party should reject invalid asymmetric ID Token signature which
       has been signed using the algorithm ES256
@@ -211,20 +171,6 @@ Flows:
             id_token_signed_response_alg: ES256
       - SyncAuthn
       - AccessToken:
-          expect_exception: BadSignature
-  RP-id_token-I_bad_es256_sig:
-    desc: The Relying Party should reject invalid asymmetric ID Token signature which
-      has been signed using the algorithm ES256
-    profile: 'CIT,IT,I...T'
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration:
-          set_request_args:
-            id_token_signed_response_alg: ES256
-      - SyncAuthn:
           expect_exception: BadSignature
   RP-id_token-C_bad_symmetric_sig_hs256:
     desc: Tests if the Relying Party can identify and reject an ID Token with an invalid
@@ -350,7 +296,7 @@ Flows:
           expect_exception: IssuerMismatch
   RP-id_token-none:
     desc: Can Request and Use unSigned ID Token Response
-    profile: C,CT,CIT...T
+    profile: 'C,CT,CIT...T'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -363,28 +309,10 @@ Flows:
           set_op_args:
             response_type: code
       - AccessToken
-  RP-id_token-sig+enc:
-    desc: Can Request and Use Signed and Encrypted ID Token Response
-    profile: I...T
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration:
-          set_jwks_uri: null
-          set_request_args:
-            id_token_encrypted_response_alg: RSA1_5
-            id_token_encrypted_response_enc: A128CBC-HS256,
-            id_token_signed_response_alg: HS256
-      - SyncAuthn:
-          set_op_args:
-            response_type:
-              - id_token
   RP-id_token-sig_none:
     desc: Tests if the Relying Party can request and use unsigned ID Tokens. Use Code
       flow and set alg=null
-    profile: C...
+    profile: 'C...'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -458,7 +386,7 @@ Flows:
             request_object_encryption_enc: A128CBC-HS256
   RP-key_rotation-op_sign_key:
     desc: Support OP Encryption Key Rotation
-    profile: I,IT,CI,CIT...
+    profile: 'C...'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -466,7 +394,11 @@ Flows:
           set_discovery_issuer: null
       - Registration
       - SyncAuthn
+      - AccessToken
+      - UpdateProviderKeys:
+          remove_grant: null
       - SyncAuthn
+      - AccessToken
   RP-key_rotation-rp_enc_key:
     desc: Can Request and Use Encrypted UserInfo Response
     profile: 'C,CT...'
@@ -478,10 +410,11 @@ Flows:
       - Registration:
           set_jwks_uri: null
           set_request_args:
-            id_token_encrypted_response_alg: RSA1_5
-            id_token_encrypted_response_enc: A128CBC-HS256
+            userinfo_encrypted_response_alg: RSA1_5
+            userinfo_encrypted_response_enc: A128CBC-HS256
       - SyncAuthn
       - AccessToken
+      - UserInfo
       - RotateKey:
           set_op_args:
             jwks_path: static/jwk.json
@@ -496,36 +429,7 @@ Flows:
               use: enc
       - SyncAuthn
       - AccessToken
-      - RestoreKeyJar:
-          set_op_args:
-            jwks_path: static/jwk.json
-  RP-key_rotation-rp_enc_key:
-    desc: Can Request and Use Encrypted UserInfo Response
-    profile: 'I,IT,CI,CIT...'
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration:
-          set_jwks_uri: null
-          set_request_args:
-            id_token_encrypted_response_alg: RSA1_5
-            id_token_encrypted_response_enc: A128CBC-HS256
-      - SyncAuthn
-      - RotateKey:
-          set_op_args:
-            jwks_path: static/jwk.json
-            new_key:
-              bits: 2048
-              type: RSA
-              use:
-                - enc
-            new_kid: rotated_enc_key
-            old_key:
-              alg: RSA1_5
-              use: enc
-      - SyncAuthn
+      - UserInfo
       - RestoreKeyJar:
           set_op_args:
             jwks_path: static/jwk.json

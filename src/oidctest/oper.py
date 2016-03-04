@@ -160,7 +160,7 @@ class SyncAuthn(SyncGetRequest):
         self.req_args['response_type'] = 'code'
 
         # verify that I've got a valid access code
-        self.tests["post"].append("valid_code")
+        # self.tests["post"].append("valid_code")
 
     def op_setup(self):
         self.req_args["redirect_uri"] = self.conv.extra_args['callback_uris'][0]
@@ -293,7 +293,7 @@ class RotateKey(Operation):
         typ = key_spec["type"].upper()
         if typ == "RSA":
             kb = KeyBundle(keytype=typ, keyusage=key_spec["use"])
-            kb.append(RSAKey(use=key_spec["use"]).load_key(
+            kb.append(RSAKey(use=key_spec["use"][0]).load_key(
                 RSA.generate(key_spec["bits"])))
         elif typ == "EC":
             kb = ec_init(key_spec)
