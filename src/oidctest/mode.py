@@ -125,7 +125,8 @@ def setup_op(mode, com_args, op_arg, trace):
         div = "/"
 
     if len(mode) == 1 and "test_id" in mode:
-        op.name = "%s%s%s" % (op.baseurl, div, mode["test_id"])
+        # op.name = "%s%s%s" % (op.baseurl, div, mode["test_id"])
+        op.name = "%s%s%s" % (op.baseurl, div, mode2path(mode))
 
     op.baseurl = "%s%s%s" % (op.baseurl, div, mode2path(mode))
 
