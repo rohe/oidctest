@@ -26,9 +26,19 @@ def dump_log(session_info, trace):
                              session_info["test_id"])
     try:
         fp = open(file_name, "a+")
-    except IOError as err:
-        os.makedirs(os.path.join("log", session_info["addr"]))
-        fp = open(file_name, "a+")
+    except IOError:
+        try:
+            os.makedirs(os.path.join("log", session_info["addr"]))
+        except OSError:
+            pass
+
+        try:
+            fp = open(file_name, "w")
+        except Exception as err:
+            logging.error(
+                "Couldn't dump to log file {} reason: {}").format(
+                file_name, err)
+            raise
 
     fp.write("{0}".format(trace))
     fp.write("\n\n")

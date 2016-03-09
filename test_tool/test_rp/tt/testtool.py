@@ -21,6 +21,9 @@ from oic.utils.http_util import BadRequest
 from oic.utils.webfinger import OIC_ISSUER
 from oic.utils.webfinger import WebFinger
 
+from requests.packages import urllib3
+urllib3.disable_warnings()
+
 __author__ = 'roland'
 
 logger = logging.getLogger("")

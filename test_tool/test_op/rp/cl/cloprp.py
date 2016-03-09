@@ -3,22 +3,19 @@
 import importlib
 import json
 import logging
-import os
-from aatest.check import OK
-from aatest.operation import Note
 import argparse
-import sys
 
-from six.moves.urllib.parse import urlparse
-#from urllib.parse import urlparse
+from future.backports.urllib.parse import urlparse
 
 from oic.utils.authn.client import BearerHeader
 from oic.utils.keyio import build_keyjar
 
-from aatest import NotSupported, exception_trace
 from aatest import ConfigurationError
+from aatest import NotSupported
+from aatest import exception_trace
+from aatest.check import OK
 from aatest.conversation import Conversation
-from aatest.yamlcnf import parse_yaml_conf
+from aatest.parse_cnf import parse_yaml_conf
 
 from oidctest.common import make_list
 from oidctest.common import make_client
@@ -28,6 +25,9 @@ from oidctest.common import Trace
 from oidctest.io import ClIO
 from oidctest.session import SessionHandler
 from oidctest.utils import get_check
+
+from requests.packages import urllib3
+urllib3.disable_warnings()
 
 __author__ = 'roland'
 
@@ -109,10 +109,10 @@ def main(flows, profile, profiles, **kw_args):
 
     for tid in test_list:
         io = ClIO(flows=flows, profile=profile, **kw_args)
-        sh = SessionHandler(None, profile, flows, **kw_args)
+        sh = SessionHandler(profile, flows, **kw_args)
 
         _flow = flows[tid]
-        _cli = make_client(**kw_args)
+        _cli, _cliconf = make_client(**kw_args)
         conversation = Conversation(_flow, _cli, kw_args["msg_factory"],
                                     interaction=kw_args["conf"].INTERACTION,
                                     trace_cls=Trace, callback_uris=redirs)
