@@ -175,10 +175,10 @@ def webfinger(environ, start_response, session_info, trace, **kwargs):
 
         if p.scheme == "acct":
             l, _ = p.path.split("@")
-            path = pathmap.IDMAP[l]
+            path = pathmap.IDMAP[l.lower()]
         else:  # scheme == http/-s
             try:
-                path = pathmap.IDMAP[p.path[1:]]
+                path = pathmap.IDMAP[p.path[1:].lower()]
             except KeyError:
                 path = None
 
