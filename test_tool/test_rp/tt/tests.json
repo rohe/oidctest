@@ -1,0 +1,32 @@
+{
+  "heart": {
+    "descr": "HEART project profile",
+    "setup": {
+
+    },
+    "RegistrationRequest": {
+      "assert":{
+        "verify-registration-offline-access": null,
+        "verify-registration-response_types": null,
+        "verify-registration-software-statement": null,
+        "verify-registration-redirect_uri-scheme": null,
+        "verify-registration-public_key-registration": null
+      }
+    },
+    "AuthorizationRequest": {
+      "assert":{
+        "verify-authorization-offline-access": null,
+        "verify-authorization-state-entropy": null,
+        "verify-authorization-redirect_uri": null
+      }
+    },
+    "AccessTokenRequest": {
+      "assert": {
+        "verify-token-request-client_assertion": null
+      }
+    }
+  },
+  "code": {
+    "descr": "Basic code profile"
+  }
+}

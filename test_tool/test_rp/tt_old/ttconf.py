@@ -23,8 +23,9 @@ multi_keys = [
 
 SERVICE_URL = "%s/verify" % issuer
 
+#Only Username and password.
 AUTHENTICATION = {
-    # Dummy authentication
+    #"UserPassword": {"ACR": "PASSWORD", "WEIGHT": 1, "URL": SERVICE_URL}
     "NoAuthn": {"ACR": "PASSWORD", "WEIGHT": 1, "user": "diana"}
 }
 
@@ -85,9 +86,3 @@ USERDB = {
 }
 
 TARGET = 'https://localhost:8666/rp?issuer={}'
-
-BEHAVIOR = {
-    'client_registration': {
-        'assign': {'token_endpoint_auth_method': 'private_key_jwt'}
-    }
-}
