@@ -69,7 +69,6 @@ def main_setup(args, lookup=None):
 
     com_args = {
         "name": config.issuer,
-        # "sdb": SessionDB(config.baseurl),
         "baseurl": config.baseurl,
         "cdb": cdb,
         "authn_broker": ac,
