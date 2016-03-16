@@ -7,9 +7,8 @@ import argparse
 
 from future.backports.urllib.parse import urlparse
 
-from oic.utils.keyio import build_keyjar
-
 from aatest.parse_cnf import parse_yaml_conf
+from oic.utils.keyio import build_keyjar
 
 from oidctest import func
 from oidctest.common import setup_logger
