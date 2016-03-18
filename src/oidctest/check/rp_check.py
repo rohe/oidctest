@@ -44,7 +44,7 @@ class VerifyRegistrationOfflineAccess(Check):
 
 class VerifyRegistrationResponseTypes(Check):
     cid = 'verify-registration-response_types'
-    msg = "Only one of 'code' or 'token' allowed"
+    msg = "Only the allowed"
 
     def _func(self, conv):
         request = conv.events.get_message(EV_PROTOCOL_REQUEST,
@@ -55,43 +55,41 @@ class VerifyRegistrationResponseTypes(Check):
         except KeyError:
             pass
         else:
-            if len(resp_types) > 1:
-                self._status = WARNING
-                self._message = 'Only allowed to register one response type'
-            elif resp_types[0] not in ['code', 'token']:
-                self._status = ERROR
-                self._message = 'Not allowed response type'
+            for typ in resp_types:
+                if typ not in self._kwargs:
+                    self._status = ERROR
+                    self._message = 'Not allowed response type: {}'.format(typ)
 
         return {}
 
 
-class VerifyRegistrationSoftwareStatement(Check):
-    cid = 'verify-registration-software-statement'
-    msg = "Verify that the correct claims appear in the Software statement"
-
-    def _func(self, conv):
-        request = conv.events.get_message(EV_PROTOCOL_REQUEST,
-                                          RegistrationRequest)
-
-        try:
-            _ss = request['software_statement']
-        except KeyError:
-            pass
-        else:
-            missing = []
-            for claim in ['redirect_uris', 'grant_types', 'client_name',
-                          'client_uri']:
-                if claim not in _ss:
-                    missing.append(claim)
-            if 'jwks_uri' not in _ss and 'jwks' not in _ss:
-                missing.append('jwks_uri/jwks')
-
-            if missing:
-                self._status = WARNING
-                self._message = 'Missing "{}" claims from Software ' \
-                                'Statement'.format(missing)
-
-        return {}
+# class VerifyRegistrationSoftwareStatement(Check):
+#     cid = 'verify-registration-software-statement'
+#     msg = "Verify that the correct claims appear in the Software statement"
+#
+#     def _func(self, conv):
+#         request = conv.events.get_message(EV_PROTOCOL_REQUEST,
+#                                           RegistrationRequest)
+#
+#         try:
+#             _ss = request['software_statement']
+#         except KeyError:
+#             pass
+#         else:
+#             missing = []
+#             for claim in ['redirect_uris', 'grant_types', 'client_name',
+#                           'client_uri']:
+#                 if claim not in _ss:
+#                     missing.append(claim)
+#             if 'jwks_uri' not in _ss and 'jwks' not in _ss:
+#                 missing.append('jwks_uri/jwks')
+#
+#             if missing:
+#                 self._status = WARNING
+#                 self._message = 'Missing "{}" claims from Software ' \
+#                                 'Statement'.format(missing)
+#
+#         return {}
 
 
 class VerifyRegistrationRedirectUriScheme(Check):

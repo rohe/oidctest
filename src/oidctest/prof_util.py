@@ -213,3 +213,25 @@ class ProfileHandler(prof_util.ProfileHandler):
             if "extras" in ret:
                 ret["extras"] = True
             return ret
+
+
+def make_list(flows, profile, **kw_args):
+    f_names = list(flows.keys())
+    f_names.sort()
+    flow_names = []
+    for k in kw_args["order"]:
+        k += '-'
+        l = [z for z in f_names if z.startswith(k)]
+        flow_names.extend(l)
+
+    res = []
+    sprofile = profile.split(".")
+    for tid in flow_names:
+        _flow = flows[tid]
+
+        if map_prof(sprofile, _flow["profile"].split(".")):
+            res.append(tid)
+
+    return res
+
+

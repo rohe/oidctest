@@ -27,6 +27,8 @@
   <script src="../../assets/js/respond.min.js"></script>
   <![endif]-->
   <style>
+    h3   {background-color:lightblue;}
+    h4    {background-color:lightcyan;}
     @media (max-width: 768px) {
       .jumbotron {
         border-radius: 10px;
@@ -83,9 +85,15 @@
     <input type="submit" value="Submit">
   </form>
   <hr>
-  <b>${http_result}</b>
+  % if http_result != '':
+    % if http_result.startswith('4') or http_result.startswith('5'):
+      <b style="color:red">${http_result}</b>
+    % else:
+      <b style="color:green">${http_result}</b>
+    % endif
+  % endif
   <hr>
-  ${print_result(events)}
+  ${events}
 </div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="/static/jquery.min.1.9.1.js"></script>

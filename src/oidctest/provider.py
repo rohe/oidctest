@@ -94,12 +94,18 @@ class Provider(provider.Provider):
 
         self.claims_type = ["normal"]
         self.behavior_type = []
-        self.server = Server(ca_certs=ca_certs, verify_ssl=verify_ssl)
+        self.server = Server(keyjar=keyjar, ca_certs=ca_certs,
+                             verify_ssl=verify_ssl)
         self.server.behavior_type = self.behavior_type
         self.claim_access_token = {}
         self.init_keys = []
         self.update_key_use = ""
         self.trace = None
+        for param in ['jwks_name', 'jwks_uri']:
+            try:
+                setattr(self, param, kwargs[param])
+            except KeyError:
+                pass
 
     def sign_encrypt_id_token(self, sinfo, client_info, areq, code=None,
                               access_token=None, user_info=None):
@@ -308,7 +314,8 @@ class Provider(provider.Provider):
             alg = mode["sign_alg"]
             if not alg:
                 alg = "RS256"
-            keys = [k.to_dict() for kb in self.keyjar[""] for k in list(kb.keys())]
+            keys = [k.to_dict() for kb in self.keyjar[""] for k in
+                    list(kb.keys())]
             for key in keys:
                 if key["use"] == "sig" and key["kty"].startswith(alg[:2]):
                     key.pop("kid", None)
@@ -317,7 +324,8 @@ class Provider(provider.Provider):
             raise Exception(
                 "Did not find sig {} key for nokid1jwk test ".format(alg))
         else:  # Return all keys
-            keys = [k.to_dict() for kb in self.keyjar[""] for k in list(kb.keys())]
+            keys = [k.to_dict() for kb in self.keyjar[""] for k in
+                    list(kb.keys())]
             jwks = dict(keys=keys)
             return json.dumps(jwks)
 

@@ -1,4 +1,22 @@
 # -*- coding: utf-8 -*-
+from oic.oic import message, ProviderConfigurationResponse
+from oic.oic.provider import AuthorizationEndpoint
+from oic.oic.provider import TokenEndpoint
+from oic.oic.provider import RegistrationEndpoint
+from oic.oic.provider import UserinfoEndpoint
+
+from otest.setup import main_setup
+from otest.testtool import authorization, userinfo
+from otest.testtool import css
+from otest.testtool import op_info
+from otest.testtool import registration
+from otest.testtool import token
+from otest.testtool import webfinger
+
+from oidctest.check import rp_check
+from oidctest.provider import Provider
+from oidctest.parse_conf import parse_json_conf
+
 
 baseurl = "https://localhost"
 issuer = "%s:%%d/" % baseurl
@@ -90,4 +108,26 @@ BEHAVIOR = {
     'client_registration': {
         'assign': {'token_endpoint_auth_method': 'private_key_jwt'}
     }
+}
+
+TOOL_ARGS = {
+    'setup': main_setup,
+    'check': rp_check,
+    'provider': Provider,
+    'parse_conf': parse_json_conf,
+    'cls_factories': [message.factory],
+    'chk_factories': [rp_check.factory],
+    'func_factories': [],
+    'configuration_response': ProviderConfigurationResponse,
+    'endpoints': [
+        AuthorizationEndpoint(authorization),
+        TokenEndpoint(token),
+        RegistrationEndpoint(registration),
+        UserinfoEndpoint(userinfo)
+    ],
+    'urls': [
+        (r'^.well-known/openid-configuration', op_info),
+        (r'^.well-known/webfinger', webfinger),
+        (r'.+\.css$', css),
+    ]
 }

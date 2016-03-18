@@ -1,14 +1,12 @@
 {
-  "heart": {
-    "descr": "HEART project profile",
-    "setup": {
-
-    },
+  "code": {
+    "descr": "Basic code profile"
+  },
+  "Sign-RS256": {
+    "descr": "Simple code profile with RS256 signatures",
     "RegistrationRequest": {
       "assert":{
-        "verify-registration-offline-access": null,
-        "verify-registration-response_types": null,
-        "verify-registration-software-statement": null,
+        "verify-registration-response_types": ["code"],
         "verify-registration-redirect_uri-scheme": null,
         "verify-registration-public_key-registration": null
       }
@@ -25,8 +23,5 @@
         "verify-token-request-client_assertion": null
       }
     }
-  },
-  "code": {
-    "descr": "Basic code profile"
   }
 }
