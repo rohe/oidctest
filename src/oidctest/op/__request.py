@@ -1,9 +1,11 @@
 import logging
 import requests
 import copy
-from six.moves.urllib.parse import parse_qs
+
 # from urllib.parse import parse_qs
 from bs4 import BeautifulSoup
+from requests.models import Response
+from future.backports.urllib.parse import parse_qs
 
 from aatest import Break
 from aatest.events import EV_PROTOCOL_RESPONSE
@@ -14,15 +16,16 @@ from aatest.events import EV_REQUEST
 
 from oic.exception import IssuerMismatch
 from oic.exception import PyoidcError
-from requests.models import Response
 from oic.oauth2 import ErrorResponse
 from oic.oauth2 import ResponseError
 from oic.oauth2.util import URL_ENCODED
 from oic.utils.http_util import Redirect
 from oic.utils.http_util import get_post
-# from oictest.check import CheckEndpoint
 
-from oidctest.oper import Operation
+from otest.aus.request import same_issuer
+
+from oidctest.op.oper import Operation
+from oidctest.op.prof_util import RESPONSE
 from oidctest.log import Log
 
 __author__ = 'rolandh'
@@ -44,7 +47,8 @@ class Request(Operation):
             response = ErrorResponse().from_json(_txt)
 
         if isinstance(response, ErrorResponse):
-            self.conv.events.store(EV_PROTOCOL_RESPONSE, response)
+            self.conv.events.store(EV_PROTOCOL_RESPONSE, response,
+                                   sender=self.__class__.__name__)
             if response["error"] not in self.expect_error["error"]:
                 raise Break("Wrong error, got {} expected {}".format(
                     response["error"], self.expect_error["error"]))
@@ -59,6 +63,11 @@ class Request(Operation):
 
         return response
 
+    def map_profile(self, profile_map):
+        for func, arg in profile_map[self.__class__][
+                self.profile[RESPONSE]].items():
+            func(self, arg)
+
 
 class SyncRequest(Request):
     request_cls = None
@@ -71,8 +80,8 @@ class SyncRequest(Request):
     accept = None
     _tests = {"post": [], "pre": []}
 
-    def __init__(self, conv, io, sh, **kwargs):
-        Operation.__init__(self, conv, io, sh, **kwargs)
+    def __init__(self, conv, inut, sh, **kwargs):
+        Operation.__init__(self, conv, inut, sh, **kwargs)
         self.conv.req = self
         self.tests = copy.deepcopy(self._tests)
         self.request = self.conv.msg_factory(self.request_cls)
@@ -83,7 +92,8 @@ class SyncRequest(Request):
         response = client.http_request(url, method=self.method, data=body,
                                        **ht_args)
 
-        self.conv.events.store(EV_HTTP_RESPONSE, response)
+        self.conv.events.store(EV_HTTP_RESPONSE, response,
+                               sender=self.__class__.__name__)
         _trace.reply("RESPONSE: %s" % response)
         _trace.reply("CONTENT: %s" % response.text)
         try:
@@ -170,7 +180,7 @@ class SyncRequest(Request):
         else:
             http_args.update(ht_args)
 
-        self.conv.events.store(EV_REQUEST, csi)
+        self.conv.events.store(EV_REQUEST, csi, sender=self.__class__.__name__)
         self.conv.trace.info(
             20 * "=" + " " + self.__class__.__name__ + " " + 20 * "=")
         self.conv.trace.request("URL: {}".format(url))
@@ -181,8 +191,9 @@ class SyncRequest(Request):
         response = self.catch_exception(self.handle_response, r=http_response,
                                         csi=csi)
         self.conv.trace.response(response)
-        self.conv.events.store(EV_RESPONSE, response)
-        #self.sequence.append((response, http_response.text))
+        self.conv.events.store(EV_RESPONSE, response,
+                               sender=self.__class__.__name__)
+        # self.sequence.append((response, http_response.text))
 
         if self.expect_error:
             response = self.expected_error_response(response)
@@ -204,8 +215,8 @@ class AsyncRequest(Request):
     accept = None
     _tests = {"post": [], "pre": []}
 
-    def __init__(self, conv, io, sh, **kwargs):
-        Operation.__init__(self, conv, io, sh, **kwargs)
+    def __init__(self, conv, inut, sh, **kwargs):
+        Operation.__init__(self, conv, inut, sh, **kwargs)
         self.conv.req = self
         self.trace = conv.trace
         self.tests = copy.deepcopy(self._tests)
@@ -229,10 +240,11 @@ class AsyncRequest(Request):
 
         _trace.info("redirect.url: %s" % url)
         _trace.info("redirect.header: %s" % ht_args)
-        self.conv.events.store(EV_REDIRECT_URL, url)
+        self.conv.events.store(EV_REDIRECT_URL, url,
+                               sender=self.__class__.__name__)
         return Redirect(str(url))
 
-    def parse_response(self, path, io, message_factory):
+    def parse_response(self, path, inut, message_factory):
         _ctype = self.response_type
         _conv = self.conv
 
@@ -265,27 +277,28 @@ class AsyncRequest(Request):
 
         # parse the response
         if response_mode == "form_post":
-            info = parse_qs(get_post(io.environ))
+            info = parse_qs(get_post(inut.environ))
             _ctype = "dict"
         elif response_where == "url":
-            info = io.environ["QUERY_STRING"]
+            info = inut.environ["QUERY_STRING"]
             _ctype = "urlencoded"
         elif response_where == "fragment":
-            query = parse_qs(get_post(io.environ))
+            query = parse_qs(get_post(inut.environ))
             try:
                 info = query["fragment"][0]
             except KeyError:
-                return io.sorry_response(io.conf.BASE, "missing fragment ?!")
+                return inut.sorry_response(inut.conf.BASE, "missing fragment ?!")
         elif response_where == "":
-            info = io.environ["QUERY_STRING"]
+            info = inut.environ["QUERY_STRING"]
             _ctype = "urlencoded"
         else:  # resp_c.where == "body"
-            info = get_post(io.environ)
+            info = get_post(inut.environ)
 
         logger.info("Response: %s" % info)
 
         _conv.trace.reply(info)
-        ev_index = _conv.events.store(EV_RESPONSE, info)
+        ev_index = _conv.events.store(EV_RESPONSE, info,
+                                      sender=self.__class__.__name__)
 
         resp_cls = message_factory(self.response_cls)
         algs = _conv.entity.sign_enc_algs("id_token")
@@ -295,28 +308,21 @@ class AsyncRequest(Request):
                 self.csi["state"],
                 keyjar=_conv.entity.keyjar, algs=algs)
         except ResponseError as err:
-            return io.err_response("run_sequence", err)
+            return inut.err_response("run_sequence", err)
         except Exception as err:
-            return io.err_response("run_sequence", err)
+            return inut.err_response("run_sequence", err)
 
         logger.info("Parsed response: %s" % response.to_dict())
 
         _conv.trace.response(response)
-        _conv.events.store(EV_PROTOCOL_RESPONSE, response, ref=ev_index)
+        _conv.events.store(EV_PROTOCOL_RESPONSE, response, ref=ev_index,
+                           sender=self.__class__.__name__)
 
         if self.expect_error:
             self.expected_error_response(response)
         else:
             if isinstance(response, ErrorResponse):
                 raise Break("Unexpected error response")
-
-
-def same_issuer(issuer_A, issuer_B):
-    if not issuer_A.endswith("/"):
-        issuer_A += "/"
-    if not issuer_B.endswith("/"):
-        issuer_B += "/"
-    return issuer_A == issuer_B
 
 
 class SyncGetRequest(SyncRequest):

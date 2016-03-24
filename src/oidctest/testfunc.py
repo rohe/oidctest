@@ -1,7 +1,9 @@
-import inspect
-from six.moves.urllib.parse import urlparse
-from aatest.check import ERROR, State
 import sys
+import inspect
+
+from future.backports.urllib.parse import urlparse
+
+from aatest.check import ERROR, State
 from aatest.events import EV_CONDITION
 from aatest.events import EV_RESPONSE
 

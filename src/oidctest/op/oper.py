@@ -2,36 +2,43 @@ import inspect
 import json
 import logging
 import os
+import sys
 import time
+
 from Crypto.PublicKey import RSA
 
 from future.backports.urllib.parse import urlparse
 
 from jwkest.jwk import RSAKey
 
-from aatest import RequirementsNotMet, Unknown, Break
+from aatest import RequirementsNotMet
+from aatest import Unknown
+from aatest import Break
 from aatest.events import EV_PROTOCOL_RESPONSE
-from aatest.operation import Operation
+
+from otest.aus.operation import Operation
 
 from oic import rndstr
 
 from oic.exception import IssuerMismatch
 from oic.exception import PyoidcError
 from oic.oauth2.message import ErrorResponse
+from oic.oauth2.util import JSON_ENCODED
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
 from oic.oic import AccessTokenResponse
 from oic.utils.keyio import KeyBundle
 from oic.utils.keyio import ec_init
 from oic.utils.keyio import dump_jwks
-from oidctest.prof_util import WEBFINGER
-from oidctest.prof_util import DISCOVER
-from oidctest.prof_util import REGISTER
-from oidctest.request import same_issuer
-from oidctest.request import SyncGetRequest
-from oidctest.request import AsyncGetRequest
-from oidctest.request import SyncPostRequest
-import sys
+
+from otest.aus.request import SyncGetRequest
+from otest.aus.request import AsyncGetRequest
+from otest.aus.request import SyncPostRequest
+from otest.aus.request import same_issuer
+
+from oidctest.op.prof_util import WEBFINGER
+from oidctest.op.prof_util import DISCOVER
+from oidctest.op.prof_util import REGISTER
 
 __author__ = 'roland'
 
@@ -72,7 +79,6 @@ class Webfinger(Operation):
     def __init__(self, conv, inut, sh, **kwargs):
         Operation.__init__(self, conv, inut, sh, **kwargs)
         self.resource = ""
-        self.profile = self.profile.split('.')
         self.dynamic = self.profile[WEBFINGER] == "T"
 
     def run(self):
@@ -80,12 +86,17 @@ class Webfinger(Operation):
             self.conv.info["issuer"] = self.conf.INFO["srv_discovery_url"]
         else:
             _conv = self.conv
+            if self.resource:
+                principal = self.resource
+            else:
+                principal = self.req_args['principal']
+
             _conv.trace.info(
-                "Discovery of resource: {}".format(self.resource))
-            issuer = _conv.entity.discover(self.resource)
+                "Discovery of resource: {}".format(principal))
+            issuer = _conv.entity.discover(principal)
             _conv.trace.reply(issuer)
             _conv.info["issuer"] = issuer
-            _conv.events.store('issuer', issuer)
+            _conv.events.store('issuer', issuer, sender=self.__class__.__name__)
 
     def op_setup(self):
         # try:
@@ -98,7 +109,6 @@ class Webfinger(Operation):
 class Discovery(Operation):
     def __init__(self, conv, inut, sh, **kwargs):
         Operation.__init__(self, conv, inut, sh, **kwargs)
-        self.profile = self.profile.split('.')
         self.dynamic = self.profile[DISCOVER] == "T"
 
     def run(self):
@@ -124,7 +134,6 @@ class Discovery(Operation):
 class Registration(Operation):
     def __init__(self, conv, inut, sh, **kwargs):
         Operation.__init__(self, conv, inut, sh, **kwargs)
-        self.profile = self.profile.split('.')
         self.dynamic = self.profile[REGISTER] == "T"
 
     def run(self):
@@ -139,6 +148,8 @@ class Registration(Operation):
             self.req_args.update(self.conf.INFO["client"])
             self.req_args["url"] = self.conv.entity.provider_info[
                 "registration_endpoint"]
+            if self.conv.entity.jwks_uri:
+                self.req_args['jwks_uri'] = self.conv.entity.jwks_uri
 
 
 class SyncAuthn(SyncGetRequest):
@@ -297,6 +308,8 @@ class RotateKey(Operation):
                 RSA.generate(key_spec["bits"])))
         elif typ == "EC":
             kb = ec_init(key_spec)
+        else:
+            raise Unknown('keytype: {}'.format(typ))
 
         # add new key to keyjar with
         list(kb.keys())[0].kid = self.op_args["new_kid"]
@@ -326,6 +339,9 @@ class RestoreKeyJar(Operation):
 
 
 class ReadRegistration(SyncGetRequest):
+    response_cls = 'RegistrationResponse'
+    content_type = JSON_ENCODED
+
     def op_setup(self):
         _client = self.conv.entity
         self.req_args["access_token"] = _client.registration_access_token
@@ -421,8 +437,7 @@ def factory(name):
             if name == fname:
                 return obj
 
-    from aatest import operation
-
+    from otest.aus import operation
     obj = operation.factory(name)
     if not obj:
         raise Unknown("Couldn't find the operation: '{}'".format(name))

@@ -1,31 +1,33 @@
 import logging
 
-from aatest import exception_trace
-from aatest import Break
-from aatest.check import State, ERROR
-from aatest.conversation import Conversation
-from aatest.events import EV_CONDITION
-from aatest.io import eval_state
-from aatest.summation import store_test_state
-from aatest.verify import Verify
-from aatest.session import Done
+from future.backports.urllib.parse import parse_qs
 
 from oic.utils.http_util import Redirect
 from oic.utils.http_util import Response
 from oic.utils.http_util import get_post
 
-from oidctest import CRYPTSUPPORT
-from oidctest.check.oidc_check import OK
+from aatest import exception_trace
+from aatest import Break
+from aatest.check import State, ERROR, OK
+from aatest.conversation import Conversation
+from aatest.events import EV_CONDITION
+from aatest.events import EV_HTTP_RESPONSE
+from aatest.io import eval_state, safe_path
+from aatest.session import Done
+from aatest.summation import store_test_state
+from aatest.verify import Verify
 
-#from oidctest.conversation import Conversation
-from oidctest.common import make_client
-from oidctest.common import Trace
-from oidctest.prof_util import map_prof
+from otest import Trace
+
+from oidctest import CRYPTSUPPORT
+from oidctest.op.client import make_client
+from oidctest.op.prof_util import map_prof
 from oidctest.utils import get_check
 
 __author__ = 'roland'
 
 logger = logging.getLogger(__name__)
+
 
 def get_redirect_uris(cinfo):
     try:
@@ -80,6 +82,14 @@ class Tester(object):
     def handle_response(self, resp, index):
         return None
 
+    def fname(self, test_id):
+        try:
+            return safe_path(
+                self.conv.entity.provider_info['issuer'],
+                self.profile, test_id)
+        except KeyError:
+            return None
+
     def run_flow(self, test_id, conf=None, index=0):
         logger.info("<=<=<=<=< %s >=>=>=>=>" % test_id)
         _ss = self.sh
@@ -133,10 +143,13 @@ class Tester(object):
             raise
 
         if isinstance(_oper, Done):
-            self.conv.events.store(EV_CONDITION,
-                                   State(test_id='Done', status=OK))
-
-        store_test_state(_ss, _ss['conv'].events)
+            self.conv.events.store(EV_CONDITION, State('Done', status=OK))
+            self.io.store_test_info()
+            store_test_state(self.sh, self.conv.events)
+            self.io.print_info(test_id, self.fname(test_id))
+        else:
+            self.io.store_test_info()
+            store_test_state(self.sh, self.conv.events)
 
         if eval_state(self.conv.events) == OK:
             return True
@@ -162,7 +175,7 @@ class WebTester(Tester):
                 else:
                     return resp(self.io.environ, self.io.start_response)
         except Exception as err:
-            exception_trace("display_test_list", err)
+            exception_trace("display_test_list", err, logger)
             return self.io.err_response("session_setup", err)
 
     def set_profile(self, environ):
@@ -217,6 +230,7 @@ class WebTester(Tester):
                                  trace_cls=Trace, callback_uris=redirs)
         self.conv.entity_config = _cli_conf
         _cli.conv = self.conv
+        _cli.event_store = self.conv.events
         self.sh.session_setup(path=test_id)
         self.sh["conv"] = self.conv
         self.conv.sequence = self.sh["sequence"]
@@ -236,7 +250,9 @@ class WebTester(Tester):
         if resp:
             self.sh["index"] = index
             if isinstance(resp, Response):
-                self.conv.events.store(EV_HTTP_RESPONSE, resp)
+                # self.conv.events.store(EV_HTTP_RESPONSE,
+                #                        {'headers': resp.headers,
+                #                         'status_code': resp.status})
                 return resp(self.io.environ, self.io.start_response)
             else:
                 return resp
@@ -264,12 +280,14 @@ class WebTester(Tester):
 
             logger.info("<--<-- {} --- {} -->-->".format(index, cls))
             try:
-                _oper = cls(conv=self.conv, io=self.io, sh=self.sh,
+                _oper = cls(conv=self.conv, inut=self.io, sh=self.sh,
                             profile=self.profile,
                             test_id=test_id, conf=conf, funcs=funcs,
                             check_factory=self.check_factory, cache=self.cache)
                 self.conv.operation = _oper
                 _oper.setup(self.profiles.PROFILEMAP)
+                if _oper.fail is True:
+                    break
                 resp = _oper()
             except Break:
                 break
@@ -282,22 +300,24 @@ class WebTester(Tester):
 
             index += 1
 
-        try:
-            if self.conv.flow["tests"]:
-                print(">>", self.check_factory)
-                _ver = Verify(self.check_factory, self.conv)
-                _ver.test_sequence(self.conv.flow["tests"])
-        except KeyError:
-            pass
-        except Exception as err:
-            raise
-
         if isinstance(_oper, Done):
-            self.conv.events.store(EV_CONDITION,
-                                   State(test_id='done', status=OK))
+            try:
+                if self.conv.flow["assert"]:
+                    #print(">>", self.check_factory)
+                    _ver = Verify(self.check_factory, self.conv)
+                    _ver.test_sequence(self.conv.flow["assert"])
+            except KeyError:
+                pass
+            except Exception as err:
+                raise
 
-        self.sh['node'].complete = True
-        self.sh['node'].state = eval_state(self.conv.events)
+            self.conv.events.store(EV_CONDITION, State('Done', status=OK))
+            self.io.store_test_info()
+            store_test_state(self.sh, self.conv.events)
+            self.io.print_info(test_id, self.fname(test_id))
+        else:
+            self.io.store_test_info()
+            store_test_state(self.sh, self.conv.events)
 
     def cont(self, environ, ENV):
         query = parse_qs(environ["QUERY_STRING"])
@@ -340,4 +360,5 @@ class WebTester(Tester):
 
         index += 1
 
-        return self.run_flow(self.sh["testid"], index=index)
+        return self.run_flow(self.sh["testid"], conf=self.conv.conf,
+                             index=index)

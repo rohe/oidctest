@@ -1,25 +1,30 @@
 import json
 import inspect
 import sys
-from six.moves.urllib.parse import urlsplit
-from six.moves.urllib.parse import parse_qs
-from six.moves.urllib.parse import urlparse
+from future.backports.urllib.parse import urlsplit
+from future.backports.urllib.parse import parse_qs
+from future.backports.urllib.parse import urlparse
 
-from jwkest import b64d
-#from jwkest import unpack
 from jwkest.jwk import base64url_to_long
 from jwkest.jwt import split_token
-from oic.exception import MessageException
+
+from oic.oauth2 import message
 from oic.oauth2.message import ErrorResponse
-from oic.oic import AuthorizationResponse
-from oic.oic import OpenIDSchema
+
+from oic.exception import MessageException
 from oic.oic import claims_match
-from oic.oic import message
+from oic.oic.message import AuthorizationResponse
+from oic.oic.message import AuthorizationRequest
+from oic.oic.message import OpenIDSchema
 from oic.utils.time_util import utc_time_sans_frac
 
-from oidctest.check import get_protocol_response
-from oidctest.check import get_provider_info
-from oidctest.check import get_id_tokens
+from otest.aus.check import CONT_JSON
+from otest.aus.check import CONT_JWT
+
+from otest.check import get_protocol_response
+from otest.check import get_authorization_request
+from otest.check import get_provider_info
+from otest.check import get_id_tokens
 
 from oidctest.regalg import MTI
 from oidctest.regalg import REGISTERED_JWS_ALGORITHMS
@@ -27,26 +32,25 @@ from oidctest.regalg import REGISTERED_JWE_alg_ALGORITHMS
 from oidctest.regalg import REGISTERED_JWE_enc_ALGORITHMS
 
 from aatest.check import Check
-from aatest.check import OK
 from aatest.check import Warnings
 from aatest.check import Information
-from aatest.check import WARNING
-from aatest.check import CONT_JSON
-from aatest.check import CONT_JWT
 from aatest.check import CriticalError
 from aatest.check import Other
 from aatest.check import Error
 from aatest.check import ResponseInfo
+from aatest.check import WARNING
+from aatest.check import OK
 from aatest.check import CRITICAL
 from aatest.check import ERROR
 from aatest.check import INTERACTION
 from aatest.check import INFORMATION
 from aatest.events import EV_RESPONSE
+from aatest.events import EV_REDIRECT_URL
+from aatest.events import EV_PROTOCOL_REQUEST
 from aatest.events import EV_PROTOCOL_RESPONSE
 from aatest.events import EV_HTTP_RESPONSE
 
 __author__ = 'rohe0002'
-
 
 from oic.oic.message import SCOPE2CLAIMS
 from oic.oic.message import IdToken
@@ -62,8 +66,7 @@ class CmpIdtoken(Other):
 
     def _func(self, conv):
         res = {}
-        instance, msg = get_protocol_response(conv,
-                                              message.AuthorizationResponse)[0]
+        instance = get_protocol_response(conv, message.AuthorizationResponse)[0]
 
         kj = conv.entity.keyjar
         keys = {}
@@ -101,7 +104,7 @@ class VerifyPromptNoneResponse(Check):
         if _response.status_code == 400:
             err = ErrorResponse().deserialize(_reply, "json")
             err.verify()
-            conv.events.store(EV_RESPONSE, err)
+            conv.events.store(EV_RESPONSE, err, sender=self.__class__.__name__)
             if err["error"] in ["consent_required", "interaction_required"]:
                 # This is OK
                 res["content"] = err.to_json()
@@ -130,7 +133,8 @@ class VerifyPromptNoneResponse(Check):
                 self._status = CRITICAL
                 return res
 
-            conv.events.store(EV_RESPONSE, _query)
+            conv.events.store(EV_RESPONSE, _query,
+                              sender=self.__class__.__name__)
             try:
                 err = ErrorResponse().deserialize(_query, "urlencoded")
                 err.verify()
@@ -138,7 +142,8 @@ class VerifyPromptNoneResponse(Check):
                                     "login_required"]:
                     # This is OK
                     res["content"] = err.to_json()
-                    conv.events.store(EV_PROTOCOL_RESPONSE, err)
+                    conv.events.store(EV_PROTOCOL_RESPONSE, err,
+                                      sender=self.__class__.__name__)
                 else:
                     self._message = "Not an expected error '%s'" % err[
                         "error"]
@@ -147,7 +152,8 @@ class VerifyPromptNoneResponse(Check):
                 resp = AuthorizationResponse().deserialize(_query, "urlencoded")
                 resp.verify()
                 res["content"] = resp.to_json()
-                conv.events.store(EV_PROTOCOL_RESPONSE, resp)
+                conv.events.store(EV_PROTOCOL_RESPONSE, resp,
+                                  sender=self.__class__.__name__)
         else:  # should not get anything else
             self._message = "Not an expected response"
             self._status = CRITICAL
@@ -679,16 +685,7 @@ class InteractionCheck(CriticalError):
         self._status = INTERACTION
         self._message = conv.events.last_item(EV_RESPONSE)
         parts = urlsplit(conv.position)
-        return {"url": "%s://%s%s" % parts[:3]}
-
-
-def get_authz_request(conv):
-    for req in ["AuthorizationRequest", "OpenIDRequest"]:
-        try:
-            return getattr(conv, req)
-        except AttributeError:
-            pass
-    return None
+        return {"url": "{}://{}{}".format(parts[:3])}
 
 
 class VerifyClaims(Error):
@@ -699,10 +696,8 @@ class VerifyClaims(Error):
     cid = "verify-claims"
     msg = "Claims received do not match those requested"
 
-    def _userinfo_claims(self, conv):
+    def _userinfo_claims(self, conv, req):
         userinfo_claims = {}
-
-        req = get_authz_request(conv)
         try:
             _scopes = req["scope"]
         except KeyError:
@@ -733,7 +728,7 @@ class VerifyClaims(Error):
         extra = []
         mm = []
         # Get the UserInfoResponse, should only be one
-        inst, txt = get_protocol_response(conv, message.OpenIDSchema)[0]
+        inst = get_protocol_response(conv, OpenIDSchema)[0]
         if userinfo_claims:
             for key, restr in list(userinfo_claims.items()):
                 try:
@@ -768,18 +763,15 @@ class VerifyClaims(Error):
 
         return {}
 
-    def _idtoken_claims(self, conv):
-        req = get_authz_request(conv)
+    def _idtoken_claims(self, conv, req):
         try:
             claims = req["claims"]["id_token"]
         except KeyError:
             pass
         else:
-            # inst, txt = get_protocol_response(conv,
-            #                                   message.AccessTokenResponse)[0]
             res = get_id_tokens(conv)
-            assert len(res)   # must be at least one
-            _idt, _ = res[0]
+            assert len(res)  # must be at least one
+            _idt = res[0]
 
             mm = []
             missing = []
@@ -814,15 +806,18 @@ class VerifyClaims(Error):
 
     def _func(self, conv=None):
         resp = {}
+        req = get_authorization_request(conv, AuthorizationRequest)
+
         if "userinfo" in self._kwargs:
-            ret = self._userinfo_claims(conv)
+            ret = self._userinfo_claims(conv, req)
             if ret:
                 resp["userinfo"] = ret
         if "id_token" in self._kwargs:
-            ret = self._idtoken_claims(conv)
+            ret = self._idtoken_claims(conv, req)
             if ret:
                 resp["idtoken"] = ret
         return resp
+
 
 REQUIRED = {"essential": True}
 OPTIONAL = None
@@ -839,7 +834,7 @@ class VerifyIDToken(CriticalError):
         done = False
 
         idtoken_claims = {}
-        req = get_authz_request(conv)
+        req = get_authorization_request(conv, AuthorizationRequest)
         try:
             id_claims = req["claims"]["id_token"]
         except KeyError:
@@ -961,7 +956,7 @@ class VerifyAccessTokenResponse(Error):
               "openid-connect-messages-1_0.html#access_token_response"
 
     def _func(self, conv=None):
-        resp, text = get_protocol_response(conv, message.AccessTokenResponse)[0]
+        resp = get_protocol_response(conv, message.AccessTokenResponse)[0]
 
         # This specification further constrains that only Bearer Tokens [OAuth
         # .Bearer] are issued at the Token Endpoint. The OAuth 2.0 response
@@ -976,7 +971,7 @@ class VerifyAccessTokenResponse(Error):
         # contained openid: id_token
         cis = conv.cis[-1]
         if cis["grant_type"] == "authorization_code":
-            req = get_authz_request(conv)
+            req = get_authorization_request(conv, AuthorizationRequest)
             if "openid" in req["scope"]:
                 if "id_token" not in resp:
                     self._message = "ID Token has to be present"
@@ -1015,7 +1010,7 @@ class MultipleSignOn(Error):
             self._status = self.status
             return ()
 
-        idt = [i for i, j in res]
+        idt = res
 
         if len(idt) == 1:
             self._message = " ".join(["Only one authentication when more than",
@@ -1056,7 +1051,7 @@ class SameAuthn(Error):
             self._status = self.status
             return ()
 
-        idt = [i for i, j in res]
+        idt = res
 
         if len(idt) < 2:
             self._message = " ".join(["Expected more than one authentication",
@@ -1190,7 +1185,6 @@ class CheckUserID(Error):
             self._status = self.status
             self._message = "Too few ID Tokens"
 
-        res = [i for i, m in res]
         # may be anywhere between 2 and 4 ID Tokens
         # weed out duplicates (ID Tokens received from authorization and the
         # token endpoint
@@ -1228,7 +1222,7 @@ class VerifyUserInfo(Error):
     msg = "Essential UserInfo missing"
 
     def _func(self, conv):
-        req = get_authz_request(conv)
+        req = get_authorization_request(conv, AuthorizationRequest)
         try:
             claims = req["userinfo_claims"]["claims"]
         except KeyError:
@@ -1261,10 +1255,9 @@ class CheckAsymSignedUserInfo(Error):
     msg = "UserInfo was not signed"
 
     def _func(self, conv):
-        instance, msg = get_protocol_response(conv, message.OpenIDSchema)[0]
-        header = json.loads(b64d(str(msg.split(".")[0])))
+        jwt = get_protocol_response(conv, OpenIDSchema)[0]
         try:
-            assert header["alg"].startswith("RS")
+            assert jwt.jws_header["alg"].startswith("RS")
         except AssertionError:
             self._status = self.status
 
@@ -1285,7 +1278,7 @@ class CheckSymSignedIdToken(Error):
             self._status = self.status
             return ()
 
-        idt, _ = res[-1]
+        idt = res[-1]
 
         try:
             assert idt.jws_header["alg"].startswith("HS")
@@ -1309,7 +1302,7 @@ class CheckESSignedIdToken(Error):
             self._status = self.status
             return ()
 
-        idt, _ = res[-1]
+        idt = res[-1]
         try:
             assert idt.jws_header["alg"].startswith("ES")
         except AssertionError:
@@ -1326,10 +1319,9 @@ class CheckEncryptedUserInfo(Error):
     msg = "UserInfo was not encrypted"
 
     def _func(self, conv):
-        jwt, msg = get_protocol_response(conv, message.OpenIDSchema)[0]
-        p = split_token(msg)
+        jwt = get_protocol_response(conv, OpenIDSchema)[0]
         try:
-            assert p[0]["alg"].startswith("RSA")
+            assert jwt.jwe_header["alg"].startswith("RSA")
         except AssertionError:
             self._status = self.status
 
@@ -1350,7 +1342,7 @@ class CheckEncryptedIDToken(Error):
             self._status = self.status
             return ()
 
-        idt, _ = res[-1]
+        idt = res[-1]
 
         try:
             assert idt.jwe_header["alg"].startswith("RSA")
@@ -1374,7 +1366,7 @@ class CheckSignedEncryptedIDToken(Error):
             self._status = self.status
             return ()
 
-        idt, jwt = res[-1]
+        idt = res[-1]
 
         # encryption header
         try:
@@ -1403,7 +1395,7 @@ class VerifyAud(Error):
             self._status = self.status
             return ()
 
-        aud = [i["aud"] for i, j in res]
+        aud = [i["aud"] for i in res]
         try:
             assert aud[0] == aud[1]
         except AssertionError:
@@ -1443,11 +1435,12 @@ class CheckIdTokenNonce(Error):
 
     def _func(self, conv):
         try:
-            _nonce = conv.AuthorizationRequest["nonce"]
+            _nonce = get_authorization_request(
+                conv, get_authorization_request)["nonce"]
         except KeyError:
             pass
         else:
-            (idt, _) = get_id_tokens(conv)[-1]
+            idt = get_id_tokens(conv)[-1]
 
             try:
                 assert _nonce == idt["nonce"]
@@ -1499,7 +1492,7 @@ class VerifyISS(Error):
 
         issuer = get_provider_info(conv)["issuer"]
 
-        for iss in [i["iss"] for i, j in res]:
+        for iss in [i["iss"] for i in res]:
             try:
                 assert iss == issuer
             except AssertionError:
@@ -1686,10 +1679,10 @@ class VerifyIDTokenUserInfoSubSame(Information):
             self._status = self.status
             return ()
 
-        idt_sub = [i["sub"] for i, j in res]
+        idt_sub = [i["sub"] for i in res]
 
         # The UserInfo sub
-        for instance, msg in get_protocol_response(conv, message.OpenIDSchema):
+        for instance in get_protocol_response(conv, OpenIDSchema):
             ui_sub = instance["sub"]
 
         try:
@@ -1709,10 +1702,10 @@ class VerifyState(Information):
 
     def _func(self, conv):
         # The send state
-        _send_state = conv.AuthorizationRequest["state"]
+        _send_state = get_authorization_request(
+            conv, AuthorizationRequest)["state"]
         # the received state
-        inst, txt = get_protocol_response(conv,
-                                          message.AuthorizationResponse)[-1]
+        inst = get_protocol_response(conv, AuthorizationResponse)[-1]
         _recv_state = inst["state"]
 
         try:
@@ -1737,7 +1730,7 @@ class VerifySignedIdTokenHasKID(Error):
             self._status = self.status
             return ()
 
-        idt, _ = res[-1]
+        idt = res[-1]
         # doesn't verify signing kid if JWT is signed and then encrypted
         if "enc" not in idt.jws_header:
             if idt.jws_header["alg"].startswith("RS"):
@@ -1764,7 +1757,7 @@ class VerifySignedIdToken(Error):
             self._status = self.status
             return ()
 
-        idt, _ = res[-1]
+        idt = res[-1]
         try:
             assert idt.jws_header["alg"] == self._kwargs["alg"]
         except KeyError:
@@ -1782,17 +1775,19 @@ class VerifySignedIdToken(Error):
 
 class VerifyNonce(Error):
     """
-    Verifies that the nonce recceived in the IDToken is the same as was
+    Verifies that the nonce received in the IDToken is the same as was
     given in the Authorization Request
     """
     cid = "verify-nonce"
     msg = "Not the same nonce in the ID Token as in the authorization request"
 
     def _func(self, conv):
+        authz_req = conv.events.get_data(EV_REDIRECT_URL)[0].split('?')[1]
+        req = parse_qs(authz_req)
         try:
-            ar_nonce = conv.AuthorizationRequest["nonce"]
+            ar_nonce = req['nonce'][0]
         except KeyError:
-            ar_nonce = ""
+            ar_nonce = ''
 
         res = get_id_tokens(conv)
         if not res:
@@ -1800,7 +1795,7 @@ class VerifyNonce(Error):
             self._status = self.status
             return ()
 
-        idt, _ = res[-1]
+        idt = res[-1]
         try:
             idt_nonce = idt["nonce"]
         except KeyError:
@@ -1829,7 +1824,7 @@ class VerifyUnSignedIdToken(Error):
             self._status = self.status
             return ()
 
-        idt, _ = res[-1]
+        idt = res[-1]
         try:
             assert idt.jws_header["alg"] == "none"
         except AssertionError:
@@ -1860,14 +1855,15 @@ class VerifySubValue(Error):
     msg = "Unexpected sub value"
 
     def _func(self, conv):
-        sub = conv.AuthorizationRequest["claims"]["id_token"]["sub"]["value"]
+        sub = get_authorization_request(
+            conv, AuthorizationRequest)["claims"]["id_token"]["sub"]["value"]
         res = get_id_tokens(conv)
         if not res:
             self._message = "No response to get the ID Token from"
             self._status = self.status
             return ()
 
-        (idt, _) = res[-1]
+        idt = res[-1]
         idt_sub = idt["sub"]
         try:
             assert idt_sub == sub
@@ -1886,7 +1882,7 @@ class VerifyDifferentSub(Error):
     msg = "Verify different RPs get different sub values"
 
     def _func(self, conv):
-        sub = [idt["sub"] for idt, _ in get_id_tokens(conv)]
+        sub = [idt["sub"] for idt in get_id_tokens(conv)]
 
         try:
             assert sub[0] != sub[1]
@@ -1913,7 +1909,7 @@ class VerifyBase64URL(Check):
         txt = []
         for y in params:
             try:
-                base64url_to_long(key[y])
+                base64url_to_long(key[y].encode('utf8'))
             except ValueError:
                 st = WARNING
                 if "kid" in key:
@@ -1958,7 +1954,7 @@ class VerifyBase64URL(Check):
             else:
                 if s != OK:
                     self._status = err_status
-                    self._message = "\n". join(txt)
+                    self._message = "\n".join(txt)
         else:
             self._status = err_status
             self._message = "Could not load JWK Set from {}".format(
@@ -2058,11 +2054,12 @@ class UsedAcrValue(Check):
             return {}
 
         try:
-            pref = conv.AuthorizationRequest["acr_values"]
+            pref = get_authorization_request(
+                conv, AuthorizationRequest)["acr_values"]
         except KeyError:
             pref = []
 
-        (idt, _) = res[-1]
+        idt = res[-1]
         try:
             self._message = "Used acr value: %s, preferred: %s" % (idt["acr"],
                                                                    pref)
@@ -2087,7 +2084,7 @@ class IsIDTokenSigned(Information):
             self._status = self.status
             return ()
 
-        (idt, _) = res[-1]
+        idt = res[-1]
         try:
             self._message = "ID Token signed using alg=%s" % idt.jws_header[
                 "alg"]
@@ -2112,7 +2109,7 @@ class ClaimsCheck(Information):
         else:
             answers = get_id_tokens(conv)
             # may be more then one, use the last.
-            (inst, txt) = answers[-1]
+            inst = answers[-1]
             missing = []
             stat = 0
             for claim in _claims:
@@ -2174,7 +2171,7 @@ class CheckQueryPart(Error):
     msg = ""
 
     def _func(self, conv):
-        (inst, msg) = get_protocol_response(conv, AuthorizationResponse)[0]
+        inst = get_protocol_response(conv, AuthorizationResponse)[0]
 
         for key, val in list(self._kwargs.items()):
             try:
@@ -2198,7 +2195,7 @@ class VerifyScopes(Warnings):
     msg = ""
 
     def _func(self, conv):
-        areq = conv.AuthorizationRequest
+        areq = get_authorization_request(conv, AuthorizationRequest)
 
         # turn scopes into claims
         claims = []
@@ -2210,17 +2207,13 @@ class VerifyScopes(Warnings):
 
         if areq["response_type"] == ["id_token"]:
             # Then everything should be in the ID Token
-            (aresp, _) = get_protocol_response(conv, AuthorizationResponse)[-1]
+            aresp = get_protocol_response(conv, AuthorizationResponse)[-1]
             container = aresp["id_token"]
         else:  # In Userinfo
-            (container, _) = get_protocol_response(conv, OpenIDSchema)[-1]
+            container = get_protocol_response(conv, OpenIDSchema)[-1]
 
-        missing = []
-        for claim in claims:
-            try:
-                assert claim in container
-            except AssertionError:
-                missing.append(claim)
+        missing = [c for c in claims if c not in container]
+
         if missing:
             self._status = self.status
             self._message = VS_LINE.format(missing)
@@ -2240,9 +2233,6 @@ def request_times(conv, endpoint):
     return res
 
 
-SKEW = 600
-
-
 class AuthTimeCheck(Warnings):
     """ Check that the auth_time returned in the ID Token is in the
     expected range."""
@@ -2251,18 +2241,18 @@ class AuthTimeCheck(Warnings):
     def _func(self, conv):
         res = get_id_tokens(conv)
 
-        # only interested in the last ID Token, and the IDToken instance will do
-        idt = res[-1][0]
+        # only interested in the last ID Token
+        idt = res[-1]
 
         max_age = self._kwargs["max_age"]
 
         # last authentication request
-        sent = request_times(conv, "authorization_endpoint")[-1]
+        sent = conv.events.when(EV_PROTOCOL_REQUEST, AuthorizationRequest)[-1]
         low = sent - max_age
-        low -= SKEW
+        low -= self._kwargs['skew']
 
         now = utc_time_sans_frac()
-        high = now + SKEW
+        high = now + self._kwargs['skew']
 
         try:
             _auth_time = idt["auth_time"]
@@ -2307,7 +2297,9 @@ def factory(cid):
             except AttributeError:
                 pass
 
-    return None
+    # Hierarchy of tests, going upwards ..
+    from otest.aus import check
+    return check.factory(cid)
 
 
 if __name__ == "__main__":

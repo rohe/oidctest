@@ -34,7 +34,9 @@ INFO = {
     "client": {
         "redirect_uris": ["%sauthz_cb" % BASE],
         "application_type": "web",
-        "contact": ["foo@example.com"]
+        "contact": ["foo@example.com"],
+        "webfinger_url": "{}diana".format(ISSUER),
+        "webfinger_email": "diana@localhost:8092"
     }
     # registered
     # srv_discovery_url

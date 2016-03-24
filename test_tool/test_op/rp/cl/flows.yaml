@@ -790,7 +790,7 @@ Flows:
     assert:
       check-http-response: null
   OP-Req-id_token_hint:
-    desc: Using prompt=null with user hint through id_token_hint [Basic, Implicit, Hybrid]
+    desc: Using prompt=none with user hint through id_token_hint [Basic, Implicit, Hybrid]
     mti:
       all: SHOULD
     profile: '...'
@@ -806,7 +806,7 @@ Flows:
       - SyncAuthn:
           set_response_where: null
           set_request_args:
-            prompt: null
+            prompt: 'none'
           id_token_hint: null
       - AccessToken
     assert:
@@ -1739,7 +1739,7 @@ Flows:
           - AuthorizationResponse
           - AccessTokenResponse
   OP-prompt-null-LoggedIn:
-    desc: Request with prompt=null when logged in [Basic, Implicit, Hybrid]
+    desc: Request with prompt=none when logged in [Basic, Implicit, Hybrid]
     mti:
       all: MUST
     profile: '...'
@@ -1754,7 +1754,7 @@ Flows:
       - AccessToken
       - SyncAuthn:
           set_request_args:
-            prompt: null
+            prompt: 'none'
       - AccessToken
     assert:
       same-authn: null
@@ -1763,7 +1763,7 @@ Flows:
           - AuthorizationResponse
           - AccessTokenResponse
   OP-prompt-null-NotLoggedIn:
-    desc: Request with prompt=null when not logged in [Basic, Implicit, Hybrid]
+    desc: Request with prompt=none when not logged in [Basic, Implicit, Hybrid]
     mti:
       all: MUST
     note: This tests what happens if the authentication request specifies that no interaction
@@ -1782,7 +1782,7 @@ Flows:
       - SyncAuthn:
           set_response_where: null
           set_request_args:
-            prompt: null
+            prompt: 'none'
     assert:
       verify-error-response:
         error:

@@ -14,7 +14,7 @@ from oic.oic import AuthorizationRequest
 from oic.oic import AccessTokenRequest
 from oic.extension.client import RegistrationRequest
 
-from oauth2test.shannon_entropy import calculate
+from otest.shannon_entropy import calculate
 
 __author__ = 'roland'
 

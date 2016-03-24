@@ -5,17 +5,18 @@ from oic.oic.provider import TokenEndpoint
 from oic.oic.provider import RegistrationEndpoint
 from oic.oic.provider import UserinfoEndpoint
 
-from otest.setup import main_setup
-from otest.testtool import authorization, userinfo
-from otest.testtool import css
-from otest.testtool import op_info
-from otest.testtool import registration
-from otest.testtool import token
-from otest.testtool import webfinger
+from otest.rp.setup import main_setup
+from otest.rp.endpoints import authorization
+from otest.rp.endpoints import css
+from otest.rp.endpoints import op_info
+from otest.rp.endpoints import registration
+from otest.rp.endpoints import token
+from otest.rp.endpoints import webfinger
+from otest.rp.endpoints import userinfo
 
-from oidctest.check import rp_check
-from oidctest.provider import Provider
-from oidctest.parse_conf import parse_json_conf
+from oidctest.rp import check
+from oidctest.rp.provider import Provider
+from oidctest.rp.parse_conf import parse_json_conf
 
 
 baseurl = "https://localhost"
@@ -112,11 +113,11 @@ BEHAVIOR = {
 
 TOOL_ARGS = {
     'setup': main_setup,
-    'check': rp_check,
+    'check': check,
     'provider': Provider,
     'parse_conf': parse_json_conf,
     'cls_factories': [message.factory],
-    'chk_factories': [rp_check.factory],
+    'chk_factories': [check.factory],
     'func_factories': [],
     'configuration_response': ProviderConfigurationResponse,
     'endpoints': [

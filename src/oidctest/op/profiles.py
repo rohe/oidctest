@@ -2,14 +2,14 @@ from aatest.func import set_request_args
 from aatest.operation import Note
 from aatest.session import Done
 
-from oidctest.oper import AccessToken
-from oidctest.oper import AsyncAuthn
-from oidctest.oper import Discovery
-from oidctest.oper import DisplayUserInfo
-from oidctest.oper import Registration
-from oidctest.oper import SyncAuthn
-from oidctest.oper import UserInfo
-from oidctest.oper import Webfinger
+from oidctest.op.oper import AccessToken
+from oidctest.op.oper import AsyncAuthn
+from oidctest.op.oper import Discovery
+from oidctest.op.oper import DisplayUserInfo
+from oidctest.op.oper import Registration
+from oidctest.op.oper import SyncAuthn
+from oidctest.op.oper import UserInfo
+from oidctest.op.oper import Webfinger
 
 from oidctest.testfunc import check_endpoint
 

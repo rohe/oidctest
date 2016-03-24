@@ -1,8 +1,10 @@
 import copy
 import logging
+
 from aatest import session
 from aatest.session import Done
-from oidctest.prof_util import map_prof
+
+from oidctest.op.prof_util import map_prof
 
 __author__ = 'roland'
 

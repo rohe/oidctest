@@ -2,19 +2,20 @@ import inspect
 import json
 import sys
 
-from six.moves.urllib.parse import urlencode
-from six.moves.urllib.parse import urlparse
-#from urllib.parse import urlencode
-#from urllib.parse import urlparse
+from future.backports.urllib.parse import urlparse
+from future.backports.urllib.parse import urlencode
 
 from aatest import ConfigurationError
+from aatest.check import ERROR
 from aatest.check import State
 from aatest.check import STATUSCODE_TRANSL
 from aatest.events import EV_CONDITION
 from aatest.events import EV_RESPONSE
-from oidctest.oidc_check import ERROR
-from oidctest.tool import get_redirect_uris
-from oidctest.check import get_id_tokens
+
+from oidctest.op.check import get_id_tokens
+from oidctest.op.tool import get_redirect_uris
+from otest.check import get_signed_id_tokens
+from past.types import basestring
 
 __author__ = 'roland'
 
@@ -49,11 +50,29 @@ def check_support(oper, args):
     # args = { level : kwargs }
     for level, kwargs in list(args.items()):
         for key, val in list(kwargs.items()):
-            if isinstance(val, list):
+            typ = oper.conv.entity.provider_info.__class__.c_param[key][0]
+            try:
+                pinfo = oper.conv.entity.provider_info[key]
+            except KeyError:
+                pass
+            else:
                 missing = []
-                for v in val:
-                    if not v in oper.conv.entity.provider_info[key]:
-                        missing.append(v)
+                if isinstance(val, list):
+                    for v in val:
+                        if typ == bool or typ == basestring or typ == int:
+                            if v != pinfo:
+                                missing.append(v)
+                        elif typ == [basestring]:
+                            if v not in pinfo:
+                                missing.append(v)
+                else:
+                    if typ == bool or typ == basestring or typ == int:
+                        if val != pinfo:
+                            missing = val
+                    elif typ == [basestring]:
+                        if val not in pinfo:
+                            missing = val
+
                 if missing:
                     oper.conv.events.store(
                         EV_CONDITION,
@@ -61,13 +80,8 @@ def check_support(oper, args):
                               test_id="Check support",
                               message="No support for: {}={}".format(key,
                                                                      missing)))
-            else:
-                if not val in oper.conv.entity.provider_info[key]:
-                    oper.conv.events.store(
-                        EV_CONDITION,
-                        State(status=STATUSCODE_TRANSL[level],
-                              test_id="Check support",
-                              message="No support for: {}={}".format(key, val)))
+                    if level == 'ERROR':
+                        oper.fail = True
 
 
 def set_principal(oper, args):
@@ -77,10 +91,10 @@ def set_principal(oper, args):
         raise ConfigurationError("Missing parameter: %s" % args["param"])
 
 
-def set_uri(oper, param, tail):
-    ru = get_redirect_uris(oper.conv)[0]
+def set_uri(oper, args):
+    ru = get_redirect_uris(oper.conf.INFO)[0]
     p = urlparse(ru)
-    oper.req_args[param] = "%s://%s/%s" % (p.scheme, p.netloc, tail)
+    oper.req_args[args[0]] = "%s://%s/%s" % (p.scheme, p.netloc, args[1])
 
 
 def static_jwk(oper, args):
@@ -89,15 +103,11 @@ def static_jwk(oper, args):
     oper.req_args["jwks"] = {"keys": _client.keyjar.dump_issuer_keys("")}
 
 
-def get_base(cconf=None):
+def get_base(base):
     """
     Make sure a '/' terminated URL is returned
     """
-    try:
-        part = urlparse(cconf["_base_url"])
-    except KeyError:
-        part = urlparse(cconf["base_url"])
-    # part = urlparse(cconf["redirect_uris"][0])
+    part = urlparse(base)
 
     if part.path:
         if not part.path.endswith("/"):
@@ -111,7 +121,7 @@ def get_base(cconf=None):
 
 
 def store_sector_redirect_uris(oper, args):
-    _base = get_base(oper.conv.entity_config)
+    _base = get_base(oper.conv.entity.base_url)
 
     try:
         ruris = args["other_uris"]
@@ -139,15 +149,14 @@ def set_expect_error(oper, args):
 
 
 def id_token_hint(oper, kwargs):
-    res = get_id_tokens(oper.conv)
+    res = get_signed_id_tokens(oper.conv)
 
     try:
         res.extend(oper.conv.cache["id_token"])
     except (KeyError, ValueError):
         pass
 
-    idt, jwt = res[0]
-    oper.req_args["id_token_hint"] = jwt
+    oper.req_args["id_token_hint"] = res[0]
 
 
 def login_hint(oper, args):
@@ -215,31 +224,31 @@ def sub_claims(oper, args):
         res.extend(oper.conv.cache["id_token"])
     except (KeyError, ValueError):
         pass
-    idt, _ = res[-1]
+    idt = res[-1]
     _sub = idt["sub"]
     oper.req_args["claims"] = {"id_token": {"sub": {"value": _sub}}}
 
 
 def multiple_return_uris(oper, args):
-    redirects = get_redirect_uris(oper.conv)
-    redirects.append("%scb" % get_base(oper.conv.entity_config))
+    redirects = oper.conv.entity.redirect_uris
+    redirects.append("%scb" % get_base(oper.conv.entity.base_url))
     oper.req_args["redirect_uris"] = redirects
 
 
 def redirect_uris_with_query_component(oper, kwargs):
-    ru = get_redirect_uris(oper.conv)[0]
+    ru = get_redirect_uris(oper.conf.INFO)[0]
     ru += "?%s" % urlencode(kwargs)
     oper.req_args["redirect_uris"] = ru
 
 
 def redirect_uris_with_fragment(oper, kwargs):
-    ru = get_redirect_uris(oper.conv)[0]
-    ru += "#" + ".".join(["%s%s" % (x, y) for x,y in list(kwargs.items())])
+    ru = get_redirect_uris(oper.conf.INFO)[0]
+    ru += "#" + ".".join(["%s%s" % (x, y) for x, y in list(kwargs.items())])
     oper.req_args["redirect_uris"] = ru
 
 
 def request_in_file(oper, kwargs):
-    oper.opargs["base_path"] = get_base(oper.conv.entity_config) + "export/"
+    oper.op_args["base_path"] = get_base(oper.conv.entity.base_url) + "export/"
 
 
 def resource(oper, args):
@@ -285,7 +294,7 @@ def check_endpoint(oper, args):
             EV_CONDITION,
             State(test_id="check_endpoint", status=ERROR,
                   message="{} not in provider configuration".format(args)))
-        oper.skip = True
+        oper.fail = True
 
 
 def cache_response(oper, arg):
