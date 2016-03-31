@@ -12,7 +12,7 @@ from oic.utils.http_util import BadRequest
 from oic.utils.webfinger import OIC_ISSUER
 from oic.utils.webfinger import WebFinger
 
-from oidctest import pathmap
+from oidctest.rp import pathmap
 
 __author__ = 'roland'
 

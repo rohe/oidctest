@@ -14,13 +14,13 @@ from oic.utils.http_util import NotFound
 from oic.utils.http_util import ServiceError
 
 from aatest import Trace
-from oidctest.mode import extract_mode
-from oidctest.mode import setup_op
-from oidctest.mode import mode2path
 from oidctest.endpoints import static
 from oidctest.endpoints import display_log
 from oidctest.endpoints import URLS
 from oidctest.response_encoder import ResponseEncoder
+from oidctest.rp.mode import extract_mode
+from oidctest.rp.mode import setup_op
+from oidctest.rp.mode import mode2path
 
 from requests.packages import urllib3
 urllib3.disable_warnings()
@@ -107,8 +107,7 @@ def op_setup(environ, mode, trace):
         _op = OP[key]
         _op.trace = trace
     except KeyError:
-        if mode["test_id"] in ['RP-id_token-C_kid_absent_multiple_jwks',
-                               'RP-id_token-I_kid_absent_multiple_jwks']:
+        if mode["test_id"] in ['RP-id_token-kid_absent_multiple_jwks']:
             _op_args = {}
             for param in ['baseurl', 'cookie_name', 'cookie_ttl', 'endpoints']:
                 _op_args[param] = OP_ARG[param]

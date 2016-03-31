@@ -4,19 +4,24 @@ import importlib
 import json
 import logging
 import argparse
+from aatest.common import setup_logger
+from aatest.result import Result
 
 from future.backports.urllib.parse import urlparse
 
 from aatest.parse_cnf import parse_yaml_conf
 from oic.utils.keyio import build_keyjar
 
-from oidctest import func
-from oidctest.common import setup_logger
-from oidctest.io import ClIO
-from oidctest.tool import ClTester
+from oidctest.op import func
+from oidctest.op import check
+from oidctest.op.prof_util import ProfileHandler
+from oidctest.op.tool import ClTester
 from oidctest.session import SessionHandler
+from aatest.io import ClIO
 
 from requests.packages import urllib3
+
+
 urllib3.disable_warnings()
 
 __author__ = 'roland'
@@ -26,16 +31,17 @@ logger = logging.getLogger("")
 
 
 if __name__ == '__main__':
-    from oidctest import profiles
-    from oidctest import oper
     from oic.oic.message import factory as oic_message_factory
-    from oidctest.utils import get_check
+
+    from oidctest.op import profiles
+    from oidctest.op import oper
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-y', dest='yaml_flows')
     parser.add_argument('-l', dest="log_name")
     parser.add_argument('-p', dest="profile")
     parser.add_argument('-t', dest="testid")
+    parser.add_argument('-g', dest="group")
     parser.add_argument('-x', dest='exit', action='store_true')
     parser.add_argument(dest="config")
     cargs = parser.parse_args()
@@ -66,17 +72,40 @@ if __name__ == '__main__':
               "cinfo": CONF.INFO, "order": FLOWS['Order'],
               "desc": FLOWS['Desc'], "profiles": profiles, "operation": oper,
               "profile": cargs.profile, "msg_factory": oic_message_factory,
-              "check_factory": get_check, "cache": {}}
+              "check_factory": check.factory, "cache": {},
+              'profile_handler': ProfileHandler}
 
     if cargs.testid:
         io = ClIO(**kwargs)
         sh = SessionHandler(**kwargs)
         sh.init_session(profile=cargs.profile)
+        res = Result(sh, ProfileHandler)
         io.session = sh
         tester = ClTester(io, sh, **kwargs)
         tester.run(cargs.testid, **kwargs)
-        io.store_test_info()
-        io.print_info(cargs.testid)
+        res.store_test_info()
+        res.print_info(cargs.testid)
+    elif cargs.group:
+        _sh = SessionHandler(**kwargs)
+        _sh.init_session(profile=cargs.profile)
+
+        for tid in _sh["flow_names"]:
+            if not tid.startswith(cargs.group):
+                continue
+            io = ClIO(**kwargs)
+            sh = SessionHandler(**kwargs)
+            sh.init_session(profile=cargs.profile)
+            io.session = sh
+            tester = ClTester(io, sh, **kwargs)
+            if not tester.match_profile(tid):
+                continue
+            elif tester.run(tid, **kwargs):
+                print('+ {}'.format(tid))
+            else:
+                res = Result(sh, ProfileHandler)
+                res.result()
+                if cargs.exit:
+                    break
     else:
         _sh = SessionHandler(**kwargs)
         _sh.init_session(profile=cargs.profile)
@@ -92,6 +121,7 @@ if __name__ == '__main__':
             elif tester.run(tid, **kwargs):
                 print('+ {}'.format(tid))
             else:
-                io.result()
+                res = Result(sh, ProfileHandler)
+                res.result()
                 if cargs.exit:
                     break

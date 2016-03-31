@@ -10,9 +10,9 @@ from oic.utils.keyio import keyjar_init
 from oic.utils.sdb import SessionDB
 from oic.utils.userinfo import UserInfo
 
-from oidctest.provider import Provider
 from oidctest.endpoints import add_endpoints
 from oidctest.endpoints import ENDPOINTS
+from oidctest.rp.provider import Provider
 
 LOGGER = logging.getLogger(__name__)
 

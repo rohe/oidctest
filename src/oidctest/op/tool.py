@@ -1,28 +1,15 @@
 import logging
 
-from future.backports.urllib.parse import parse_qs
-
-from oic.utils.http_util import Redirect
 from oic.utils.http_util import Response
-from oic.utils.http_util import get_post
 
 from aatest import exception_trace
-from aatest import Break
-from aatest.check import State, ERROR, OK
 from aatest.conversation import Conversation
-from aatest.events import EV_CONDITION
-from aatest.events import EV_HTTP_RESPONSE
-from aatest.io import eval_state, safe_path
-from aatest.session import Done
-from aatest.summation import store_test_state
-from aatest.verify import Verify
+
+from oidctest.op import prof_util
+from oidctest.op.client import make_client
 
 from otest import Trace
-
-from oidctest import CRYPTSUPPORT
-from oidctest.op.client import make_client
-from oidctest.op.prof_util import map_prof
-from oidctest.utils import get_check
+from otest.aus import tool
 
 __author__ = 'roland'
 
@@ -36,30 +23,23 @@ def get_redirect_uris(cinfo):
         return cinfo["registered"]["redirect_uris"]
 
 
-class Tester(object):
-    def __init__(self, io, sh, profiles, profile, flows,
+class Tester(tool.Tester):
+    def __init__(self, io, sh, profiles, profile, flows=None,
                  msg_factory=None, cache=None, **kwargs):
-        self.io = io
-        self.sh = sh
-        self.profiles = profiles
-        self.profile = profile
-        self.flows = flows
-        self.check_factory = get_check
-        self.message_factory = msg_factory
-        self.cache = cache
-        self.kwargs = kwargs
-        self.conv = None
+        tool.Tester.__init__(self, io, sh, profiles, profile, flows,
+                             msg_factory=msg_factory, cache=cache,
+                             **kwargs)
+        #self.chk_factory = get_check
+        self.map_prof = prof_util.map_prof
 
-    def match_profile(self, test_id):
-        _spec = self.flows[test_id]
-        return map_prof(self.profile.split("."), _spec["profile"].split("."))
 
-    def run(self, test_id, cinfo, **kw_args):
+class ClTester(Tester):
+    def run(self, test_id, **kw_args):
         if not self.match_profile(test_id):
             logger.info("Test doesn't match the profile")
             return True
 
-        redirs = get_redirect_uris(cinfo)
+        redirs = get_redirect_uris(kw_args['cinfo'])
 
         self.sh.session_setup(path=test_id)
         _flow = self.flows[test_id]
@@ -73,155 +53,25 @@ class Tester(object):
 
         # noinspection PyTypeChecker
         try:
-            return self.run_flow(test_id, kw_args["conf"])
+            return self.run_flow(test_id, conf=kw_args["conf"])
         except Exception as err:
             exception_trace("", err, logger)
-            self.io.print_info(test_id)
-            return self.io.err_response("run", err)
-
-    def handle_response(self, resp, index):
-        return None
-
-    def fname(self, test_id):
-        try:
-            return safe_path(
-                self.conv.entity.provider_info['issuer'],
-                self.profile, test_id)
-        except KeyError:
-            return None
-
-    def run_flow(self, test_id, conf=None, index=0):
-        logger.info("<=<=<=<=< %s >=>=>=>=>" % test_id)
-        _ss = self.sh
-        _ss["node"].complete = False
-        self.conv.test_id = test_id
-        self.conv.conf = conf
-
-        if index >= len(self.conv.sequence):
-            return None
-
-        _oper = None
-        for item in self.conv.sequence[index:]:
-            if isinstance(item, tuple):
-                cls, funcs = item
-            else:
-                cls = item
-                funcs = {}
-
-            logger.info("<--<-- {} --- {} -->-->".format(index, cls))
-            try:
-                _oper = cls(conv=self.conv, inut=self.io, sh=self.sh,
-                            profile=self.profile, test_id=test_id, conf=conf,
-                            funcs=funcs, check_factory=self.check_factory,
-                            cache=self.cache)
-                self.conv.operation = _oper
-                _oper.setup(self.profiles.PROFILEMAP)
-                resp = _oper()
-            except Exception as err:
-                self.conv.events.store(
-                    EV_CONDITION,
-                    State(test_id=test_id, status=ERROR, message=err,
-                          context=cls.__name__))
-                exception_trace(cls.__name__, err, logger)
-                self.sh["index"] = index
-                return self.io.err_response("run_sequence", err)
-            else:
-                if resp:
-                    resp = self.handle_response(resp, index)
-                    if resp:
-                        return self.io.respond(resp)
-
-            index += 1
-
-        try:
-            if self.conv.flow["tests"]:
-                _ver = Verify(self.check_factory, self.conv)
-                _ver.test_sequence(self.conv.flow["tests"])
-        except KeyError:
-            pass
-        except Exception as err:
-            raise
-
-        if isinstance(_oper, Done):
-            self.conv.events.store(EV_CONDITION, State('Done', status=OK))
-            self.io.store_test_info()
-            store_test_state(self.sh, self.conv.events)
-            self.io.print_info(test_id, self.fname(test_id))
-        else:
-            self.io.store_test_info()
-            store_test_state(self.sh, self.conv.events)
-
-        if eval_state(self.conv.events) == OK:
-            return True
-        else:
-            return False
+            # res = Result(self.sh, self.kwargs['profile_handler'])
+            # res.print_info(test_id)
+            return self.inut.err_response("run", err)
 
 
-class ClTester(Tester):
-    pass
+class WebTester(tool.WebTester):
+    def __init__(self, io, sh, profiles, profile, flows, check_factory=None,
+                 msg_factory=None, cache=None, map_prof=None, **kwargs):
+        tool.WebTester.__init__(self, io, sh, profiles=profiles,
+                                profile=profile, flows=flows,
+                                msg_factory=msg_factory, cache=cache, **kwargs)
+        self.check_factory = check_factory
+        self.map_prof = map_prof or prof_util.map_prof
 
 
-class WebTester(Tester):
-    def display_test_list(self):
-        try:
-            if self.sh.session_init():
-                return self.io.flow_list()
-            else:
-                try:
-                    resp = Redirect("%sopresult#%s" % (
-                        self.io.conf.BASE, self.sh["testid"][0]))
-                except KeyError:
-                    return self.io.flow_list()
-                else:
-                    return resp(self.io.environ, self.io.start_response)
-        except Exception as err:
-            exception_trace("display_test_list", err, logger)
-            return self.io.err_response("session_setup", err)
-
-    def set_profile(self, environ):
-        info = parse_qs(get_post(environ))
-        try:
-            cp = self.sh["profile"].split(".")
-            cp[0] = info["rtype"][0]
-
-            crsu = []
-            for name, cs in list(CRYPTSUPPORT.items()):
-                try:
-                    if info[name] == ["on"]:
-                        crsu.append(cs)
-                except KeyError:
-                    pass
-
-            if len(cp) == 3:
-                if len(crsu) == 3:
-                    pass
-                else:
-                    cp.append("".join(crsu))
-            else:  # len >= 4
-                cp[3] = "".join(crsu)
-
-            try:
-                if info["extra"] == ['on']:
-                    if len(cp) == 3:
-                        cp.extend(["", "+"])
-                    elif len(cp) == 4:
-                        cp.append("+")
-                    elif len(cp) == 5:
-                        cp[4] = "+"
-                else:
-                    if len(cp) == 5:
-                        cp = cp[:-1]
-            except KeyError:
-                if len(cp) == 5:
-                    cp = cp[:-1]
-
-            # reset all test flows
-            self.sh.reset_session(profile=".".join(cp))
-            return self.io.flow_list()
-        except Exception as err:
-            return self.io.err_response("profile", err)
-
-    def _setup(self, test_id, cinfo, **kw_args):
+    def setup(self, test_id, cinfo, **kw_args):
         redirs = get_redirect_uris(cinfo)
 
         _flow = self.flows[test_id]
@@ -235,130 +85,26 @@ class WebTester(Tester):
         self.sh["conv"] = self.conv
         self.conv.sequence = self.sh["sequence"]
 
-    def run(self, test_id, cinfo, **kw_args):
-        self._setup(test_id, cinfo, **kw_args)
+    def run(self, test_id, **kw_args):
+        self.setup(test_id, **kw_args)
 
         # noinspection PyTypeChecker
         try:
-            return self.run_flow(test_id, kw_args["conf"])
+            return self.run_flow(test_id, conf=kw_args["conf"])
         except Exception as err:
             exception_trace("", err, logger)
-            #self.io.dump_log(self.sh, test_id)
-            return self.io.err_response("run", err)
+            # self.inut.dump_log(self.sh, test_id)
+            return self.inut.err_response("run", err)
 
-    def handle_response(self, resp, index):
+    def handle_response(self, resp, index, oper=None):
         if resp:
             self.sh["index"] = index
             if isinstance(resp, Response):
                 # self.conv.events.store(EV_HTTP_RESPONSE,
                 #                        {'headers': resp.headers,
                 #                         'status_code': resp.status})
-                return resp(self.io.environ, self.io.start_response)
+                return resp(self.inut.environ, self.inut.start_response)
             else:
                 return resp
         else:
             return None
-
-    def run_flow(self, test_id, conf=None, index=0):
-        logger.info("<=<=<=<=< %s >=>=>=>=>" % test_id)
-        _ss = self.sh
-        _ss["node"].complete = False
-        self.conv.test_id = test_id
-        self.conv.conf = conf
-
-        if index >= len(self.conv.sequence):
-            return None
-
-        _oper = None
-        for item in self.conv.sequence[index:]:
-            self.sh["index"] = index
-            if isinstance(item, tuple):
-                cls, funcs = item
-            else:
-                cls = item
-                funcs = {}
-
-            logger.info("<--<-- {} --- {} -->-->".format(index, cls))
-            try:
-                _oper = cls(conv=self.conv, inut=self.io, sh=self.sh,
-                            profile=self.profile,
-                            test_id=test_id, conf=conf, funcs=funcs,
-                            check_factory=self.check_factory, cache=self.cache)
-                self.conv.operation = _oper
-                _oper.setup(self.profiles.PROFILEMAP)
-                if _oper.fail is True:
-                    break
-                resp = _oper()
-            except Break:
-                break
-            except Exception as err:
-                return self.io.err_response("run_sequence", err)
-            else:
-                rsp = self.handle_response(resp, index)
-                if rsp:
-                    return self.io.respond(rsp)
-
-            index += 1
-
-        if isinstance(_oper, Done):
-            try:
-                if self.conv.flow["assert"]:
-                    #print(">>", self.check_factory)
-                    _ver = Verify(self.check_factory, self.conv)
-                    _ver.test_sequence(self.conv.flow["assert"])
-            except KeyError:
-                pass
-            except Exception as err:
-                raise
-
-            self.conv.events.store(EV_CONDITION, State('Done', status=OK))
-            self.io.store_test_info()
-            store_test_state(self.sh, self.conv.events)
-            self.io.print_info(test_id, self.fname(test_id))
-        else:
-            self.io.store_test_info()
-            store_test_state(self.sh, self.conv.events)
-
-    def cont(self, environ, ENV):
-        query = parse_qs(environ["QUERY_STRING"])
-        path = query["path"][0]
-        index = int(query["index"][0])
-
-        try:
-            index = self.sh["index"]
-        except KeyError:  # Cookie delete broke session
-            self._setup(path, **ENV)
-        except Exception as err:
-            return self.io.err_response("session_setup", err)
-        else:
-            self.conv = self.sh["conv"]
-
-        index += 1
-
-        try:
-            return self.run_flow(path, ENV["conf"], index)
-        except Exception as err:
-            exception_trace("", err, logger)
-            self.io.print_info(path)
-            return self.io.err_response("run", err)
-
-    def async_response(self, conf):
-        index = self.sh["index"]
-        item = self.sh["sequence"][index]
-        self.conv = self.sh["conv"]
-
-        if isinstance(item, tuple):
-            cls, funcs = item
-        else:
-            cls = item
-
-        logger.info("<--<-- {} --- {}".format(index, cls))
-        resp = self.conv.operation.parse_response(self.sh["testid"],
-                                                  self.io, self.message_factory)
-        if resp:
-            return resp
-
-        index += 1
-
-        return self.run_flow(self.sh["testid"], conf=self.conv.conf,
-                             index=index)

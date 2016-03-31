@@ -21,7 +21,7 @@ __author__ = 'rohe0002'
 
 setup(
     name="oidctest",
-    version="0.1.0",
+    version="0.5.0",
     description="Test framework for testing OpenID Connect provider and "
                 "relaying party implementations",
     author="Roland Hedberg",

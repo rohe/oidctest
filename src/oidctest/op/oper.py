@@ -36,7 +36,7 @@ from otest.aus.request import AsyncGetRequest
 from otest.aus.request import SyncPostRequest
 from otest.aus.request import same_issuer
 
-from oidctest.op.prof_util import WEBFINGER
+from oidctest.op.prof_util import WEBFINGER, RESPONSE
 from oidctest.op.prof_util import DISCOVER
 from oidctest.op.prof_util import REGISTER
 
@@ -150,6 +150,15 @@ class Registration(Operation):
                 "registration_endpoint"]
             if self.conv.entity.jwks_uri:
                 self.req_args['jwks_uri'] = self.conv.entity.jwks_uri
+
+    def map_profile(self, profile_map):
+        try:
+            items = profile_map[self.__class__][self.profile[RESPONSE]].items()
+        except KeyError:
+            pass
+        else:
+            for func, arg in items:
+                func(self, arg)
 
 
 class SyncAuthn(SyncGetRequest):

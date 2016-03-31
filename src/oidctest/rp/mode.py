@@ -5,7 +5,7 @@ from oic import rndstr
 from oic.oic import OIDCONF_PATTERN
 from oic.utils.sdb import SessionDB
 from oic.utils.webfinger import WF_URL
-from oidctest.provider import Provider
+from oidctest.rp.provider import Provider
 
 __author__ = 'roland'
 
@@ -126,7 +126,7 @@ def setup_op(mode, com_args, op_arg, trace):
 
     op.name = op.baseurl = "%s%s%s" % (op.baseurl, div, mode2path(mode))
 
-    for _typ in ["sign_alg", "enc_alg", "enc_enc"]:
+    for _typ in ["signing_alg", "encryption_alg", "encryption_enc"]:
         try:
             _alg = mode[_typ]
         except (TypeError, KeyError):

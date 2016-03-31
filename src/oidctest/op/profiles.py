@@ -58,15 +58,15 @@ PROFILEMAP = {
     },
     AccessToken: {
         "C": {},
-        "I": None,
-        "IT": None,
+        "I": {},
+        "IT": {},
         "CI": {},
         "CT": {},
         "CIT": {},
     },
     UserInfo: {
         "C": {},
-        "I": None,
+        "I": {},
         "IT": {},
         "CI": {},
         "CT": {},
@@ -74,7 +74,7 @@ PROFILEMAP = {
     },
     DisplayUserInfo: {
         "C": {},
-        "I": None,
+        "I": {},
         "IT": {},
         "CI": {},
         "CT": {},

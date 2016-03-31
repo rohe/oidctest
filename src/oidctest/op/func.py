@@ -13,6 +13,7 @@ from aatest.events import EV_CONDITION
 from aatest.events import EV_RESPONSE
 
 from oidctest.op.check import get_id_tokens
+from oidctest.op.prof_util import map_prof
 from oidctest.op.tool import get_redirect_uris
 from otest.check import get_signed_id_tokens
 from past.types import basestring
@@ -261,9 +262,8 @@ def expect_exception(oper, args):
     oper.expect_exception = args
 
 
-def conditional_expect_exception(oper, args):
+def conditional_expect(oper, args):
     condition = args["condition"]
-    exception = args["exception"]
 
     res = True
     for key in list(condition.keys()):
@@ -274,12 +274,27 @@ def conditional_expect_exception(oper, args):
         except AssertionError:
             res = False
 
-    try:
-        if res == args["oper"]:
-            oper.expect_exception = exception
-    except KeyError:
-        if res is True:
-            oper.expect_exception = exception
+    for param in ['error', 'exception']:
+        do_set = False
+        try:
+            if res == args["oper"]:
+                do_set = True
+        except KeyError:
+            if res is True:
+                do_set = True
+
+        if do_set:
+            try:
+                setattr(oper, 'expect_{}'.format(param), args[param])
+            except KeyError:
+                pass
+
+def conditional_excecution(oper, arg):
+    for key,val in arg.items():
+        if key == 'profile':
+            if map_prof(oper.profile, val.split('.')):
+                oper.skip = True
+                return
 
 
 def set_jwks_uri(oper, args):

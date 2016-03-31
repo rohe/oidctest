@@ -1,3 +1,4 @@
+---
 Flows:
   RP-claims-aggregated:
     desc: Can handle aggregated user information
@@ -101,23 +102,10 @@ Flows:
     sequence:
       - Webfinger:
           set_webfinger_resource: null
-  RP-id_token-C_aud:
-    desc: The Relying Party should request an ID token and compare its aud value to
-      Relying Partys Client ID
-    profile: 'C,T...'
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration
-      - SyncAuthn
-      - AccessToken:
-          expect_exception: NotForMe
-  RP-id_token-I_aud:
-    desc: The Relying Party should request an ID token and compare its aud value to
-      Relying Partys Client ID
-    profile: 'CIT,IT,I...'
+  RP-id_token-aud:
+    desc: The Relying Party should request an ID token and compare its aud value
+      to the Client ID.
+    profile: '...'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -125,12 +113,30 @@ Flows:
           set_discovery_issuer: null
       - Registration
       - SyncAuthn:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                -
+                  - token
+                -
+                  - code
+                  - id_token
+                  - token
+                -
+                  - id_token
+                  - token
+                -
+                  - id_token
+            exception: NotForMe
+      - AccessToken:
+          conditional_excecution:
+            profile: 'CIT,IT,I,T...'
           expect_exception: NotForMe
-  RP-id_token-I_bad_asym_sig_rs256:
+  RP-id_token-bad_asym_sig_rs256:
     desc: Tests if the Relying Party can identify and reject an ID Token with an invalid
       signature. The ID Token has been signed using the asymmetric algorithm RS256.
       For more information see list item 6 in ID Token validation
-    profile: 'CIT,IT,I...T'
+    profile: '...T'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -140,27 +146,29 @@ Flows:
           set_request_args:
             id_token_signed_response_alg: RS256
       - SyncAuthn:
-          expect_exception: BadSignature
-  RP-id_token-C_bad_asym_sig_rs256:
-    desc: Tests if the Relying Party can identify and reject an ID Token with an invalid
-      signature. The ID Token has been signed using the asymmetric algorithm RS256.
-      For more information see list item 6 in ID Token validation
-    profile: 'C,CT...T'
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration:
-          set_request_args:
-            id_token_signed_response_alg: RS256
-      - SyncAuthn
+          conditional_expect_exception:
+            condition:
+              response_type:
+                -
+                  - token
+                -
+                  - code
+                  - id_token
+                  - token
+                -
+                  - id_token
+                  - token
+                -
+                  - id_token
+            exception: BadSignature
       - AccessToken:
+          conditional_excecution:
+            profile: 'CIT,IT,I,T...'
           expect_exception: BadSignature
-  RP-id_token-C_bad_es256_sig:
+  RP-id_token-bad_es256_sig:
     desc: The Relying Party should reject invalid asymmetric ID Token signature which
       has been signed using the algorithm ES256
-    profile: 'C,CT...T'
+    profile: '...T'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -169,14 +177,31 @@ Flows:
       - Registration:
           set_request_args:
             id_token_signed_response_alg: ES256
-      - SyncAuthn
+      - SyncAuthn:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                -
+                  - token
+                -
+                  - code
+                  - id_token
+                  - token
+                -
+                  - id_token
+                  - token
+                -
+                  - id_token
+            exception: BadSignature
       - AccessToken:
+          conditional_excecution:
+            profile: 'CIT,IT,I,T...'
           expect_exception: BadSignature
-  RP-id_token-C_bad_symmetric_sig_hs256:
+  RP-id_token-bad_symmetric_sig_hs256:
     desc: Tests if the Relying Party can identify and reject an ID Token with an invalid
       signature. The ID Token has been signed using the symmetric algorithm HS256. For
       more information see list item 6 in ID Token validation
-    profile: 'C,CT...T'
+    profile: '...T'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -185,41 +210,30 @@ Flows:
       - Registration:
           set_request_args:
             id_token_signed_response_alg: HS256
-      - SyncAuthn
-      - AccessToken:
-          expect_exception: BadSignature
-  RP-id_token-I_bad_symmetric_sig_hs256:
-    desc: Tests if the Relying Party can identify and reject an ID Token with an invalid
-      signature. The ID Token has been signed using the symmetric algorithm HS256. For
-      more information see list item 6 in ID Token validation
-    profile: 'I,IT,CIT...T'
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration:
-          set_request_args:
-            id_token_signed_response_alg: HS256
       - SyncAuthn:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                -
+                  - token
+                -
+                  - code
+                  - id_token
+                  - token
+                -
+                  - id_token
+                  - token
+                -
+                  - id_token
+            exception: BadSignature
+      - AccessToken:
+          conditional_excecution:
+            profile: 'CIT,IT,I,T...'
           expect_exception: BadSignature
-  RP-id_token-C_iat:
+  RP-id_token-iat:
     desc: The Relying Party should request an ID token if it does not contain a iat
       claim it should be rejected
-    profile: 'C,CT...'
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration
-      - SyncAuthn
-      - AccessToken:
-          expect_exception: MissingRequiredAttribute
-  RP-id_token-I_iat:
-    desc: The Relying Party should request an ID token if it does not contain a iat
-      claim it should be rejected
-    profile: 'CIT,IT,I...'
+    profile: '...'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -227,24 +241,29 @@ Flows:
           set_discovery_issuer: null
       - Registration
       - SyncAuthn:
-          expect_exception: MissingRequiredAttribute
-  RP-id_token-C_kid_absent_multiple_jwks:
-    desc: If there are multiple keys in the referenced JWK Set document, a kid value
-      MUST be provided in the JOSE Header
-    profile: 'C,CT...'
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration
-      - SyncAuthn
+          conditional_expect_exception:
+            condition:
+              response_type:
+                -
+                  - token
+                -
+                  - code
+                  - id_token
+                  - token
+                -
+                  - id_token
+                  - token
+                -
+                  - id_token
+            exception: BadSignature
       - AccessToken:
-          expect_exception: PyoidcError
-  RP-id_token-I_kid_absent_multiple_jwks:
+          conditional_excecution:
+            profile: 'CIT,IT,I,T...'
+          expect_exception: MissingRequiredAttribute
+  RP-id_token-kid_absent_multiple_jwks:
     desc: If there are multiple keys in the referenced JWK Set document, a kid value
       MUST be provided in the JOSE Header
-    profile: 'CIT,IT,I...'
+    profile: '...'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -252,10 +271,28 @@ Flows:
           set_discovery_issuer: null
       - Registration
       - SyncAuthn:
+          conditional_expect:
+            condition:
+              response_type:
+                -
+                  - token
+                -
+                  - code
+                  - id_token
+                  - token
+                -
+                  - id_token
+                  - token
+                -
+                  - id_token
+            exception: PyoidcError
+      - AccessToken:
+          conditional_excecution:
+            profile: 'CIT,IT,I,T...'
           expect_exception: PyoidcError
   RP-id_token-kid_absent_single_jwks:
-    desc: If the JWK supplied in jwks_uri only contains a single key the ID Token does
-      not need to contain a kid claim
+    desc: If the JWK supplied in jwks_uri only contains a single key the ID
+      Token does not need to contain a kid claim
     profile: '...'
     sequence:
       - Webfinger:
@@ -264,26 +301,13 @@ Flows:
           set_discovery_issuer: null
       - Registration
       - SyncAuthn
-      - AccessToken
-  RP-id_token-C_mismatching_issuer:
-    desc: The Relying Party should request an ID token and reject it if the issuer identifier
-      for the OpenID Provider is not matching the issuer in the returned ID Token
-    profile: 'C,CT...'
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration:
-          set_request_args:
-            id_token_signed_response_alg: HS256
-      - SyncAuthn
       - AccessToken:
-          expect_exception: IssuerMismatch
-  RP-id_token-I_mismatching_issuer:
+          conditional_excecution:
+            profile: 'CIT,IT,I...'
+  RP-id_token-mismatching_issuer:
     desc: The Relying Party should request an ID token and reject it if the issuer identifier
       for the OpenID Provider is not matching the issuer in the returned ID Token
-    profile: 'CIT,IT,I...'
+    profile: '...'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -293,6 +317,24 @@ Flows:
           set_request_args:
             id_token_signed_response_alg: HS256
       - SyncAuthn:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                -
+                  - token
+                -
+                  - code
+                  - id_token
+                  - token
+                -
+                  - id_token
+                  - token
+                -
+                  - id_token
+            exception: IssuerMismatch
+      - AccessToken:
+          conditional_excecution:
+            profile: 'CIT,IT,I,T...'
           expect_exception: IssuerMismatch
   RP-id_token-none:
     desc: Can Request and Use unSigned ID Token Response
@@ -323,9 +365,9 @@ Flows:
             id_token_signed_response_alg: null
       - SyncAuthn
       - AccessToken
-  RP-id_token-C_sub:
-    desc: The Relying Party should request an ID token and reject it if the sub claim
-      is missing
+  RP-id_token-sub:
+    desc: The Relying Party should request an ID token and reject it if the sub
+      claim is missing
     profile: 'C,CT...'
     sequence:
       - Webfinger:
@@ -333,20 +375,25 @@ Flows:
       - Discovery:
           set_discovery_issuer: null
       - Registration
-      - SyncAuthn
-      - AccessToken:
-          expect_exception: MissingRequiredAttribute
-  RP-id_token-I_sub:
-    desc: The Relying Party should request an ID token and reject it if the sub claim
-      is missing
-    profile: 'CIT,IT,I,CI...'
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration
       - SyncAuthn:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                -
+                  - token
+                -
+                  - code
+                  - id_token
+                  - token
+                -
+                  - id_token
+                  - token
+                -
+                  - id_token
+            exception: MissingRequiredAttribute
+      - AccessToken:
+          conditional_excecution:
+            profile: 'CIT,IT,I,T...'
           expect_exception: MissingRequiredAttribute
   RP-id_token-sym_sig:
     desc: Accept Valid Symmetric ID Token Signature
@@ -513,7 +560,7 @@ Flows:
       - Discovery:
           set_discovery_issuer: null
       - Registration:
-          expect_exception: PyoidcError
+          expect_exception: RegistrationError
           set_request_args:
             redirect_uris:
               - ''
@@ -526,7 +573,7 @@ Flows:
       - Discovery:
           set_discovery_issuer: null
       - Registration:
-          expect_exception: PyoidcError
+          expect_exception: RegistrationError
           set_request_args:
             initiate_login_uri: http://test.com
             jwks_uri: http://test.com
@@ -862,7 +909,6 @@ Flows:
       - AccessToken
       - UserInfo
 Order:
-  - RP-webfinger
   - RP-discovery
   - RP-registration
   - RP-response_type
@@ -876,7 +922,6 @@ Order:
   - RP-key_rotation
   - RP-user_info
 Desc:
-  RP-webfinger: WebFinger
   RP-discovery: Discovery
   RP-registration: Dynamic Client Registration
   RP-response_type: Response Type
