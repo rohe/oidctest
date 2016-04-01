@@ -3,12 +3,14 @@ import json
 import sys
 import requests
 
-from urllib.parse import urlparse
+#from urllib.parse import urlparse
 
 from aatest.check import Check
 from aatest.check import ERROR
 from aatest.check import WARNING
 from aatest.events import EV_PROTOCOL_REQUEST
+
+from future.backports.urllib.parse import urlparse
 
 from oic.oic import AuthorizationRequest
 from oic.oic import AccessTokenRequest
