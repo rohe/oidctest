@@ -1,7 +1,7 @@
 import json
 import time
 
-from Crypto.PublicKey import RSA
+from Cryptodome.PublicKey import RSA
 from future.backports.urllib.parse import parse_qs
 
 from jwkest.ecc import P256
