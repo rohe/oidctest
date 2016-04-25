@@ -62,7 +62,7 @@ But if the RP only supports static client registration you need to modify the UR
 This is about getting the OP to behave in different ways, presently these are
 defined:
 
-| |  |
+| | |
 |--------|--------|
 |ath     |the at_hash is incorrect|
 |aud     |ID Token with invalid aud|
