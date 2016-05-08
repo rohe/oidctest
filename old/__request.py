@@ -65,7 +65,7 @@ class Request(Operation):
 
     def map_profile(self, profile_map):
         for func, arg in profile_map[self.__class__][
-                self.profile[RESPONSE]].items():
+            self.profile[RESPONSE]].items():
             func(self, arg)
 
 
@@ -287,7 +287,8 @@ class AsyncRequest(Request):
             try:
                 info = query["fragment"][0]
             except KeyError:
-                return inut.sorry_response(inut.conf.BASE, "missing fragment ?!")
+                return inut.sorry_response(inut.conf.BASE,
+                                           "missing fragment ?!")
         elif response_where == "":
             info = inut.environ["QUERY_STRING"]
             _ctype = "urlencoded"

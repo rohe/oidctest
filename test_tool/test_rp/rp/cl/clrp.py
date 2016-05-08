@@ -21,14 +21,11 @@ from aatest.io import ClIO
 
 from requests.packages import urllib3
 
-
 urllib3.disable_warnings()
 
 __author__ = 'roland'
 
-
 logger = logging.getLogger("")
-
 
 if __name__ == '__main__':
     from oic.oic.message import factory as oic_message_factory
@@ -62,7 +59,7 @@ if __name__ == '__main__':
 
     # export JWKS
     p = urlparse(CONF.KEY_EXPORT_URL)
-    f = open("."+p.path, "w")
+    f = open("." + p.path, "w")
     f.write(json.dumps(jwks))
     f.close()
     jwks_uri = p.geturl()

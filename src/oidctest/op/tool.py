@@ -29,7 +29,7 @@ class Tester(tool.Tester):
         tool.Tester.__init__(self, io, sh, profiles, profile, flows,
                              msg_factory=msg_factory, cache=cache,
                              **kwargs)
-        #self.chk_factory = get_check
+        # self.chk_factory = get_check
         self.map_prof = prof_util.map_prof
 
 
@@ -69,7 +69,6 @@ class WebTester(tool.WebTester):
                                 msg_factory=msg_factory, cache=cache, **kwargs)
         self.check_factory = check_factory
         self.map_prof = map_prof or prof_util.map_prof
-
 
     def setup(self, test_id, cinfo, **kw_args):
         redirs = get_redirect_uris(cinfo)

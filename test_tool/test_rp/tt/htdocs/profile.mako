@@ -1,5 +1,5 @@
 <%!
-def inputs(spec, selected):
+  def inputs(spec, selected):
   """
   Creates list of choices
   """

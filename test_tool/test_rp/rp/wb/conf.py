@@ -10,7 +10,7 @@ CA_BUNDLE = None
 VERIFY_SSL = False
 
 ISSUER = "https://localhost:8092/"
-#ISSUER = "https://oictest.umdc.umu.se:8051/"
+# ISSUER = "https://oictest.umdc.umu.se:8051/"
 
 KEY_EXPORT_URL = "%sstatic/jwk.json" % BASE
 
@@ -30,7 +30,7 @@ keys = [
 ]
 
 INFO = {
-    "client":{
+    "client": {
         "redirect_uris": ["%sauthz_cb" % BASE],
         "application_type": "web",
         "contact": ["foo@example.com"]

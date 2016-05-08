@@ -10,6 +10,7 @@ __author__ = 'roland'
 
 logger = logging.getLogger(__name__)
 
+
 class Node(object):
     def __init__(self, name, desc, mti=None):
         self.name = name
@@ -23,7 +24,6 @@ class Node(object):
 
 
 class SessionHandler(session.SessionHandler):
-
     def session_setup(self, path="", index=0):
         logger.info("session_setup")
 
@@ -53,7 +53,7 @@ class SessionHandler(session.SessionHandler):
         self.session = session
 
     def init_session(self, profile=None):
-        if profile is None:
+        if not profile:
             profile = self.profile
 
         f_names = list(self.test_flows.keys())
@@ -64,8 +64,8 @@ class SessionHandler(session.SessionHandler):
             l = [z for z in f_names if z.startswith(k)]
             self["flow_names"].extend(l)
 
-        _tests =[]
-        _sprof = self.profile.split(".")
+        _tests = []
+        _sprof = profile.split(".")
         for k in self["flow_names"]:
             _test = self.test_flows[k]
             if map_prof(_sprof, _test["profile"].split(".")):

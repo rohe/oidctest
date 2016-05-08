@@ -14,7 +14,6 @@ from oidctest.check import get_protocol_response
 
 __author__ = 'rolandh'
 
-
 INFORMATION = 0
 OK = 1
 WARNING = 2

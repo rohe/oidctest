@@ -20,6 +20,7 @@ LOOKUP = TemplateLookup(directories=['templates', 'htdocs'],
                         input_encoding='utf-8',
                         output_encoding='utf-8')
 
+
 # =============================================================================
 
 def static(environ, start_response, path):
@@ -62,7 +63,6 @@ def opresult_fragment(environ, start_response):
                     headers=[])
     argv = {}
     return resp(environ, start_response, **argv)
-
 
 
 # -----------------------------------------------------------------------------

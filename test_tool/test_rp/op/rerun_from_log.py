@@ -127,7 +127,7 @@ def userinfo(info, state):
     tresp = state["token"]
     authn = "Bearer {}".format(tresp["access_token"])
 
-    return "user_info",  PROVIDER.userinfo_endpoint("", authn=authn)
+    return "user_info", PROVIDER.userinfo_endpoint("", authn=authn)
 
 
 def behavior(info, state):
@@ -157,6 +157,7 @@ def behavior(info, state):
 
     return None, None
 
+
 OP = {
     "jwks": jwks,
     "registration_response": registration_response,
@@ -185,7 +186,7 @@ def opkey(l):
 
 
 CONTENT_MAP = [
-    #("@registration_endpoint: <<", ">>", "registration_request", list2dict),
+    # ("@registration_endpoint: <<", ">>", "registration_request", list2dict),
     (" registration_response: ", "", "registration_response", eval_oneliner),
     (" Loaded JWKS: ", " from ", "jwks", list2dict),
     ("oic.oauth2.provider:DEBUG Request: ", "", "authorization", oneliner),

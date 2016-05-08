@@ -27,7 +27,7 @@ def main_setup(args, lookup):
     config.SERVICE_URL = config.SERVICE_URL % args.port
 
     # Client data base
-    #cdb = shelve.open(config.CLIENT_DB, writeback=True)
+    # cdb = shelve.open(config.CLIENT_DB, writeback=True)
     cdb = {}
 
     ac = AuthnBroker()
@@ -173,4 +173,3 @@ def multi_keys(as_args, key_conf):
     jwks = keyjar_init(_op, key_conf, "m%d")
 
     return {"jwks": jwks, "keys": key_conf}
-

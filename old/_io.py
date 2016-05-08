@@ -21,4 +21,3 @@ class ClIO(IO):
             self.print_info(_tid)
         except KeyError:
             pass
-

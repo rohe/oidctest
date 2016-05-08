@@ -23,6 +23,7 @@ from oidctest.rp.mode import setup_op
 from oidctest.rp.mode import mode2path
 
 from requests.packages import urllib3
+
 urllib3.disable_warnings()
 
 __author__ = 'rohe0002'

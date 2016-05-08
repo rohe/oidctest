@@ -48,7 +48,7 @@ INTERACTION = [
     {
         "matches": {
             "url": "%s/slo/soap" % IDP_BASE,
-            #"title": "SAML 2.0 POST"
+            # "title": "SAML 2.0 POST"
         },
         "page-type": "other",
         "control": {

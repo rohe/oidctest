@@ -1,7 +1,7 @@
 <%
-import os
+  import os
 
-def display_log(logs, issuer, profile):
+  def display_log(logs, issuer, profile):
     if issuer:
         if profile:
             el = "<h3>A list of tests that are saved on disk for this profile:</h3>"
@@ -29,32 +29,33 @@ def display_log(logs, issuer, profile):
 
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>OpenID Certification OP Test</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap -->
-    <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-      <link href="static/style.css" rel="stylesheet" media="all">
+<head>
+  <title>OpenID Certification OP Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap -->
+  <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+        media="screen">
+  <link href="static/style.css" rel="stylesheet" media="all">
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="../../assets/js/html5shiv.js"></script>
-      <script src="../../assets/js/respond.min.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="container">
-     <!-- Main component for a primary marketing message or call to action -->
-      <div class="jumbotron">
-        <h1>OpenID Certification OP Test logs</h1>
-            ${display_log(logs, issuer, profile)}
-      </div>
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="../../assets/js/html5shiv.js"></script>
+  <script src="../../assets/js/respond.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<div class="container">
+  <!-- Main component for a primary marketing message or call to action -->
+  <div class="jumbotron">
+    <h1>OpenID Certification OP Test logs</h1>
+    ${display_log(logs, issuer, profile)}
+  </div>
 
-    </div> <!-- /container -->
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="/static/jquery.min.1.9.1.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+</div> <!-- /container -->
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="/static/jquery.min.1.9.1.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
 
-  </body>
+</body>
 </html>

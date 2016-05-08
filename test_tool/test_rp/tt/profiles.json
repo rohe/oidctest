@@ -1,5 +1,5 @@
 {
-  "Sign-RS256": {
+  "Simple": {
     "token_endpoint_auth_methods_supported": [
       "client_secret_basic"
     ],

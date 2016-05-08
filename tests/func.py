@@ -2,11 +2,13 @@ from oidctest.oper import include
 
 __author__ = 'roland'
 
+
 def set_webfinger_resource(oper, args):
     try:
         oper.resource = oper.op_args["resource"]
     except KeyError:
-        oper.resource = oper.conf.ISSUER+oper.test_id
+        oper.resource = oper.conf.ISSUER + oper.test_id
+
 
 def set_discovery_issuer(oper, args):
     if oper.dynamic:

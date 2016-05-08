@@ -29,6 +29,7 @@ from oidctest.op.prof_util import ProfileHandler
 from oidctest.op.tool import WebTester
 
 from requests.packages import urllib3
+
 urllib3.disable_warnings()
 
 if not os.path.isdir(SERVER_LOG_FOLDER):

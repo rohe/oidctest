@@ -23,9 +23,9 @@ multi_keys = [
 
 SERVICE_URL = "%s/verify" % issuer
 
-#Only Username and password.
+# Only Username and password.
 AUTHENTICATION = {
-    #"UserPassword": {"ACR": "PASSWORD", "WEIGHT": 1, "URL": SERVICE_URL}
+    # "UserPassword": {"ACR": "PASSWORD", "WEIGHT": 1, "URL": SERVICE_URL}
     "NoAuthn": {"ACR": "PASSWORD", "WEIGHT": 1, "user": "diana"}
 }
 

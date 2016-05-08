@@ -53,6 +53,7 @@ def get_response(line):
 
     return parts.fragment
 
+
 def get_request(line):
     if re.match(r'^[A-Z]*:', line):
         return ""
@@ -122,7 +123,8 @@ def authorization(lines, state):
     info = parse_lines(lines, op_map["authorization"])
 
     if "jwks" in info:
-        _cid = [c for c in list(PROVIDER.keyjar.issuer_keys.keys()) if c != ''][0]
+        _cid = [c for c in list(PROVIDER.keyjar.issuer_keys.keys()) if c != ''][
+            0]
         PROVIDER.keyjar[_cid].append(KeyBundle(keys=info["jwks"]["keys"]))
 
     resp = PROVIDER.authorization_endpoint(info["req"])
@@ -162,7 +164,7 @@ def userinfo(lines, state):
     tresp = state["token"]
     authn = "Bearer {}".format(tresp["access_token"])
 
-    return "user_info",  PROVIDER.userinfo_endpoint("", authn=authn)
+    return "user_info", PROVIDER.userinfo_endpoint("", authn=authn)
 
 
 OP = {

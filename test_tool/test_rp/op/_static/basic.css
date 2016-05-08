@@ -1,5 +1,5 @@
 
-#infoIcon{
+#infoIcon {
     opacity: 0.40;
     font-size: 50px;
 }
@@ -12,9 +12,9 @@
 
     background-color: #F2F2F2;
 
-    border:1px solid;
-    border-color:#CFCFCF;
-    border-radius:5px;
+    border: 1px solid;
+    border-color: #CFCFCF;
+    border-radius: 5px;
 }
 
 .jumbotron h1 {
@@ -30,14 +30,14 @@
     color: #000000;
 
     background-color: #eeeeee;
-    opacity:1.00;
-    filter:alpha(opacity=100); /* For IE8 and earlier */
+    opacity: 1.00;
+    filter: alpha(opacity=100); /* For IE8 and earlier */
 
 }
 
 .container .jumbotron {
     padding-right: 0px;
     padding-left: 0px;
-    border:2px solid;
-    border-color:#CFCFCF;
+    border: 2px solid;
+    border-color: #CFCFCF;
 }

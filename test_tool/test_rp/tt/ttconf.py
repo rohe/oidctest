@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from aatest.parse_cnf import parse_yaml_conf
 from oic.oic import message, ProviderConfigurationResponse
 from oic.oic.provider import AuthorizationEndpoint
 from oic.oic.provider import TokenEndpoint
@@ -15,12 +16,14 @@ from otest.rp.endpoints import webfinger
 from otest.rp.endpoints import userinfo
 
 from oidctest.rp import check
+from oidctest.rp import func
+from oidctest.rp import operation
 from oidctest.rp.provider import Provider
-from oidctest.rp.parse_conf import parse_json_conf
 
+# baseurl = "https://130.239.200.165"
 
 baseurl = "https://localhost"
-issuer = "%s:%%d/" % baseurl
+issuer = "%s:%%d" % baseurl
 
 keys = [
     {"type": "RSA", "key": "keys/pyoidc_enc", "use": ["enc"]},
@@ -115,10 +118,10 @@ TOOL_ARGS = {
     'setup': main_setup,
     'check': check,
     'provider': Provider,
-    'parse_conf': parse_json_conf,
-    'cls_factories': [message.factory],
-    'chk_factories': [check.factory],
-    'func_factories': [],
+    'parse_conf': parse_yaml_conf,
+    'cls_factories': {'': operation.factory},
+    'chk_factory': check.factory,
+    'func_factory': func.factory,
     'configuration_response': ProviderConfigurationResponse,
     'endpoints': [
         AuthorizationEndpoint(authorization),

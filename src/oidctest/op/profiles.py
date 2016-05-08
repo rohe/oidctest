@@ -38,8 +38,8 @@ PROFILEMAP = {
         "CT": {set_request_args: {"response_type": ["code", "token"],
                                   "scope": ["openid"]}},
         "CIT": {set_request_args:
-                 {"response_type": ["code", "id_token", "token"],
-                  "scope": ["openid"]}},
+                    {"response_type": ["code", "id_token", "token"],
+                     "scope": ["openid"]}},
     },
     AsyncAuthn: {
         "C": {set_request_args: {"response_type": ["code"],
@@ -53,8 +53,8 @@ PROFILEMAP = {
         "CT": {set_request_args: {"response_type": ["code", "token"],
                                   "scope": ["openid"]}},
         "CIT": {set_request_args:
-                 {"response_type": ["code", "id_token", "token"],
-                  "scope": ["openid"]}},
+                    {"response_type": ["code", "id_token", "token"],
+                     "scope": ["openid"]}},
     },
     AccessToken: {
         "C": {},
@@ -85,11 +85,11 @@ PROFILEMAP = {
             set_request_args: {
                 "response_types": ["code"],
                 "grant_types": ["authorization_code"]}},
-                # don't register any
-                # "token_endpoint_auth_method": {},
-                # "userinfo_signed_response_alg": {},
-                # "id_token_signed_response_alg": {},
-                # "request_object_signing_alg": {},
+        # don't register any
+        # "token_endpoint_auth_method": {},
+        # "userinfo_signed_response_alg": {},
+        # "id_token_signed_response_alg": {},
+        # "request_object_signing_alg": {},
 
         "I": {
             set_request_args: {

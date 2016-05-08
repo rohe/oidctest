@@ -27,10 +27,10 @@ from oidctest.session import SessionHandler
 from oidctest.utils import get_check
 
 from requests.packages import urllib3
+
 urllib3.disable_warnings()
 
 __author__ = 'roland'
-
 
 logger = logging.getLogger("")
 
@@ -134,6 +134,7 @@ def main(flows, profile, profiles, **kw_args):
             print(conversation.trace)
             break
 
+
 if __name__ == '__main__':
     from oidctest import profiles
     from oidctest import oper
@@ -172,7 +173,7 @@ if __name__ == '__main__':
 
     # export JWKS
     p = urlparse(CONF.KEY_EXPORT_URL)
-    f = open("."+p.path, "w")
+    f = open("." + p.path, "w")
     f.write(json.dumps(jwks))
     f.close()
     jwks_uri = p.geturl()

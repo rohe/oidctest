@@ -17,7 +17,8 @@ class ResponseEncoder:
 
     def service_error(self, message, html=None):
         """
-        :return A error response which is used to show error messages in the client
+        :return A error response which is used to show error messages in the
+        client
         """
         message = {"ExceptionMessage": message, "HTML": html}
         resp = ServiceError(json.dumps(message))

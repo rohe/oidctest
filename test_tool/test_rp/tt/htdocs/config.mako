@@ -27,8 +27,14 @@
   <script src="../../assets/js/respond.min.js"></script>
   <![endif]-->
   <style>
-    h3   {background-color:lightblue;}
-    h4    {background-color:lightcyan;}
+    h3 {
+      background-color: lightblue;
+    }
+
+    h4 {
+      background-color: lightcyan;
+    }
+
     @media (max-width: 768px) {
       .jumbotron {
         border-radius: 10px;
@@ -57,22 +63,24 @@
 <body>
 <!-- Main component for a primary marketing message or call to action -->
 <div class="jumbotron">
-  <form action="rp" method="get">
-    <input type="hidden" name="id" value="${id}">
+  <form action="list" method="post">
     <b>Issuer:</b> ${issuer}
     <p>
-    Service provider start page:<br>
-    <input type="text" name="start_page" value="${start_page}" size="60"><br>
-    </p><p>
-    If the relying party can be told to contact a specific Authorization
-    Server it is ursually done using query parameters to the initial
-    service all. This is where you can enter the parameter/-s.<br>
-    If you need to enter the issuers URL you can use &lt;issuer&gt; as
-    a short cut.<br>
-    Like this: issuer=&lt;issuer&gt; assuming that the parameters name is 'issuer'<br>
-    </p><p>
-    Query parameter/-s:<br>
-    <input type="text" name="params" value="${params}" size="60">
+      Service provider start page:<br>
+      <input type="text" name="start_page" value="${start_page}" size="60"><br>
+    </p>
+    <p>
+      If the relying party can be told to contact a specific Authorization
+      Server it is ursually done using query parameters to the initial
+      service all. This is where you can enter the parameter/-s.<br>
+      If you need to enter the issuers URL you can use &lt;issuer&gt; as
+      a short cut.<br>
+      Like this: issuer=&lt;issuer&gt; assuming that the parameters name is
+      'issuer'<br>
+    </p>
+    <p>
+      Query parameter/-s:<br>
+      <input type="text" name="params" value="${params}" size="60">
     </p>
     <p>
       Choose profile:
@@ -84,16 +92,6 @@
     </p>
     <input type="submit" value="Submit">
   </form>
-  <hr>
-  % if http_result != '':
-    % if http_result.startswith('4') or http_result.startswith('5'):
-      <b style="color:red">${http_result}</b>
-    % else:
-      <b style="color:green">${http_result}</b>
-    % endif
-  % endif
-  <hr>
-  ${events}
 </div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="/static/jquery.min.1.9.1.js"></script>

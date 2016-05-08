@@ -5,14 +5,16 @@
   "Sign-RS256": {
     "descr": "Simple code profile with RS256 signatures",
     "RegistrationRequest": {
-      "assert":{
-        "verify-registration-response_types": ["code"],
+      "assert": {
+        "verify-registration-response_types": [
+          "code"
+        ],
         "verify-registration-redirect_uri-scheme": null,
         "verify-registration-public_key-registration": null
       }
     },
     "AuthorizationRequest": {
-      "assert":{
+      "assert": {
         "verify-authorization-offline-access": null,
         "verify-authorization-state-entropy": null,
         "verify-authorization-redirect_uri": null

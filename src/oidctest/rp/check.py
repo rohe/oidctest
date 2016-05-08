@@ -3,18 +3,19 @@ import json
 import sys
 import requests
 
-#from urllib.parse import urlparse
+# from urllib.parse import urlparse
 
 from aatest.check import Check
 from aatest.check import ERROR
 from aatest.check import WARNING
-from aatest.events import EV_PROTOCOL_REQUEST
+from aatest.events import EV_PROTOCOL_REQUEST, NoSuchEvent
 
 from future.backports.urllib.parse import urlparse
 
-from oic.oic import AuthorizationRequest
-from oic.oic import AccessTokenRequest
-from oic.extension.client import RegistrationRequest
+from oic.oic.message import AuthorizationRequest
+from oic.oic.message import AccessTokenRequest
+from oic.oic.message import RegistrationRequest
+from oic.extension import client
 
 from otest.shannon_entropy import calculate
 
@@ -26,8 +27,13 @@ class VerifyRegistrationOfflineAccess(Check):
     msg = "Check if offline access is requested"
 
     def _func(self, conv):
-        request = conv.events.get_message(EV_PROTOCOL_REQUEST,
-                                          RegistrationRequest)
+        # Must be one of them
+        try:
+            request = conv.events.get_message(EV_PROTOCOL_REQUEST,
+                                              RegistrationRequest)
+        except NoSuchEvent:
+            request = conv.events.get_message(EV_PROTOCOL_REQUEST,
+                                              client.RegistrationRequest)
 
         # 'offline_access only allow if response_type == 'code'
         try:
@@ -49,8 +55,13 @@ class VerifyRegistrationResponseTypes(Check):
     msg = "Only the allowed"
 
     def _func(self, conv):
-        request = conv.events.get_message(EV_PROTOCOL_REQUEST,
-                                          RegistrationRequest)
+        # Must be one of them
+        try:
+            request = conv.events.get_message(EV_PROTOCOL_REQUEST,
+                                              RegistrationRequest)
+        except NoSuchEvent:
+            request = conv.events.get_message(EV_PROTOCOL_REQUEST,
+                                              client.RegistrationRequest)
 
         try:
             resp_types = request['response_types']
@@ -58,7 +69,7 @@ class VerifyRegistrationResponseTypes(Check):
             pass
         else:
             for typ in resp_types:
-                if typ not in self._kwargs:
+                if typ not in self._kwargs['allowed']:
                     self._status = ERROR
                     self._message = 'Not allowed response type: {}'.format(typ)
 
@@ -99,8 +110,13 @@ class VerifyRegistrationRedirectUriScheme(Check):
     msg = "Only certain redirect_uri schemes are allowed"
 
     def _func(self, conv):
-        request = conv.events.get_message(EV_PROTOCOL_REQUEST,
-                                          RegistrationRequest)
+        # Must be one of them
+        try:
+            request = conv.events.get_message(EV_PROTOCOL_REQUEST,
+                                              RegistrationRequest)
+        except NoSuchEvent:
+            request = conv.events.get_message(EV_PROTOCOL_REQUEST,
+                                              client.RegistrationRequest)
 
         try:
             ruris = request['redirect_uris']
@@ -128,8 +144,13 @@ class VerifyRegistrationPublicKeyRegistration(Check):
     msg = "Public key must be registered"
 
     def _func(self, conv):
-        request = conv.events.get_message(EV_PROTOCOL_REQUEST,
-                                          RegistrationRequest)
+        # Must be one of them
+        try:
+            request = conv.events.get_message(EV_PROTOCOL_REQUEST,
+                                              RegistrationRequest)
+        except NoSuchEvent:
+            request = conv.events.get_message(EV_PROTOCOL_REQUEST,
+                                              client.RegistrationRequest)
 
         try:
             _uri = request['jwks_uri']
@@ -229,12 +250,17 @@ class VerifyAuthorizationRedirectUri(Check):
     msg = "Check if offline access is requested"
 
     def _func(self, conv):
-        clireq_request = conv.events.get_message(EV_PROTOCOL_REQUEST,
-                                                 RegistrationRequest)
+        # Must be one of them
+        try:
+            cli_request = conv.events.get_message(EV_PROTOCOL_REQUEST,
+                                                  RegistrationRequest)
+        except NoSuchEvent:
+            cli_request = conv.events.get_message(EV_PROTOCOL_REQUEST,
+                                                  client.RegistrationRequest)
         authz_request = conv.events.get_message(EV_PROTOCOL_REQUEST,
                                                 AuthorizationRequest)
 
-        if authz_request['redirect_uri'] not in clireq_request['redirect_uris']:
+        if authz_request['redirect_uri'] not in cli_request['redirect_uris']:
             self._status = ERROR
             self._message = 'Redirect_uri not registered'
 
@@ -278,4 +304,5 @@ def factory(cid):
             except AttributeError:
                 pass
 
-    return None
+    from otest.rp import check
+    return check.factory(cid)

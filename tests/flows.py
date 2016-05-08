@@ -124,7 +124,7 @@ FLOWS = {
                     "kty": "RSA",
                     "kid": "a1"
                 }]},
-                "id_token_signed_response_alg": "RS256", }}),
+                "id_token_signed_response_alg": "RS256",}}),
             (SyncAuthn, {set_op_args: {"response_type": ["id_token"]}}),
         ],
         "profile": "...T",
@@ -544,7 +544,9 @@ FLOWS = {
             SyncAuthn
         ],
         "profile": "I,IT,CI,CIT...",
-        "desc": "If a nonce value was sent in the Authentication Request the Relying Party must validate the nonce returned in the ID Token."
+        "desc": "If a nonce value was sent in the Authentication Request the "
+                "Relying Party must validate the nonce returned in the ID "
+                "Token."
     },
     "rp-nonce-unless_code_flow": {
         "sequence": [
@@ -554,9 +556,12 @@ FLOWS = {
             (SyncAuthn, {set_request_args: {"nonce": None}})
         ],
         "profile": "I,IT,CI,CIT...",
-        "desc": "The Relying Party should always send a nonce as a request parameter while using implicit or hybrid flow. "
-                "Since the server is suppose to return the nonce in the ID Token return from Authorization Endpoint, "
-                "see ID Token required claims in hybrid flow or implicit flow. When using Code flow the the nonce is not "
+        "desc": "The Relying Party should always send a nonce as a request "
+                "parameter while using implicit or hybrid flow. "
+                "Since the server is suppose to return the nonce in the ID "
+                "Token return from Authorization Endpoint, "
+                "see ID Token required claims in hybrid flow or implicit "
+                "flow. When using Code flow the the nonce is not "
                 "required, see ID Token validation for code flow"
     },
     "rp-request_uri-enc": {
@@ -565,15 +570,20 @@ FLOWS = {
             (Discovery, {set_discovery_issuer: {}}),
             Registration,
             (SyncAuthn, {set_op_args: {"request_method": "file",
-                                       "request_object_encryption_alg": "RSA1_5",
-                                       "request_object_encryption_enc": "A128CBC-HS256",
+                                       "request_object_encryption_alg":
+                                           "RSA1_5",
+                                       "request_object_encryption_enc":
+                                           "A128CBC-HS256",
                                        "local_dir": "./request_objects",
-                                       "base_path": "https://localhost:8088/request_objects/"
+                                       "base_path":
+                                           "https://localhost:8088/request_objects/"
                                        }})
         ],
         "profile": "...",
-        "desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. "
-                "Encrypt the Request Object using RSA1_5 and A128CBC-HS256 algorithms"
+        "desc": "The Relying Party can pass a Request Object by reference "
+                "using the request_uri parameter. "
+                "Encrypt the Request Object using RSA1_5 and A128CBC-HS256 "
+                "algorithms"
     },
     "rp-key_rollover-op_enc_key": {
         "sequence": [

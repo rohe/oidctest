@@ -4,19 +4,15 @@ from aatest import Unknown
 __author__ = 'roland'
 
 
-def translate(spec, func_factories):
+def translate(spec, chk_factory):
     asp = {}
     for key, args in spec.items():
-        _fnc = None
-        for fact in func_factories:
-            try:
-                _fnc = fact(key)
-            except Exception:
-                pass
-            else:
-                break
-        if not _fnc:
+        fact = chk_factory
+        try:
+            _fnc = fact(key)
+        except Exception:
             raise Unknown('Check {}'.format(key))
+
         asp[_fnc] = args
     return asp
 
@@ -24,7 +20,7 @@ def translate(spec, func_factories):
 COPY = ['descr']
 
 
-def parse_json_conf(cnf_file, cls_factories, chk_factories, func_factories):
+def parse_json_conf(cnf_file, cls_factories, chk_factory, func_factories):
     """
 
     :param cnf_file:
@@ -61,6 +57,6 @@ def parse_json_conf(cnf_file, cls_factories, chk_factories, func_factories):
                 ops[_cls.__name__] = {'assert': {}}
                 if 'assert' in asse and asse['assert'] is not None:
                     ops[_cls.__name__]['assert'] = translate(
-                        asse['assert'], chk_factories)
+                        asse['assert'], chk_factory)
         res[tid] = ops
     return res

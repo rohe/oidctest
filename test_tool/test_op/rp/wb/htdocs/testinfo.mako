@@ -1,6 +1,6 @@
 <%!
 
-def do_assertions(events):
+  def do_assertions(events):
     element = ['<h3>Assertions</h3>','<ul>']
     for ev in events.get_data('condition'):
       element.append('<li>{}'.format(ev))
@@ -9,7 +9,7 @@ def do_assertions(events):
 %>
 
 <%!
-def trace_output(trace):
+  def trace_output(trace):
     """
 
     """
@@ -21,7 +21,7 @@ def trace_output(trace):
 %>
 
 <%
-def profile_output(pinfo):
+  def profile_output(pinfo):
     element = []
     for key, val in pinfo.items():
         element.append("<em>%s:</em> %s<br>" % (key,val))
@@ -32,35 +32,36 @@ def profile_output(pinfo):
 <!DOCTYPE html>
 
 <html>
-  <head>
-    <title>OpenID Certification OP Test</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap -->
-    <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-      <link href="static/style.css" rel="stylesheet" media="all">
+<head>
+  <title>OpenID Certification OP Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap -->
+  <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+        media="screen">
+  <link href="static/style.css" rel="stylesheet" media="all">
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="../../assets/js/html5shiv.js"></script>
-      <script src="../../assets/js/respond.min.js"></script>
-    <![endif]-->
-  </head>
-  <body>
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="../../assets/js/html5shiv.js"></script>
+  <script src="../../assets/js/respond.min.js"></script>
+  <![endif]-->
+</head>
+<body>
 
-    <div class="container">
-     <!-- Main component for a primary marketing message or call to action -->
-        <h2>Test info</h2>
-        ${profile_output(profile)}
-        <hr>
-        ${do_assertions(events)}
-        <hr>
-        ${trace_output(trace)}
-        <hr>
-        <h3>Result</h3>${result}
-    </div> <!-- /container -->
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="/static/jquery.min.1.9.1.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
-  </body>
+<div class="container">
+  <!-- Main component for a primary marketing message or call to action -->
+  <h2>Test info</h2>
+  ${profile_output(profile)}
+  <hr>
+  ${do_assertions(events)}
+  <hr>
+  ${trace_output(trace)}
+  <hr>
+  <h3>Result</h3>${result}
+</div> <!-- /container -->
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="/static/jquery.min.1.9.1.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+</body>
 </html>

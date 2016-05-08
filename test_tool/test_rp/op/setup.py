@@ -138,4 +138,3 @@ def multi_keys(com_args, key_conf):
     jwks = keyjar_init(_op, key_conf, "m%d")
 
     return {"jwks": jwks, "keys": key_conf}
-

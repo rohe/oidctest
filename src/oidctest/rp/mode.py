@@ -1,4 +1,4 @@
-#from oic.oic.provider import Provider
+# from oic.oic.provider import Provider
 import json
 
 from oic import rndstr

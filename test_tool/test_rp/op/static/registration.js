@@ -3,7 +3,10 @@ var app = angular.module('main', ['ngSanitize']);
 app.factory('static_client_factory', function ($http) {
     return {
         generate_client_credentials: function (redirect_uris, jwks_uri) {
-            return $http.post("/generate_client_credentials", {"redirect_uris": redirect_uris, "jwks_uri": jwks_uri});
+            return $http.post("/generate_client_credentials", {
+                "redirect_uris": redirect_uris,
+                "jwks_uri": jwks_uri
+            });
         }
     };
 });
@@ -25,7 +28,7 @@ app.controller('IndexCtrl', function ($scope, $sce, static_client_factory) {
     }
 
     function error_callback(data, status, headers, config) {
-        alert("ERROR: " +  data.ExceptionMessage);
+        alert("ERROR: " + data.ExceptionMessage);
     }
 
     $scope.add_redirect_uri = function () {
@@ -37,9 +40,9 @@ app.controller('IndexCtrl', function ($scope, $sce, static_client_factory) {
         $scope.redirect_uris.splice(index, 1);
     };
 
-    function convert_to_simple_list(list){
+    function convert_to_simple_list(list) {
         var redirect_uris = [];
-        for (var i=0; i < list.length; i++){
+        for (var i = 0; i < list.length; i++) {
             redirect_uris.push(list[i].value)
         }
         return redirect_uris;
@@ -57,10 +60,10 @@ app.controller('IndexCtrl', function ($scope, $sce, static_client_factory) {
 /**
  * Activates the tooltip
  */
-app.directive('directiveCallback', function(){
-    return function(scope, element, attrs){
-        attrs.$observe('directiveCallback',function(){
-            if (attrs.directiveCallback == "true"){
+app.directive('directiveCallback', function () {
+    return function (scope, element, attrs) {
+        attrs.$observe('directiveCallback', function () {
+            if (attrs.directiveCallback == "true") {
                 $("[data-toggle='tooltip']").tooltip();
             }
         });

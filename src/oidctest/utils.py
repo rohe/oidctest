@@ -3,7 +3,7 @@ import os
 import pkgutil
 import tarfile
 from six.moves.urllib.parse import quote_plus
-#from urllib.parse import quote_plus
+# from urllib.parse import quote_plus
 
 from oic.utils.time_util import in_a_while
 
@@ -185,7 +185,6 @@ def get_profile_info(session, test_id=None):
 
 
 def get_check(check_id):
-
     package = op_check
     prefix = package.__name__ + "."
     for importer, modname, ispkg in pkgutil.iter_modules(package.__path__,

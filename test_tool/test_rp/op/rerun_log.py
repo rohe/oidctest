@@ -140,7 +140,12 @@ _op.keyjar.add_symmetric(issuer=RESP["client_id"], key=RESP["client_secret"],
 
 # AUTHZ REQ
 
-AREQ = 'state=6d464d007f2dab07118932556d7dbf01&redirect_uri=https%3A%2F%2Fconnect.openid4.us%3A5443%2FphpRp%2Findex.php%2Fcallback&response_type=code&client_id=rwfQ8i71ZGet&nonce=44a5b7ef45135233e8095a136be39a33&scope=openid+profile&code_challenge_method=S256&code_challenge=SM8WBlkhIbkjpg8oexuF6IfrdhOjyuqoXKOIO2dYzmY'
+AREQ = 'state=6d464d007f2dab07118932556d7dbf01&redirect_uri=https%3A%2F' \
+       '%2Fconnect.openid4.us%3A5443%2FphpRp%2Findex.php%2Fcallback' \
+       '&response_type=code&client_id=rwfQ8i71ZGet&nonce' \
+       '=44a5b7ef45135233e8095a136be39a33&scope=openid+profile' \
+       '&code_challenge_method=S256&code_challenge' \
+       '=SM8WBlkhIbkjpg8oexuF6IfrdhOjyuqoXKOIO2dYzmY'
 
 resp = _op.authorization_endpoint(AREQ)
 
@@ -148,7 +153,10 @@ parts = urllib.parse.urlparse(resp.message)
 
 aresp = AuthorizationResponse().from_urlencoded(parts.query)
 
-TPAT = "client_id=rwfQ8i71ZGet&code={}&redirect_uri=https%3A%2F%2Fconnect.openid4.us%3A5443%2FphpRp%2Findex.php%2Fcallback&grant_type=authorization_code&code_verifier=fEQ2jENiGEOF3XtW6GxecZ6kbqzFAqknz3cQ4AQWSGk&client_secret={}"
+TPAT = "client_id=rwfQ8i71ZGet&code={" \
+       "}&redirect_uri=https%3A%2F%2Fconnect.openid4.us%3A5443%2FphpRp" \
+       "%2Findex.php%2Fcallback&grant_type=authorization_code&code_verifier" \
+       "=fEQ2jENiGEOF3XtW6GxecZ6kbqzFAqknz3cQ4AQWSGk&client_secret={}"
 TREQ = TPAT.format(urllib.parse.quote(aresp["code"]), RESP["client_secret"])
 
 _resp = _op.token_endpoint(TREQ)

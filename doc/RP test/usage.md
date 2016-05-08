@@ -14,9 +14,7 @@ telling it what is expected from it. We chose the later.
 For the RP to be able to tell the OP what to do it uses a specially crafted url
 path.
 
-The basic format of the path is:
-
-``
+The basic format of the path is: ``
 /<`id`_>/<`signalg`_>/<`encalg`_>/<`behavior`_>/<`claims`_>/<`endpoint`_>
 ``
 
@@ -28,12 +26,10 @@ be present!!
 In this section the different parts of the URL is explained
 
 ####id
-The ID should be selected by the one testing the RP. This identifier will the be used to access the 
-logs of a specific test run. 
+The ID should be selected by the one testing the RP. This identifier will the be used to access the
+logs of a specific test run.
 
-In order to access the logs use the path:
-
-``
+In order to access the logs use the path: ``
 /log/<RP IP-address>/<id>
 `
 
@@ -53,16 +49,14 @@ But if the RP only supports static client registration you need to modify the UR
 ####encalg
 The encryption algorithms used, this is actually a tuple. The encryption alg
 and the encryption enc algorithms. The tuple are joined by a ':' so a typical
-value could be RSA1_5:A128CBC-HS256.
+value could be RSA1_5: A128CBC-HS256.
 
 If possible this information should be specifies while doing the dynamic client registration.
 But if the RP only supports static client registration you need to modify the URL path.
 
 ####behavior
 This is about getting the OP to behave in different ways, presently these are
-defined:
-
-| |  |
+defined: | |  |
 |--------|--------|
 |ath     |the at_hash is incorrect|
 |aud     |ID Token with invalid aud|
@@ -80,9 +74,7 @@ defined:
 |rotenc  |Rotate encryption keys|
 
 ####claims
-The three possible claims types are:
-
-* normal
+The three possible claims types are: * normal
 * aggregated
 * distributed
 
@@ -121,8 +113,7 @@ rp-01/RS256/_/isso/normal/token_endpoint
 * Some tests assumes that incorrect data is returned by the OP, see `errtype`_
 
 
-###OP configurations:
-The configuration for the RP certification service.
+###OP configurations: The configuration for the RP certification service.
 
 | |  |
 |--------|--------|
@@ -165,8 +156,8 @@ The configuration for the RP certification service.
 |                                                        |nickname|
 |                                                        |email|
 |                                                        |sub|
-|issuer                                                  |https://rp.certification.openid.net:8080/id/_/_/_/normal/|
-|endsession_endpoint                                     |https://rp.certification.openid.net:8080/id/_/_/_/normal/endsession|
+|issuer                                                  |https: //rp.certification.openid.net:8080/id/_/_/_/normal/|
+|endsession_endpoint                                     |https: //rp.certification.openid.net:8080/id/_/_/_/normal/endsession|
 |id_token_encryption_enc_values_supported                |* A128CBC-HS256|
 |                                                        |A256CBC-HS512|
 |                                                        |A192CBC-HS384|
@@ -176,15 +167,15 @@ The configuration for the RP certification service.
 |require_request_uri_registration                        |true|
 |grant_types_supported                                   |authorization_code|
 |                                                        |implicit|
-|                                                        |urn:ietf:params:oauth:grant-type:jwt-bearer|
-|token_endpoint                                          |https://rp.certification.openid.net:8080/id/_/_/_/normal/token|
+|                                                        |urn: ietf: params: oauth: grant-type: jwt-bearer|
+|token_endpoint                                          |https: //rp.certification.openid.net:8080/id/_/_/_/normal/token|
 |request_uri_parameter_supported                         |true|
 |version                                                 |3.0|
-|registration_endpoint                                   |https://rp.certification.openid.net:8080/id/_/_/_/normal/registration|
+|registration_endpoint                                   |https: //rp.certification.openid.net:8080/id/_/_/_/normal/registration|
 |response_modes_supported                                |query|
 |                                                        |fragment|
 |                                                        |form_post|
-|jwks_uri                                                |https://rp.certification.openid.net:8080/static/jwk.json|
+|jwks_uri                                                |https: //rp.certification.openid.net:8080/static/jwk.json|
 |userinfo_encryption_alg_values_supported                |RSA1_5|
 |                                                        |RSA-OAEP|
 |                                                        |A128KW|
@@ -243,7 +234,7 @@ The configuration for the RP certification service.
 |                                                        |PS256|
 |                                                        |ES256|
 |                                                        |RS384|
-|userinfo_endpoint                                       |https://rp.certification.openid.net:8080/id/_/_/_/normal/userinfo|
+|userinfo_endpoint                                       |https: //rp.certification.openid.net:8080/id/_/_/_/normal/userinfo|
 |request_object_signing_alg_values_supported             |ES512|
 |                                                        |PS521|
 |                                                        |RS512|
@@ -282,7 +273,7 @@ The configuration for the RP certification service.
 |                                                        |ECDH-ES+A128KW|
 |                                                        |ECDH-ES+A192KW|
 |                                                        |ECDH-ES+A256KW|
-|authorization_endpoint                                  |https://rp.certification.openid.net:8080/id/_/_/_/normal/authorization|
+|authorization_endpoint                                  |https: //rp.certification.openid.net:8080/id/_/_/_/normal/authorization|
 |claim_types_supported                                   |normal|
 |                                                        |aggregated|
 |                                                        |distributed|

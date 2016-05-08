@@ -1,6 +1,6 @@
 <%!
 
-def op_choice(base, nodes, test_info, headlines):
+  def op_choice(base, nodes, test_info, headlines):
     """
     Creates a list of test flows
     """
@@ -43,7 +43,7 @@ def op_choice(base, nodes, test_info, headlines):
 
 <%!
 
-ICONS = [
+  ICONS = [
     ('<img src="static/black.png" alt="Black">',"The test has not be run"),
     ('<img src="static/green.png" alt="Green">',"Success"),
     ('<img src="static/yellow.png" alt="Yellow">',
@@ -55,7 +55,7 @@ ICONS = [
     "Signals the fact that there are trace information available for the test"),
     ]
 
-def legends():
+  def legends():
     element = ["<table border='1' id='legends'>"]
     for icon, txt in ICONS:
         element.append("<tr><td>%s</td><td>%s</td></tr>" % (icon, txt))
@@ -64,17 +64,17 @@ def legends():
 %>
 
 <%
-    PMAP = {
+  PMAP = {
         "C": "Basic (code)", "I": "Implicit (id_token)",
         "IT": "Implicit (id_token+token)",
         "CI": "Hybrid (code+id_token)", "CT": "Hybrid (code+token)",
         "CIT": "Hybrid (code+id_token+token)"
     }
 
-    L2I = {"webfinger": 1, "discovery": 2, "registration": 3}
-    CM = {"n": "none", "s": "sign", "e": "encrypt"}
+  L2I = {"webfinger": 1, "discovery": 2, "registration": 3}
+  CM = {"n": "none", "s": "sign", "e": "encrypt"}
 
-    def display_profile(spec):
+  def display_profile(spec):
         el = ["<p><ul>"]
         p = spec.split('.')
         el.append("<li> %s" % PMAP[p[0]])
@@ -95,7 +95,7 @@ def legends():
 %>
 
 <%
-    def results(nodes, testresults):
+  def results(nodes, testresults):
         res = dict([(s, 0) for s in testresults.keys()])
         res[0] = 0
         tot = len(nodes)
@@ -114,59 +114,62 @@ def legends():
 <!DOCTYPE html>
 <html>
 <head>
-    <title>OpenID Certification OP Tests</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap -->
-    <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="static/style.css" rel="stylesheet" media="all">
+  <title>OpenID Certification OP Tests</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap -->
+  <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+        media="screen">
+  <link href="static/style.css" rel="stylesheet" media="all">
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-    <script src="../../assets/js/html5shiv.js"></script>
-    <script src="../../assets/js/respond.min.js"></script>
-    <![endif]-->
-    <style>
-        @media (max-width: 768px) {
-            .jumbotron {
-                border-radius: 10px;
-                margin-left: 4%;
-                margin-right: 4%;
-            }
-        }
-        @media (min-width: 768px) and (max-width: 1600px){
-            .jumbotron {
-                border-radius: 10px;
-                margin-left: 10%;
-                margin-right: 10%;
-            }
-        }
-        @media (min-width: 1600px){
-            .jumbotron {
-                border-radius: 10px;
-                margin-left: 20%;
-                margin-right: 20%;
-            }
-        }
-    </style>
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!--[if lt IE 9]>
+  <script src="../../assets/js/html5shiv.js"></script>
+  <script src="../../assets/js/respond.min.js"></script>
+  <![endif]-->
+  <style>
+    @media (max-width: 768px) {
+      .jumbotron {
+        border-radius: 10px;
+        margin-left: 4%;
+        margin-right: 4%;
+      }
+    }
+
+    @media (min-width: 768px) and (max-width: 1600px) {
+      .jumbotron {
+        border-radius: 10px;
+        margin-left: 10%;
+        margin-right: 10%;
+      }
+    }
+
+    @media (min-width: 1600px) {
+      .jumbotron {
+        border-radius: 10px;
+        margin-left: 20%;
+        margin-right: 20%;
+      }
+    }
+  </style>
 </head>
 <body>
-    <!-- Main component for a primary marketing message or call to action -->
-    <div class="jumbotron">
-        <h1>OpenID Certification OP Tests</h1>
-        <em>Explanations of legends at <a href="#legends">end of page</a></em>
+<!-- Main component for a primary marketing message or call to action -->
+<div class="jumbotron">
+  <h1>OpenID Certification OP Tests</h1>
+  <em>Explanations of legends at <a href="#legends">end of page</a></em>
 
-        <h3>You are testing using: ${display_profile(profile)}</h3>
-        If you want to change this you can do it <a href="pedit">here</a>
+  <h3>You are testing using: ${display_profile(profile)}</h3>
+  If you want to change this you can do it <a href="pedit">here</a>
 
-        <h3>Chose the next test flow you want to run from this list: </h3>
-        ${op_choice(base, flows, test_info, headlines)}
-        <h3>Legends</h3>
-        ${legends()}
-    </div>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="/static/jquery.min.1.9.1.js"></script>
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+  <h3>Chose the next test flow you want to run from this list: </h3>
+  ${op_choice(base, flows, test_info, headlines)}
+  <h3>Legends</h3>
+  ${legends()}
+</div>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="/static/jquery.min.1.9.1.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
 
 </body>
 </html>

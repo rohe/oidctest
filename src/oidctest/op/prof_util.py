@@ -3,13 +3,13 @@ from aatest.time_util import in_a_while
 
 __author__ = 'roland'
 
-
 RESPONSE = 0
 WEBFINGER = 1
 DISCOVER = 2
 REGISTER = 3
 CRYPTO = 4
 EXTRAS = 5
+
 
 def from_code(code):
     # Of the form <typ>.<disc>.<reg>.*['+'/'n'/'s'/'se']
@@ -78,7 +78,7 @@ def map_prof(a, b):
                 if a[n] != b[n]:
                     return False
     except IndexError:
-        print("Too short a:{}, b:{}".format(a,b))
+        print("Too short a:{}, b:{}".format(a, b))
         raise
 
     if len(a) > CRYPTO:
@@ -149,6 +149,7 @@ def extras(flow_set, profile_map):
 
     _all.sort()
     return _all
+
 
 RT = {"C": "code", "I": "id_token", "T": "token"}
 OC = {"T": "config", "F": "no-config"}
@@ -233,5 +234,3 @@ def make_list(flows, profile, **kw_args):
             res.append(tid)
 
     return res
-
-

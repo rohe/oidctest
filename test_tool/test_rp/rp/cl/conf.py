@@ -1,7 +1,7 @@
 __author__ = 'roland'
 
 PORT = 8088
-#BASE = "https://130.239.144.143:" + str(PORT) + "/"
+# BASE = "https://130.239.144.143:" + str(PORT) + "/"
 BASE = "https://localhost:" + str(PORT) + "/"
 
 # If BASE is https these has to be specified
@@ -11,7 +11,7 @@ CA_BUNDLE = None
 VERIFY_SSL = False
 
 ISSUER = "https://localhost:8080/"
-#ISSUER = "https://rp.certification.openid.net:8080/"
+# ISSUER = "https://rp.certification.openid.net:8080/"
 
 KEY_EXPORT_URL = "%sstatic/jwk.json" % BASE
 
@@ -31,7 +31,7 @@ keys = [
 ]
 
 INFO = {
-    "client":{
+    "client": {
         "redirect_uris": ["%sauthz_cb" % BASE],
         "application_type": "web",
         "contact": ["foo@example.com"]

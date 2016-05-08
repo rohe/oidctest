@@ -289,8 +289,9 @@ def conditional_expect(oper, args):
             except KeyError:
                 pass
 
+
 def conditional_excecution(oper, arg):
-    for key,val in arg.items():
+    for key, val in arg.items():
         if key == 'profile':
             if map_prof(oper.profile, val.split('.')):
                 oper.skip = True

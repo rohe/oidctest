@@ -6,53 +6,71 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var REJECTION_ALLOWED = "(rejection allowed)"
     var ALT_TO_HDR_METHOD = "(alt to hdr method)"
 
-    var BASIC = {"text" : "Basic"}
-    var BASIC_OPTIONAL = {"text" : BASIC.text, "optional_text": OPTIONAL}
-    var BASIC_ALT_TO_HDR_METHOD = {"text" : BASIC.text, "optional_text": ALT_TO_HDR_METHOD}
+    var BASIC = {"text": "Basic"}
+    var BASIC_OPTIONAL = {"text": BASIC.text, "optional_text": OPTIONAL}
+    var BASIC_ALT_TO_HDR_METHOD = {
+        "text": BASIC.text,
+        "optional_text": ALT_TO_HDR_METHOD
+    }
 
-    var IMPLICIT = {"text" : "Implicit"}
-    var IMPLICIT_OPTIONAL = {"text" : IMPLICIT.text, "optional_text": OPTIONAL}
-    var IMPLICIT_REJECTION_ALLOWED = {"text" : IMPLICIT.text, "optional_text": REJECTION_ALLOWED}
-    var IMPLICIT_ALT_TO_HDR_METHOD = {"text" : IMPLICIT.text, "optional_text": ALT_TO_HDR_METHOD}
+    var IMPLICIT = {"text": "Implicit"}
+    var IMPLICIT_OPTIONAL = {"text": IMPLICIT.text, "optional_text": OPTIONAL}
+    var IMPLICIT_REJECTION_ALLOWED = {
+        "text": IMPLICIT.text,
+        "optional_text": REJECTION_ALLOWED
+    }
+    var IMPLICIT_ALT_TO_HDR_METHOD = {
+        "text": IMPLICIT.text,
+        "optional_text": ALT_TO_HDR_METHOD
+    }
 
-    var HYBRID = {"text" :"Hybrid"}
-    var HYBRID_OPTIONAL = {"text" : HYBRID.text, "optional_text": OPTIONAL}
-    var HYBRID_REJECTION_ALLOWED = {"text" : HYBRID.text, "optional_text": REJECTION_ALLOWED}
-    var HYBRID_ALT_TO_HDR_METHOD = {"text" : HYBRID.text, "optional_text": ALT_TO_HDR_METHOD}
+    var HYBRID = {"text": "Hybrid"}
+    var HYBRID_OPTIONAL = {"text": HYBRID.text, "optional_text": OPTIONAL}
+    var HYBRID_REJECTION_ALLOWED = {
+        "text": HYBRID.text,
+        "optional_text": REJECTION_ALLOWED
+    }
+    var HYBRID_ALT_TO_HDR_METHOD = {
+        "text": HYBRID.text,
+        "optional_text": ALT_TO_HDR_METHOD
+    }
 
-    var SELF_ISSUED = {"text" :"Self-issued"}
-    var SELF_ISSUED_OPTIONAL = {"text" : SELF_ISSUED.text, "optional_text": OPTIONAL}
+    var SELF_ISSUED = {"text": "Self-issued"}
+    var SELF_ISSUED_OPTIONAL = {
+        "text": SELF_ISSUED.text,
+        "optional_text": OPTIONAL
+    }
 
-    var CONFIG = {"text" :"Config"}
-    var CONFIG_OPTIONAL = {"text" : CONFIG.text, "optional_text": OPTIONAL}
+    var CONFIG = {"text": "Config"}
+    var CONFIG_OPTIONAL = {"text": CONFIG.text, "optional_text": OPTIONAL}
 
-    var DYNAMIC = {"text" :"Dynamic"}
-    var DYNAMIC_OPTIONAL = {"text" : DYNAMIC.text, "optional_text": OPTIONAL}
+    var DYNAMIC = {"text": "Dynamic"}
+    var DYNAMIC_OPTIONAL = {"text": DYNAMIC.text, "optional_text": OPTIONAL}
 
     $scope.profiles = [
-        {profile: 'All tests' },
-        {profile: BASIC.text },
-        {profile: IMPLICIT.text },
-        {profile: HYBRID.text },
-        {profile: SELF_ISSUED.text },
-        {profile: CONFIG.text },
+        {profile: 'All tests'},
+        {profile: BASIC.text},
+        {profile: IMPLICIT.text},
+        {profile: HYBRID.text},
+        {profile: SELF_ISSUED.text},
+        {profile: CONFIG.text},
         {profile: DYNAMIC.text}
     ];
 
     $scope.selectedItem = $scope.profiles[0];
 
-    $scope.contains_selected_profile = function(profile_list){
+    $scope.contains_selected_profile = function (profile_list) {
 
-        if ($scope.selectedItem == $scope.profiles[0]){
+        if ($scope.selectedItem == $scope.profiles[0]) {
             return true;
         }
 
-        if (profile_list == null){
+        if (profile_list == null) {
             return false;
         }
 
-        for (var i=0; i<profile_list.length; i++){
-            if ($scope.selectedItem.profile == profile_list[i].text){
+        for (var i = 0; i < profile_list.length; i++) {
+            if ($scope.selectedItem.profile == profile_list[i].text) {
                 return true;
             }
         }
@@ -60,7 +78,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         return false;
     };
 
-    $scope.get_3rd_party_test = function() {
+    $scope.get_3rd_party_test = function () {
         var test_adress = window.location.href
         test_adress = test_adress.split("/")
         test_adress = test_adress[0] + "//" + test_adress[2] + "/3rd_party_init_login"
@@ -172,8 +190,8 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             "RP-discovery-issuer_not_matching_config": {
                 "short_description": "Rejects discovered issuer not matching provider configuration issuer",
                 "profiles": [CONFIG, DYNAMIC],
-                "detailed_description": "Retrieve "+ OPENID_CONFIGURATION_INFORMATION +" for OpenID Provider from the " +
-                ".well-known/openid-configuration path. Verify that the issuer in the "+ PROVIDER_CONFIGURATION +" matches the one returned by WebFinger.",
+                "detailed_description": "Retrieve " + OPENID_CONFIGURATION_INFORMATION + " for OpenID Provider from the " +
+                ".well-known/openid-configuration path. Verify that the issuer in the " + PROVIDER_CONFIGURATION + " matches the one returned by WebFinger.",
                 "expected_result": "Identify that the issuers are not matching and reject the provider configuration."
             },
             "RP-discovery-openid_configuration": {
@@ -200,7 +218,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             "RP-registration-redirect_uris": {
                 "short_description": "Registration request has redirect_uris",
                 "profiles": [DYNAMIC],
-                "detailed_description": "Set the redirect_uris parameter of the "+ CLIENT_METADATA +" in a registration request.",
+                "detailed_description": "Set the redirect_uris parameter of the " + CLIENT_METADATA + " in a registration request.",
                 "expected_result": "Get a " + CLIENT_REGISTRATION_RESPONSE + "."
             },
             "RP-registration-well_formed_jwk": {
@@ -212,7 +230,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             "RP-registration-uses_https_endpoints": {
                 "short_description": "Uses HTTPS for all endpoints",
                 "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
-                "detailed_description": "Only register URLs using the https scheme for all endpoints in the " +  CLIENT_METADATA + ".",
+                "detailed_description": "Only register URLs using the https scheme for all endpoints in the " + CLIENT_METADATA + ".",
                 "expected_result": "No endpoints not supporting HTTPS."
             }
         }],
@@ -227,20 +245,20 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "short_description": "Can make request using response_type 'id_token'",
                 "profiles": [IMPLICIT],
                 "detailed_description": "Make an authentication request using the " + IMPLICIT_FLOW +
-                ", specifying the "+ RESPONSE_TYPE +" as 'id_token'."  ,
+                ", specifying the " + RESPONSE_TYPE + " as 'id_token'.",
                 "expected_result": "An " + IMPLICIT_AUTHENTICATION_RESPONSE + " containing an " + ID_TOKEN_IMPLICIT_FLOW + "."
             },
             "RP-response_type-id_token+token": {
                 "short_description": "Can make request using response_type 'id_token token'",
                 "profiles": [IMPLICIT],
                 "detailed_description": "Make an authentication request using the " + IMPLICIT_FLOW +
-                ", specifying the "+ RESPONSE_TYPE +" as 'id_token token'"  ,
+                ", specifying the " + RESPONSE_TYPE + " as 'id_token token'",
                 "expected_result": "An " + IMPLICIT_AUTHENTICATION_RESPONSE + " containing an " + ID_TOKEN_IMPLICIT_FLOW + " and an Access Token."
             },
             "RP-response_mode-form_post": {
                 "short_description": "Can make request using response_type='id_token token' and response_mode='form_post'",
-                "detailed_description": "Make an authentication request with the "+ RESPONSE_TYPE +
-                " set to 'id_token token' and the "+ RESPONSE_MODE +" set to " + FORM_POST + ".",
+                "detailed_description": "Make an authentication request with the " + RESPONSE_TYPE +
+                " set to 'id_token token' and the " + RESPONSE_MODE + " set to " + FORM_POST + ".",
                 "expected_result": "HTML form post response processed, resulting in query encoded parameters."
             },
             "RP-response_type-self_issued": {
@@ -253,13 +271,13 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         ["Claims Request Parameter", {
             "RP-claims_request-id_token_claims": {
                 "short_description": "Can request and use claims in ID Token using the 'claims' request parameter",
-                "detailed_description": "Ask for the claim 'name' using the "+ CLAIMS_REQUEST_PARAMETER +
+                "detailed_description": "Ask for the claim 'name' using the " + CLAIMS_REQUEST_PARAMETER +
                 ". Retrieve the claim from an ID Token, either by making a " + TOKEN_REQUEST + " or by using " + IMPLICIT_FLOW + ".",
                 "expected_result": "An " + ID_TOKEN + " containing the requested claim."
             },
             "RP-claims_request-userinfo_claims": {
                 "short_description": "Can request and use claims in UserInfo Response using the 'claims' request parameter",
-                "detailed_description": "Ask for the claim 'name' using the "+ CLAIMS_REQUEST_PARAMETER +
+                "detailed_description": "Ask for the claim 'name' using the " + CLAIMS_REQUEST_PARAMETER +
                 ". Retrieve the claims by making a " + USERINFO_REQUEST + ".",
                 "expected_result": "A " + USERINFO_RESPONSE + " containing the requested claim."
             }
@@ -267,35 +285,35 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         ["request_uri Request Parameter", {
             "RP-request_uri-enc": {
                 "short_description": "Can use request_uri request parameter with encrypted request",
-                "detailed_description": "Pass a "+ REQUEST_OBJECT_BY_REFERENCE + ", using the " +
-                "request_uri parameter. " + ENCRYPT_THE_REQUEST_OBJECT +" using the 'RSA1_5' and 'A128CBC-HS256' algorithms.",
+                "detailed_description": "Pass a " + REQUEST_OBJECT_BY_REFERENCE + ", using the " +
+                "request_uri parameter. " + ENCRYPT_THE_REQUEST_OBJECT + " using the 'RSA1_5' and 'A128CBC-HS256' algorithms.",
                 "expected_result": "An authentication response to the encrypted request passed using the request_uri request parameter."
             },
             "RP-request_uri-sig+enc": {
                 "short_description": "Can use request_uri request parameter with signed and encrypted request",
-                "detailed_description": "Pass a "+ REQUEST_OBJECT_BY_REFERENCE +", using the " +
-                "request_uri parameter. "+ SIGN_THE_REQUEST_OBJECT +" using the 'RS256' algorithm, then " + ENCRYPT_THE_REQUEST_OBJECT +" using the 'RSA1_5' and 'A128CBC-HS256' algorithms.",
+                "detailed_description": "Pass a " + REQUEST_OBJECT_BY_REFERENCE + ", using the " +
+                "request_uri parameter. " + SIGN_THE_REQUEST_OBJECT + " using the 'RS256' algorithm, then " + ENCRYPT_THE_REQUEST_OBJECT + " using the 'RSA1_5' and 'A128CBC-HS256' algorithms.",
                 "expected_result": "An authentication response to the signed and encrypted request passed using the request_uri request parameter."
             },
             "RP-request_uri-unsigned": {
                 "short_description": "Can use request_uri request parameter with unsigned request",
                 "profiles": [DYNAMIC_OPTIONAL],
-                "detailed_description": "Pass a "+ REQUEST_OBJECT_BY_REFERENCE +", using the " +
-                "request_uri parameter. The Request Object should be signed using the algorithm 'none' (" +UNSECURED_JWS + ").",
+                "detailed_description": "Pass a " + REQUEST_OBJECT_BY_REFERENCE + ", using the " +
+                "request_uri parameter. The Request Object should be signed using the algorithm 'none' (" + UNSECURED_JWS + ").",
                 "expected_result": "An authentication response to the unsigned request passed using the request_uri request parameter."
             },
             "RP-request_uri-sig": {
                 "short_description": "Can use request_uri request parameter with signed request",
                 "profiles": [DYNAMIC_OPTIONAL],
-                "detailed_description": "Pass a "+ REQUEST_OBJECT_BY_REFERENCE + ", using the " +
-                "request_uri parameter. "+ SIGN_THE_REQUEST_OBJECT +" using the 'RS256' algorithm.",
+                "detailed_description": "Pass a " + REQUEST_OBJECT_BY_REFERENCE + ", using the " +
+                "request_uri parameter. " + SIGN_THE_REQUEST_OBJECT + " using the 'RS256' algorithm.",
                 "expected_result": "An authentication response to the signed request passed using the request_uri request parameter."
             }
         }],
         ["Third Party Initiated Login", {
             "RP-support_3rd_party_init_login": {
                 "short_description": "Supports third-party initiated login",
-                "detailed_description": "Receive a "+ THIRD_PARTY_INITIATED_LOGIN +" request and send authentication request to the specified OpenID Connect Provider. " +
+                "detailed_description": "Receive a " + THIRD_PARTY_INITIATED_LOGIN + " request and send authentication request to the specified OpenID Connect Provider. " +
                 "Go to " + THIRD_PARTY_LOGIN_TEST + " to start the test",
                 "expected_result": "An authentication response."
             }
@@ -304,7 +322,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             "RP-scope-contains_openid_scope": {
                 "short_description": "'openid' scope value should be present in the Authentication Request",
                 "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
-                "detailed_description": "Always add the "+ OPENID_SCOPE + " value when sending an Authentication Request.",
+                "detailed_description": "Always add the " + OPENID_SCOPE + " value when sending an Authentication Request.",
                 "expected_result": "An authentication response."
             },
             "RP-scope-userinfo_claims": {
@@ -385,7 +403,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             "RP-id_token-bad_c_hash": {
                 "short_description": "Rejects ID Token with incorrect 'c_hash' claim when hybrid flow is used",
                 "profiles": [HYBRID],
-                "detailed_description": "Retrieve Authorization Code and ID Token from the Authorization Endpoint, using " + HYBRID_FLOW + ". Verify the "+ C_HASH +" value in the returned ID token. 'id_token_signed_response_alg' must NOT be 'none'",
+                "detailed_description": "Retrieve Authorization Code and ID Token from the Authorization Endpoint, using " + HYBRID_FLOW + ". Verify the " + C_HASH + " value in the returned ID token. 'id_token_signed_response_alg' must NOT be 'none'",
                 "expected_result": "Identify the incorrect 'c_hash' value and reject the ID Token after doing " + AUTHORIZATION_CODE_VALIDATION + "."
             },
             "RP-id_token-bad_at_hash": {
@@ -414,7 +432,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             "RP-id_token-aud": {
                 "short_description": "Rejects ID Token with invalid 'aud' claim",
                 "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
-                "detailed_description": "Request an ID token and compare its "+ AUD +" value to the Relying Party's '" + CLIENT_ID + "'.",
+                "detailed_description": "Request an ID token and compare its " + AUD + " value to the Relying Party's '" + CLIENT_ID + "'.",
                 "expected_result": "Identify that the 'aud' value is missing or doesn't match the 'client_id' and reject the ID Token after doing " + ID_TOKEN_VALIDATION + "."
 
             },
@@ -447,19 +465,19 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             "RP-key_rotation-rp_sign_key": {
                 "short_description": "Can rotate signing keys",
                 "profiles": [DYNAMIC],
-                "detailed_description": "Make a " + SIGNED_REQUEST + ". " + ROTATE_SIGNING_KEYS +" at the Relying Party's 'jwks_uri' after it has been used by OpenID Connect Provider. " +
+                "detailed_description": "Make a " + SIGNED_REQUEST + ". " + ROTATE_SIGNING_KEYS + " at the Relying Party's 'jwks_uri' after it has been used by OpenID Connect Provider. " +
                 "Make a new signed authentication request.",
                 "expected_result": "The OpenID Connect Provider successfully uses the rotated signing key: a successful authentication response to both authentication requests signed using the rotated signing key."
             },
             "RP-key_rotation-op_enc_key": {
                 "short_description": "Supports rotation of provider's asymmetric encryption keys",
-                "detailed_description": "Fetch the issuer's keys from the 'jwks_uri' and make an " + ENCRYPTED_REQUEST +  " using the issuer's encryption keys. " +
+                "detailed_description": "Fetch the issuer's keys from the 'jwks_uri' and make an " + ENCRYPTED_REQUEST + " using the issuer's encryption keys. " +
                 "Fetch the issuer's keys from the jwks_uri again, and make a new encrypted request using the rotated encryption keys.",
                 "expected_result": "A successful authentication response to both authentication requests encrypted using rotated encryption keys."
             },
             "RP-key_rotation-rp_enc_key": {
                 "short_description": "Can rotate encryption keys",
-                "detailed_description": "Request an encrypted ID Token and decrypt it. " + ROTATE_ENCRYPTION_KEYS +" at the Relying Party's 'jwks_uri' after it has been used by the OpenID Connect Provider. " +
+                "detailed_description": "Request an encrypted ID Token and decrypt it. " + ROTATE_ENCRYPTION_KEYS + " at the Relying Party's 'jwks_uri' after it has been used by the OpenID Connect Provider. " +
                 "Make a new request for an encrypted ID Token and decrypt it using the rotated decryption key.",
                 "expected_result": "The OpenID Connect Provider successfully uses the rotated key: the first ID Token can decrypted using the first key and the second ID Token can be decrypted using the rotated key."
             }
@@ -489,32 +507,32 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "detailed_description": "Pass the access token as a " + FORM_ENCODED_BODY_PARAMETER + " while doing the " + USERINFO_REQUEST + ".",
                 "expected_result": "A " + USERINFO_RESPONSE + "."
             },
-            "RP-user_info-not_query":{
+            "RP-user_info-not_query": {
                 "short_description": "Does not send Access Token as URI query parameter",
                 "profiles": [BASIC, IMPLICIT, HYBRID],
-                "detailed_description": "Make a "+ USERINFO_REQUEST +" without sending the Access Token in the HTTP request URI.",
+                "detailed_description": "Make a " + USERINFO_REQUEST + " without sending the Access Token in the HTTP request URI.",
                 "expected_result": "A successful " + USERINFO_RESPONSE + " without passing the Access Token as a query parameter."
             },
-            "RP-user_info-sign":{
+            "RP-user_info-sign": {
                 "short_description": "Can request and use signed UserInfo Response",
                 "profiles": [CONFIG_OPTIONAL, DYNAMIC_OPTIONAL],
                 "detailed_description": "Request signed UserInfo.",
                 "expected_result": "Successful signature verification of the " + USERINFO_RESPONSE + "."
             },
-            "RP-user_info-sig+enc":{
+            "RP-user_info-sig+enc": {
                 "short_description": "Can request and use signed and encrypted UserInfo Response",
                 "detailed_description": "Request signed and encrypted UserInfo. Decrypt the " + USERINFO_RESPONSE + " and verify its signature.",
                 "expected_result": "Successful decryption and signature verification of the " + USERINFO_RESPONSE + "."
             },
-            "RP-user_info-enc":{
+            "RP-user_info-enc": {
                 "short_description": "Can request and use encrypted UserInfo Response",
                 "detailed_description": "Request encrypted UserInfo. Decrypt the " + USERINFO_RESPONSE + ".",
                 "expected_result": "A " + USERINFO_RESPONSE + "."
             },
-            "RP-user_info-bad_sub_claim":{
+            "RP-user_info-bad_sub_claim": {
                 "short_description": "Rejects UserInfo Response with invalid 'sub' claim",
                 "profiles": [BASIC, IMPLICIT, HYBRID],
-                "detailed_description": "Make a " + USERINFO_REQUEST + " and verify the 'sub' value of the "+ USERINFO_RESPONSE + " by " + USER_INFO_SUB_CLAIM + ".",
+                "detailed_description": "Make a " + USERINFO_REQUEST + " and verify the 'sub' value of the " + USERINFO_RESPONSE + " by " + USER_INFO_SUB_CLAIM + ".",
                 "expected_result": "Identify the invalid 'sub' value and reject the UserInfo Response."
             }
         }]
@@ -553,7 +571,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         return '<a href=' + url + ' target="_blank">' + url + '</a>';
     }
 
-    function list_all_tests(){
+    function list_all_tests() {
         var all_tests = [];
         var tests = [];
         for (var j = 0; j < $scope.guidlines.length; j++) {
