@@ -17,6 +17,16 @@ def set_start_page(oper, args):
     oper.start_page = _url + '?' + urlencode(_args)
 
 
+def set_op(oper, args):
+    _op = oper.conv.entity
+    for key, val in args.items():
+        _attr = getattr(_op, key)
+        if isinstance(_attr, dict):
+            _attr.update(val)
+        else:
+            _attr = val
+
+
 def factory(name):
     for fname, obj in inspect.getmembers(sys.modules[__name__]):
         if inspect.isfunction(obj):
