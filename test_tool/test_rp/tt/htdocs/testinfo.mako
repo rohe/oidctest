@@ -10,6 +10,15 @@
     return "\n".join(elements)
 %>
 
+<%!
+  def print_dict(obj):
+    elements = ['<table>']
+    for k,v in obj.items():
+      elements.append('<tr><td>{}</td><td>{}</td></tr>'.format(k,v))
+    elements.append('</table')
+    return "\n".join(elements)
+%>
+
 
 <!DOCTYPE html>
 <html>
@@ -63,16 +72,15 @@
 <body>
 <!-- Main component for a primary marketing message or call to action -->
 <div class="jumbotron">
+  ${print_dict(profile)}
   <hr>
-  % if http_result != '':
-    % if http_result.startswith('4') or http_result.startswith('5'):
-      <b style="color:red">${http_result}</b>
-    % else:
-      <b style="color:green">${http_result}</b>
-    % endif
-  % endif
+  % for item in trace:
+    ${item}<br>
+  % endfor
   <hr>
   ${events}
+  <hr>
+  ${result}
 </div>
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="/static/jquery.min.1.9.1.js"></script>
