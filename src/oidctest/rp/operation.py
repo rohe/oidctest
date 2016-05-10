@@ -10,8 +10,8 @@ from aatest.events import EV_PROTOCOL_RESPONSE
 from aatest.events import EV_REDIRECT_URL
 from aatest.events import EV_REQUEST
 from aatest.verify import Verify
-from future.backports.http.cookies import SimpleCookie, CookieError
-from oic.oauth2.exception import NonFatalException
+from future.backports.http.cookies import CookieError
+from future.backports.http.cookies import SimpleCookie
 from oic.oauth2.util import set_cookie
 
 from oic.oic import message
