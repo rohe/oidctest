@@ -36,9 +36,10 @@ from otest.aus.request import AsyncGetRequest
 from otest.aus.request import SyncPostRequest
 from otest.aus.request import same_issuer
 
-from oidctest.op.prof_util import WEBFINGER, RESPONSE
 from oidctest.op.prof_util import DISCOVER
 from oidctest.op.prof_util import REGISTER
+from oidctest.op.prof_util import RESPONSE
+from oidctest.op.prof_util import WEBFINGER
 
 __author__ = 'roland'
 
