@@ -39,6 +39,20 @@ Flows:
                 status_code:
                   - 302
                   - 303
+          set_configuration:
+            userinfo_signing_alg_values_supported:
+              - HS256
+            request_object_signing_alg_values_supported:
+              - HS256
+            id_token_signing_alg_values_supported:
+              - HS256
+            token_endpoint_auth_signing_alg_values_supported:
+              - HS256
+          set_op:
+            jwx_def:
+              signing_alg:
+                id_token: HS256
+                userinfo: HS256
       - ConfigurationResponse
       - RegistrationResponse:
           add_pre_condition:

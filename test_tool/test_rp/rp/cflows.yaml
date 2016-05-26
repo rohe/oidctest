@@ -120,7 +120,7 @@ Flows:
                   - token
                 -
                   - code
-                  - id_token
+                  - mode-form_post
                   - token
                 -
                   - id_token
@@ -395,6 +395,50 @@ Flows:
           conditional_excecution:
             profile: 'CIT,IT,I,T...'
           expect_exception: MissingRequiredAttribute
+  RP-id_token-bad_c_hash:
+    desc: The Relying Party should request an ID token and reject it if the
+      c_hash claim is incorrect
+    profile: 'CIT,CI...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: null
+      - Discovery:
+          set_discovery_issuer: null
+      - Registration
+      - SyncAuthn:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                -
+                  - code
+                  - id_token
+                  - token
+                -
+                  - code
+                  - id_token
+            exception: CHashError
+  RP-id_token-bad_at_hash:
+    desc: The Relying Party should request an ID token and reject it if the
+      at_hash claim is incorrect
+    profile: 'CIT,IT...'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: null
+      - Discovery:
+          set_discovery_issuer: null
+      - Registration
+      - SyncAuthn:
+          conditional_expect_exception:
+            condition:
+              response_type:
+                -
+                  - code
+                  - id_token
+                  - token
+                -
+                  - id_token
+                  - token
+            exception: AtHashError
   RP-id_token-sym_sig:
     desc: Accept Valid Symmetric ID Token Signature
     profile: I...T

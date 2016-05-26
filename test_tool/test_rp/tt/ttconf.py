@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 from aatest.parse_cnf import parse_yaml_conf
-from oic.oic import message, ProviderConfigurationResponse
+from oic.oic import ProviderConfigurationResponse
 from oic.oic.provider import AuthorizationEndpoint
 from oic.oic.provider import TokenEndpoint
 from oic.oic.provider import RegistrationEndpoint
 from oic.oic.provider import UserinfoEndpoint
 
-from otest.rp.setup import main_setup
+from otest.rp import operation
+from otest.rp import func
+from otest.rp import check
+
 from otest.rp.endpoints import authorization
 from otest.rp.endpoints import css
 from otest.rp.endpoints import op_info
@@ -14,11 +17,10 @@ from otest.rp.endpoints import registration
 from otest.rp.endpoints import token
 from otest.rp.endpoints import webfinger
 from otest.rp.endpoints import userinfo
+from otest.rp.setup import main_setup
 
-from oidctest.rp import check
-from oidctest.rp import func
-from oidctest.rp import operation
 from oidctest.rp.provider import Provider
+
 
 # baseurl = "https://130.239.200.165"
 

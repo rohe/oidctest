@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-python3 ../../../otest/script/testtool.py -k -p 8092 -t tests.json -P profiles.json ttconf
+python3 ../../../otest/script/testtool.py -y flows.yaml -p C  -P 8091 -s -O profiles.json ttconf

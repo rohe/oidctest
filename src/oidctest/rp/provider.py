@@ -106,6 +106,20 @@ class Provider(provider.Provider):
                 setattr(self, param, kwargs[param])
             except KeyError:
                 pass
+        self.jwx_def = {}
+        self.build_jwx_def()
+
+    def build_jwx_def(self):
+        self.jwx_def = {}
+
+        for _typ in ["signing_alg", "encryption_alg", "encryption_enc"]:
+            self.jwx_def[_typ] = {}
+            for item in ["id_token", "userinfo"]:
+                cap_param = '{}_{}_values_supported'.format(item, _typ)
+                try:
+                    self.jwx_def[_typ][item] = self.capabilities[cap_param][0]
+                except KeyError:
+                    self.jwx_def[_typ][item] = ""
 
     def sign_encrypt_id_token(self, sinfo, client_info, areq, code=None,
                               access_token=None, user_info=None):
@@ -252,7 +266,11 @@ class Provider(provider.Provider):
                 )
 
         client_id = _req["client_id"][0]
-        if 'id_token' in _scopes:
+        _rtypes = []
+        for rt in _req['response_type']:
+            _rtypes.extend(rt.split(' '))
+
+        if 'id_token' in _rtypes:
             try:
                 self._update_client_keys(client_id)
             except TestError:
