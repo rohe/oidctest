@@ -8,8 +8,6 @@ import argparse
 import logging
 import sys
 
-from future.backports.urllib.parse import urlparse
-
 from oic.utils.keyio import build_keyjar
 from oic.oic.message import factory as oic_message_factory
 
@@ -65,13 +63,13 @@ if __name__ == '__main__':
     from cherrypy import wsgiserver
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-m', dest='mailaddr')
     parser.add_argument('-o', dest='operations')
     parser.add_argument('-f', dest='flows', action='append')
     parser.add_argument('-p', dest='profile')
     parser.add_argument('-P', dest='profiles')
     parser.add_argument('-M', dest='makodir')
     parser.add_argument('-S', dest='staticdir')
+    parser.add_argument('-s', dest='tls', action='store_true')
     parser.add_argument(dest="config")
     args = parser.parse_args()
 
@@ -127,10 +125,10 @@ if __name__ == '__main__':
     #KEY_EXPORT_URL = "%sstatic/jwk.json" % BASE
 
     # export JWKS
-    f = open(_sdir, "w")
+    f = open('{}/jwks_{}.json'.format(_sdir, CONF.PORT), "w")
     f.write(json.dumps(jwks))
     f.close()
-    jwks_uri = "%sstatic/jwk.json" % CONF.BASE
+    jwks_uri = "{}static/jwk_{}.json".format(CONF.BASE, CONF.PORT)
 
     # MAKO setup
     if args.makodir:
@@ -145,6 +143,7 @@ if __name__ == '__main__':
                             input_encoding='utf-8',
                             output_encoding='utf-8')
 
+    # Application arguments
     app_args = {"base_url": CONF.BASE, "kidd": kidd, "keyjar": keyjar,
                 "jwks_uri": jwks_uri, "flows": fdef['Flows'], "conf": CONF,
                 "cinfo": CONF.INFO, "order": fdef['Order'],
@@ -160,7 +159,7 @@ if __name__ == '__main__':
     SRV = wsgiserver.CherryPyWSGIServer(
         ('0.0.0.0', CONF.PORT), SessionMiddleware(WA.application, session_opts))
 
-    if CONF.BASE.startswith("https"):
+    if args.tls:
         from cherrypy.wsgiserver.ssl_builtin import BuiltinSSLAdapter
 
         SRV.ssl_adapter = BuiltinSSLAdapter(CONF.SERVER_CERT, CONF.SERVER_KEY,
@@ -169,7 +168,7 @@ if __name__ == '__main__':
     else:
         extra = ""
 
-    txt = "RP server starting listening on port:%s%s" % (CONF.PORT, extra)
+    txt = "OP test server started, listening on port:%s%s" % (CONF.PORT, extra)
     logger.info(txt)
     print(txt)
     try:
