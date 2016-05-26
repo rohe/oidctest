@@ -68,9 +68,10 @@ if __name__ == '__main__':
     parser.add_argument('-m', dest='mailaddr')
     parser.add_argument('-o', dest='operations')
     parser.add_argument('-f', dest='flows', action='append')
-    parser.add_argument('-d', dest='directory')
     parser.add_argument('-p', dest='profile')
     parser.add_argument('-P', dest='profiles')
+    parser.add_argument('-M', dest='makodir')
+    parser.add_argument('-S', dest='staticdir')
     parser.add_argument(dest="config")
     args = parser.parse_args()
 
@@ -109,27 +110,35 @@ if __name__ == '__main__':
     else:
         from oidctest.op import oper as operations
 
-    if args.directory:
-        _dir = args.directory
-        if not _dir.endswith("/"):
-            _dir += "/"
-    else:
-        _dir = "./"
 
     if args.profile:
         TEST_PROFILE = args.profile
     else:
-        TEST_PROFILE = "C.T.T.ns"
+        TEST_PROFILE = "C.T.T.T.ns"
 
     # Add own keys for signing/encrypting JWTs
     jwks, keyjar, kidd = build_keyjar(CONF.keys)
 
+    if args.staticdir:
+        _sdir = args.staticdir
+    else:
+        _sdir = './static'
+
+    #KEY_EXPORT_URL = "%sstatic/jwk.json" % BASE
+
     # export JWKS
-    p = urlparse(CONF.KEY_EXPORT_URL)
-    f = open("." + p.path, "w")
+    f = open(_sdir, "w")
     f.write(json.dumps(jwks))
     f.close()
-    jwks_uri = p.geturl()
+    jwks_uri = "%sstatic/jwk.json" % CONF.BASE
+
+    # MAKO setup
+    if args.makodir:
+        _dir = args.makodir
+        if not _dir.endswith("/"):
+            _dir += "/"
+    else:
+        _dir = "./"
 
     LOOKUP = TemplateLookup(directories=[_dir + 'templates', _dir + 'htdocs'],
                             module_directory=_dir + 'modules',

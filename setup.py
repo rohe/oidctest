@@ -40,4 +40,5 @@ setup(
         "requests >= 2.0.0", 'future',
     ],
     zip_safe=False,
+    scripts=['script/optest.py']
 )
