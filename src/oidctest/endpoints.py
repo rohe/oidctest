@@ -3,6 +3,8 @@ import os
 from future.backports.urllib.parse import parse_qs
 from future.backports.urllib.parse import urlparse
 
+from oic.oauth2.provider import error_response
+
 from oic.utils.http_util import extract_from_request
 from oic.utils.http_util import Response
 from oic.utils.http_util import Unauthorized
@@ -12,7 +14,10 @@ from oic.utils.http_util import BadRequest
 from oic.utils.webfinger import OIC_ISSUER
 from oic.utils.webfinger import WebFinger
 
-from oidctest.rp import pathmap
+from aatest import jlog, resp2json
+
+#from oidctest.rp import pathmap
+from oidctest.rp import test_config
 
 __author__ = 'roland'
 
@@ -57,16 +62,27 @@ def find_identifier(uri):
 
 def wsgi_wrapper(environ, start_response, func, session_info, trace, **kwargs):
     kwargs = extract_from_request(environ)
+
+    kwargs['test_cnf'] = test_config.CONF[kwargs['path'].split('/')[1].lower()]
+    if func.__name__ in kwargs['test_cnf']['out_of_scope']:
+        return error_response(
+            error='incorrect_behavior',
+            descr='You should not talk to this endpoint in this test')
+
     trace.request(kwargs["request"])
+    jlog(LOGGER, 'info', {func.__name__: kwargs})
     args = func(**kwargs)
 
     try:
         resp, state = args
+        jlog(LOGGER, 'info',
+             {'{}-resp'.format(func.__name__): resp2json(resp), 'state': state})
         trace.reply(resp.message)
         dump_log(session_info, trace)
         return resp(environ, start_response)
     except TypeError:
         resp = args
+        jlog(LOGGER, 'info', {'{}-resp'.format(func.__name__): resp2json(resp)})
         trace.reply(resp.message)
         dump_log(session_info, trace)
         return resp(environ, start_response)
@@ -80,6 +96,7 @@ def wsgi_wrapper(environ, start_response, func, session_info, trace, **kwargs):
 # noinspection PyUnusedLocal
 def token(environ, start_response, session_info, trace, **kwargs):
     trace.info(HEADER % "AccessToken")
+    jlog(LOGGER, 'info', {'operation': 'token'})
     _op = session_info["op"]
 
     return wsgi_wrapper(environ, start_response, _op.token_endpoint,
@@ -151,12 +168,15 @@ def endsession(environ, start_response, session_info, trace, **kwargs):
 def webfinger(environ, start_response, session_info, trace, **kwargs):
     query = parse_qs(environ["QUERY_STRING"])
 
+    jlog(LOGGER, 'info', {'webfinger': query})
+
     # Find the identifier
     session_info["test_id"] = find_identifier(query["resource"][0])
 
     trace.info(HEADER % "WebFinger")
     trace.request(environ["QUERY_STRING"])
     trace.info("QUERY: %s" % (query,))
+
 
     try:
         assert query["rel"] == [OIC_ISSUER]
@@ -175,10 +195,10 @@ def webfinger(environ, start_response, session_info, trace, **kwargs):
 
         if p.scheme == "acct":
             l, _ = p.path.split("@")
-            path = pathmap.IDMAP[l.lower()]
+            path = test_config.CONF[l.lower()]['path']
         else:  # scheme == http/-s
             try:
-                path = pathmap.IDMAP[p.path[1:].lower()]
+                path = test_config.CONF[p.path[1:].lower()]['path']
             except KeyError:
                 path = None
 
