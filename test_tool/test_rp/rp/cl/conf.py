@@ -18,12 +18,12 @@ KEY_EXPORT_URL = "%sstatic/jwk.json" % BASE
 keys = [
     {
         "type": "RSA",
-        "key": "../keys/rp_enc_key",
+        "key": "../keys/pyoidc_enc",
         "use": ["enc"],
     },
     {
         "type": "RSA",
-        "key": "../keys/rp_sign_key",
+        "key": "../keys/pyoidc_sig",
         "use": ["sig"],
     },
     {"type": "EC", "crv": "P-256", "use": ["sig"]},
