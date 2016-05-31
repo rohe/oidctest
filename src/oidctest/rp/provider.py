@@ -35,6 +35,20 @@ def sort_string(string):
     return "".join(_l)
 
 
+def response_type_cmp(allowed, offered):
+    ort = [set(r.split(' ')) for r in offered]
+    n = 0
+    for rt in allowed:
+        _rt = set(rt.split(' '))
+        if _rt in ort:
+            n += 1
+
+    if n == len(ort):
+        return True
+    else:
+        return False
+
+
 class Server(oic.Server):
     def __init__(self, keyjar=None, ca_certs=None, verify_ssl=True):
         oic.Server.__init__(self, keyjar, ca_certs, verify_ssl)
@@ -58,7 +72,7 @@ class Server(oic.Server):
             try:
                 idt["c_hash"] = sort_string(idt["c_hash"])
             except (KeyError, TypeError):
-                raise TestError("Missing c_hash in id_token")
+                pass
 
         if "issi" in self.behavior_type:  # mess with the iss value
             idt["iss"] = "https://example.org/"
@@ -217,6 +231,9 @@ class Provider(provider.Provider):
         except ValueError:
             reg_req = RegistrationRequest().deserialize(request)
 
+        f = response_type_cmp(kwargs['test_cnf']['response_type'],
+                              reg_req['response_types'])
+
         # Do initial verification that all endpoints from the client uses https
         for endp in ["redirect_uris", "jwks_uri", "initiate_login_uri"]:
             try:
@@ -266,6 +283,13 @@ class Provider(provider.Provider):
                 )
 
         client_id = _req["client_id"][0]
+
+        f = response_type_cmp(kwargs['test_cnf']['response_type'],
+                              _req['response_type'])
+        if f is False:
+            return self._error_response(error="incorrect_behavior",
+                                        descr="Wrong response_type")
+
         _rtypes = []
         for rt in _req['response_type']:
             _rtypes.extend(rt.split(' '))
@@ -307,7 +331,6 @@ class Provider(provider.Provider):
 
     def token_endpoint(self, request="", authn=None, dtype='urlencoded',
                        **kwargs):
-
         try:
             req = AccessTokenRequest().deserialize(request, dtype)
             client_id = self.client_authn(self, req, authn)
