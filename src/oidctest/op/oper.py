@@ -207,7 +207,7 @@ class AsyncAuthn(AsyncGetRequest):
 
 class AccessToken(SyncPostRequest):
     def __init__(self, conv, inut, sh, **kwargs):
-        Operation.__init__(self, conv, inut, sh, **kwargs)
+        super(AccessToken, self).__init__(conv, inut, sh, **kwargs)
         self.op_args["state"] = conv.state
         self.req_args["redirect_uri"] = conv.entity.redirect_uris[0]
 
@@ -252,7 +252,7 @@ class AccessToken(SyncPostRequest):
 
 class UserInfo(SyncGetRequest):
     def __init__(self, conv, inut, sh, **kwargs):
-        Operation.__init__(self, conv, inut, sh, **kwargs)
+        super(UserInfo, self).__init__(conv, inut, sh, **kwargs)
         self.op_args["state"] = conv.state
 
     def run(self):
