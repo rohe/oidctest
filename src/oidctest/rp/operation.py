@@ -176,10 +176,10 @@ class UserInfoResponse(Response):
         self.msg_args = kwargs
 
     def construct_message(self):
-        _kwargs = {
-            'request': self.conv.events.last_item(EV_REQUEST),
-            'authn': self.conv.events.last_item('HTTP_AUTHORIZATION')
-        }
+        _kwargs = {'request': self.conv.events.last_item(EV_REQUEST)}
+        if 'access_token' not in _kwargs['request']:
+            _kwargs['authn'] = self.conv.events.last_item('HTTP_AUTHORIZATION')
+
         _kwargs.update(self.msg_args)
         _kwargs.update(self.op_args)
 
