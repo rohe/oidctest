@@ -14,6 +14,8 @@ from aatest.parse_cnf import parse_yaml_conf
 from aatest.utils import SERVER_LOG_FOLDER
 from aatest.utils import setup_common_log
 from aatest.utils import setup_logging
+from otest.rp.setup import read_path2port_map
+
 from oidctest.op.profiles import PROFILEMAP
 
 from otest.aus.app import WebApplication
@@ -69,6 +71,9 @@ if __name__ == '__main__':
     parser.add_argument('-M', dest='makodir')
     parser.add_argument('-S', dest='staticdir')
     parser.add_argument('-s', dest='tls', action='store_true')
+    parser.add_argument(
+        '-x', dest='xport', action='store_true', help='ONLY for testing')
+    parser.add_argument('-m', dest='path2port')
     parser.add_argument(dest="config")
     args = parser.parse_args()
 
@@ -123,12 +128,6 @@ if __name__ == '__main__':
 
     #KEY_EXPORT_URL = "%sstatic/jwk.json" % BASE
 
-    # export JWKS
-    f = open('{}/jwks_{}.json'.format(_sdir, CONF.PORT), "w")
-    f.write(json.dumps(jwks))
-    f.close()
-    jwks_uri = "{}static/jwk_{}.json".format(CONF.BASE, CONF.PORT)
-
     # MAKO setup
     if args.makodir:
         _dir = args.makodir
@@ -137,13 +136,43 @@ if __name__ == '__main__':
     else:
         _dir = "./"
 
+    if args.path2port:
+        ppmap = read_path2port_map(args.path2port)
+        _path = ppmap[str(CONF.PORT)]
+        if args.xport:
+            _port = CONF.PORT
+            _base = '{}:{}/{}/'.format(CONF.BASE, str(CONF.PORT), _path)
+        else:
+            _base = '{}/{}/'.format(CONF.BASE, _path)
+            if args.tls:
+                _port = 443
+            else:
+                _port = 80
+    else:
+        _port = CONF.PORT
+        _base = CONF.BASE
+        _path = ''
+
+    # export JWKS
+    if _port not in [443,80]:
+        jwks_uri = "{}:{}/static/jwks_{}.json".format(CONF.BASE, _port, _port)
+        f = open('{}/jwks_{}.json'.format(_sdir, _port), "w")
+    else:
+        jwks_uri = "{}/static/jwks.json".format(CONF.BASE)
+        f = open('{}/jwks.json'.format(_sdir), "w")
+    f.write(json.dumps(jwks))
+    f.close()
+
     LOOKUP = TemplateLookup(directories=[_dir + 'templates', _dir + 'htdocs'],
                             module_directory=_dir + 'modules',
                             input_encoding='utf-8',
                             output_encoding='utf-8')
 
+    l = [s.format(_base) for s in CONF.REDIRECT_URIS_PATTERN]
+    CONF.INFO['client']['redirect_uris'] = l
+
     # Application arguments
-    app_args = {"base_url": CONF.BASE, "kidd": kidd, "keyjar": keyjar,
+    app_args = {"base_url": _base, "kidd": kidd, "keyjar": keyjar,
                 "jwks_uri": jwks_uri, "flows": fdef['Flows'], "conf": CONF,
                 "cinfo": CONF.INFO, "order": fdef['Order'],
                 "profiles": profiles, "operation": operations,
@@ -153,10 +182,10 @@ if __name__ == '__main__':
 
     WA = WebApplication(sessionhandler=SessionHandler, webio=WebIO,
                         webtester=WebTester, check=check, webenv=app_args,
-                        pick_grp=pick_grp)
+                        pick_grp=pick_grp, path=_path)
 
     SRV = wsgiserver.CherryPyWSGIServer(
-        ('0.0.0.0', CONF.PORT), SessionMiddleware(WA.application, session_opts))
+        ('0.0.0.0', _port), SessionMiddleware(WA.application, session_opts))
 
     if args.tls:
         from cherrypy.wsgiserver.ssl_builtin import BuiltinSSLAdapter
@@ -167,8 +196,9 @@ if __name__ == '__main__':
     else:
         extra = ""
 
-    txt = "OP test server started, listening on port:%s%s" % (CONF.PORT, extra)
+    txt = "OP test server started, listening on port:%s%s" % (_port, extra)
     logger.info(txt)
+    print(_base)
     print(txt)
     try:
         SRV.start()

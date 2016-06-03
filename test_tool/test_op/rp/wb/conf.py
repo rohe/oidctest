@@ -1,11 +1,11 @@
 __author__ = 'roland'
 
-PORT = 8088
-BASE = "https://localhost:" + str(PORT) + "/"
+PORT = 9100
+BASE = "https://localhost"
 
 # If BASE is https these has to be specified
-SERVER_CERT = "../certs/server.crt"
-SERVER_KEY = "../certs/server.key"
+SERVER_CERT = "./certs/server.crt"
+SERVER_KEY = "./certs/server.key"
 CA_BUNDLE = None
 VERIFY_SSL = False
 CERT_CHAIN = None
@@ -13,7 +13,7 @@ CERT_CHAIN = None
 ISSUER = "https://localhost:8092/"
 # ISSUER = "https://oictest.umdc.umu.se:8051/"
 
-KEY_EXPORT_URL = "%sstatic/jwk.json" % BASE
+JWKS_NAME = 'jwk.json'
 
 keys = [
     {
@@ -30,9 +30,11 @@ keys = [
     {"type": "EC", "crv": "P-256", "use": ["enc"]}
 ]
 
+REDIRECT_URIS_PATTERN = ["{}authz_cb"]
+
 INFO = {
     "client": {
-        "redirect_uris": ["%sauthz_cb" % BASE],
+        #"redirect_uris": ["{}authz_cb"],
         "application_type": "web",
         "contact": ["foo@example.com"],
         "webfinger_url": "{}diana".format(ISSUER),
