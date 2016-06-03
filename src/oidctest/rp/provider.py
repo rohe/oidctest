@@ -2,6 +2,7 @@ import json
 import time
 
 from Cryptodome.PublicKey import RSA
+from aatest.events import EV_HTTP_RESPONSE
 from future.backports.urllib.parse import parse_qs
 
 from jwkest.ecc import P256
@@ -231,8 +232,11 @@ class Provider(provider.Provider):
         except ValueError:
             reg_req = RegistrationRequest().deserialize(request)
 
-        f = response_type_cmp(kwargs['test_cnf']['response_type'],
-                              reg_req['response_types'])
+        try:
+            f = response_type_cmp(kwargs['test_cnf']['response_type'],
+                                  reg_req['response_types'])
+        except KeyError:
+            pass
 
         # Do initial verification that all endpoints from the client uses https
         for endp in ["redirect_uris", "jwks_uri", "initiate_login_uri"]:
@@ -251,7 +255,7 @@ class Provider(provider.Provider):
 
         _response = provider.Provider.registration_endpoint(self, request,
                                                             authn, **kwargs)
-
+        self.conv.events.store(EV_HTTP_RESPONSE, _response)
         self.init_keys = []
         if "jwks_uri" in reg_req:
             if _response.status == "200 OK":
@@ -284,11 +288,15 @@ class Provider(provider.Provider):
 
         client_id = _req["client_id"][0]
 
-        f = response_type_cmp(kwargs['test_cnf']['response_type'],
-                              _req['response_type'])
-        if f is False:
-            return self._error_response(error="incorrect_behavior",
-                                        descr="Wrong response_type")
+        try:
+            f = response_type_cmp(kwargs['test_cnf']['response_type'],
+                                  _req['response_type'])
+        except KeyError:
+            pass
+        else:
+            if f is False:
+                return self._error_response(error="incorrect_behavior",
+                                            descr="Wrong response_type")
 
         _rtypes = []
         for rt in _req['response_type']:
