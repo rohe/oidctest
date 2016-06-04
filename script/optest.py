@@ -197,7 +197,7 @@ if __name__ == '__main__':
     else:
         extra = ""
 
-    txt = "OP test server started, listening on port:%s%s" % (_port, extra)
+    txt = "OP test server started, listening on port:%s%s" % (CONF.PORT, extra)
     logger.info(txt)
     print(_base)
     print(txt)
