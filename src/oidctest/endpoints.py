@@ -75,10 +75,15 @@ def wsgi_wrapper(environ, start_response, func, session_info, trace, jlog):
     kwargs = extract_from_request(environ)
 
     kwargs['test_cnf'] = session_info['test_conf']
-    if func.__name__ in kwargs['test_cnf']['out_of_scope']:
-        return error_response(
-            error='incorrect_behavior',
-            descr='You should not talk to this endpoint in this test')
+    try:
+        oos = kwargs['test_cnf']['out_of_scope']
+    except KeyError:
+        pass
+    else:
+        if func.__name__ in oos:
+            return error_response(
+                error='incorrect_behavior',
+                descr='You should not talk to this endpoint in this test')
 
     trace.request(kwargs["request"])
     jlog.info({func.__name__: kwargs})
