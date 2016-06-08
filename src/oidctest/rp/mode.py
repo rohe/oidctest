@@ -11,11 +11,12 @@ __author__ = 'roland'
 
 OIDC_PATTERN = OIDCONF_PATTERN[3:]
 WEB_FINGER = WF_URL[11:]
-NP = 5
+NP = 6
 
 
 def extract_mode(path):
-    # path = <test_id>/<sign_alg>/<encrypt>/<behaviortype/<claims>/<endpoint>
+    # path = <oper_id>/<test_id>/<sign_alg>/<encrypt>/<behaviortype/<claims>/
+    #          <endpoint>
 
     if path == "":
         return {}, ""
@@ -28,67 +29,67 @@ def extract_mode(path):
 
     part = path.split("/", NP)
 
-    mod = {"test_id": part[0]}
+    mod = {'oper_id': part[0], "test_id": part[1].lower()}
 
     plen = len(part)
-    if plen == 3 and path.endswith(OIDC_PATTERN):
+    if plen == 4 and path.endswith(OIDC_PATTERN):
         return mod, OIDC_PATTERN
 
+    if plen >= 6:
+        if part[5] != "_":
+            try:
+                mod["claims"] = part[5].split(",")
+            except ValueError:
+                pass
     if plen >= 5:
         if part[4] != "_":
             try:
-                mod["claims"] = part[4].split(",")
-            except ValueError:
-                pass
-    if plen >= 4:
-        if part[3] != "_":
-            try:
-                mod["behavior"] = part[3].split(",")
+                mod["behavior"] = part[4].split(",")
             except ValueError:
                 pass
 
-    if plen >= 3:
-        if part[2] != "_":
+    if plen >= 4:
+        if part[3] != "_":
             try:
-                _enc_alg, _enc_enc = part[2].split(":")
+                _enc_alg, _enc_enc = part[3].split(":")
             except ValueError:
                 pass
             else:
                 mod.update({"enc_alg": _enc_alg, "enc_enc": _enc_enc})
 
-    if plen >= 2:
-        if part[1] != "_":
-            mod["sign_alg"] = part[1]
+    if plen >= 3:
+        if part[2] != "_":
+            mod["sign_alg"] = part[2]
 
-    if plen == NP or plen == 1:
+    if plen == NP or plen == 2:
         return mod, ""
     else:
         return mod, part[-1]
 
 
 def mode2path(mode):
-    # test_id/<sig-alg>/<enc-alg>/<behavior>/<userinfo>[/<endpoint>]
+    # oper_id/test_id/<sig-alg>/<enc-alg>/<behavior>/<userinfo>[/<endpoint>]
     if mode is None:
         mode = {}
 
     noop = "_/"
     try:
-        path = "%s/" % mode["test_id"]
+        path = '{}/{}/'.format(mode['oper_id'], mode["test_id"])
     except KeyError:
         path = ""
 
     try:
-        path += "%s/" % mode["sign_alg"]
+        path += "{}/".format(mode["sign_alg"])
     except KeyError:
         path += noop
 
     try:
-        path += "%s:%s/" % (mode["enc_alg"], mode["enc_enc"])
+        path += "{}}:{}/".format(mode["enc_alg"], mode["enc_enc"])
     except KeyError:
         path += noop
 
     try:
-        path += "%s/" % ",".join(mode["behavior"])
+        path += "{}/".format(",".join(mode["behavior"]))
     except KeyError:
         path += noop
 
@@ -100,7 +101,7 @@ def mode2path(mode):
     return path
 
 
-def setup_op(mode, com_args, op_arg, trace):
+def setup_op(mode, com_args, op_arg, trace, test_conf):
     op = Provider(sdb=SessionDB(com_args["baseurl"]), **com_args)
     op.trace = trace
 
@@ -124,11 +125,13 @@ def setup_op(mode, com_args, op_arg, trace):
     else:
         div = "/"
 
-    op.name = op.baseurl = "%s%s%s" % (op.baseurl, div, mode2path(mode))
+    op.name = op.baseurl = "{}{}{}/{}".format(op.baseurl, div, mode['oper_id'],
+                                              mode['test_id'])
 
+    _tc = test_conf[mode['test_id']]
     for _typ in ["signing_alg", "encryption_alg", "encryption_enc"]:
         try:
-            _alg = mode[_typ]
+            _alg = _tc[_typ]
         except (TypeError, KeyError):
             for obj in ["id_token", "request_object", "userinfo"]:
                 op.jwx_def[_typ][obj] = ''
@@ -136,16 +139,15 @@ def setup_op(mode, com_args, op_arg, trace):
             for obj in ["id_token", "request_object", "userinfo"]:
                 op.jwx_def[_typ][obj] = _alg
 
-    if mode:
-        try:
-            op.claims_type = mode["claims"]
-        except KeyError:
-            pass
+    try:
+        op.claims_type = _tc["claims"]
+    except KeyError:
+        pass
 
-        try:
-            op.behavior_type = mode["behavior"]
-            op.server.behavior_type = mode["behavior"]
-        except KeyError:
-            pass
+    try:
+        op.behavior_type = _tc["behavior"]
+        op.server.behavior_type = _tc["behavior"]
+    except KeyError:
+        pass
 
     return op

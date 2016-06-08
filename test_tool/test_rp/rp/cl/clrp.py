@@ -39,6 +39,7 @@ if __name__ == '__main__':
     parser.add_argument('-p', dest="profile")
     parser.add_argument('-t', dest="testid")
     parser.add_argument('-g', dest="group")
+    parser.add_argument('-i', dest="id")
     parser.add_argument('-x', dest='exit', action='store_true')
     parser.add_argument(dest="config")
     cargs = parser.parse_args()
@@ -70,7 +71,7 @@ if __name__ == '__main__':
               "desc": FLOWS['Desc'], "profiles": profiles, "operation": oper,
               "profile": cargs.profile, "msg_factory": oic_message_factory,
               "check_factory": check.factory, "cache": {},
-              'profile_handler': ProfileHandler}
+              'profile_handler': ProfileHandler, 'opid': cargs.id}
 
     if cargs.testid:
         io = ClIO(**kwargs)

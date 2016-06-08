@@ -1,6 +1,6 @@
 import logging
 import os
-from future.backports.urllib.parse import parse_qs
+
 from future.backports.urllib.parse import urlparse
 
 from oic.oauth2.provider import error_response
@@ -14,10 +14,14 @@ from oic.utils.http_util import BadRequest
 from oic.utils.webfinger import OIC_ISSUER
 from oic.utils.webfinger import WebFinger
 
-from aatest import jlog, resp2json
+from aatest import resp2json
 
-#from oidctest.rp import pathmap
-from oidctest.rp import test_config
+# All endpoints the OpenID Connect Provider should answer on
+from oic.oic.provider import AuthorizationEndpoint
+from oic.oic.provider import EndSessionEndpoint
+from oic.oic.provider import TokenEndpoint
+from oic.oic.provider import UserinfoEndpoint
+from oic.oic.provider import RegistrationEndpoint
 
 __author__ = 'roland'
 
@@ -27,13 +31,20 @@ HEADER = "---------- %s ----------"
 
 
 def dump_log(session_info, trace):
-    file_name = os.path.join("log", session_info["addr"],
-                             session_info["test_id"])
+    try:
+        file_name = os.path.join("log", session_info["oper_id"],
+                                 session_info["test_id"])
+        _dir = os.path.join("log", session_info["oper_id"])
+    except KeyError:
+        file_name = os.path.join("log", session_info["addr"],
+                                 session_info["test_id"])
+        _dir = os.path.join("log", session_info["addr"])
+
     try:
         fp = open(file_name, "a+")
     except IOError:
         try:
-            os.makedirs(os.path.join("log", session_info["addr"]))
+            os.makedirs(_dir)
         except OSError:
             pass
 
@@ -60,29 +71,29 @@ def find_identifier(uri):
         return l
 
 
-def wsgi_wrapper(environ, start_response, func, session_info, trace, **kwargs):
+def wsgi_wrapper(environ, start_response, func, session_info, trace, jlog):
     kwargs = extract_from_request(environ)
 
-    kwargs['test_cnf'] = test_config.CONF[kwargs['path'].split('/')[1].lower()]
+    kwargs['test_cnf'] = session_info['test_conf']
     if func.__name__ in kwargs['test_cnf']['out_of_scope']:
         return error_response(
             error='incorrect_behavior',
             descr='You should not talk to this endpoint in this test')
 
     trace.request(kwargs["request"])
-    jlog(LOGGER, 'info', {func.__name__: kwargs})
+    jlog.info({func.__name__: kwargs})
     args = func(**kwargs)
 
     try:
         resp, state = args
-        jlog(LOGGER, 'info',
-             {'{}-resp'.format(func.__name__): resp2json(resp), 'state': state})
+        jlog.info({'{}-resp'.format(func.__name__): resp2json(resp),
+                   'state': state})
         trace.reply(resp.message)
         dump_log(session_info, trace)
         return resp(environ, start_response)
     except TypeError:
         resp = args
-        jlog(LOGGER, 'info', {'{}-resp'.format(func.__name__): resp2json(resp)})
+        jlog.info({'{}-resp'.format(func.__name__): resp2json(resp)})
         trace.reply(resp.message)
         dump_log(session_info, trace)
         return resp(environ, start_response)
@@ -94,35 +105,33 @@ def wsgi_wrapper(environ, start_response, func, session_info, trace, **kwargs):
 
 
 # noinspection PyUnusedLocal
-def token(environ, start_response, session_info, trace, **kwargs):
+def token(environ, start_response, session_info, trace, jlog, **kwargs):
     trace.info(HEADER % "AccessToken")
-    jlog(LOGGER, 'info', {'operation': 'token'})
     _op = session_info["op"]
 
     return wsgi_wrapper(environ, start_response, _op.token_endpoint,
-                        session_info,
-                        trace)
+                        session_info, trace, jlog)
 
 
 # noinspection PyUnusedLocal
-def authorization(environ, start_response, session_info, trace, **kwargs):
+def authorization(environ, start_response, session_info, trace, jlog, **kwargs):
     trace.info(HEADER % "Authorization")
     _op = session_info["op"]
 
     return wsgi_wrapper(environ, start_response, _op.authorization_endpoint,
-                        session_info, trace)
+                        session_info, trace, jlog)
 
 
 # noinspection PyUnusedLocal
-def userinfo(environ, start_response, session_info, trace, **kwargs):
+def userinfo(environ, start_response, session_info, trace, jlog, **kwargs):
     trace.info(HEADER % "UserInfo")
     _op = session_info["op"]
     return wsgi_wrapper(environ, start_response, _op.userinfo_endpoint,
-                        session_info, trace)
+                        session_info, trace, jlog)
 
 
 # noinspection PyUnusedLocal
-def op_info(environ, start_response, session_info, trace, **kwargs):
+def op_info(environ, start_response, session_info, trace, jlog, **kwargs):
     trace.info(HEADER % "ProviderConfiguration")
     trace.request("PATH: %s" % environ["PATH_INFO"])
     try:
@@ -131,58 +140,51 @@ def op_info(environ, start_response, session_info, trace, **kwargs):
         pass
     _op = session_info["op"]
     return wsgi_wrapper(environ, start_response, _op.providerinfo_endpoint,
-                        session_info, trace)
+                        session_info, trace, jlog)
 
 
 # noinspection PyUnusedLocal
-def registration(environ, start_response, session_info, trace, **kwargs):
+def registration(environ, start_response, session_info, trace, jlog, **kwargs):
     trace.info(HEADER % "ClientRegistration")
     _op = session_info["op"]
 
     if environ["REQUEST_METHOD"] == "POST":
         return wsgi_wrapper(environ, start_response, _op.registration_endpoint,
-                            session_info, trace)
+                            session_info, trace, jlog)
     elif environ["REQUEST_METHOD"] == "GET":
         return wsgi_wrapper(environ, start_response, _op.read_registration,
-                            session_info, trace)
+                            session_info, trace, jlog)
     else:
         resp = ServiceError("Method not supported")
         return resp(environ, start_response)
 
 
 # noinspection PyUnusedLocal
-def check_id(environ, start_response, session_info, trace, **kwargs):
+def check_id(environ, start_response, session_info, trace, jlog, **kwargs):
     _op = session_info["op"]
 
     return wsgi_wrapper(environ, start_response, _op.check_id_endpoint,
-                        session_info, trace)
+                        session_info, trace, jlog)
 
 
 # noinspection PyUnusedLocal
-def endsession(environ, start_response, session_info, trace, **kwargs):
+def endsession(environ, start_response, session_info, trace, jlog, **kwargs):
     _op = session_info["op"]
     return wsgi_wrapper(environ, start_response, _op.endsession_endpoint,
-                        session_info=session_info, trace=trace)
+                        session_info=session_info, trace=trace, jlog=jlog)
 
 
-def webfinger(environ, start_response, session_info, trace, **kwargs):
-    query = parse_qs(environ["QUERY_STRING"])
-
-    jlog(LOGGER, 'info', {'webfinger': query})
-
-    # Find the identifier
-    session_info["test_id"] = find_identifier(query["resource"][0])
-
+def webfinger(environ, start_response, session_info, trace, jlog, **kwargs):
+    _query = session_info['parameters']
     trace.info(HEADER % "WebFinger")
     trace.request(environ["QUERY_STRING"])
-    trace.info("QUERY: %s" % (query,))
-
+    trace.info("QUERY: {}".format(_query))
 
     try:
-        assert query["rel"] == [OIC_ISSUER]
-        resource = query["resource"][0]
+        assert _query["rel"] == [OIC_ISSUER]
+        resource = _query["resource"][0]
     except AssertionError:
-        errmsg = "Wrong 'rel' value: %s" % query["rel"][0]
+        errmsg = "Wrong 'rel' value: %s" % _query["rel"][0]
         trace.error(errmsg)
         resp = BadRequest(errmsg)
     except KeyError:
@@ -191,37 +193,26 @@ def webfinger(environ, start_response, session_info, trace, **kwargs):
         resp = BadRequest(errmsg)
     else:
         wf = WebFinger()
-        p = urlparse(resource)
 
-        if p.scheme == "acct":
-            l, _ = p.path.split("@")
-            path = test_config.CONF[l.lower()]['path']
-        else:  # scheme == http/-s
-            try:
-                path = test_config.CONF[p.path[1:].lower()]['path']
-            except KeyError:
-                path = None
-
-        if path:
-            _url = os.path.join(kwargs["op_arg"]["baseurl"],
-                                session_info["test_id"],
-                                path[1:])
-            resp = Response(wf.response(subject=resource, base=_url),
-                            content="application/jrd+json")
-        else:
-            resp = BadRequest("Incorrect resource specification")
+        _url = os.path.join(kwargs["op_arg"]["baseurl"],
+                            session_info['oper_id'],
+                            session_info["test_id"])
+        resp = Response(wf.response(subject=resource, base=_url),
+                        content="application/jrd+json")
 
         trace.reply(resp.message)
+
+    jlog.info(resp2json(resp))
 
     dump_log(session_info, trace)
     return resp(environ, start_response)
 
 
 # noinspection PyUnusedLocal
-def verify(environ, start_response, session_info, trace, **kwargs):
+def verify(environ, start_response, session_info, trace, jlog, **kwargs):
     _op = session_info["op"]
     return wsgi_wrapper(environ, start_response, _op.verify_endpoint,
-                        session_info, trace)
+                        session_info, trace, jlog)
 
 
 def static_file(path):
@@ -332,13 +323,6 @@ def display_log(environ, start_response, lookup):
         resp = Response("No saved logs")
         return resp(environ, start_response)
 
-
-# All endpoints the OpenID Connect Provider should answer on
-from oic.oic.provider import AuthorizationEndpoint
-from oic.oic.provider import EndSessionEndpoint
-from oic.oic.provider import TokenEndpoint
-from oic.oic.provider import UserinfoEndpoint
-from oic.oic.provider import RegistrationEndpoint
 
 ENDPOINTS = [
     AuthorizationEndpoint(authorization),

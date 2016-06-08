@@ -1,5 +1,6 @@
 import inspect
 import json
+import os
 import sys
 
 from future.backports.urllib.parse import urlparse
@@ -26,9 +27,9 @@ def set_webfinger_resource(oper, args):
         _base = oper.op_args["resource"]
     except KeyError:
         _base = oper.conf.ISSUER
-    if not _base.endswith('/'):
-        _base += '/'
-    oper.resource = '{}{}'.format(_base, oper.conv.test_id)
+
+    oper.resource = os.path.join(_base, oper.conv.operator_id,
+                                 oper.conv.test_id)
 
 
 def set_discovery_issuer(oper, args):

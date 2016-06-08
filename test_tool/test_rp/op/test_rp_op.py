@@ -18,9 +18,12 @@ from oidctest.endpoints import static
 from oidctest.endpoints import display_log
 from oidctest.endpoints import URLS
 from oidctest.response_encoder import ResponseEncoder
+from oidctest.rp import test_config
 from oidctest.rp.mode import extract_mode
 from oidctest.rp.mode import setup_op
 from oidctest.rp.mode import mode2path
+from otest.conversation import Conversation
+from otest.jlog import JLog
 
 from requests.packages import urllib3
 
@@ -44,9 +47,7 @@ hdlr.setFormatter(base_formatter)
 LOGGER.addHandler(hdlr)
 LOGGER.setLevel(logging.DEBUG)
 
-URLMAP = {}
 NAME = "pyoic"
-OP = {}
 
 PASSWD = {
     "diana": "krall",
@@ -98,161 +99,205 @@ def generate_static_client_credentials(parameters):
     return static_client['client_id'], static_client['client_secret']
 
 
-def op_setup(environ, mode, trace):
-    addr = environ.get("REMOTE_ADDR", '')
-    path = mode2path(mode)
+def parse_path(path):
+    # path should be <oper_id>/<test_id>/<endpoint> or just <endpoint>
+    # if endpoint == '.well-known/webfinger'
 
-    key = "{}:{}".format(addr, path)
-    LOGGER.debug("OP key: {}".format(key))
-    try:
-        _op = OP[key]
-        _op.trace = trace
-    except KeyError:
-        if mode["test_id"] in ['RP-id_token-kid_absent_multiple_jwks']:
-            _op_args = {}
-            for param in ['baseurl', 'cookie_name', 'cookie_ttl', 'endpoints']:
-                _op_args[param] = OP_ARG[param]
-            for param in ["jwks", "keys"]:
-                _op_args[param] = OP_ARG["marg"][param]
-            _op = setup_op(mode, COM_ARGS, _op_args, trace)
-        else:
-            _op = setup_op(mode, COM_ARGS, OP_ARG, trace)
-        OP[key] = _op
+    if path == '.well-known/webfinger':
+        return {'endpoint': path}
 
-    return _op, path
+    if path.startswith('/'):
+        path = path[1:]
+
+    p = path.split('/')
+    if len(p) == 2:
+        return {'oper_id': p[0], 'test_id': p[1].lower()}
+    elif len(p) >= 3:
+        return {'endpoint': '/'.join(p[2:]), 'oper_id': p[0],
+                'test_id': p[1].lower()}
+    else:
+        raise ValueError('illegal path')
 
 
-def application(environ, start_response):
-    """
-    :param environ: The HTTP application environment
-    :param start_response: The application to run when the handling of the
-        request is done
-    :return: The response as a list of lines
-    """
+class Application(object):
+    def __init__(self, test_conf):
+        self.test_conf = test_conf
+        self.op = {}
 
-    kaka = environ.get("HTTP_COOKIE", '')
-    LOGGER.debug("Cookie: {}".format(kaka))
+    def op_setup(self, environ, mode, trace, test_conf):
+        addr = environ.get("REMOTE_ADDR", '')
+        path = '/'.join([mode['oper_id'], mode['test_id']])
 
-    path = environ.get('PATH_INFO', '').lstrip('/')
-    response_encoder = ResponseEncoder(environ=environ,
-                                       start_response=start_response)
-    parameters = parse_qs(environ["QUERY_STRING"])
-
-    session_info = {
-        "addr": environ.get("REMOTE_ADDR", '')}
-
-    if path == "robots.txt":
-        return static(environ, start_response, "static/robots.txt")
-
-    if path.startswith("static/"):
-        return static(environ, start_response, path)
-    elif path.startswith("log"):
-        return display_log(environ, start_response, lookup=LOOKUP)
-    elif path.startswith("_static/"):
-        return static(environ, start_response, path)
-    elif path.startswith("jwks.json"):
+        key = "{}:{}".format(addr, path)
+        LOGGER.debug("OP key: {}".format(key))
         try:
-            mode, endpoint = extract_mode(OP_ARG["baseurl"])
-            trace = Trace(absolut_start=True)
-            op, path = op_setup(environ, mode, trace)
-            jwks = op.generate_jwks(mode)
-            resp = Response(jwks,
-                            headers=[('Content-Type', 'application/json')])
-            return resp(environ, start_response)
+            _op = self.op[key]
+            _op.trace = trace
         except KeyError:
-            # Try to load from static file
-            return static(environ, start_response, "static/jwks.json")
+            if mode["test_id"] in ['RP-id_token-kid_absent_multiple_jwks']:
+                _op_args = {}
+                for param in ['baseurl', 'cookie_name', 'cookie_ttl',
+                              'endpoints']:
+                    _op_args[param] = OP_ARG[param]
+                for param in ["jwks", "keys"]:
+                    _op_args[param] = OP_ARG["marg"][param]
+                _op = setup_op(mode, COM_ARGS, _op_args, trace, test_conf)
+            else:
+                _op = setup_op(mode, COM_ARGS, OP_ARG, trace, test_conf)
+            _op.conv = Conversation(mode["test_id"], _op, None)
+            self.op[key] = _op
 
-    trace = Trace(absolut_start=True)
+        return _op, path
 
-    if path == "test_list":
-        return rp_test_list(environ, start_response)
-    elif path == "":
-        return registration(environ, start_response)
-    elif path == "generate_client_credentials":
-        client_id, client_secret = generate_static_client_credentials(
-            parameters)
-        return response_encoder.return_json(
-            json.dumps({"client_id": client_id,
-                        "client_secret": client_secret}))
-    elif path == "claim":
-        authz = environ["HTTP_AUTHORIZATION"]
-        try:
-            assert authz.startswith("Bearer")
-        except AssertionError:
-            resp = BadRequest()
-        else:
-            tok = authz[7:]
-            mode, endpoint = extract_mode(OP_ARG["baseurl"])
-            _op, _ = op_setup(environ, mode, trace)
+    def application(self, environ, start_response):
+        """
+        :param environ: The HTTP application environment
+        :param start_response: The application to run when the handling of the
+            request is done
+        :return: The response as a list of lines
+        """
+
+        path = environ.get('PATH_INFO', '').lstrip('/')
+        response_encoder = ResponseEncoder(environ=environ,
+                                           start_response=start_response)
+        parameters = parse_qs(environ["QUERY_STRING"])
+
+        session_info = {
+            "addr": environ.get("REMOTE_ADDR", ''),
+            'cookie': environ.get("HTTP_COOKIE", ''),
+            'path': path,
+            'parameters': parameters
+        }
+
+        jlog = JLog(LOGGER, session_info['addr'])
+        jlog.info(session_info)
+
+        if path == "robots.txt":
+            return static(environ, start_response, "static/robots.txt")
+
+        if path.startswith("static/"):
+            return static(environ, start_response, path)
+        elif path.startswith("log"):
+            return display_log(environ, start_response, lookup=LOOKUP)
+        elif path.startswith("_static/"):
+            return static(environ, start_response, path)
+        elif path.startswith("jwks.json"):
             try:
-                _claims = _op.claim_access_token[tok]
+                mode, endpoint = extract_mode(OP_ARG["baseurl"])
+                trace = Trace(absolut_start=True)
+                op, path = op_setup(environ, mode, trace)
+                jwks = op.generate_jwks(mode)
+                resp = Response(jwks,
+                                headers=[('Content-Type', 'application/json')])
+                return resp(environ, start_response)
             except KeyError:
+                # Try to load from static file
+                return static(environ, start_response, "static/jwks.json")
+
+        trace = Trace(absolut_start=True)
+
+        if path == "test_list":
+            return rp_test_list(environ, start_response)
+        elif path == "":
+            return registration(environ, start_response)
+        elif path == "generate_client_credentials":
+            client_id, client_secret = generate_static_client_credentials(
+                parameters)
+            return response_encoder.return_json(
+                json.dumps({"client_id": client_id,
+                            "client_secret": client_secret}))
+        elif path == "claim":
+            authz = environ["HTTP_AUTHORIZATION"]
+            try:
+                assert authz.startswith("Bearer")
+            except AssertionError:
                 resp = BadRequest()
             else:
-                del _op.claim_access_token[tok]
-                resp = Response(json.dumps(_claims), content='application/json')
-        return resp(environ, start_response)
-    elif path == "3rd_party_init_login":
-        return rp_support_3rd_party_init_login(environ, start_response)
+                tok = authz[7:]
+                mode, endpoint = extract_mode(OP_ARG["baseurl"])
+                _op, _ = op_setup(environ, mode, trace)
+                try:
+                    _claims = _op.claim_access_token[tok]
+                except KeyError:
+                    resp = BadRequest()
+                else:
+                    del _op.claim_access_token[tok]
+                    resp = Response(json.dumps(_claims), content='application/json')
+            return resp(environ, start_response)
+        elif path == "3rd_party_init_login":
+            return rp_support_3rd_party_init_login(environ, start_response)
 
-    mode, endpoint = extract_mode(path)
-
-    if endpoint == ".well-known/webfinger":
+        # path should be <oper_id>/<test_id>/<endpoint>
         try:
-            _p = urlparse(parameters["resource"][0])
-        except KeyError:
-            resp = ServiceError("No resource defined")
+            mode = parse_path(path)
+        except ValueError:
+            resp = BadRequest('Illegal path')
             return resp(environ, start_response)
 
-        if _p.scheme in ["http", "https"]:
-            mode = {"test_id": _p.path[1:]}
-        elif _p.scheme == "acct":
-            _l, _ = _p.path.split('@')
-            mode = {"test_id": _l}
-        else:
-            resp = ServiceError("Unknown scheme: {}".format(_p.scheme))
-            return resp(environ, start_response)
+        endpoint = mode['endpoint']
 
-    if mode:
-        session_info["test_id"] = mode["test_id"]
-
-    _op, path = op_setup(environ, mode, trace)
-
-    session_info["op"] = _op
-    session_info["path"] = path
-
-    for regex, callback in URLS:
-        match = re.search(regex, endpoint)
-        if match is not None:
-            trace.request("PATH: %s" % endpoint)
-            trace.request("METHOD: %s" % environ["REQUEST_METHOD"])
+        if endpoint == ".well-known/webfinger":
+            session_info['endpoint'] = endpoint
             try:
-                trace.request(
-                    "HTTP_AUTHORIZATION: %s" % environ["HTTP_AUTHORIZATION"])
+                _p = urlparse(parameters["resource"][0])
             except KeyError:
-                pass
-
-            try:
-                environ['oic.url_args'] = match.groups()[0]
-            except IndexError:
-                environ['oic.url_args'] = endpoint
-
-            LOGGER.info("callback: %s" % callback)
-            try:
-                return callback(environ, start_response, session_info, trace,
-                                op_arg=OP_ARG)
-            except Exception as err:
-                print("%s" % err)
-                message = traceback.format_exception(*sys.exc_info())
-                print(message)
-                LOGGER.exception("%s" % err)
-                resp = ServiceError("%s" % err)
+                jlog.error({'reason': 'No resource defined'})
+                resp = ServiceError("No resource defined")
                 return resp(environ, start_response)
 
-    LOGGER.debug("unknown page: '{}'".format(endpoint))
-    resp = NotFound("Couldn't find the side you asked for!")
-    return resp(environ, start_response)
+            if _p.scheme in ["http", "https"]:
+                mode = parse_path(_p.path)
+            elif _p.scheme == "acct":
+                _l, _ = _p.path.split('@')
+                _a = _l.split('.')
+                mode = {'oper_id': _a[0], "test_id": _a[1]}
+            else:
+                _msg = "Unknown scheme: {}".format(_p.scheme)
+                jlog.error({'reason': _msg})
+                resp = ServiceError(_msg)
+                return resp(environ, start_response)
+
+        if mode:
+            session_info.update(mode)
+            jlog.id = mode['oper_id']
+
+        _op, path = self.op_setup(environ, mode, trace, self.test_conf)
+
+        session_info["op"] = _op
+        session_info["path"] = path
+        session_info['test_conf'] = self.test_conf[session_info['test_id']]
+
+        for regex, callback in URLS:
+            match = re.search(regex, endpoint)
+            if match is not None:
+                trace.request("PATH: %s" % endpoint)
+                trace.request("METHOD: %s" % environ["REQUEST_METHOD"])
+                try:
+                    trace.request(
+                        "HTTP_AUTHORIZATION: %s" % environ["HTTP_AUTHORIZATION"])
+                except KeyError:
+                    pass
+
+                try:
+                    environ['oic.url_args'] = match.groups()[0]
+                except IndexError:
+                    environ['oic.url_args'] = endpoint
+
+                LOGGER.info("callback: %s" % callback)
+                try:
+                    return callback(environ, start_response, session_info, trace,
+                                    op_arg=OP_ARG, jlog=jlog)
+                except Exception as err:
+                    print("%s" % err)
+                    message = traceback.format_exception(*sys.exc_info())
+                    print(message)
+                    LOGGER.exception("%s" % err)
+                    resp = ServiceError("%s" % err)
+                    return resp(environ, start_response)
+
+        LOGGER.debug("unknown page: '{}'".format(endpoint))
+        resp = NotFound("Couldn't find the side you asked for!")
+        return resp(environ, start_response)
 
 
 # ----------------------------------------------------------------------------
@@ -277,8 +322,10 @@ if __name__ == '__main__':
 
     COM_ARGS, OP_ARG, config = main_setup(args, LOOKUP)
 
+    _app = Application(test_conf=test_config.CONF)
     # Setup the web server
-    SRV = wsgiserver.CherryPyWSGIServer(('0.0.0.0', args.port), application, )
+    SRV = wsgiserver.CherryPyWSGIServer(('0.0.0.0', args.port),
+                                        _app.application)
 
     if OP_ARG["baseurl"].startswith("https"):
         SRV.ssl_adapter = BuiltinSSLAdapter(config.SERVER_CERT,

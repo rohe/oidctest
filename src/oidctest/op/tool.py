@@ -46,7 +46,8 @@ class ClTester(Tester):
         (_cli, _reg_info) = make_client(**kw_args)
         self.conv = Conversation(_flow, _cli,
                                  msg_factory=kw_args["msg_factory"],
-                                 callback_uris=redirs, trace_cls=Trace)
+                                 callback_uris=redirs, trace_cls=Trace,
+                                 opid=kw_args['opid'])
         _cli.conv = self.conv
         self.conv.sequence = self.sh["sequence"]
         self.sh["conv"] = self.conv
