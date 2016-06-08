@@ -81,9 +81,10 @@ def wsgi_wrapper(environ, start_response, func, session_info, trace, jlog):
         pass
     else:
         if func.__name__ in oos:
-            return error_response(
+            resp = error_response(
                 error='incorrect_behavior',
                 descr='You should not talk to this endpoint in this test')
+            return resp(environ, start_response)
 
     trace.request(kwargs["request"])
     jlog.info({func.__name__: kwargs})

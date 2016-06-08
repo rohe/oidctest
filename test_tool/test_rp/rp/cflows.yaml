@@ -127,11 +127,10 @@ Flows:
                   - token
                 -
                   - id_token
+                -
+                  - code
+                  - id_token
             exception: NotForMe
-      - AccessToken:
-          conditional_excecution:
-            profile: 'CIT,IT,I,T...'
-          expect_exception: NotForMe
   RP-id_token-bad_asym_sig_rs256:
     desc: Tests if the Relying Party can identify and reject an ID Token with an invalid
       signature. The ID Token has been signed using the asymmetric algorithm RS256.
@@ -160,11 +159,13 @@ Flows:
                   - token
                 -
                   - id_token
+                -
+                  - code
+                  - id_token
+                -
+                  - code
+                  - id_token
             exception: BadSignature
-      - AccessToken:
-          conditional_excecution:
-            profile: 'CIT,IT,I,T...'
-          expect_exception: BadSignature
   RP-id_token-bad_es256_sig:
     desc: The Relying Party should reject invalid asymmetric ID Token signature which
       has been signed using the algorithm ES256
@@ -192,11 +193,10 @@ Flows:
                   - token
                 -
                   - id_token
+                -
+                  - code
+                  - id_token
             exception: BadSignature
-      - AccessToken:
-          conditional_excecution:
-            profile: 'CIT,IT,I,T...'
-          expect_exception: BadSignature
   RP-id_token-bad_symmetric_sig_hs256:
     desc: Tests if the Relying Party can identify and reject an ID Token with an invalid
       signature. The ID Token has been signed using the symmetric algorithm HS256. For
@@ -225,14 +225,13 @@ Flows:
                   - token
                 -
                   - id_token
+                -
+                  - code
+                  - id_token
             exception: BadSignature
-      - AccessToken:
-          conditional_excecution:
-            profile: 'CIT,IT,I,T...'
-          expect_exception: BadSignature
   RP-id_token-iat:
-    desc: The Relying Party should request an ID token if it does not contain a iat
-      claim it should be rejected
+    desc: The Relying Party should request an ID token if it does not contain a
+      iat claim it should be rejected
     profile: '...'
     sequence:
       - Webfinger:
@@ -255,11 +254,10 @@ Flows:
                   - token
                 -
                   - id_token
-            exception: BadSignature
-      - AccessToken:
-          conditional_excecution:
-            profile: 'CIT,IT,I,T...'
-          expect_exception: MissingRequiredAttribute
+                -
+                  - code
+                  - id_token
+            exception: MissingRequiredAttribute
   RP-id_token-kid_absent_multiple_jwks:
     desc: If there are multiple keys in the referenced JWK Set document, a kid value
       MUST be provided in the JOSE Header
@@ -285,11 +283,10 @@ Flows:
                   - token
                 -
                   - id_token
+                -
+                  - code
+                  - id_token
             exception: PyoidcError
-      - AccessToken:
-          conditional_excecution:
-            profile: 'CIT,IT,I,T...'
-          expect_exception: PyoidcError
   RP-id_token-kid_absent_single_jwks:
     desc: If the JWK supplied in jwks_uri only contains a single key the ID
       Token does not need to contain a kid claim
@@ -331,11 +328,17 @@ Flows:
                   - token
                 -
                   - id_token
+                -
+                  - code
+                  - id_token
             exception: IssuerMismatch
       - AccessToken:
-          conditional_excecution:
-            profile: 'CIT,IT,I,T...'
-          expect_exception: IssuerMismatch
+          conditional_expect_exception:
+            condition:
+              response_type:
+                -
+                  - code
+            exception: IssuerMismatch
   RP-id_token-none:
     desc: Can Request and Use unSigned ID Token Response
     profile: 'C,CT,CIT...T'
@@ -390,11 +393,10 @@ Flows:
                   - token
                 -
                   - id_token
+                -
+                  - code
+                  - id_token
             exception: MissingRequiredAttribute
-      - AccessToken:
-          conditional_excecution:
-            profile: 'CIT,IT,I,T...'
-          expect_exception: MissingRequiredAttribute
   RP-id_token-bad_c_hash:
     desc: The Relying Party should request an ID token and reject it if the
       c_hash claim is incorrect

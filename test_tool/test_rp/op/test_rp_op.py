@@ -21,7 +21,6 @@ from oidctest.response_encoder import ResponseEncoder
 from oidctest.rp import test_config
 from oidctest.rp.mode import extract_mode
 from oidctest.rp.mode import setup_op
-from oidctest.rp.mode import mode2path
 from otest.conversation import Conversation
 from otest.jlog import JLog
 
@@ -134,7 +133,7 @@ class Application(object):
             _op = self.op[key]
             _op.trace = trace
         except KeyError:
-            if mode["test_id"] in ['RP-id_token-kid_absent_multiple_jwks']:
+            if mode["test_id"] in ['rp-id_token-kid_absent_multiple_jwks']:
                 _op_args = {}
                 for param in ['baseurl', 'cookie_name', 'cookie_ttl',
                               'endpoints']:
@@ -185,7 +184,7 @@ class Application(object):
             try:
                 mode, endpoint = extract_mode(OP_ARG["baseurl"])
                 trace = Trace(absolut_start=True)
-                op, path = op_setup(environ, mode, trace)
+                op, path = self.op_setup(environ, mode, trace, self.test_conf)
                 jwks = op.generate_jwks(mode)
                 resp = Response(jwks,
                                 headers=[('Content-Type', 'application/json')])
@@ -215,7 +214,7 @@ class Application(object):
             else:
                 tok = authz[7:]
                 mode, endpoint = extract_mode(OP_ARG["baseurl"])
-                _op, _ = op_setup(environ, mode, trace)
+                _op, _ = self.op_setup(environ, mode, trace, self.test_conf)
                 try:
                     _claims = _op.claim_access_token[tok]
                 except KeyError:

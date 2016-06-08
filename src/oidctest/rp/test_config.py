@@ -146,7 +146,7 @@ CONF = {
         "claims": "normal",
         "behavior": ["issi"],
         "response_type": ALL,
-        'out_of_scope': [R, A, T, U]
+        'out_of_scope': [U]
     },
     "rp-id_token-none": {
         "claims": "normal",
