@@ -164,7 +164,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
 
     $scope.guidlines = [
         ["Discovery", {
-            "RP-discovery-webfinger_url": {
+            "rp-discovery-webfinger-url": {
                 "short_description": "Can discover OpenID providers using URL syntax",
                 "profiles": [DYNAMIC],
                 "detailed_description": "Use WebFinger (" +
@@ -172,7 +172,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "The discovery should be done using " + URL_SYNTAX + " as user input identifier.",
                 "expected_result": "An issuer location should be returned."
             },
-            "RP-discovery-webfinger_acct": {
+            "rp-discovery-webfinger-acct": {
                 "short_description": "Can discover OpenID providers using acct URI syntax",
                 "profiles": [DYNAMIC],
                 "detailed_description": "Use WebFinger (" +
@@ -180,27 +180,27 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "The discovery should be done using " + ACCT_SYNTAX + " as user input identifier.",
                 "expected_result": "An issuer location should be returned."
             },
-            "RP-discovery": {
+            "rp-discovery": {
                 "short_description": "Uses OpenID Connect Discovery",
                 "profiles": [DYNAMIC],
                 "detailed_description": "The Relying Party should be able to determine the OpenID Provider location by using " +
                 OPENID_PROVIDER_ISSUER_DISCOVERY + ".",
                 "expected_result": "An issuer location should be returned."
             },
-            "RP-discovery-issuer_not_matching_config": {
+            "rp-discovery-issuer-not-matching-config": {
                 "short_description": "Rejects discovered issuer not matching provider configuration issuer",
                 "profiles": [CONFIG, DYNAMIC],
                 "detailed_description": "Retrieve " + OPENID_CONFIGURATION_INFORMATION + " for OpenID Provider from the " +
                 ".well-known/openid-configuration path. Verify that the issuer in the " + PROVIDER_CONFIGURATION + " matches the one returned by WebFinger.",
                 "expected_result": "Identify that the issuers are not matching and reject the provider configuration."
             },
-            "RP-discovery-openid_configuration": {
+            "rp-discovery-openid-configuration": {
                 "short_description": "Uses Provider Configuration Information",
                 "profiles": [CONFIG, DYNAMIC],
                 "detailed_description": "Retrieve and use the " + OPENID_CONFIGURATION_INFORMATION + ".",
                 "expected_result": "Read and use the JSON object returned from the OpenID Connect Provider."
             },
-            "RP-discovery-jwks_uri_keys": {
+            "rp-discovery-jwks_uri-keys": {
                 "short_description": "Uses keys discovered with jwks_uri value",
                 "profiles": [CONFIG, DYNAMIC],
                 "detailed_description": "The Relying Party uses keys from the jwks_uri which has been obtained from the " + OPENID_PROVIDER_METADATA + ".",
@@ -208,74 +208,74 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             }
         }],
         ["Dynamic Client Registration", {
-            "RP-registration-dynamic": {
+            "rp-registration-dynamic": {
                 "short_description": "Uses dynamic registration",
                 "profiles": [DYNAMIC],
                 "detailed_description": "Use the " + CLIENT_REGISTRATION_ENDPOINT + " in order to dynamically " +
                 "register the Relying Party.",
                 "expected_result": "Get a " + CLIENT_REGISTRATION_RESPONSE + "."
             },
-            "RP-registration-redirect_uris": {
+            "rp-registration-redirect_uris": {
                 "short_description": "Registration request has redirect_uris",
                 "profiles": [DYNAMIC],
                 "detailed_description": "Set the redirect_uris parameter of the " + CLIENT_METADATA + " in a registration request.",
                 "expected_result": "Get a " + CLIENT_REGISTRATION_RESPONSE + "."
             },
-            "RP-registration-well_formed_jwk": {
+            "rp-registration-well-formed-jwk": {
                 "short_description": "Keys are published as a well-formed JWK Set",
                 "profiles": [DYNAMIC],
                 "detailed_description": "The keys published by the Relying Party should follow the " + JSON_WEB_KEY_SET_FORMAT + ".",
                 "expected_result": "Get a " + CLIENT_REGISTRATION_RESPONSE + "."
             },
-            "RP-registration-uses_https_endpoints": {
+            "rp-registration-uses-https-endpoints": {
                 "short_description": "Uses HTTPS for all endpoints",
                 "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
                 "detailed_description": "Only register URLs using the https scheme for all endpoints in the " + CLIENT_METADATA + ".",
                 "expected_result": "No endpoints not supporting HTTPS."
             }
         }],
-        ["Response type and response mode", {
-            "RP-response_type-code": {
+        ["Response Type and Response Mode", {
+            "rp-response_type-code": {
                 "short_description": "Can make request using response_type 'code'",
                 "profiles": [BASIC],
                 "detailed_description": "Make an authentication request using the " + AUTHORIZATION_CODE_FLOW + ".",
                 "expected_result": "An " + CODE_AUTHENTICATION_RESPONSE + " containing an authorization code."
             },
-            "RP-response_type-id_token": {
+            "rp-response_type-id_token": {
                 "short_description": "Can make request using response_type 'id_token'",
                 "profiles": [IMPLICIT],
                 "detailed_description": "Make an authentication request using the " + IMPLICIT_FLOW +
                 ", specifying the " + RESPONSE_TYPE + " as 'id_token'.",
                 "expected_result": "An " + IMPLICIT_AUTHENTICATION_RESPONSE + " containing an " + ID_TOKEN_IMPLICIT_FLOW + "."
             },
-            "RP-response_type-id_token+token": {
+            "rp-response_type-id_token+token": {
                 "short_description": "Can make request using response_type 'id_token token'",
                 "profiles": [IMPLICIT],
                 "detailed_description": "Make an authentication request using the " + IMPLICIT_FLOW +
                 ", specifying the " + RESPONSE_TYPE + " as 'id_token token'",
                 "expected_result": "An " + IMPLICIT_AUTHENTICATION_RESPONSE + " containing an " + ID_TOKEN_IMPLICIT_FLOW + " and an Access Token."
             },
-            "RP-response_mode-form_post": {
+            "rp-response_mode-form_post": {
                 "short_description": "Can make request using response_type='id_token token' and response_mode='form_post'",
                 "detailed_description": "Make an authentication request with the " + RESPONSE_TYPE +
                 " set to 'id_token token' and the " + RESPONSE_MODE + " set to " + FORM_POST + ".",
                 "expected_result": "HTML form post response processed, resulting in query encoded parameters."
             },
-            "RP-response_type-self_issued": {
+            "rp-self-issued": {
                 "short_description": "Can use Self-Issued OpenID Provider",
                 "profiles": [SELF_ISSUED],
                 "detailed_description": "Make an authentication request to a " + SELF_ISSUED_OPENID_PROVIDERS + ".",
                 "expected_result": "An " + SELF_ISSUED_AUTH_RESPONSE + " containing an " + SELF_ISSUED_ID_TOKEN + "."
             }
         }],
-        ["Claims Request Parameter", {
-            "RP-claims_request-id_token_claims": {
+        ["claims Request Parameter", {
+            "rp-claims-request-id_token": {
                 "short_description": "Can request and use claims in ID Token using the 'claims' request parameter",
                 "detailed_description": "Ask for the claim 'name' using the " + CLAIMS_REQUEST_PARAMETER +
                 ". Retrieve the claim from an ID Token, either by making a " + TOKEN_REQUEST + " or by using " + IMPLICIT_FLOW + ".",
                 "expected_result": "An " + ID_TOKEN + " containing the requested claim."
             },
-            "RP-claims_request-userinfo_claims": {
+            "rp-claims-request-userinfo": {
                 "short_description": "Can request and use claims in UserInfo Response using the 'claims' request parameter",
                 "detailed_description": "Ask for the claim 'name' using the " + CLAIMS_REQUEST_PARAMETER +
                 ". Retrieve the claims by making a " + USERINFO_REQUEST + ".",
@@ -283,26 +283,26 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             }
         }],
         ["request_uri Request Parameter", {
-            "RP-request_uri-enc": {
+            "rp-request_uri-enc": {
                 "short_description": "Can use request_uri request parameter with encrypted request",
                 "detailed_description": "Pass a " + REQUEST_OBJECT_BY_REFERENCE + ", using the " +
                 "request_uri parameter. " + ENCRYPT_THE_REQUEST_OBJECT + " using the 'RSA1_5' and 'A128CBC-HS256' algorithms.",
                 "expected_result": "An authentication response to the encrypted request passed using the request_uri request parameter."
             },
-            "RP-request_uri-sig+enc": {
+            "rp-request_uri-sig+enc": {
                 "short_description": "Can use request_uri request parameter with signed and encrypted request",
                 "detailed_description": "Pass a " + REQUEST_OBJECT_BY_REFERENCE + ", using the " +
                 "request_uri parameter. " + SIGN_THE_REQUEST_OBJECT + " using the 'RS256' algorithm, then " + ENCRYPT_THE_REQUEST_OBJECT + " using the 'RSA1_5' and 'A128CBC-HS256' algorithms.",
                 "expected_result": "An authentication response to the signed and encrypted request passed using the request_uri request parameter."
             },
-            "RP-request_uri-unsigned": {
+            "rp-request_uri-unsigned": {
                 "short_description": "Can use request_uri request parameter with unsigned request",
                 "profiles": [DYNAMIC_OPTIONAL],
                 "detailed_description": "Pass a " + REQUEST_OBJECT_BY_REFERENCE + ", using the " +
                 "request_uri parameter. The Request Object should be signed using the algorithm 'none' (" + UNSECURED_JWS + ").",
                 "expected_result": "An authentication response to the unsigned request passed using the request_uri request parameter."
             },
-            "RP-request_uri-sig": {
+            "rp-request_uri-sig": {
                 "short_description": "Can use request_uri request parameter with signed request",
                 "profiles": [DYNAMIC_OPTIONAL],
                 "detailed_description": "Pass a " + REQUEST_OBJECT_BY_REFERENCE + ", using the " +
@@ -311,7 +311,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             }
         }],
         ["Third Party Initiated Login", {
-            "RP-support_3rd_party_init_login": {
+            "rp-support-3rd-party-init-login": {
                 "short_description": "Supports third-party initiated login",
                 "detailed_description": "Receive a " + THIRD_PARTY_INITIATED_LOGIN + " request and send authentication request to the specified OpenID Connect Provider. " +
                 "Go to " + THIRD_PARTY_LOGIN_TEST + " to start the test",
@@ -319,13 +319,13 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             }
         }],
         ["scope Request Parameter", {
-            "RP-scope-contains_openid_scope": {
+            "rp-scope-openid": {
                 "short_description": "'openid' scope value should be present in the Authentication Request",
                 "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
                 "detailed_description": "Always add the " + OPENID_SCOPE + " value when sending an Authentication Request.",
                 "expected_result": "An authentication response."
             },
-            "RP-scope-userinfo_claims": {
+            "rp-scope-userinfo-claims": {
                 "short_description": "Can request and use claims using scope values",
                 "profiles": [BASIC_OPTIONAL, IMPLICIT_OPTIONAL, HYBRID_OPTIONAL, SELF_ISSUED_OPTIONAL],
                 "detailed_description": REQUEST_CLAIMS_USING_SCOPE_VALUES + ".",
@@ -334,14 +334,14 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             }
         }],
         ["nonce Request Parameter", {
-            "RP-nonce-unless_code_flow": {
+            "rp-nonce-unless-code-flow": {
                 "short_description": "Sends 'nonce' unless using code flow",
                 "profiles": [IMPLICIT, HYBRID, SELF_ISSUED],
                 "detailed_description": "Always send a " + NONCE_IMPLMENTATION + " as a request parameter while using implicit or hybrid flow. " +
                 "Verify the 'nonce' value returned in the " + ID_TOKEN + ".",
                 "expected_result": "An " + ID_TOKEN + ", either from the Authorization Endpoint or from the Token Endpoint, containing the same 'nonce' value as passed in the authentication request when using " + HYBRID_FLOW_ID_TOKEN + " or " + IMPLICIT_FLOW_ID_TOKEN + "."
             },
-            "RP-nonce-invalid": {
+            "rp-nonce-invalid": {
                 "short_description": "Rejects ID Token with invalid 'nonce' when valid 'nonce' sent",
                 "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
                 "detailed_description": "Pass a " + NONCE_IMPLMENTATION + " in the Authentication Request. Verify the 'nonce' value " +
@@ -350,26 +350,26 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             }
         }],
         ["Client Authentication", {
-            "RP-token_endpoint-client_secret_basic": {
+            "rp-authentication-client_secret_basic": {
                 "short_description": "Can make Access Token Request with 'client_secret_basic' authentication",
                 "profiles": [BASIC, IMPLICIT, HYBRID],
                 "detailed_description": "Use the '" + CLIENT_SECRET_BASIC + "' method to authenticate at the Authorization Server " +
                 "when using the token endpoint.",
                 "expected_result": "A " + TOKEN_RESPONSE + ", containing an ID token."
             },
-            "RP-token_endpoint-client_secret_jwt": {
+            "rp-authentication-client_secret_jwt": {
                 "short_description": "Can make Access Token Request with 'client_secret_jwt' authentication",
                 "detailed_description": "Use the '" + CLIENT_SECRET_JWT + "' method to authenticate at the Authorization Server " +
                 "when using the token endpoint.",
                 "expected_result": "A " + TOKEN_RESPONSE + ", containing an ID token."
             },
-            "RP-token_endpoint-client_secret_post": {
+            "rp-authentication-client_secret_post": {
                 "short_description": "Can make Access Token Request with 'client_secret_post' authentication",
                 "detailed_description": "Use the '" + CLIENT_SECRET_POST + "' method to authenticate at the Authorization Server " +
                 "when using the token endpoint.",
                 "expected_result": "A " + TOKEN_RESPONSE + ", containing an ID token."
             },
-            "RP-token_endpoint-private_key_jwt": {
+            "rp-authentication-private_key_jwt": {
                 "short_description": "Can make Access Token Request with 'private_key_jwt' authentication",
                 "detailed_description": "Use the '" + PRIVATE_KEY_JWT + "' method to authenticate at the Authorization Server " +
                 "when using the token endpoint.",
@@ -377,78 +377,78 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             }
         }],
         ["ID Token", {
-            "RP-id_token-bad_asym_sig_rs256": {
+            "rp-id_token-bad-sig-rs256": {
                 "short_description": "Rejects ID Token with invalid asymmetric 'RS256' signature",
                 "profiles": [BASIC_OPTIONAL, IMPLICIT, HYBRID, SELF_ISSUED],
                 "detailed_description": "Request an ID token and verify its signature using the keys provided by the Issuer.",
                 "expected_result": "Identify the invalid signature and reject the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
-            "RP-id_token-bad_symmetric_sig_hs256": {
+            "rp-id_token-bad-sig-hs256": {
                 "short_description": "Rejects ID Token with invalid symmetric 'HS256' signature",
                 "detailed_description": "Request an ID token and verify its signature using the " + SYMMETRIC_SIGNATURES + ".",
                 "expected_result": "Identify the invalid signature and reject the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
-            "RP-id_token-sig+enc": {
+            "rp-id_token-sig+enc": {
                 "short_description": "Can request and use signed and encrypted ID Token",
                 "detailed_description": "Request an encrypted ID Token. " +
                 "Decrypt the returned the ID Token and verify its signature using the keys published by the Issuer.",
                 "expected_result": "Accept the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
-            "RP-id_token-sig_none": {
+            "rp-id_token-sig-none": {
                 "short_description": "Can request and use unsigned ID Token",
                 "profiles": [BASIC_OPTIONAL, CONFIG_OPTIONAL, DYNAMIC_OPTIONAL],
                 "detailed_description": "Use " + CODE_FLOW + " and retrieve an unsigned ID Token.",
                 "expected_result": "Accept the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
-            "RP-id_token-bad_c_hash": {
+            "rp-id_token-bad-c_hash": {
                 "short_description": "Rejects ID Token with incorrect 'c_hash' claim when hybrid flow is used",
                 "profiles": [HYBRID],
                 "detailed_description": "Retrieve Authorization Code and ID Token from the Authorization Endpoint, using " + HYBRID_FLOW + ". Verify the " + C_HASH + " value in the returned ID token. 'id_token_signed_response_alg' must NOT be 'none'",
                 "expected_result": "Identify the incorrect 'c_hash' value and reject the ID Token after doing " + AUTHORIZATION_CODE_VALIDATION + "."
             },
-            "RP-id_token-bad_at_hash": {
+            "rp-id_token-bad-at_hash": {
                 "short_description": "Rejects ID Token with incorrect 'at_hash' claim when response_type='id_token token'",
                 "profiles": [IMPLICIT, HYBRID],
                 "detailed_description": "Make an authentication request using response_type='id_token token' for " + IMPLICIT_FLOW + " or response_type='code id_token token' for " + HYBRID_FLOW + ". Verify the 'at_hash' value in the returned " + ID_TOKEN + ".",
                 "expected_result": "Identify the incorrect 'at_hash' value and reject the ID Token after doing " + ACCESS_TOKEN_VALIDATION + "."
             },
-            "RP-id_token-mismatching_issuer": {
+            "rp-id_token-issuer-mismatch": {
                 "short_description": "Rejects ID Token with incorrect 'iss' claim",
                 "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
                 "detailed_description": "Request an ID token and verify its '" + ISS + "' value.",
                 "expected_result": "Identify the incorrect 'iss' value and reject the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
-            "RP-id_token-iat": {
+            "rp-id_token-iat": {
                 "short_description": "Rejects ID Token without 'iat' claim",
                 "profiles": [BASIC, IMPLICIT, HYBRID],
                 "detailed_description": "Request an ID token and verify its '" + IAT + "' value.",
                 "expected_result": "Identify the missing 'iat' value and reject the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
-            "RP-id_token-bad_es256_sig": {
+            "rp-id_token-bad-sig-es256": {
                 "short_description": "Rejects ID Token with invalid asymmetric 'ES256' signature",
                 "detailed_description": "Request an ID token and verify its signature using the keys provided by the Issuer.",
                 "expected_result": "Identify the invalid signature and reject the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
-            "RP-id_token-aud": {
+            "rp-id_token-aud": {
                 "short_description": "Rejects ID Token with invalid 'aud' claim",
                 "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
                 "detailed_description": "Request an ID token and compare its " + AUD + " value to the Relying Party's '" + CLIENT_ID + "'.",
                 "expected_result": "Identify that the 'aud' value is missing or doesn't match the 'client_id' and reject the ID Token after doing " + ID_TOKEN_VALIDATION + "."
 
             },
-            "RP-id_token-sub": {
+            "rp-id_token-sub": {
                 "short_description": "Rejects ID Token without 'sub' claim",
                 "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
                 "detailed_description": "Request an ID token and verify it contains a " + SUB + " value.",
                 "expected_result": "Identify the missing 'sub' value and reject the ID Token."
             },
-            "RP-id_token-kid_absent_single_jwks": {
+            "rp-id_token-kid-absent-single-jwks": {
                 "short_description": "Accepts ID Token without 'kid' claim in JOSE header if only one JWK supplied in 'jwks_uri'",
                 "profiles": [BASIC_OPTIONAL, IMPLICIT, HYBRID],
                 "detailed_description": "Request an ID token and verify its signature using the keys provided by the Issuer.",
                 "expected_result": "Use the single key published by the Issuer to verify the ID Tokens signature and accept the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
-            "RP-id_token-kid_absent_multiple_jwks": {
+            "rp-id_token-kid-absent-multiple-jwks": {
                 "short_description": "Rejects ID Token without 'kid' claim in JOSE header if multiple JWKs supplied in 'jwks_uri'",
                 "profiles": [BASIC_OPTIONAL, IMPLICIT_REJECTION_ALLOWED, HYBRID_REJECTION_ALLOWED],
                 "detailed_description": "Request an ID token and verify its signature using the keys provided by the Issuer.",
@@ -456,26 +456,26 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             }
         }],
         ["Key Rotation", {
-            "RP-key_rotation-op_sign_key": {
+            "rp-key-rotation-op-sign-key": {
                 "short_description": "Supports rotation of provider's asymmetric signing keys",
                 "profiles": [CONFIG, DYNAMIC],
                 "detailed_description": "Request an ID Token and verify its signature. Make a new authentication and retrieve another ID Token and verify its signature.",
                 "expected_result": "Successfully verify both ID Token signatures, fetching the " + SIGNING_KEY_ROTATION + " if the 'kid' claim in the JOSE header is unknown."
             },
-            "RP-key_rotation-rp_sign_key": {
+            "rp-key-rotation-rp-sign-key": {
                 "short_description": "Can rotate signing keys",
                 "profiles": [DYNAMIC],
                 "detailed_description": "Make a " + SIGNED_REQUEST + ". " + ROTATE_SIGNING_KEYS + " at the Relying Party's 'jwks_uri' after it has been used by OpenID Connect Provider. " +
                 "Make a new signed authentication request.",
                 "expected_result": "The OpenID Connect Provider successfully uses the rotated signing key: a successful authentication response to both authentication requests signed using the rotated signing key."
             },
-            "RP-key_rotation-op_enc_key": {
+            "rp-key-rotation-op-enc-key": {
                 "short_description": "Supports rotation of provider's asymmetric encryption keys",
                 "detailed_description": "Fetch the issuer's keys from the 'jwks_uri' and make an " + ENCRYPTED_REQUEST + " using the issuer's encryption keys. " +
                 "Fetch the issuer's keys from the jwks_uri again, and make a new encrypted request using the rotated encryption keys.",
                 "expected_result": "A successful authentication response to both authentication requests encrypted using rotated encryption keys."
             },
-            "RP-key_rotation-rp_enc_key": {
+            "rp-key-rotation-rp-enc-key": {
                 "short_description": "Can rotate encryption keys",
                 "detailed_description": "Request an encrypted ID Token and decrypt it. " + ROTATE_ENCRYPTION_KEYS + " at the Relying Party's 'jwks_uri' after it has been used by the OpenID Connect Provider. " +
                 "Make a new request for an encrypted ID Token and decrypt it using the rotated decryption key.",
@@ -483,53 +483,53 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             }
         }],
         ["Claim Types", {
-            "RP-claims-aggregated": {
+            "rp-claims-aggregated": {
                 "short_description": "Can use Aggregated Claims",
                 "detailed_description": "Make a " + USERINFO_REQUEST + " and read the " + AGGREGATED_CLAIMS + ".",
                 "expected_result": "Understand the aggregated claims in the " + USERINFO_RESPONSE + "."
             },
-            "RP-claims-distributed": {
+            "rp-claims-distributed": {
                 "short_description": "Can use Distributed Claims",
                 "detailed_description": "Make a " + USERINFO_REQUEST + " and read the " + DISTRIBUTED_CLAIMS + ".",
                 "expected_result": "Understand the distributed claims in the " + USERINFO_RESPONSE + "."
             }
         }],
         ["UserInfo Endpoint", {
-            "RP-user_info-bearer_header": {
+            "rp-userinfo-bearer-header": {
                 "short_description": "Can send Access Token in the HTTP Authorization request header",
                 "profiles": [BASIC, IMPLICIT, HYBRID],
                 "detailed_description": "Pass the access token using the " + BEARER_AUTH_SCHEME + " while doing the " + USERINFO_REQUEST + ".",
                 "expected_result": "A " + USERINFO_RESPONSE + "."
             },
-            "RP-user_info-bearer_body": {
+            "rp-userinfo-bearer-body": {
                 "short_description": "Can send Access Token as form-encoded body parameter",
                 "profiles": [BASIC_ALT_TO_HDR_METHOD, IMPLICIT_ALT_TO_HDR_METHOD, HYBRID_ALT_TO_HDR_METHOD],
                 "detailed_description": "Pass the access token as a " + FORM_ENCODED_BODY_PARAMETER + " while doing the " + USERINFO_REQUEST + ".",
                 "expected_result": "A " + USERINFO_RESPONSE + "."
             },
-            "RP-user_info-not_query": {
+            "rp-userinfo-not-query": {
                 "short_description": "Does not send Access Token as URI query parameter",
                 "profiles": [BASIC, IMPLICIT, HYBRID],
                 "detailed_description": "Make a " + USERINFO_REQUEST + " without sending the Access Token in the HTTP request URI.",
                 "expected_result": "A successful " + USERINFO_RESPONSE + " without passing the Access Token as a query parameter."
             },
-            "RP-user_info-sign": {
+            "rp-userinfo-sign": {
                 "short_description": "Can request and use signed UserInfo Response",
                 "profiles": [CONFIG_OPTIONAL, DYNAMIC_OPTIONAL],
                 "detailed_description": "Request signed UserInfo.",
                 "expected_result": "Successful signature verification of the " + USERINFO_RESPONSE + "."
             },
-            "RP-user_info-sig+enc": {
+            "rp-userinfo-sig+enc": {
                 "short_description": "Can request and use signed and encrypted UserInfo Response",
                 "detailed_description": "Request signed and encrypted UserInfo. Decrypt the " + USERINFO_RESPONSE + " and verify its signature.",
                 "expected_result": "Successful decryption and signature verification of the " + USERINFO_RESPONSE + "."
             },
-            "RP-user_info-enc": {
+            "rp-userinfo-enc": {
                 "short_description": "Can request and use encrypted UserInfo Response",
                 "detailed_description": "Request encrypted UserInfo. Decrypt the " + USERINFO_RESPONSE + ".",
                 "expected_result": "A " + USERINFO_RESPONSE + "."
             },
-            "RP-user_info-bad_sub_claim": {
+            "rp-userinfo-bad-sub-claim": {
                 "short_description": "Rejects UserInfo Response with invalid 'sub' claim",
                 "profiles": [BASIC, IMPLICIT, HYBRID],
                 "detailed_description": "Make a " + USERINFO_REQUEST + " and verify the 'sub' value of the " + USERINFO_RESPONSE + " by " + USER_INFO_SUB_CLAIM + ".",
