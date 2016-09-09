@@ -49,7 +49,7 @@ CONF = {
     "rp-discovery-jwks_uri_keys": {
         "claims": "normal",
         "response_type": ALL,
-        'out_of_scope': [R, A, T, U]
+        'out_of_scope': [U]
     },
     "rp-discovery-openid_configuration": {
         "claims": "normal",

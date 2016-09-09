@@ -1,6 +1,6 @@
 import time
 from oic import rndstr
-# TODO remove this dependency
+
 from oidctest.session import SessionHandler
 from otest.conversation import Conversation
 
