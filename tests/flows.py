@@ -21,23 +21,23 @@ __author__ = 'roland'
 
 ORDDESC = ["rp-discovery", "rp-registration",
            "rp-response_type", "rp-response_mode",
-           "rp-token_endpoint", "rp-idt", "rp-id_token",
-           "rp-user_info", "rp-claims", "rp-claims_request",
-           "rp-request_uri", "rp-scope", "rp-nonce", "rp-key_rollover"]
+           "rp-token_endpoint", "rp-id_token",
+           "rp-userinfo", "rp-claims", "rp-claims-request",
+           "rp-request_uri", "rp-scope", "rp-nonce", "rp-key-rotation"]
 
 FLOWS = {
-    "rp-discovery-webfinger_url": {
+    "rp-discovery-webfinger-url": {
         "sequence": [(Webfinger, {set_webfinger_resource: {}})],
         "desc": "Can Discover Identifiers using URL Syntax",
         "profile": ".T..",
     },
-    "rp-discovery-webfinger_acct": {
+    "rp-discovery-webfinger-acct": {
         "sequence": [(Webfinger, {resource: {"pattern": "acct:{}@{}"},
                                   set_webfinger_resource: {}})],
         "desc": "Can Discover Identifiers using acct Syntax",
         "profile": ".T..",
     },
-    "rp-discovery-openid_configuration": {
+    "rp-discovery-openid-configuration": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}})
@@ -45,7 +45,7 @@ FLOWS = {
         "profile": "..T.",
         "desc": "Uses openid-configuration Discovery Information"
     },
-    # "rp-discovery-issuer_not_matching_config": {
+    # "rp-discovery-issuer-not-matching-config": {
     #     "sequence": [
     #         (Webfinger, {set_webfinger_resource: {}}),
     #         (Discovery, {expect_exception: IssuerMismatch})
@@ -56,7 +56,7 @@ FLOWS = {
     # the issuer in the openid-configuration matches the one returned by
     # WebFinger"
     # },
-    'rp-discovery-jwks_uri_keys': {
+    "rp-discovery-jwks_uri-keys": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}})
@@ -68,7 +68,7 @@ FLOWS = {
             "bare-keys": {}
         }
     },
-    'rp-discovery-issuer_not_matching_config': {
+    "rp-discovery-issuer-not-matching-config": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {},
@@ -99,7 +99,7 @@ FLOWS = {
                 "while doing a registration request. Then send a valid "
                 "redirect_uris list"
     },
-    "rp-registration-uses_https_endpoints": {
+    "rp-registration-uses-https-endpoints": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -111,7 +111,7 @@ FLOWS = {
         "desc": "Sends a redirect_uri endpoint which does not use https. The "
                 "a valid redirect_uri is sent to the OP"
     },
-    "rp-registration-well_formed_jwk": {
+    "rp-registration-well-formed-jwk": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -173,7 +173,7 @@ FLOWS = {
         "profile": "I,IT,CI,CT,CIT,...",
         "desc": "Can Make Request with response_mode=form_post"
     },
-    "rp-token_endpoint-client_secret_basic": {
+    "rp-authentication-client_secret_basic": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -186,7 +186,7 @@ FLOWS = {
         "desc": "Can Make Access Token Request with 'client_secret_basic' "
                 "Authentication"
     },
-    "rp-token_endpoint-client_secret_post": {
+    "rp-authentication-client_secret_post": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -201,7 +201,7 @@ FLOWS = {
         "desc": "Can Make Access Token Request with 'client_secret_post' "
                 "Authentication"
     },
-    "rp-token_endpoint-client_secret_jwt": {
+    "rp-authentication-client_secret_jwt": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -216,7 +216,7 @@ FLOWS = {
         "desc": "Can Make Access Token Request with 'client_secret_jwt' "
                 "Authentication"
     },
-    "rp-token_endpoint-private_key_jwt": {
+    "rp-authentication-private_key_jwt": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -233,7 +233,7 @@ FLOWS = {
         "desc": "Can Make Access Token Request with 'private_key_jwt' "
                 "Authentication"
     },
-    "rp-idt-asym_sig": {
+    "rp-id_token-sig-rs256": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -247,7 +247,7 @@ FLOWS = {
         "profile": "I...T",
         "desc": "Accept Valid Asymmetric ID Token Signature"
     },
-    "rp-idt-sym_sig": {
+    "rp-id_token-sig-hs256": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -261,7 +261,7 @@ FLOWS = {
         "profile": "I...T",
         "desc": "Accept Valid Symmetric ID Token Signature"
     },
-    "rp-idt-invalid-asym_sig": {
+    "rp-id_token-bad-sig-rs256": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -278,7 +278,7 @@ FLOWS = {
         "profile": "I...T",
         "desc": "Reject Invalid Asymmetric ID Token Signature"
     },
-    "rp-idt-invalid-ec_sig": {
+    "rp-id_token-bad-sig-es256": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -295,7 +295,7 @@ FLOWS = {
         "profile": "I...T",
         "desc": "Reject Invalid Asymmetric ID Token Signature"
     },
-    "rp-idt-invalid-sym_sig": {
+    "rp-id_token-bad-sig-hs256": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -328,7 +328,7 @@ FLOWS = {
         "profile": "I...T",
         "desc": "Can Request and Use Signed and Encrypted ID Token Response",
     },
-    "rp-idt-none": {
+    "rp-id_token-sig-none": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -341,7 +341,7 @@ FLOWS = {
         "profile": "C,CT,CIT...T",
         "desc": "Can Request and Use unSigned ID Token Response"
     },
-    "rp-user_info-bad_sub_claim": {
+    "rp-userinfo-bad-sub-claim": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -353,7 +353,7 @@ FLOWS = {
         "profile": "C,CI,CT,CIT...",
         "desc": "Reject UserInfo with Invalid Sub claim"
     },
-    "rp-claims_request-id_token_claims": {
+    "rp-claims-request-id_token": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -377,7 +377,7 @@ FLOWS = {
                 "'claims' request parameter. The claim should be returned in "
                 "an ID Token"
     },
-    "rp-claims_request-request_userinfo": {
+    "rp-claims-request-userinfo": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -401,7 +401,7 @@ FLOWS = {
                 "'claims' request parameter. The claim should be returned in "
                 "a UserInfo response",
     },
-    "rp-scope-contains_openid_scope": {
+    "rp-scope-openid": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -412,7 +412,7 @@ FLOWS = {
         "desc": "The Relying Party should always add the openid scope value "
                 "while sending an Authorization Request.",
     },
-    "rp-scope-userinfo_claims": {
+    "rp-scope-userinfo-claims": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -426,7 +426,7 @@ FLOWS = {
         "desc": "The Relying Party should be able to request claims using "
                 "Scope Values",
     },
-    "rp-user_info-bearer_body": {
+    "rp-userinfo-bearer-body": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -442,7 +442,7 @@ FLOWS = {
         "profile": "C,CI,CT,CIT...",
         "desc": "Accesses UserInfo Endpoint with form-encoded body method"
     },
-    "rp-user_info-bearer_header": {
+    "rp-userinfo-bearer-header": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -458,7 +458,7 @@ FLOWS = {
         "profile": "C,CI,CT,CIT...",
         "desc": "Accesses UserInfo Endpoint with Header Method "
     },
-    "rp-user_info-enc": {
+    "rp-userinfo-enc": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -476,7 +476,7 @@ FLOWS = {
         "profile": "C,CI,CT,CIT...",
         "desc": "Can Request and Use Encrypted UserInfo Response "
     },
-    "rp-user_info-sig+enc": {
+    "rp-userinfo-sig+enc": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -495,7 +495,7 @@ FLOWS = {
         "profile": "C,CI,CT,CIT...",
         "desc": "Can Request and Use Signed and Encrypted UserInfo Response"
     },
-    "rp-user_info-sign": {
+    "rp-userinfo-sign": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -548,7 +548,7 @@ FLOWS = {
                 "Relying Party must validate the nonce returned in the ID "
                 "Token."
     },
-    "rp-nonce-unless_code_flow": {
+    "rp-nonce-unless-code-flow": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -585,7 +585,7 @@ FLOWS = {
                 "Encrypt the Request Object using RSA1_5 and A128CBC-HS256 "
                 "algorithms"
     },
-    "rp-key_rollover-op_enc_key": {
+    "rp-key-rotation-op-enc-key": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -609,7 +609,7 @@ FLOWS = {
         "profile": "...",
         "desc": "Support OP Encryption Key Rollover"
     },
-    "rp-key_rollover-op_sign_key": {
+    "rp-key-rotation-op-sign-key": {
         "sequence": [
             (Webfinger, {set_webfinger_resource: {}}),
             (Discovery, {set_discovery_issuer: {}}),
@@ -618,6 +618,6 @@ FLOWS = {
             SyncAuthn
         ],
         "profile": "I,IT,CI,CIT...",
-        "desc": "Support OP Encryption Key Rollover"
+        "desc": "Support OP Signing Key Rollover"
     }
 }

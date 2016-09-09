@@ -69,6 +69,17 @@ LOOKUP = TemplateLookup(directories=[ROOT + 'templates', ROOT + 'htdocs'],
 
 # ----------------------------------------------------------------------------
 
+def get_client_address(environ):
+    try:
+        _port = environ['REMOTE_PORT']
+    except KeyError:
+        _port = '?'
+    try:
+        _addr = environ['HTTP_X_FORWARDED_FOR'].split(',')[-1].strip()
+    except KeyError:
+        _addr = environ['REMOTE_ADDR']
+    return "{}:{}".format(_addr, _port)
+
 
 def rp_support_3rd_party_init_login(environ, start_response):
     resp = Response(mako_template="rp_support_3rd_party_init_login.mako",
@@ -128,7 +139,7 @@ class Application(object):
         self.op = {}
 
     def op_setup(self, environ, mode, trace, test_conf):
-        addr = environ.get("REMOTE_ADDR", '')
+        addr = get_client_address(environ)
         path = '/'.join([mode['oper_id'], mode['test_id']])
 
         key = "{}:{}".format(addr, path)
@@ -166,7 +177,7 @@ class Application(object):
         parameters = parse_qs(environ["QUERY_STRING"])
 
         session_info = {
-            "addr": environ.get("REMOTE_ADDR", ''),
+            "addr": get_client_address(environ),
             'cookie': environ.get("HTTP_COOKIE", ''),
             'path': path,
             'parameters': parameters
