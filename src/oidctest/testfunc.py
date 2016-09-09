@@ -3,9 +3,9 @@ import inspect
 
 from future.backports.urllib.parse import urlparse
 
-from aatest.check import ERROR, State
-from aatest.events import EV_CONDITION
-from aatest.events import EV_RESPONSE
+from otest.check import ERROR, State
+from otest.events import EV_CONDITION
+from otest.events import EV_RESPONSE
 
 __author__ = 'roland'
 
@@ -85,6 +85,6 @@ def factory(name):
             if fname == name:
                 return obj
 
-    from aatest.func import factory as aafactory
+    from otest.func import factory as _factory
 
-    return aafactory(name)
+    return _factory(name)

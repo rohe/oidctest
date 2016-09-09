@@ -441,6 +441,23 @@ Flows:
                   - id_token
                   - token
             exception: AtHashError
+  RP-id_token-sig+enc:
+    desc: Can request and use signed and encrypted ID Token
+    profile: ...T
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: null
+      - Discovery:
+          set_discovery_issuer: null
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: RS256
+            id_token_encrypted_response_alg: RSA1_5
+            id_token_encrypted_response_enc: A128CBC-HS256
+      - SyncAuthn
+      - AccessToken:
+          conditional_excecution:
+            profile: 'CIT,CI,C,CT...'
   RP-id_token-sym_sig:
     desc: Accept Valid Symmetric ID Token Signature
     profile: I...T
@@ -787,7 +804,7 @@ Flows:
               - profile
       - AccessToken
       - UserInfo
-  RP-scope-without_openid_scope:
+  RP-scope-contains_openid_scope:
     desc: The Relying Party should always add the openid scope value while sending an
       Authorization Request.
     profile: '...'
@@ -954,6 +971,21 @@ Flows:
       - SyncAuthn
       - AccessToken
       - UserInfo
+  RP-user_info-query:
+    desc: Can send Access Token as URI query parameter
+    profile: ...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: null
+      - Discovery:
+          set_discovery_issuer: null
+      - Registration:
+          set_jwks_uri: null
+      - SyncAuthn
+      - AccessToken
+      - UserInfo:
+          set_request_args:
+            behavior: as_query_parameter
 Order:
   - RP-discovery
   - RP-registration

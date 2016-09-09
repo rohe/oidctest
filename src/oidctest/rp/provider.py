@@ -2,7 +2,6 @@ import json
 import time
 
 from Cryptodome.PublicKey import RSA
-from aatest.events import EV_HTTP_RESPONSE
 from future.backports.urllib.parse import parse_qs
 
 from jwkest.ecc import P256
@@ -19,6 +18,8 @@ from oic.oic.message import ProviderConfigurationResponse
 from oic.oic.message import RegistrationResponse
 from oic.oic.message import RegistrationRequest
 from oic.utils.keyio import keyjar_init
+
+from otest.events import EV_HTTP_RESPONSE
 
 __author__ = 'roland'
 

@@ -1,5 +1,5 @@
-from aatest import prof_util
-from aatest.time_util import in_a_while
+from otest import prof_util
+from otest.time_util import in_a_while
 
 __author__ = 'roland'
 

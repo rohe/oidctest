@@ -27,10 +27,10 @@ CONF = {
         "claims": "normal",
         "response_type": ALL
     },
-    "rp-claims_request-request_userinfo": {
-        "claims": "normal",
-        "response_type": [C, IT, CI, CT, CIT]
-    },
+    # "rp-claims_request-request_userinfo": {
+    #     "claims": "normal",
+    #     "response_type": [C, IT, CI, CT, CIT]
+    # },
     "rp-claims_request-userinfo_claims": {
         "claims": "normal",
         "response_type": [C, IT, CI, CT, CIT]
@@ -116,11 +116,6 @@ CONF = {
         "behavior": ["iat"],
         "response_type": ALL
     },
-    "rp-id_token-issuer": {
-        "claims": "normal",
-        "behavior": ["issi"],
-        "response_type": ALL
-    },
     "rp-id_token-kid": {
         "claims": "normal",
         # "behavior": ["nokidjwks"],
@@ -147,16 +142,6 @@ CONF = {
         "behavior": ["issi"],
         "response_type": ALL,
         'out_of_scope': [U]
-    },
-    "rp-id_token-none": {
-        "claims": "normal",
-        'signing_alg': "none",
-        "response_type": [C, CT, CIT]
-    },
-    "rp-id_token-none-code": {
-        "claims": "normal",
-        'signing_alg': "none",
-        "response_type": ALL
     },
     "rp-id_token-sig+enc": {
         "claims": "normal",
@@ -288,17 +273,17 @@ CONF = {
         # "path": "/_/_/_/normal",
         "response_type": ALL
     },
-    "rp-scope-without_openid_scope": {
-        "claims": "normal",
-        "behavior": ["openid"],
-        # "path": "/_/_/openid/normal",
-        "response_type": ALL
-    },
-    "rp-support_3rd_party_init_login": {
-        "claims": "normal",
-        # "path": "/_/_/_/normal",
-        "response_type": ALL
-    },
+    # "rp-scope-without_openid_scope": {
+    #     "claims": "normal",
+    #     "behavior": ["openid"],
+    #     # "path": "/_/_/openid/normal",
+    #     "response_type": ALL
+    # },
+    # "rp-support_3rd_party_init_login": {
+    #     "claims": "normal",
+    #     # "path": "/_/_/_/normal",
+    #     "response_type": ALL
+    # },
     "rp-token_endpoint-client_secret_basic": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
@@ -340,7 +325,7 @@ CONF = {
         # "path": "/_/_/_/normal",
         "response_type": [C, CI, CT, CIT]
     },
-    "rp-user_info-not_query": {
+    "rp-user_info-query": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
         "response_type": ALL

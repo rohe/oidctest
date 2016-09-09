@@ -2,10 +2,10 @@ import os
 import logging
 from six.moves.urllib.parse import unquote
 # from urllib.parse import unquote
-from aatest import exception_trace, Break
-from aatest.check import ERROR, State
-from aatest.check import WARNING
-from aatest.events import EV_CONDITION
+from otest import exception_trace, Break
+from otest.check import ERROR, State
+from otest.check import WARNING
+from otest.events import EV_CONDITION
 from oic.utils.http_util import Response
 
 __author__ = 'roland'

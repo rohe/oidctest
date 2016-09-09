@@ -1,6 +1,6 @@
-from aatest.func import set_request_args
-from aatest.operation import Note
-from aatest.session import Done
+from otest import Done
+from otest.func import set_request_args
+from otest.operation import Note
 
 from oidctest.op.oper import AccessToken
 from oidctest.op.oper import AsyncAuthn

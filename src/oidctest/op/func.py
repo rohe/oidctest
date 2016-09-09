@@ -6,17 +6,17 @@ import sys
 from future.backports.urllib.parse import urlparse
 from future.backports.urllib.parse import urlencode
 
-from aatest import ConfigurationError
-from aatest.check import ERROR
-from aatest.check import State
-from aatest.check import STATUSCODE_TRANSL
-from aatest.events import EV_CONDITION
-from aatest.events import EV_RESPONSE
+from otest import ConfigurationError
+from otest.check import ERROR
+from otest.check import get_signed_id_tokens
+from otest.check import State
+from otest.check import STATUSCODE_TRANSL
+from otest.events import EV_CONDITION
+from otest.events import EV_RESPONSE
 
 from oidctest.op.check import get_id_tokens
 from oidctest.op.prof_util import map_prof
 from oidctest.op.tool import get_redirect_uris
-from otest.check import get_signed_id_tokens
 from past.types import basestring
 
 __author__ = 'roland'
@@ -354,6 +354,6 @@ def factory(name):
             if fname == name:
                 return obj
 
-    from aatest.func import factory as aafactory
+    from otest.func import factory as aafactory
 
     return aafactory(name)

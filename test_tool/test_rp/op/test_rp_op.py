@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+"""
+The OP used when testing RP libraries
+"""
 import json
 import re
 import sys
@@ -13,7 +16,6 @@ from oic.utils.http_util import Response
 from oic.utils.http_util import NotFound
 from oic.utils.http_util import ServiceError
 
-from aatest import Trace
 from oidctest.endpoints import static
 from oidctest.endpoints import display_log
 from oidctest.endpoints import URLS
@@ -21,6 +23,8 @@ from oidctest.response_encoder import ResponseEncoder
 from oidctest.rp import test_config
 from oidctest.rp.mode import extract_mode
 from oidctest.rp.mode import setup_op
+
+from otest import Trace
 from otest.conversation import Conversation
 from otest.jlog import JLog
 

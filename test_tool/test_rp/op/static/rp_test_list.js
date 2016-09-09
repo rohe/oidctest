@@ -160,7 +160,6 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var SIGNING_KEY_ROTATION = convert_to_link(ROTATE_SIGNING_KEY_URL, "rotated signing keys");
     var SIGNED_REQUEST = convert_to_link(JWT_REQUESTS_URL, "signed authentication request");
     var USER_INFO_SUB_CLAIM = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse", "comparing it with the ID Token's 'sub' value");
-    var THIRD_PARTY_LOGIN_TEST = convert_to_link($scope.get_3rd_party_test(), "third-party initiated login test")
 
     $scope.guidlines = [
         ["Discovery", {
@@ -260,12 +259,6 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "detailed_description": "Make an authentication request with the " + RESPONSE_TYPE +
                 " set to 'id_token token' and the " + RESPONSE_MODE + " set to " + FORM_POST + ".",
                 "expected_result": "HTML form post response processed, resulting in query encoded parameters."
-            },
-            "RP-response_type-self_issued": {
-                "short_description": "Can use Self-Issued OpenID Provider",
-                "profiles": [SELF_ISSUED],
-                "detailed_description": "Make an authentication request to a " + SELF_ISSUED_OPENID_PROVIDERS + ".",
-                "expected_result": "An " + SELF_ISSUED_AUTH_RESPONSE + " containing an " + SELF_ISSUED_ID_TOKEN + "."
             }
         }],
         ["Claims Request Parameter", {
@@ -308,14 +301,6 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "detailed_description": "Pass a " + REQUEST_OBJECT_BY_REFERENCE + ", using the " +
                 "request_uri parameter. " + SIGN_THE_REQUEST_OBJECT + " using the 'RS256' algorithm.",
                 "expected_result": "An authentication response to the signed request passed using the request_uri request parameter."
-            }
-        }],
-        ["Third Party Initiated Login", {
-            "RP-support_3rd_party_init_login": {
-                "short_description": "Supports third-party initiated login",
-                "detailed_description": "Receive a " + THIRD_PARTY_INITIATED_LOGIN + " request and send authentication request to the specified OpenID Connect Provider. " +
-                "Go to " + THIRD_PARTY_LOGIN_TEST + " to start the test",
-                "expected_result": "An authentication response."
             }
         }],
         ["scope Request Parameter", {
@@ -507,11 +492,11 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "detailed_description": "Pass the access token as a " + FORM_ENCODED_BODY_PARAMETER + " while doing the " + USERINFO_REQUEST + ".",
                 "expected_result": "A " + USERINFO_RESPONSE + "."
             },
-            "RP-user_info-not_query": {
-                "short_description": "Does not send Access Token as URI query parameter",
+            "RP-user_info-query": {
+                "short_description": "Can send Access Token as URI query parameter",
                 "profiles": [BASIC, IMPLICIT, HYBRID],
-                "detailed_description": "Make a " + USERINFO_REQUEST + " without sending the Access Token in the HTTP request URI.",
-                "expected_result": "A successful " + USERINFO_RESPONSE + " without passing the Access Token as a query parameter."
+                "detailed_description": "Make a " + USERINFO_REQUEST + " with the Access Token in the HTTP request URI.",
+                "expected_result": "A successful " + USERINFO_RESPONSE + " while passing the Access Token as a query parameter."
             },
             "RP-user_info-sign": {
                 "short_description": "Can request and use signed UserInfo Response",

@@ -1,23 +1,26 @@
 #!/usr/bin/env python
-
+"""
+Command line tool for testing the pyoidc RP library
+"""
 import importlib
 import json
 import logging
 import argparse
-from aatest.common import setup_logger
-from aatest.result import Result
 
 from future.backports.urllib.parse import urlparse
 
-from aatest.parse_cnf import parse_yaml_conf
 from oic.utils.keyio import build_keyjar
+
+from otest.parse_cnf import parse_yaml_conf
+from otest.common import setup_logger
+from otest.io import ClIO
+from otest.result import Result
 
 from oidctest.op import func
 from oidctest.op import check
 from oidctest.op.prof_util import ProfileHandler
 from oidctest.op.tool import ClTester
 from oidctest.session import SessionHandler
-from aatest.io import ClIO
 
 from requests.packages import urllib3
 

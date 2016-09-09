@@ -31,24 +31,24 @@ from oidctest.regalg import REGISTERED_JWS_ALGORITHMS
 from oidctest.regalg import REGISTERED_JWE_alg_ALGORITHMS
 from oidctest.regalg import REGISTERED_JWE_enc_ALGORITHMS
 
-from aatest.check import Check
-from aatest.check import Warnings
-from aatest.check import Information
-from aatest.check import CriticalError
-from aatest.check import Other
-from aatest.check import Error
-from aatest.check import ResponseInfo
-from aatest.check import WARNING
-from aatest.check import OK
-from aatest.check import CRITICAL
-from aatest.check import ERROR
-from aatest.check import INTERACTION
-from aatest.check import INFORMATION
-from aatest.events import EV_RESPONSE
-from aatest.events import EV_REDIRECT_URL
-from aatest.events import EV_PROTOCOL_REQUEST
-from aatest.events import EV_PROTOCOL_RESPONSE
-from aatest.events import EV_HTTP_RESPONSE
+from otest.check import Check
+from otest.check import Warnings
+from otest.check import Information
+from otest.check import CriticalError
+from otest.check import Other
+from otest.check import Error
+from otest.check import ResponseInfo
+from otest.check import WARNING
+from otest.check import OK
+from otest.check import CRITICAL
+from otest.check import ERROR
+from otest.check import INTERACTION
+from otest.check import INFORMATION
+from otest.events import EV_RESPONSE
+from otest.events import EV_REDIRECT_URL
+from otest.events import EV_PROTOCOL_REQUEST
+from otest.events import EV_PROTOCOL_RESPONSE
+from otest.events import EV_HTTP_RESPONSE
 
 __author__ = 'rohe0002'
 

@@ -1,9 +1,6 @@
 import os
 
-from aatest.time_util import in_a_while
-from future.backports.urllib.parse import quote_plus
-
-from aatest.log import with_or_without_slash
+from otest.time_util import in_a_while
 
 __author__ = 'roland'
 

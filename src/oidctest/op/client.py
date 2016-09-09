@@ -1,7 +1,7 @@
 from oic import oic
-from aatest.events import EV_RESPONSE
-from aatest.events import EV_PROTOCOL_RESPONSE
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
+from otest.events import EV_RESPONSE
+from otest.events import EV_PROTOCOL_RESPONSE
 
 __author__ = 'roland'
 

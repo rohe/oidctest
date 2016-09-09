@@ -13,15 +13,14 @@ from oic.utils.http_util import ServiceError
 from oic.utils.http_util import BadRequest
 from oic.utils.webfinger import OIC_ISSUER
 from oic.utils.webfinger import WebFinger
-
-from aatest import resp2json
-
 # All endpoints the OpenID Connect Provider should answer on
 from oic.oic.provider import AuthorizationEndpoint
 from oic.oic.provider import EndSessionEndpoint
 from oic.oic.provider import TokenEndpoint
 from oic.oic.provider import UserinfoEndpoint
 from oic.oic.provider import RegistrationEndpoint
+
+from otest import resp2json
 
 __author__ = 'roland'
 

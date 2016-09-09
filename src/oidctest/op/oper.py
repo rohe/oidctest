@@ -11,13 +11,6 @@ from future.backports.urllib.parse import urlparse
 
 from jwkest.jwk import RSAKey
 
-from aatest import RequirementsNotMet
-from aatest import Unknown
-from aatest import Break
-from aatest.events import EV_PROTOCOL_RESPONSE
-
-from otest.aus.operation import Operation
-
 from oic import rndstr
 
 from oic.exception import IssuerMismatch
@@ -31,10 +24,15 @@ from oic.utils.keyio import KeyBundle
 from oic.utils.keyio import ec_init
 from oic.utils.keyio import dump_jwks
 
+from otest import RequirementsNotMet
+from otest import Unknown
+from otest import Break
+from otest.aus.operation import Operation
 from otest.aus.request import SyncGetRequest
 from otest.aus.request import AsyncGetRequest
 from otest.aus.request import SyncPostRequest
 from otest.aus.request import same_issuer
+from otest.events import EV_PROTOCOL_RESPONSE
 
 from oidctest.op.prof_util import DISCOVER
 from oidctest.op.prof_util import REGISTER

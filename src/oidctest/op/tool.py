@@ -2,8 +2,8 @@ import logging
 
 from oic.utils.http_util import Response
 
-from aatest import exception_trace
-from aatest.conversation import Conversation
+from otest import exception_trace
+from otest.conversation import Conversation
 
 from oidctest.op import prof_util
 from oidctest.op.client import make_client

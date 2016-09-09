@@ -2,14 +2,14 @@ import inspect
 import logging
 import sys
 
-from aatest import operation
-from aatest import OperationError
+from otest import operation
+from otest import OperationError
 
-from aatest.events import EV_HTTP_RESPONSE
-from aatest.events import EV_PROTOCOL_RESPONSE
-from aatest.events import EV_REDIRECT_URL
-from aatest.events import EV_REQUEST
-from aatest.verify import Verify
+from otest.events import EV_HTTP_RESPONSE
+from otest.events import EV_PROTOCOL_RESPONSE
+from otest.events import EV_REDIRECT_URL
+from otest.events import EV_REQUEST
+from otest.verify import Verify
 from future.backports.http.cookies import CookieError
 from future.backports.http.cookies import SimpleCookie
 from oic.oauth2.util import set_cookie

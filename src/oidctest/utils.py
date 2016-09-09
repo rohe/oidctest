@@ -8,7 +8,7 @@ from six.moves.urllib.parse import quote_plus
 from oic.utils.time_util import in_a_while
 
 from oidctest.op import check as op_check
-from aatest import check as aa_check
+from otest import check as o_check
 
 __author__ = 'roland'
 
@@ -194,4 +194,4 @@ def get_check(check_id):
         if chk:
             return chk
 
-    return aa_check.factory(check_id)
+    return o_check.factory(check_id)

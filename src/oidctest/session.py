@@ -1,8 +1,8 @@
 import copy
 import logging
 
-from aatest import session
-from aatest.session import Done
+from otest import Done
+from otest import session
 
 from oidctest.op.prof_util import map_prof
 

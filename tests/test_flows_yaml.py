@@ -1,6 +1,6 @@
-from aatest.yamlcnf import parse_yaml_conf
-from oidctest import oper
-from oidctest import func
+from otest.yamlcnf import parse_yaml_conf
+from oidctest.op import oper
+from oidctest.op import func
 
 __author__ = 'roland'
 

@@ -10,14 +10,14 @@ from future.backports.urllib.parse import urlparse
 from oic.utils.authn.client import BearerHeader
 from oic.utils.keyio import build_keyjar
 
-from aatest import ConfigurationError
-from aatest import NotSupported
-from aatest import exception_trace
-from aatest.check import OK
-from aatest.conversation import Conversation
-from aatest.parse_cnf import parse_yaml_conf
+from otest import ConfigurationError
+from otest import NotSupported
+from otest import exception_trace
+from otest.check import OK
+from otest.conversation import Conversation
+from otest.parse_cnf import parse_yaml_conf
 
-from oidctest.common import make_list
+from oidctest.op import make_list
 from oidctest.common import make_client
 from oidctest.common import setup_logger
 from oidctest.common import run_flow
