@@ -209,24 +209,6 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "register the Relying Party.",
                 "expected_result": "Get a " + CLIENT_REGISTRATION_RESPONSE + "."
             },
-            "rp-registration-redirect_uris": {
-                "short_description": "Registration request has redirect_uris",
-                "profiles": [DYNAMIC],
-                "detailed_description": "Set the redirect_uris parameter of the " + CLIENT_METADATA + " in a registration request.",
-                "expected_result": "Get a " + CLIENT_REGISTRATION_RESPONSE + "."
-            },
-            "rp-registration-well-formed-jwk": {
-                "short_description": "Keys are published as a well-formed JWK Set",
-                "profiles": [DYNAMIC],
-                "detailed_description": "The keys published by the Relying Party should follow the " + JSON_WEB_KEY_SET_FORMAT + ".",
-                "expected_result": "Get a " + CLIENT_REGISTRATION_RESPONSE + "."
-            },
-            "rp-registration-uses-https-endpoints": {
-                "short_description": "Uses HTTPS for all endpoints",
-                "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
-                "detailed_description": "Only register URLs using the https scheme for all endpoints in the " + CLIENT_METADATA + ".",
-                "expected_result": "No endpoints not supporting HTTPS."
-            }
         }],
         ["Response Type and Response Mode", {
             "rp-response_type-code": {

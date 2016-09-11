@@ -185,21 +185,21 @@ CONF = {
         # "path": "/_/_/_/normal",
         "response_type": ALL
     },
-    "rp-registration-redirect_uris": {
-        "claims": "normal",
-        # "path": "/_/_/_/normal",
-        "response_type": ALL
-    },
-    "rp-registration-uses-https-endpoints": {
-        "claims": "normal",
-        # "path": "/_/_/_/normal",
-        "response_type": ALL
-    },
-    "rp-registration-well-formed-jwk": {
-        "claims": "normal",
-        # "path": "/_/_/_/normal",
-        "response_type": ALL
-    },
+    # "rp-registration-redirect_uris": {
+    #     "claims": "normal",
+    #     # "path": "/_/_/_/normal",q
+    #     "response_type": ALL
+    # },
+    # "rp-registration-uses-https-endpoints": {
+    #     "claims": "normal",
+    #     # "path": "/_/_/_/normal",
+    #     "response_type": ALL
+    # },
+    # "rp-registration-well-formed-jwk": {
+    #     "claims": "normal",
+    #     # "path": "/_/_/_/normal",
+    #     "response_type": ALL
+    # },
     "rp-request_uri-enc": {
         "claims": "normal",
         # "path": "/_/_/_/normal",

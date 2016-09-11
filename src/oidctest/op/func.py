@@ -258,7 +258,6 @@ def resource(oper, args):
         test_id=oper.conv.test_id, host=_p.netloc,
         oper_id=oper.conv.operator_id)
 
-
 def expect_exception(oper, args):
     oper.expect_exception = args
 

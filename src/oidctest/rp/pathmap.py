@@ -12,9 +12,8 @@ IDMAP = {
 
     # Dynamic Client Registration
     "rp-registration-dynamic": NORMAL,
-    'rp-registration-redirect_uris': NORMAL,
-    "rp-registration-well-formed-jwk": NORMAL,
-    "rp-registration-uses-https-endpoints": NORMAL,
+    #"rp-registration-well-formed-jwk": NORMAL,
+    #"rp-registration-uses-https-endpoints": NORMAL,
 
     # Response type and response mode
     "rp-response_type-code": NORMAL,
