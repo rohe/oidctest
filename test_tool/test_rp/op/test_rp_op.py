@@ -266,8 +266,17 @@ class Application(object):
                 mode = parse_path(_p.path)
             elif _p.scheme == "acct":
                 _l, _ = _p.path.split('@')
+
                 _a = _l.split('.')
-                mode = {'oper_id': _a[0], "test_id": _a[1]}
+                if len(_a) == 2:
+                    mode = {'oper_id': _a[0], "test_id": _a[1]}
+                elif len(_a) > 2:
+                    mode = {'oper_id': ".".join(_a[:-1]), "test_id": _a[-1]}
+                else:
+                    mode = {'oper_id': _a[0], "test_id": 'default'}
+
+                trace.info(
+                    'oper_id: {oper_id}, test_id: {test_id}'.format(**mode))
             else:
                 _msg = "Unknown scheme: {}".format(_p.scheme)
                 jlog.error({'reason': _msg})
