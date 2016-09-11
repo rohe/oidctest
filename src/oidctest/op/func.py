@@ -24,12 +24,11 @@ __author__ = 'roland'
 
 def set_webfinger_resource(oper, args):
     try:
-        _base = oper.op_args["resource"]
+        oper.resource = oper.op_args["resource"]
     except KeyError:
         _base = oper.conf.ISSUER
-
-    oper.resource = os.path.join(_base, oper.conv.operator_id,
-                                 oper.conv.test_id)
+        oper.resource = os.path.join(_base, oper.conv.operator_id,
+                                     oper.conv.test_id)
 
 
 def set_discovery_issuer(oper, args):
@@ -255,8 +254,9 @@ def request_in_file(oper, kwargs):
 
 def resource(oper, args):
     _p = urlparse(oper.conv.conf.ISSUER)
-    oper.op_args["resource"] = args["pattern"].format(oper.conv.test_id,
-                                                      _p.netloc)
+    oper.op_args["resource"] = args["pattern"].format(
+        test_id=oper.conv.test_id, host=_p.netloc,
+        oper_id=oper.conv.operator_id)
 
 
 def expect_exception(oper, args):

@@ -177,14 +177,8 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "profiles": [DYNAMIC],
                 "detailed_description": "Use WebFinger (" +
                 RFC7033 + ") and " + ISSUER_DISCOVERY_DOC + " to determine the location of the OpenID Provider. " +
-                "The discovery should be done using " + ACCT_SYNTAX + " as user input identifier.",
-                "expected_result": "An issuer location should be returned."
-            },
-            "rp-discovery": {
-                "short_description": "Uses OpenID Connect Discovery",
-                "profiles": [DYNAMIC],
-                "detailed_description": "The Relying Party should be able to determine the OpenID Provider location by using " +
-                OPENID_PROVIDER_ISSUER_DISCOVERY + ".",
+                "The discovery should be done using " + ACCT_SYNTAX + " as user input identifier." +
+                "Note that the local part of the acct value should adhere to the pattern <oper_id>.<test_id>",
                 "expected_result": "An issuer location should be returned."
             },
             "rp-discovery-issuer-not-matching-config": {
@@ -255,6 +249,27 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 ", specifying the " + RESPONSE_TYPE + " as 'id_token token'",
                 "expected_result": "An " + IMPLICIT_AUTHENTICATION_RESPONSE + " containing an " + ID_TOKEN_IMPLICIT_FLOW + " and an Access Token."
             },
+            "rp-response_type-code+id_token": {
+                "short_description": "Can make request using response_type 'code id_token'",
+                "profiles": [IMPLICIT],
+                "detailed_description": "Make an authentication request using the " + HYBRID_FLOW +
+                ", specifying the " + RESPONSE_TYPE + " as 'id_token token'",
+                "expected_result": "An " + IMPLICIT_AUTHENTICATION_RESPONSE + " containing an " + ID_TOKEN_IMPLICIT_FLOW + " and an Access Token."
+            },
+            "rp-response_type-code+token": {
+                "short_description": "Can make request using response_type 'code token'",
+                "profiles": [IMPLICIT],
+                "detailed_description": "Make an authentication request using the " + HYBRID_FLOW +
+                ", specifying the " + RESPONSE_TYPE + " as 'code token'",
+                "expected_result": "An " + IMPLICIT_AUTHENTICATION_RESPONSE + " containing an authorization code and an Access Token."
+            },
+            "rp-response_type-code+id_token+token": {
+                "short_description": "Can make request using response_type 'code id_token token'",
+                "profiles": [IMPLICIT],
+                "detailed_description": "Make an authentication request using the " + HYBRID_FLOW +
+                ", specifying the " + RESPONSE_TYPE + " as 'code id_token token'",
+                "expected_result": "An " + IMPLICIT_AUTHENTICATION_RESPONSE + " containing an authorization code, an " + ID_TOKEN_IMPLICIT_FLOW + " and an Access Token."
+            },
             "rp-response_mode-form_post": {
                 "short_description": "Can make request using response_type='id_token token' and response_mode='form_post'",
                 "detailed_description": "Make an authentication request with the " + RESPONSE_TYPE +
@@ -269,13 +284,13 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             }
         }],
         ["claims Request Parameter", {
-            "rp-claims-request-id_token": {
+            "rp-claims_request-id_token": {
                 "short_description": "Can request and use claims in ID Token using the 'claims' request parameter",
                 "detailed_description": "Ask for the claim 'name' using the " + CLAIMS_REQUEST_PARAMETER +
                 ". Retrieve the claim from an ID Token, either by making a " + TOKEN_REQUEST + " or by using " + IMPLICIT_FLOW + ".",
                 "expected_result": "An " + ID_TOKEN + " containing the requested claim."
             },
-            "rp-claims-request-userinfo": {
+            "rp-claims_request-userinfo": {
                 "short_description": "Can request and use claims in UserInfo Response using the 'claims' request parameter",
                 "detailed_description": "Ask for the claim 'name' using the " + CLAIMS_REQUEST_PARAMETER +
                 ". Retrieve the claims by making a " + USERINFO_REQUEST + ".",
@@ -350,26 +365,26 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             }
         }],
         ["Client Authentication", {
-            "rp-authentication-client_secret_basic": {
+            "rp-token_endpoint-client_secret_basic": {
                 "short_description": "Can make Access Token Request with 'client_secret_basic' authentication",
                 "profiles": [BASIC, IMPLICIT, HYBRID],
                 "detailed_description": "Use the '" + CLIENT_SECRET_BASIC + "' method to authenticate at the Authorization Server " +
                 "when using the token endpoint.",
                 "expected_result": "A " + TOKEN_RESPONSE + ", containing an ID token."
             },
-            "rp-authentication-client_secret_jwt": {
+            "rp-token_endpoint-client_secret_jwt": {
                 "short_description": "Can make Access Token Request with 'client_secret_jwt' authentication",
                 "detailed_description": "Use the '" + CLIENT_SECRET_JWT + "' method to authenticate at the Authorization Server " +
                 "when using the token endpoint.",
                 "expected_result": "A " + TOKEN_RESPONSE + ", containing an ID token."
             },
-            "rp-authentication-client_secret_post": {
+            "rp-token_endpoint-client_secret_post": {
                 "short_description": "Can make Access Token Request with 'client_secret_post' authentication",
                 "detailed_description": "Use the '" + CLIENT_SECRET_POST + "' method to authenticate at the Authorization Server " +
                 "when using the token endpoint.",
                 "expected_result": "A " + TOKEN_RESPONSE + ", containing an ID token."
             },
-            "rp-authentication-private_key_jwt": {
+            "rp-token_endpoint-private_key_jwt": {
                 "short_description": "Can make Access Token Request with 'private_key_jwt' authentication",
                 "detailed_description": "Use the '" + PRIVATE_KEY_JWT + "' method to authenticate at the Authorization Server " +
                 "when using the token endpoint.",
@@ -390,6 +405,24 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             },
             "rp-id_token-sig+enc": {
                 "short_description": "Can request and use signed and encrypted ID Token",
+                "detailed_description": "Request an encrypted ID Token. " +
+                "Decrypt the returned the ID Token and verify its signature using the keys published by the Issuer.",
+                "expected_result": "Accept the ID Token after doing " + ID_TOKEN_VALIDATION + "."
+            },
+            "rp-id_token-sig-rs256": {
+                "short_description": "Accepts ID Token with valid asymmetric 'RS256' signature",
+                "detailed_description": "Request an encrypted ID Token. " +
+                "Decrypt the returned the ID Token and verify its signature using the keys published by the Issuer.",
+                "expected_result": "Accept the ID Token after doing " + ID_TOKEN_VALIDATION + "."
+            },
+            "rp-id_token-sig-hs256": {
+                "short_description": "",
+                "detailed_description": "Accepts ID Token with valid symmetric 'HS256' signature" +
+                "Decrypt the returned the ID Token and verify its signature using the keys published by the Issuer.",
+                "expected_result": "Accept the ID Token after doing " + ID_TOKEN_VALIDATION + "."
+            },
+            "rp-id_token-sig-es256": {
+                "short_description": "Accepts ID Token with valid asymmetric 'ES256' signature",
                 "detailed_description": "Request an encrypted ID Token. " +
                 "Decrypt the returned the ID Token and verify its signature using the keys published by the Issuer.",
                 "expected_result": "Accept the ID Token after doing " + ID_TOKEN_VALIDATION + "."
@@ -513,7 +546,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "detailed_description": "Make a " + USERINFO_REQUEST + " without sending the Access Token in the HTTP request URI.",
                 "expected_result": "A successful " + USERINFO_RESPONSE + " without passing the Access Token as a query parameter."
             },
-            "rp-userinfo-sign": {
+            "rp-userinfo-sig": {
                 "short_description": "Can request and use signed UserInfo Response",
                 "profiles": [CONFIG_OPTIONAL, DYNAMIC_OPTIONAL],
                 "detailed_description": "Request signed UserInfo.",

@@ -1,4 +1,4 @@
-from otest.yamlcnf import parse_yaml_conf
+from otest.parse_cnf import parse_yaml_conf
 from oidctest.op import oper
 from oidctest.op import func
 

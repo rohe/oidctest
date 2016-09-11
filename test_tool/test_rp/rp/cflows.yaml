@@ -24,7 +24,7 @@ Flows:
       - SyncAuthn
       - AccessToken
       - UserInfo
-  rp-claims_request-id_token_claims:
+  rp-claims_request-id_token:
     desc: The Relying Party can ask for a specific claim using the 'claims' request
       parameter. The claim should be returned in an ID Token
     profile: '...'
@@ -41,7 +41,7 @@ Flows:
                 auth_time: {essential: true}
                 email: {essential: true}
       - AccessToken
-  rp-claims_request-userinfo_claims:
+  rp-claims_request-userinfo:
     desc: The Relying Party can ask for a specific claim using the 'claims' request
       parameter. The claim should be returned in a UserInfo response
     profile: C,IT,CI,CT,CIT...
@@ -58,7 +58,7 @@ Flows:
                 email: {essential: true}
       - AccessToken
       - UserInfo
-  rp-discovery-issuer_not_matching_config:
+  rp-discovery-issuer-not-matching-config:
     desc: Retrieve openid-configuration information for OpenID Provider from
       the .well-known/openid-configuration path. Verify that the issuer in
       the openid-configuration matches the one returned by WebFinger
@@ -69,7 +69,7 @@ Flows:
       - Discovery:
           expect_exception: IssuerMismatch
           set_discovery_issuer: null
-  rp-discovery-jwks_uri_keys:
+  rp-discovery-jwks_uri-keys:
     desc: Can read and understand jwks_uri
     profile: ..T.
     sequence:
@@ -80,7 +80,7 @@ Flows:
     assert:
       bare-keys: null
       providerinfo-has-jwks_uri: null
-  rp-discovery-openid_configuration:
+  rp-discovery-openid-configuration:
     desc: Uses openid-configuration Discovery Information
     profile: ..T.
     sequence:
@@ -88,15 +88,15 @@ Flows:
           set_webfinger_resource: null
       - Discovery:
           set_discovery_issuer: null
-  rp-discovery-webfinger_acct:
+  rp-discovery-webfinger-acct:
     desc: Can Discover Identifiers using acct Syntax
     profile: .T..
     sequence:
       - Webfinger:
           resource:
-            pattern: 'acct:{}@{}'
+            pattern: 'acct:{oper_id}.{test_id}@{host}'
           set_webfinger_resource: null
-  rp-discovery-webfinger_url:
+  rp-discovery-webfinger-url:
     desc: Can Discover Identifiers using URL Syntax
     profile: .T..
     sequence:
@@ -131,7 +131,7 @@ Flows:
                   - code
                   - id_token
             exception: NotForMe
-  rp-id_token-bad_asym_sig_rs256:
+  rp-id_token-bad-sig-rs256:
     desc: Tests if the Relying Party can identify and reject an ID Token with an invalid
       signature. The ID Token has been signed using the asymmetric algorithm RS256.
       For more information see list item 6 in ID Token validation
@@ -166,7 +166,7 @@ Flows:
                   - code
                   - id_token
             exception: BadSignature
-  rp-id_token-bad_es256_sig:
+  rp-id_token-bad-sig-es256:
     desc: The Relying Party should reject invalid asymmetric ID Token signature which
       has been signed using the algorithm ES256
     profile: '...T'
@@ -197,7 +197,7 @@ Flows:
                   - code
                   - id_token
             exception: BadSignature
-  rp-id_token-bad_symmetric_sig_hs256:
+  rp-id_token-bad-sig-hs256:
     desc: Tests if the Relying Party can identify and reject an ID Token with an invalid
       signature. The ID Token has been signed using the symmetric algorithm HS256. For
       more information see list item 6 in ID Token validation
@@ -258,7 +258,7 @@ Flows:
                   - code
                   - id_token
             exception: MissingRequiredAttribute
-  rp-id_token-kid_absent_multiple_jwks:
+  rp-id_token-kid-absent-multiple-jwks:
     desc: If there are multiple keys in the referenced JWK Set document, a kid value
       MUST be provided in the JOSE Header
     profile: '...'
@@ -287,7 +287,7 @@ Flows:
                   - code
                   - id_token
             exception: PyoidcError
-  rp-id_token-kid_absent_single_jwks:
+  rp-id_token-kid-absent-single-jwks:
     desc: If the JWK supplied in jwks_uri only contains a single key the ID
       Token does not need to contain a kid claim
     profile: '...'
@@ -301,7 +301,7 @@ Flows:
       - AccessToken:
           conditional_excecution:
             profile: 'CIT,IT,I...'
-  rp-id_token-mismatching_issuer:
+  rp-id_token-issuer-mismatch:
     desc: The Relying Party should request an ID token and reject it if the issuer identifier
       for the OpenID Provider is not matching the issuer in the returned ID Token
     profile: '...'
@@ -339,22 +339,7 @@ Flows:
                 -
                   - code
             exception: IssuerMismatch
-  rp-id_token-none:
-    desc: Can Request and Use unSigned ID Token Response
-    profile: 'C,CT,CIT...T'
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration:
-          set_request_args:
-            id_token_signed_response_alg: null
-      - SyncAuthn:
-          set_op_args:
-            response_type: code
-      - AccessToken
-  rp-id_token-sig_none:
+  rp-id_token-sig-none:
     desc: Tests if the Relying Party can request and use unsigned ID Tokens. Use Code
       flow and set alg=null
     profile: 'C...'
@@ -397,7 +382,7 @@ Flows:
                   - code
                   - id_token
             exception: MissingRequiredAttribute
-  rp-id_token-bad_c_hash:
+  rp-id_token-bad-c_hash:
     desc: The Relying Party should request an ID token and reject it if the
       c_hash claim is incorrect
     profile: 'CIT,CI...'
@@ -419,7 +404,7 @@ Flows:
                   - code
                   - id_token
             exception: CHashError
-  rp-id_token-bad_at_hash:
+  rp-id_token-bad-at_hash:
     desc: The Relying Party should request an ID token and reject it if the
       at_hash claim is incorrect
     profile: 'CIT,IT...'
@@ -458,7 +443,7 @@ Flows:
       - AccessToken:
           conditional_excecution:
             profile: 'CIT,CI,C,CT...'
-  rp-id_token-sym_sig:
+  rp-id_token-sig-hs256:
     desc: Accept Valid Symmetric ID Token Signature
     profile: I...T
     sequence:
@@ -473,7 +458,37 @@ Flows:
           set_op_args:
             response_type:
               - id_token
-  rp-key_rotation-op_enc_key:
+  rp-id_token-sig-es256:
+    desc: Accept Valid Symmetric ID Token Signature
+    profile: I...T
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: null
+      - Discovery:
+          set_discovery_issuer: null
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: ES256
+      - SyncAuthn:
+          set_op_args:
+            response_type:
+              - id_token
+  rp-id_token-sig-rs256:
+    desc: Accept Valid Symmetric ID Token Signature
+    profile: I...T
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: null
+      - Discovery:
+          set_discovery_issuer: null
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: RS256
+      - SyncAuthn:
+          set_op_args:
+            response_type:
+              - id_token
+  rp-key-rotation-op-enc-key:
     desc: Support OP Encryption Key Rotation
     profile: '...'
     sequence:
@@ -494,7 +509,7 @@ Flows:
             request_method: request
             request_object_encryption_alg: RSA1_5
             request_object_encryption_enc: A128CBC-HS256
-  rp-key_rotation-op_sign_key:
+  rp-key-rotation-op-sign-key:
     desc: Support OP Encryption Key Rotation
     profile: 'C...'
     sequence:
@@ -509,7 +524,7 @@ Flows:
           remove_grant: null
       - SyncAuthn
       - AccessToken
-  rp-key_rotation-rp_enc_key:
+  rp-key-rotation-rp-enc-key:
     desc: Can Request and Use Encrypted UserInfo Response
     profile: 'C,CT...'
     sequence:
@@ -543,7 +558,7 @@ Flows:
       - RestoreKeyJar:
           set_op_args:
             jwks_path: static/jwk.json
-  rp-key_rotation-rp_sign_key:
+  rp-key-rotation-rp-sign-key:
     desc: Can Request and Use Encrypted UserInfo Response
     profile: '...'
     sequence:
@@ -588,7 +603,7 @@ Flows:
       - Registration
       - SyncAuthn:
           expect_exception: PyoidcError
-  rp-nonce-unless_code_flow:
+  rp-nonce-unless-code-flow:
     desc: The Relying Party should always send a nonce as a request parameter while
       using implicit or hybrid flow. Since the server is suppose to return the nonce
       in the ID Token return from Authorization Endpoint, see ID Token required claims
@@ -627,7 +642,7 @@ Flows:
           set_request_args:
             redirect_uris:
               - ''
-  rp-registration-uses_https_endpoints:
+  rp-registration-uses-https-endpoints:
     desc: Sends endpoints which does not use https. Should be rejected by the OP.
     profile: '...T'
     sequence:
@@ -642,7 +657,7 @@ Flows:
             jwks_uri: http://test.com
             redirect_uris:
               - 'http://test.com'
-  rp-registration-well_formed_jwk:
+  rp-registration-well-formed-jwk:
     desc: ''
     profile: '...T'
     sequence:
@@ -787,7 +802,43 @@ Flows:
           set_request_args:
             id_token_signed_response_alg: RS256
       - SyncAuthn
-  rp-scope-userinfo_claims:
+  rp-response_type-code+id_token+token:
+    desc: Can Make Request with 'id_token token' Response Type
+    profile: CIT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: null
+      - Discovery:
+          set_discovery_issuer: null
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: RS256
+      - SyncAuthn
+  rp-response_type-code+id_token:
+    desc: Can Make Request with 'id_token token' Response Type
+    profile: CI...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: null
+      - Discovery:
+          set_discovery_issuer: null
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: RS256
+      - SyncAuthn
+  rp-response_type-code+token:
+    desc: Can Make Request with 'id_token token' Response Type
+    profile: CT...
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: null
+      - Discovery:
+          set_discovery_issuer: null
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: RS256
+      - SyncAuthn
+  rp-scope-userinfo-claims:
     desc: The Relying Party should be able to request claims using Scope Values
     profile: '...'
     sequence:
@@ -804,7 +855,7 @@ Flows:
               - profile
       - AccessToken
       - UserInfo
-  rp-scope-contains_openid_scope:
+  rp-scope-openid:
     desc: The Relying Party should always add the openid scope value while sending an
       Authorization Request.
     profile: '...'
@@ -882,7 +933,7 @@ Flows:
       - AccessToken:
           set_request_args:
             authn_method: private_key_jwt
-  rp-user_info-bad_sub_claim:
+  rp-userinfo-bad-sub-claim:
     desc: Reject UserInfo with Invalid Sub claim
     profile: C,CI,CT,CIT...
     sequence:
@@ -895,7 +946,7 @@ Flows:
       - AccessToken
       - UserInfo:
           expect_exception: SubjectMismatch
-  rp-user_info-bearer_body:
+  rp-userinfo-bearer-body:
     desc: Accesses UserInfo Endpoint with form-encoded body method
     profile: C,CI,CT,CIT...
     sequence:
@@ -909,7 +960,7 @@ Flows:
       - UserInfo:
           set_request_args:
             behavior: token_in_message_body
-  rp-user_info-bearer_header:
+  rp-userinfo-bearer-header:
     desc: 'Accesses UserInfo Endpoint with Header Method '
     profile: C,CI,CT,CIT...
     sequence:
@@ -923,7 +974,7 @@ Flows:
       - UserInfo:
           set_request_args:
             behavior: use_authorization_header
-  rp-user_info-enc:
+  rp-userinfo-enc:
     desc: 'Can Request and Use Encrypted UserInfo Response '
     profile: C,CI,CT,CIT...
     sequence:
@@ -939,7 +990,7 @@ Flows:
       - SyncAuthn
       - AccessToken
       - UserInfo
-  rp-user_info-sig+enc:
+  rp-userinfo-sig+enc:
     desc: Can Request and Use Signed and Encrypted UserInfo Response
     profile: C,CI,CT,CIT...
     sequence:
@@ -956,7 +1007,7 @@ Flows:
       - SyncAuthn
       - AccessToken
       - UserInfo
-  rp-user_info-sign:
+  rp-userinfo-sig:
     desc: Can Request and Use Signed UserInfo Response
     profile: C,CI,CT,CIT...
     sequence:
@@ -971,8 +1022,8 @@ Flows:
       - SyncAuthn
       - AccessToken
       - UserInfo
-  rp-user_info-query:
-    desc: Can send Access Token as URI query parameter
+  rp-userinfo-not-query:
+    desc: Does not send Access Token as URI query parameter
     profile: ...
     sequence:
       - Webfinger:
@@ -983,9 +1034,12 @@ Flows:
           set_jwks_uri: null
       - SyncAuthn
       - AccessToken
-      - UserInfo:
-          set_request_args:
-            behavior: as_query_parameter
+      - UserInfo
+  rp-self-issued:
+    desc: Can use Self-Issued OpenID Provider
+    profile: ...
+    sequence:
+      - Webfinger
 Order:
   - rp-discovery
   - rp-registration
@@ -997,8 +1051,9 @@ Order:
   - rp-request_uri
   - rp-scope
   - rp-nonce
-  - rp-key_rotation
-  - rp-user_info
+  - rp-key-rotation
+  - rp-userinfo
+  - rp-self-issued
 Desc:
   rp-discovery: Discovery
   rp-registration: Dynamic Client Registration
@@ -1010,8 +1065,9 @@ Desc:
   rp-request_uri: request_uri Request Parameter
   rp-scope: scope Request Parameter
   rp-nonce: nonce Request Parameter
-  rp-key_rotation: Key Rotation
-  rp-user_info: Userinfo Endpoint
+  rp-key-rotation: Key Rotation
+  rp-userinfo: Userinfo Endpoint
+  rp-self: Self Issued OP
   Req: Misc Request Parameters
   OAuth: OAuth behaviors
   ClientAuth: Client Authentication

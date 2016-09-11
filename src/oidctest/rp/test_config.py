@@ -23,51 +23,52 @@ CONF = {
         "claims": "distributed",
         "response_type": [C, CI, CT, CIT]
     },
-    "rp-claims_request-id_token_claims": {
+    "rp-claims_request-id_token": {
         "claims": "normal",
         "response_type": ALL
     },
-    # "rp-claims_request-request_userinfo": {
-    #     "claims": "normal",
-    #     "response_type": [C, IT, CI, CT, CIT]
-    # },
-    "rp-claims_request-userinfo_claims": {
+    "rp-claims_request-userinfo": {
         "claims": "normal",
         "response_type": [C, IT, CI, CT, CIT]
     },
-    "rp-discovery": {
-        "claims": "normal",
-        "response_type": ALL,
-        'out_of_scope': [R, A, T, U]
-    },
-    "rp-discovery-issuer_not_matching_config": {
+    "rp-discovery-issuer-not-matching-config": {
         "claims": "normal",
         "behavior": "isso",
         "response_type": ALL,
         'out_of_scope': [R, A, T, U]
     },
-    "rp-discovery-jwks_uri_keys": {
+    "rp-discovery-jwks_uri-keys": {
         "claims": "normal",
         "response_type": ALL,
         'out_of_scope': [U]
     },
-    "rp-discovery-openid_configuration": {
+    "rp-discovery-openid-configuration": {
         "claims": "normal",
         "response_type": ALL,
         'out_of_scope': [R, A, T, U]
     },
-    "rp-discovery-webfinger_acct": {
+    "rp-discovery-webfinger-acct": {
         "claims": "normal",
         "response_type": ALL
     },
-    "rp-discovery-webfinger_url": {
+    "rp-discovery-webfinger-url": {
         "claims": "normal",
         "response_type": ALL,
         'out_of_scope': [R, A, T, U]
     },
-    "rp-id_token-asym_sig": {
+    "rp-id_token-sig-rs256": {
         "claims": "normal",
         'signing_alg': "RS256",
+        "response_type": ALL
+    },
+    "rp-id_token-sig-hs256": {
+        "claims": "normal",
+        'signing_alg': "HS256",
+        "response_type": ALL
+    },
+    "rp-id_token-sig-es256": {
+        "claims": "normal",
+        'signing_alg': "ES256",
         "response_type": ALL
     },
     "rp-id_token-aud": {
@@ -75,69 +76,52 @@ CONF = {
         "behavior": ["aud"],
         "response_type": ALL
     },
-    "rp-id_token-bad_asym_sig_rs256": {
+    "rp-id_token-bad-sig-rs256": {
         "claims": "normal",
         "behavior": ["idts"],
         'signing_alg': "RS256",
         "response_type": ALL
     },
-    "rp-id_token-bad_at_hash": {
+    "rp-id_token-bad-sig-hs256": {
+        "claims": "normal",
+        "behavior": ["idts"],
+        'signing_alg': "HS256",
+        "response_type": ALL
+    },
+    "rp-id_token-bad-sig-es256": {
+        "claims": "normal",
+        "behavior": ["idts"],
+        'signing_alg': "ES256",
+        "response_type": ALL
+    },
+    "rp-id_token-bad-at_hash": {
         "claims": "normal",
         "behavior": ["ath"],
         "response_type": [CIT, IT],
         'out_of_scope': [T, U]
     },
-    "rp-id_token-bad_c_hash": {
+    "rp-id_token-bad-c_hash": {
         "claims": "normal",
         "behavior": ["ch"],
         "response_type": [CIT, CI],
         'out_of_scope': [T, U]
     },
-    "rp-id_token-bad_es256_sig": {
-        "claims": "normal",
-        "behavior": ["idts"],
-        'signing_alg': "ES256",
-        "response_type": ALL,
-        'out_of_scope': [U]
-    },
-    "rp-id_token-bad_symmetric_sig_hs256": {
-        "claims": "normal",
-        "behavior": ["idts"],
-        'signing_alg': "HS256",
-        "response_type": ALL,
-        'out_of_scope': [U]
-    },
-    "rp-id_token-ec_sig": {
-        "claims": "normal",
-        'signing_alg': "ES256",
-        "response_type": ALL},
     "rp-id_token-iat": {
         "claims": "normal",
         "behavior": ["iat"],
         "response_type": ALL
     },
-    "rp-id_token-kid": {
-        "claims": "normal",
-        # "behavior": ["nokidjwks"],
-        "response_type": ALL
-    },
-    "rp-id_token-kid-absent": {
-        "claims": "normal",
-        "behavior": ["nokidjwks"],
-        "response_type": ALL,
-        'out_of_scope': [U]
-    },
-    "rp-id_token-kid_absent_multiple_jwks": {
+    "rp-id_token-kid-absent-multiple-jwks": {
         "claims": "normal",
         "behavior": ["nokidmuljwks"],
         "response_type": ALL
     },
-    "rp-id_token-kid_absent_single_jwks": {
+    "rp-id_token-kid-absent-single-jwks": {
         "claims": "normal",
-        "behavior": ["nokidjwks"],
+        "behavior": ["nokid1jwks"],
         "response_type": ALL
     },
-    "rp-id_token-mismatching_issuer": {
+    "rp-id_token-issuer-mismatch": {
         "claims": "normal",
         "behavior": ["issi"],
         "response_type": ALL,
@@ -150,7 +134,7 @@ CONF = {
         'encryption_enc': 'A128CBC-HS256',
         "response_type": ALL
     },
-    "rp-id_token-sig_none": {
+    "rp-id_token-sig-none": {
         "claims": "normal",
         'signing_alg': "none",
         "response_type": [C]
@@ -161,31 +145,25 @@ CONF = {
         # "path": "/_/_/itsub/normal",
         "response_type": [C, CT]
     },
-    "rp-id_token-sym_sig": {
-        "claims": "normal",
-        'signing_alg': "HS256",
-        # "path": "/HS256/_/_/normal",
-        "response_type": [I]
-    },
-    "rp-key_rotation-op_enc_key": {
+    "rp-key-rotation-op-enc-key": {
         "claims": "normal",
         "behavior": ["rotenc"],
         # "path": "/_/_/rotenc/normal",
         "response_type": ALL
     },
-    "rp-key_rotation-op_sign_key": {
+    "rp-key-rotation-op-sign-key": {
         "claims": "normal",
         "behavior": ["rotsig"],
         # "path": "/_/_/rotsig/normal",
         "response_type": [C]
     },
-    "rp-key_rotation-rp_enc_key": {
+    "rp-key-rotation-rp-enc-key": {
         "claims": "normal",
         "behavior": ["updkeys"],
         # "path": "/_/_/updkeys/normal",
         "response_type": [C, CT]
     },
-    "rp-key_rotation-rp_sign_key": {
+    "rp-key-rotation-rp-sign-key": {
         "claims": "normal",
         "behavior": ["updkeys"],
         # "path": "/_/_/updkeys/normal",
@@ -197,7 +175,7 @@ CONF = {
         # "path": "/_/_/nonce/normal",
         "response_type": [I, IT, CI, CIT]
     },
-    "rp-nonce-unless_code_flow": {
+    "rp-nonce-unless-code-flow": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
         "response_type": [I, IT, CI, CIT]
@@ -212,12 +190,12 @@ CONF = {
         # "path": "/_/_/_/normal",
         "response_type": ALL
     },
-    "rp-registration-uses_https_endpoints": {
+    "rp-registration-uses-https-endpoints": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
         "response_type": ALL
     },
-    "rp-registration-well_formed_jwk": {
+    "rp-registration-well-formed-jwk": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
         "response_type": ALL
@@ -262,20 +240,34 @@ CONF = {
         # "path": "/_/_/_/normal",
         "response_type": [IT]
     },
-    "rp-scope-contains_openid_scope": {
+    "rp-response_type-code+token": {
+        "claims": "normal",
+        # "path": "/_/_/_/normal",
+        "response_type": [CT]
+    },
+    "rp-response_type-code+id_token": {
+        "claims": "normal",
+        # "path": "/_/_/_/normal",
+        "response_type": [CI]
+    },
+    "rp-response_type-code+id_token+token": {
+        "claims": "normal",
+        # "path": "/_/_/_/normal",
+        "response_type": [CIT]
+    },
+    "rp-scope-openid": {
         "claims": "normal",
         "behavior": ["openid"],
         # "path": "/_/_/openid/normal",
         "response_type": ALL
     },
-    "rp-scope-userinfo_claims": {
+    "rp-scope-userinfo-claims": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
         "response_type": ALL
     },
-    # "rp-scope-without_openid_scope": {
+    # "rp-self-issued": {
     #     "claims": "normal",
-    #     "behavior": ["openid"],
     #     # "path": "/_/_/openid/normal",
     #     "response_type": ALL
     # },
@@ -304,38 +296,38 @@ CONF = {
         # "path": "/_/_/_/normal",
         "response_type": [C, CI, CIT]
     },
-    "rp-user_info-bad_sub_claim": {
+    "rp-userinfo-bad-sub-claim": {
         "claims": "normal",
         "behavior": ["uisub"],
         # "path": "/_/_/uisub/normal",
         "response_type": [C, CI, CT, CIT]
     },
-    "rp-user_info-bearer_body": {
+    "rp-userinfo-bearer-body": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
         "response_type": [C, CI, CT, CIT]
     },
-    "rp-user_info-bearer_header": {
+    "rp-userinfo-bearer-header": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
         "response_type": [C, CI, CT, CIT]
     },
-    "rp-user_info-enc": {
+    "rp-userinfo-enc": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
         "response_type": [C, CI, CT, CIT]
     },
-    "rp-user_info-query": {
+    "rp-userinfo-not-query": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
         "response_type": ALL
     },
-    "rp-user_info-sig+enc": {
+    "rp-userinfo-sig+enc": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
         "response_type": [C, CI, CT, CIT]
     },
-    "rp-user_info-sign": {
+    "rp-userinfo-sig": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
         "response_type": [C, CI, CT, CIT]

@@ -28,9 +28,12 @@ from otest import Trace
 from otest.conversation import Conversation
 from otest.jlog import JLog
 
-from requests.packages import urllib3
-
-urllib3.disable_warnings()
+try:
+    from requests.packages import urllib3
+except ImportError:
+    pass
+else:
+    urllib3.disable_warnings()
 
 __author__ = 'rohe0002'
 
