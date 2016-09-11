@@ -255,12 +255,12 @@ CONF = {
         # "path": "/_/_/_/normal",
         "response_type": [CIT]
     },
-    "rp-scope-openid": {
-        "claims": "normal",
-        "behavior": ["openid"],
-        # "path": "/_/_/openid/normal",
-        "response_type": ALL
-    },
+    # "rp-scope-openid": {
+    #     "claims": "normal",
+    #     "behavior": ["openid"],
+    #     # "path": "/_/_/openid/normal",
+    #     "response_type": ALL
+    # },
     "rp-scope-userinfo-claims": {
         "claims": "normal",
         # "path": "/_/_/_/normal",

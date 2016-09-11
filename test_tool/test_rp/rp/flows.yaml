@@ -2,7 +2,7 @@
 Flows:
   rp-claims-aggregated:
     desc: Can handle aggregated user information
-    profile: C,CI,CT,CIT...
+    profile: C,CI,CT,CIT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -14,7 +14,7 @@ Flows:
       - UserInfo
   rp-claims-distributed:
     desc: Handles distributed user information
-    profile: C,CI,CT,CIT...
+    profile: C,CI,CT,CIT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -27,7 +27,7 @@ Flows:
   rp-claims_request-id_token:
     desc: The Relying Party can ask for a specific claim using the 'claims' request
       parameter. The claim should be returned in an ID Token
-    profile: '...'
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -44,7 +44,7 @@ Flows:
   rp-claims_request-userinfo:
     desc: The Relying Party can ask for a specific claim using the 'claims' request
       parameter. The claim should be returned in a UserInfo response
-    profile: C,IT,CI,CT,CIT...
+    profile: C,IT,CI,CT,CIT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -62,7 +62,7 @@ Flows:
     desc: Retrieve openid-configuration information for OpenID Provider from
       the .well-known/openid-configuration path. Verify that the issuer in
       the openid-configuration matches the one returned by WebFinger
-    profile: ..T.
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -82,7 +82,7 @@ Flows:
       providerinfo-has-jwks_uri: null
   rp-discovery-openid-configuration:
     desc: Uses openid-configuration Discovery Information
-    profile: ..T.
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -90,7 +90,7 @@ Flows:
           set_discovery_issuer: null
   rp-discovery-webfinger-acct:
     desc: Can Discover Identifiers using acct Syntax
-    profile: .T..
+    profile: *
     sequence:
       - Webfinger:
           resource:
@@ -98,14 +98,14 @@ Flows:
           set_webfinger_resource: null
   rp-discovery-webfinger-url:
     desc: Can Discover Identifiers using URL Syntax
-    profile: .T..
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
   rp-id_token-aud:
     desc: The Relying Party should request an ID token and compare its aud value
       to the Client ID.
-    profile: '...'
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -135,7 +135,7 @@ Flows:
     desc: Tests if the Relying Party can identify and reject an ID Token with an invalid
       signature. The ID Token has been signed using the asymmetric algorithm RS256.
       For more information see list item 6 in ID Token validation
-    profile: '...T'
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -169,7 +169,7 @@ Flows:
   rp-id_token-bad-sig-es256:
     desc: The Relying Party should reject invalid asymmetric ID Token signature which
       has been signed using the algorithm ES256
-    profile: '...T'
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -201,7 +201,7 @@ Flows:
     desc: Tests if the Relying Party can identify and reject an ID Token with an invalid
       signature. The ID Token has been signed using the symmetric algorithm HS256. For
       more information see list item 6 in ID Token validation
-    profile: '...T'
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -232,7 +232,7 @@ Flows:
   rp-id_token-iat:
     desc: The Relying Party should request an ID token if it does not contain a
       iat claim it should be rejected
-    profile: '...'
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -261,7 +261,7 @@ Flows:
   rp-id_token-kid-absent-multiple-jwks:
     desc: If there are multiple keys in the referenced JWK Set document, a kid value
       MUST be provided in the JOSE Header
-    profile: '...'
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -290,7 +290,7 @@ Flows:
   rp-id_token-kid-absent-single-jwks:
     desc: If the JWK supplied in jwks_uri only contains a single key the ID
       Token does not need to contain a kid claim
-    profile: '...'
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -304,7 +304,7 @@ Flows:
   rp-id_token-issuer-mismatch:
     desc: The Relying Party should request an ID token and reject it if the issuer identifier
       for the OpenID Provider is not matching the issuer in the returned ID Token
-    profile: '...'
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -342,7 +342,7 @@ Flows:
   rp-id_token-sig-none:
     desc: Tests if the Relying Party can request and use unsigned ID Tokens. Use Code
       flow and set alg=null
-    profile: 'C...'
+    profile: C
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -356,7 +356,7 @@ Flows:
   rp-id_token-sub:
     desc: The Relying Party should request an ID token and reject it if the sub
       claim is missing
-    profile: 'C,CT...'
+    profile: C,CT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -385,7 +385,7 @@ Flows:
   rp-id_token-bad-c_hash:
     desc: The Relying Party should request an ID token and reject it if the
       c_hash claim is incorrect
-    profile: 'CIT,CI...'
+    profile: CIT,CI
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -407,7 +407,7 @@ Flows:
   rp-id_token-bad-at_hash:
     desc: The Relying Party should request an ID token and reject it if the
       at_hash claim is incorrect
-    profile: 'CIT,IT...'
+    profile: CIT,IT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -428,7 +428,7 @@ Flows:
             exception: AtHashError
   rp-id_token-sig+enc:
     desc: Can request and use signed and encrypted ID Token
-    profile: ...T
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -445,7 +445,7 @@ Flows:
             profile: 'CIT,CI,C,CT...'
   rp-id_token-sig-hs256:
     desc: Accept Valid Symmetric ID Token Signature
-    profile: I...T
+    profile: I
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -460,7 +460,7 @@ Flows:
               - id_token
   rp-id_token-sig-es256:
     desc: Accept Valid Symmetric ID Token Signature
-    profile: I...T
+    profile: I
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -475,7 +475,7 @@ Flows:
               - id_token
   rp-id_token-sig-rs256:
     desc: Accept Valid Symmetric ID Token Signature
-    profile: I...T
+    profile: I
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -490,7 +490,7 @@ Flows:
               - id_token
   rp-key-rotation-op-enc-key:
     desc: Support OP Encryption Key Rotation
-    profile: '...'
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -511,7 +511,7 @@ Flows:
             request_object_encryption_enc: A128CBC-HS256
   rp-key-rotation-op-sign-key:
     desc: Support OP Encryption Key Rotation
-    profile: 'C...'
+    profile: C
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -526,7 +526,7 @@ Flows:
       - AccessToken
   rp-key-rotation-rp-enc-key:
     desc: Can Request and Use Encrypted UserInfo Response
-    profile: 'C,CT...'
+    profile: C,CT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -560,7 +560,7 @@ Flows:
             jwks_path: static/jwk.json
   rp-key-rotation-rp-sign-key:
     desc: Can Request and Use Encrypted UserInfo Response
-    profile: '...'
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -594,7 +594,7 @@ Flows:
   rp-nonce-invalid:
     desc: If a nonce value was sent in the Authentication Request the Relying Party
       must validate the nonce returned in the ID Token.
-    profile: I,IT,CI,CIT...
+    profile: I,IT,CI,CIT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -609,7 +609,7 @@ Flows:
       in the ID Token return from Authorization Endpoint, see ID Token required claims
       in hybrid flow or implicit flow. When using Code flow the the nonce is not required,
       see ID Token validation for code flow
-    profile: I,IT,CI,CIT...
+    profile: I,IT,CI,CIT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -621,7 +621,7 @@ Flows:
             nonce: null
   rp-registration-dynamic:
     desc: Uses Dynamic Registration
-    profile: '...T'
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -631,7 +631,7 @@ Flows:
 #  rp-registration-redirect_uris:
 #    desc: Sends redirect_uris value which only contains a empty string while doing a
 #      registration request. Then send a valid redirect_uris list
-#    profile: '...T'
+#    profile: ''
 #    sequence:
 #      - Webfinger:
 #          set_webfinger_resource: null
@@ -644,7 +644,7 @@ Flows:
 #              - ''
 #  rp-registration-uses-https-endpoints:
 #    desc: Sends endpoints which does not use https. Should be rejected by the OP.
-#    profile: '...T'
+#    profile: ''
 #    sequence:
 #      - Webfinger:
 #          set_webfinger_resource: null
@@ -659,7 +659,7 @@ Flows:
 #              - 'http://test.com'
 #  rp-registration-well-formed-jwk:
 #    desc: ''
-#    profile: '...T'
+#    profile: ''
 #    sequence:
 #      - Webfinger:
 #          set_webfinger_resource: null
@@ -684,7 +684,7 @@ Flows:
   rp-request_uri-enc:
     desc: The Relying Party can pass a Request Object by reference using the request_uri
       parameter. Encrypt the Request Object using RSA1_5 and A128CBC-HS256 algorithms
-    profile: '...'
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -701,7 +701,7 @@ Flows:
   rp-request_uri-sig:
     desc: The Relying Party can pass a Request Object by reference using the request_uri
       parameter. Sign the Request Object using the RS256 algorithm
-    profile: '...'
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -719,7 +719,7 @@ Flows:
     desc: The Relying Party can pass a Request Object by reference using the request_uri
       parameter. Encrypt the Request Object using RSA1_5 and A128CBC-HS256 algorithms
       and sign it using RS256 algorithm
-    profile: '...'
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -738,7 +738,7 @@ Flows:
   rp-request_uri-unsigned:
     desc: The Relying Party can pass a Request Object by reference using the request_uri
       parameter. The Request Object should set alg=null
-    profile: '...'
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -755,7 +755,7 @@ Flows:
             request_object_signing_alg: null
   rp-response_mode-form_post:
     desc: Can Make Request with response_mode=form_post
-    profile: I,IT,CI,CT,CIT,...
+    profile: I,IT,CI,CT,CIT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -770,7 +770,7 @@ Flows:
               - form_post
   rp-response_type-code:
     desc: Can Make Request with 'code' Response Type
-    profile: C...
+    profile: C
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -780,7 +780,7 @@ Flows:
       - SyncAuthn
   rp-response_type-id_token:
     desc: Can Make Request with 'id_token' Response Type
-    profile: I...
+    profile: I
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -792,7 +792,7 @@ Flows:
       - SyncAuthn
   rp-response_type-id_token+token:
     desc: Can Make Request with 'id_token token' Response Type
-    profile: IT...
+    profile: IT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -804,7 +804,7 @@ Flows:
       - SyncAuthn
   rp-response_type-code+id_token+token:
     desc: Can Make Request with 'id_token token' Response Type
-    profile: CIT...
+    profile: CIT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -816,7 +816,7 @@ Flows:
       - SyncAuthn
   rp-response_type-code+id_token:
     desc: Can Make Request with 'id_token token' Response Type
-    profile: CI...
+    profile: CI
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -828,7 +828,7 @@ Flows:
       - SyncAuthn
   rp-response_type-code+token:
     desc: Can Make Request with 'id_token token' Response Type
-    profile: CT...
+    profile: CT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -840,7 +840,7 @@ Flows:
       - SyncAuthn
   rp-scope-userinfo-claims:
     desc: The Relying Party should be able to request claims using Scope Values
-    profile: '...'
+    profile: *
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -855,28 +855,9 @@ Flows:
               - profile
       - AccessToken
       - UserInfo
-  rp-scope-openid:
-    desc: The Relying Party should always add the openid scope value while sending an
-      Authorization Request.
-    profile: '...'
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration
-      - SyncAuthn:
-          set_expect_error:
-            error:
-              - incorrect_behavior
-            stop: false
-          set_request_args:
-            scope:
-              - wrong
-          remove_post_test: valid_code
   rp-token_endpoint-client_secret_basic:
     desc: Can Make Access Token Request with 'client_secret_basic' Authentication
-    profile: C,CI,CIT...
+    profile: C,CI,CT,CIT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -889,7 +870,7 @@ Flows:
             authn_method: client_secret_basic
   rp-token_endpoint-client_secret_jwt:
     desc: Can Make Access Token Request with 'client_secret_jwt' Authentication
-    profile: C,CI,CIT...
+    profile: C,CI,CT,CIT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -904,7 +885,7 @@ Flows:
             authn_method: client_secret_jwt
   rp-token_endpoint-client_secret_post:
     desc: Can Make Access Token Request with 'client_secret_post' Authentication
-    profile: C,CI,CIT...
+    profile: C,CI,CT,CIT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -919,7 +900,7 @@ Flows:
             authn_method: client_secret_post
   rp-token_endpoint-private_key_jwt:
     desc: Can Make Access Token Request with 'private_key_jwt' Authentication
-    profile: C,CI,CIT...
+    profile: C,CI,CT,CIT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -935,7 +916,7 @@ Flows:
             authn_method: private_key_jwt
   rp-userinfo-bad-sub-claim:
     desc: Reject UserInfo with Invalid Sub claim
-    profile: C,CI,CT,CIT...
+    profile: C,CI,CT,CIT,IT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -948,7 +929,7 @@ Flows:
           expect_exception: SubjectMismatch
   rp-userinfo-bearer-body:
     desc: Accesses UserInfo Endpoint with form-encoded body method
-    profile: C,CI,CT,CIT...
+    profile: C,CI,CT,CIT,IT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -962,7 +943,7 @@ Flows:
             behavior: token_in_message_body
   rp-userinfo-bearer-header:
     desc: 'Accesses UserInfo Endpoint with Header Method '
-    profile: C,CI,CT,CIT...
+    profile: C,CI,CT,CIT,IT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -976,7 +957,7 @@ Flows:
             behavior: use_authorization_header
   rp-userinfo-enc:
     desc: 'Can Request and Use Encrypted UserInfo Response '
-    profile: C,CI,CT,CIT...
+    profile: C,CI,CT,CIT,IT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -992,7 +973,7 @@ Flows:
       - UserInfo
   rp-userinfo-sig+enc:
     desc: Can Request and Use Signed and Encrypted UserInfo Response
-    profile: C,CI,CT,CIT...
+    profile: C,CI,CT,CIT,IT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -1009,7 +990,7 @@ Flows:
       - UserInfo
   rp-userinfo-sig:
     desc: Can Request and Use Signed UserInfo Response
-    profile: C,CI,CT,CIT...
+    profile: C,CI,CT,CIT,IT
     sequence:
       - Webfinger:
           set_webfinger_resource: null

@@ -316,12 +316,6 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             }
         }],
         ["scope Request Parameter", {
-            "rp-scope-openid": {
-                "short_description": "'openid' scope value should be present in the Authentication Request",
-                "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
-                "detailed_description": "Always add the " + OPENID_SCOPE + " value when sending an Authentication Request.",
-                "expected_result": "An authentication response."
-            },
             "rp-scope-userinfo-claims": {
                 "short_description": "Can request and use claims using scope values",
                 "profiles": [BASIC_OPTIONAL, IMPLICIT_OPTIONAL, HYBRID_OPTIONAL, SELF_ISSUED_OPTIONAL],
