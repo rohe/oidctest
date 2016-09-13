@@ -3,13 +3,13 @@ import logging
 from oic.utils.http_util import Response
 
 from otest import exception_trace
-from otest.conversation import Conversation
-
-from oidctest.op import prof_util
-from oidctest.op.client import make_client
-
 from otest import Trace
 from otest.aus import tool
+from otest.conversation import Conversation
+
+from oidctest import session
+from oidctest.op import prof_util
+from oidctest.op.client import make_client
 
 __author__ = 'roland'
 
@@ -33,7 +33,19 @@ class Tester(tool.Tester):
         self.map_prof = prof_util.map_prof
 
 
-class ClTester(Tester):
+class ClTester(tool.Tester):
+    def __init__(self, io, sh, profiles, profile, flows=None,
+                 msg_factory=None, cache=None, **kwargs):
+        tool.Tester.__init__(self, io, sh, profiles, profile, flows,
+                             msg_factory=msg_factory, cache=cache,
+                             **kwargs)
+        # self.chk_factory = get_check
+        self.map_prof = session.map_prof
+
+    def match_profile(self, test_id):
+        _spec = self.flows[test_id]
+        return self.map_prof(self.profile, _spec["profile"])
+
     def run(self, test_id, **kw_args):
         if not self.match_profile(test_id):
             logger.info("Test doesn't match the profile")

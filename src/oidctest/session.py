@@ -4,7 +4,7 @@ import logging
 from otest import Done
 from otest import session
 
-from oidctest.op.prof_util import map_prof
+#from oidctest.op.prof_util import map_prof
 
 __author__ = 'roland'
 
@@ -21,6 +21,15 @@ class Node(object):
         self.rmc = False
         self.experr = False
         self.complete = False
+
+
+def map_prof(a, b):
+    if b == '*':
+        return True
+    elif a in b.split(','):
+        return True
+    else:
+        return False
 
 
 class SessionHandler(session.SessionHandler):
@@ -65,10 +74,9 @@ class SessionHandler(session.SessionHandler):
             self["flow_names"].extend(l)
 
         _tests = []
-        _sprof = profile.split(".")
         for k in self["flow_names"]:
             _test = self.test_flows[k]
-            if map_prof(_sprof, _test["profile"].split(".")):
+            if map_prof(profile, _test["profile"]):
                 try:
                     kwargs = {"mti": _test["mti"]}
                 except KeyError:
