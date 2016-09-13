@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 
@@ -202,7 +203,19 @@ def webfinger(environ, start_response, session_info, trace, jlog, **kwargs):
         _url = os.path.join(kwargs["op_arg"]["baseurl"],
                             session_info['oper_id'],
                             session_info["test_id"])
-        resp = Response(wf.response(subject=resource, base=_url),
+
+        _mesg = wf.response(subject=resource, base=_url)
+        if session_info['test_id'] == 'rp-discovery-webfinger-http-href':
+            _msg = json.loads(_mesg)
+            _msg['links'][0]['href'] = _msg['links'][0]['href'].replace(
+                'https', 'http')
+            _mesg = json.dumps(_msg)
+        elif session_info['test_id'] == 'rp-discovery-webfinger-unknown-member':
+            _msg = json.loads(_mesg)
+            _msg['dummy'] = 'foobar'
+            _mesg = json.dumps(_msg)
+
+        resp = Response(_mesg,
                         content="application/jrd+json")
 
         trace.reply(resp.message)

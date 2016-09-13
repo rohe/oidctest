@@ -34,10 +34,7 @@ from otest.aus.request import SyncPostRequest
 from otest.aus.request import same_issuer
 from otest.events import EV_PROTOCOL_RESPONSE
 
-from oidctest.op.prof_util import DISCOVER
-from oidctest.op.prof_util import REGISTER
 from oidctest.op.prof_util import RESPONSE
-from oidctest.op.prof_util import WEBFINGER
 
 __author__ = 'roland'
 
@@ -78,7 +75,7 @@ class Webfinger(Operation):
     def __init__(self, conv, inut, sh, **kwargs):
         Operation.__init__(self, conv, inut, sh, **kwargs)
         self.resource = ""
-        self.dynamic = self.profile[WEBFINGER] == "T"
+        self.dynamic = inut.profile_handler.webfinger(self.profile)
 
     def run(self):
         if not self.dynamic:
@@ -92,10 +89,14 @@ class Webfinger(Operation):
 
             _conv.trace.info(
                 "Discovery of resource: {}".format(principal))
-            issuer = _conv.entity.discover(principal)
-            _conv.trace.reply(issuer)
-            _conv.info["issuer"] = issuer
-            _conv.events.store('issuer', issuer, sender=self.__class__.__name__)
+
+            self.catch_exception(_conv.entity.discover, principal=principal)
+
+            if not _conv.events.last_event_type == 'exception':
+                issuer = _conv.events.last_item('response')
+                _conv.info["issuer"] = issuer
+                _conv.events.store('issuer', issuer,
+                                   sender=self.__class__.__name__)
 
     def op_setup(self):
         # try:
@@ -108,7 +109,7 @@ class Webfinger(Operation):
 class Discovery(Operation):
     def __init__(self, conv, inut, sh, **kwargs):
         Operation.__init__(self, conv, inut, sh, **kwargs)
-        self.dynamic = self.profile[DISCOVER] == "T"
+        self.dynamic = inut.profile_handler.discover(self.profile)
 
     def run(self):
         if self.dynamic:
@@ -133,7 +134,7 @@ class Discovery(Operation):
 class Registration(Operation):
     def __init__(self, conv, inut, sh, **kwargs):
         Operation.__init__(self, conv, inut, sh, **kwargs)
-        self.dynamic = self.profile[REGISTER] == "T"
+        self.dynamic = inut.profile_handler.register(self.profile)
 
     def run(self):
         if self.dynamic:
