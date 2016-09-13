@@ -18,17 +18,60 @@ from otest.result import Result
 
 from oidctest.op import func
 from oidctest.op import check
-from oidctest.op.prof_util import ProfileHandler
+from oidctest.op.prof_util import SimpleProfileHandler
 from oidctest.op.tool import ClTester
 from oidctest.session import SessionHandler
+from oidctest.rp.test_config import PROFILES
 
-from requests.packages import urllib3
-
-urllib3.disable_warnings()
+try:
+    from requests.packages import urllib3
+except ImportError:
+    pass
+else:
+    urllib3.disable_warnings()
 
 __author__ = 'roland'
 
 logger = logging.getLogger("")
+
+
+def get_return_types(spec):
+    if spec == '*':
+        return PROFILES
+    else:
+        return [x for x in spec.split(',') if x in PROFILES]
+
+
+def run_return_types(test_id, flows, oper_id, kwargs, return_types, single=True):
+    for rtyp in return_types:
+        kwargs['profile'] = rtyp
+        kwargs['opid'] = oper_id + '_' + rtyp
+
+        sh = SessionHandler(**kwargs)
+        sh.init_session(profile=rtyp)
+
+        res = Result(sh, SimpleProfileHandler)
+
+        io = ClIO(**kwargs)
+        io.session = sh
+
+        tester = ClTester(io, sh, **kwargs)
+
+        if single:
+            tester.run(test_id, **kwargs)
+
+            res.store_test_info()
+            res.print_info(test_id)
+        else:
+            if not tester.match_profile(test_id):
+                continue
+            elif tester.run(tid, **kwargs):
+                print('+ {}'.format(test_id))
+            else:
+                res = Result(sh, SimpleProfileHandler)
+                res.result()
+                if cargs.exit:
+                    break
 
 if __name__ == '__main__':
     from oic.oic.message import factory as oic_message_factory
@@ -39,9 +82,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-y', dest='yaml_flows')
     parser.add_argument('-l', dest="log_name")
+    parser.add_argument('-t', dest="test_id")
     parser.add_argument('-p', dest="profile")
-    parser.add_argument('-t', dest="testid")
-    parser.add_argument('-g', dest="group")
     parser.add_argument('-i', dest="id")
     parser.add_argument('-x', dest='exit', action='store_true')
     parser.add_argument(dest="config")
@@ -72,57 +114,36 @@ if __name__ == '__main__':
               "jwks_uri": jwks_uri, "flows": FLOWS['Flows'], "conf": CONF,
               "cinfo": CONF.INFO, "order": FLOWS['Order'],
               "desc": FLOWS['Desc'], "profiles": profiles, "operation": oper,
-              "profile": cargs.profile, "msg_factory": oic_message_factory,
+              "msg_factory": oic_message_factory,
               "check_factory": check.factory, "cache": {},
-              'profile_handler': ProfileHandler, 'opid': cargs.id}
+              'profile_handler': SimpleProfileHandler}
 
-    if cargs.testid:
-        io = ClIO(**kwargs)
-        sh = SessionHandler(**kwargs)
-        sh.init_session(profile=cargs.profile)
-        res = Result(sh, ProfileHandler)
-        io.session = sh
-        tester = ClTester(io, sh, **kwargs)
-        tester.run(cargs.testid, **kwargs)
-        res.store_test_info()
-        res.print_info(cargs.testid)
-    elif cargs.group:
-        _sh = SessionHandler(**kwargs)
-        _sh.init_session(profile=cargs.profile)
+    rtypes = []
+    if cargs.profile:
+        rtypes = [cargs.profile]
+    else:
+        try:
+            rtypes = get_return_types(FLOWS['Flows'][cargs.test_id]['profile'])
+        except KeyError:
+            print('No such test ID')
+            exit()
 
-        for tid in _sh["flow_names"]:
-            if not tid.startswith(cargs.group):
-                continue
-            io = ClIO(**kwargs)
-            sh = SessionHandler(**kwargs)
-            sh.init_session(profile=cargs.profile)
-            io.session = sh
-            tester = ClTester(io, sh, **kwargs)
-            if not tester.match_profile(tid):
-                continue
-            elif tester.run(tid, **kwargs):
-                print('+ {}'.format(tid))
-            else:
-                res = Result(sh, ProfileHandler)
-                res.result()
-                if cargs.exit:
-                    break
+    if cargs.test_id:
+        if len(rtypes) == 1:
+            run_return_types(cargs.test_id, FLOWS['Flows'], cargs.id, kwargs,
+                             return_types=rtypes)
+        else:
+            run_return_types(cargs.test_id, FLOWS['Flows'], cargs.id, kwargs,
+                             rtypes, False)
     else:
         _sh = SessionHandler(**kwargs)
-        _sh.init_session(profile=cargs.profile)
+        _sh.init_session(profile=rtypes[0])
 
-        for tid in _sh["flow_names"]:
-            io = ClIO(**kwargs)
-            sh = SessionHandler(**kwargs)
-            sh.init_session(profile=cargs.profile)
-            io.session = sh
-            tester = ClTester(io, sh, **kwargs)
-            if not tester.match_profile(tid):
-                continue
-            elif tester.run(tid, **kwargs):
-                print('+ {}'.format(tid))
-            else:
-                res = Result(sh, ProfileHandler)
-                res.result()
-                if cargs.exit:
-                    break
+        if cargs.group:
+            test_ids = [t for t in _sh["flow_names"] if t.startswith(cargs.group)]
+        else:
+            test_ids = _sh["flow_names"]
+
+        for tid in test_ids:
+            run_return_types(tid, FLOWS['Flows'], cargs.id, kwargs, rtypes,
+                             False)
