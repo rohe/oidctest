@@ -27,7 +27,7 @@ Flows:
   rp-claims_request-id_token:
     desc: The Relying Party can ask for a specific claim using the 'claims' request
       parameter. The claim should be returned in an ID Token
-    profile: *
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -62,7 +62,7 @@ Flows:
     desc: Retrieve openid-configuration information for OpenID Provider from
       the .well-known/openid-configuration path. Verify that the issuer in
       the openid-configuration matches the one returned by WebFinger
-    profile: *
+    profile: C
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -71,7 +71,7 @@ Flows:
           set_discovery_issuer: null
   rp-discovery-jwks_uri-keys:
     desc: Can read and understand jwks_uri
-    profile: ..T.
+    profile: C
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -82,7 +82,7 @@ Flows:
       providerinfo-has-jwks_uri: null
   rp-discovery-openid-configuration:
     desc: Uses openid-configuration Discovery Information
-    profile: *
+    profile: C
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -90,7 +90,7 @@ Flows:
           set_discovery_issuer: null
   rp-discovery-webfinger-acct:
     desc: Can Discover Identifiers using acct Syntax
-    profile: *
+    profile: C
     sequence:
       - Webfinger:
           resource:
@@ -98,14 +98,27 @@ Flows:
           set_webfinger_resource: null
   rp-discovery-webfinger-url:
     desc: Can Discover Identifiers using URL Syntax
-    profile: *
+    profile: C
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: null
+  rp-discovery-webfinger-http-href:
+    desc: Complain about href as http URL
+    profile: C
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: null
+          expect_exception: WebFingerError
+  rp-discovery-webfinger-unknown-member:
+    desc: Can deal with unknown member of JRD
+    profile: C
     sequence:
       - Webfinger:
           set_webfinger_resource: null
   rp-id_token-aud:
     desc: The Relying Party should request an ID token and compare its aud value
       to the Client ID.
-    profile: *
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -135,7 +148,7 @@ Flows:
     desc: Tests if the Relying Party can identify and reject an ID Token with an invalid
       signature. The ID Token has been signed using the asymmetric algorithm RS256.
       For more information see list item 6 in ID Token validation
-    profile: *
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -169,7 +182,7 @@ Flows:
   rp-id_token-bad-sig-es256:
     desc: The Relying Party should reject invalid asymmetric ID Token signature which
       has been signed using the algorithm ES256
-    profile: *
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -201,7 +214,7 @@ Flows:
     desc: Tests if the Relying Party can identify and reject an ID Token with an invalid
       signature. The ID Token has been signed using the symmetric algorithm HS256. For
       more information see list item 6 in ID Token validation
-    profile: *
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -232,7 +245,7 @@ Flows:
   rp-id_token-iat:
     desc: The Relying Party should request an ID token if it does not contain a
       iat claim it should be rejected
-    profile: *
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -261,7 +274,7 @@ Flows:
   rp-id_token-kid-absent-multiple-jwks:
     desc: If there are multiple keys in the referenced JWK Set document, a kid value
       MUST be provided in the JOSE Header
-    profile: *
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -290,7 +303,7 @@ Flows:
   rp-id_token-kid-absent-single-jwks:
     desc: If the JWK supplied in jwks_uri only contains a single key the ID
       Token does not need to contain a kid claim
-    profile: *
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -304,7 +317,7 @@ Flows:
   rp-id_token-issuer-mismatch:
     desc: The Relying Party should request an ID token and reject it if the issuer identifier
       for the OpenID Provider is not matching the issuer in the returned ID Token
-    profile: *
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -428,7 +441,7 @@ Flows:
             exception: AtHashError
   rp-id_token-sig+enc:
     desc: Can request and use signed and encrypted ID Token
-    profile: *
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -490,7 +503,7 @@ Flows:
               - id_token
   rp-key-rotation-op-enc-key:
     desc: Support OP Encryption Key Rotation
-    profile: *
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -560,7 +573,7 @@ Flows:
             jwks_path: static/jwk.json
   rp-key-rotation-rp-sign-key:
     desc: Can Request and Use Encrypted UserInfo Response
-    profile: *
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -621,7 +634,7 @@ Flows:
             nonce: null
   rp-registration-dynamic:
     desc: Uses Dynamic Registration
-    profile: *
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -684,7 +697,7 @@ Flows:
   rp-request_uri-enc:
     desc: The Relying Party can pass a Request Object by reference using the request_uri
       parameter. Encrypt the Request Object using RSA1_5 and A128CBC-HS256 algorithms
-    profile: *
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -701,7 +714,7 @@ Flows:
   rp-request_uri-sig:
     desc: The Relying Party can pass a Request Object by reference using the request_uri
       parameter. Sign the Request Object using the RS256 algorithm
-    profile: *
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -719,7 +732,7 @@ Flows:
     desc: The Relying Party can pass a Request Object by reference using the request_uri
       parameter. Encrypt the Request Object using RSA1_5 and A128CBC-HS256 algorithms
       and sign it using RS256 algorithm
-    profile: *
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -738,7 +751,7 @@ Flows:
   rp-request_uri-unsigned:
     desc: The Relying Party can pass a Request Object by reference using the request_uri
       parameter. The Request Object should set alg=null
-    profile: *
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -840,7 +853,7 @@ Flows:
       - SyncAuthn
   rp-scope-userinfo-claims:
     desc: The Relying Party should be able to request claims using Scope Values
-    profile: *
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -1003,9 +1016,9 @@ Flows:
       - SyncAuthn
       - AccessToken
       - UserInfo
-  rp-userinfo-not-query:
-    desc: Does not send Access Token as URI query parameter
-    profile: ...
+  rp-userinfo-query:
+    desc: Can send Access Token as URI query parameter
+    profile: '*'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -1015,10 +1028,12 @@ Flows:
           set_jwks_uri: null
       - SyncAuthn
       - AccessToken
-      - UserInfo
+      - UserInfo:
+          set_request_args:
+            behavior: use_authorization_header
   rp-self-issued:
     desc: Can use Self-Issued OpenID Provider
-    profile: ...
+    profile: '*'
     sequence:
       - Webfinger
 Order:

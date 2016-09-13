@@ -8,6 +8,7 @@ CIT = 'code id_token token'
 I = 'id_token'
 IT = 'id_token token'
 ALL = [C, CI, CT, CIT, I, IT]
+PROFILES = ["C", "CI", "CT", "CIT", "I", "IT"]
 
 R = 'registration_endpoint'
 A = 'authorization_endpoint'
@@ -52,6 +53,16 @@ CONF = {
         "response_type": ALL
     },
     "rp-discovery-webfinger-url": {
+        "claims": "normal",
+        "response_type": ALL,
+        'out_of_scope': [R, A, T, U]
+    },
+    "rp-discovery-webfinger-http-href": {
+        "claims": "normal",
+        "response_type": ALL,
+        'out_of_scope': [R, A, T, U]
+    },
+    "rp-discovery-webfinger-unknown-member": {
         "claims": "normal",
         "response_type": ALL,
         'out_of_scope': [R, A, T, U]

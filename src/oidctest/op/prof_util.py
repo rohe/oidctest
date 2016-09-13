@@ -151,7 +151,9 @@ def extras(flow_set, profile_map):
     return _all
 
 
-RT = {"C": "code", "I": "id_token", "T": "token"}
+RT = {"C": "code", "I": "id_token", "T": "token", "CT": "code token",
+      'CI': 'code id_token', 'IT': 'id_token token',
+      'CIT': 'code id_token token'}
 OC = {"T": "config", "F": "no-config"}
 REG = {"T": "dynamic", "F": "static"}
 CR = {"n": "none", "s": "sign", "e": "encrypt"}
@@ -214,6 +216,46 @@ class ProfileHandler(prof_util.ProfileHandler):
             if "extras" in ret:
                 ret["extras"] = True
             return ret
+
+
+class SimpleProfileHandler(prof_util.ProfileHandler):
+    @staticmethod
+    def webfinger(profile):
+        return True
+
+    @staticmethod
+    def discover(profile):
+        return True
+
+    @staticmethod
+    def register(profile):
+        return True
+
+    def get_profile_info(self, test_id=None):
+        try:
+            _conv = self.session["conv"]
+        except KeyError:
+            pass
+        else:
+            try:
+                iss = _conv.entity.provider_info["issuer"]
+            except (TypeError, KeyError):
+                iss = ""
+
+            profile = RT[self.session["profile"]]
+
+            if test_id is None:
+                try:
+                    test_id = self.session["testid"]
+                except KeyError:
+                    return {}
+
+            return {"Issuer": iss, "Profile": profile,
+                    "Test ID": test_id,
+                    "Test description": self.session["node"].desc,
+                    "Timestamp": in_a_while()}
+
+        return {}
 
 
 def make_list(flows, profile, **kw_args):

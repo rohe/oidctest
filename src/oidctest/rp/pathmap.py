@@ -3,9 +3,12 @@ __author__ = 'roland'
 NORMAL = "/_/_/_/normal"
 
 IDMAP = {
-    # Discovery
+    # Webfinger
     "rp-discovery-webfinger-url": NORMAL,
     "rp-discovery-webfinger-acct": NORMAL,
+    'rp-discovery-webfinger-http-href': '/_/_/httphref/normal',
+    'rp-discovery-webfinger-unknown-member': '/_/_/wfunknown/normal',
+    # Discovery
     "rp-discovery-openid-configuration": NORMAL,
     "rp-discovery-jwks_uri-keys": NORMAL,
     "rp-discovery-issuer-not-matching-config": "/_/_/isso/normal",
