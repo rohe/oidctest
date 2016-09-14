@@ -92,7 +92,7 @@ class Webfinger(Operation):
 
             self.catch_exception(_conv.entity.discover, principal=principal)
 
-            if not _conv.events.last_event_type == 'exception':
+            if not _conv.events.last_event_type() == 'exception':
                 issuer = _conv.events.last_item('response')
                 _conv.info["issuer"] = issuer
                 _conv.events.store('issuer', issuer,
