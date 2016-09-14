@@ -128,7 +128,11 @@ def setup_op(mode, com_args, op_arg, trace, test_conf):
     op.name = op.baseurl = "{}{}{}/{}".format(op.baseurl, div, mode['oper_id'],
                                               mode['test_id'])
 
-    _tc = test_conf[mode['test_id']]
+    try:
+        _tc = test_conf[mode['test_id']]
+    except KeyError:
+        raise UnknowTestID(mode['test_id'])
+
     for _typ in ["signing_alg", "encryption_alg", "encryption_enc"]:
         try:
             _alg = _tc[_typ]
