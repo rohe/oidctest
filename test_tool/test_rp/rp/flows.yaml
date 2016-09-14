@@ -1016,21 +1016,6 @@ Flows:
       - SyncAuthn
       - AccessToken
       - UserInfo
-  rp-userinfo-query:
-    desc: Can send Access Token as URI query parameter
-    profile: '*'
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration:
-          set_jwks_uri: null
-      - SyncAuthn
-      - AccessToken
-      - UserInfo:
-          set_request_args:
-            behavior: use_authorization_header
   rp-self-issued:
     desc: Can use Self-Issued OpenID Provider
     profile: '*'

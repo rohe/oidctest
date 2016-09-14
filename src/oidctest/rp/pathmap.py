@@ -59,7 +59,6 @@ IDMAP = {
     # UserInfo Endpoint
     "rp-userinfo-bearer-header": NORMAL,
     "rp-userinfo-bearer-body": NORMAL,
-    "rp-userinfo-not-query": NORMAL,
     "rp-userinfo-bad-sub-claim": "/_/_/uisub/normal",
     "rp-userinfo-sig": NORMAL,
     "rp-userinfo-enc": NORMAL,

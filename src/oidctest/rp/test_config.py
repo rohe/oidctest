@@ -328,11 +328,6 @@ CONF = {
         # "path": "/_/_/_/normal",
         "response_type": [C, CI, CT, CIT]
     },
-    "rp-userinfo-not-query": {
-        "claims": "normal",
-        # "path": "/_/_/_/normal",
-        "response_type": ALL
-    },
     "rp-userinfo-sig+enc": {
         "claims": "normal",
         # "path": "/_/_/_/normal",

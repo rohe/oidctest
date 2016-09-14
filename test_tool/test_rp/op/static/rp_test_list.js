@@ -516,12 +516,6 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "detailed_description": "Pass the access token as a " + FORM_ENCODED_BODY_PARAMETER + " while doing the " + USERINFO_REQUEST + ".",
                 "expected_result": "A " + USERINFO_RESPONSE + "."
             },
-            "rp-userinfo-not-query": {
-                "short_description": "Does not send Access Token as URI query parameter",
-                "profiles": [BASIC, IMPLICIT, HYBRID],
-                "detailed_description": "Make a " + USERINFO_REQUEST + " without sending the Access Token in the HTTP request URI.",
-                "expected_result": "A successful " + USERINFO_RESPONSE + " without passing the Access Token as a query parameter."
-            },
             "rp-userinfo-sig": {
                 "short_description": "Can request and use signed UserInfo Response",
                 "profiles": [CONFIG_OPTIONAL, DYNAMIC_OPTIONAL],
