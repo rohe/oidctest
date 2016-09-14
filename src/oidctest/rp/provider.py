@@ -382,7 +382,7 @@ class Provider(provider.Provider):
     def _update_client_keys(self, client_id):
         if "updkeys" in self.behavior_type:
             if not self.init_keys:
-                if "rp_enc_key" in self.baseurl:
+                if "rp-enc-key" in self.baseurl:
                     self.update_key_use = "enc"
                 else:
                     self.update_key_use = "sig"
