@@ -81,7 +81,8 @@ def get_client_address(environ):
         _addr = environ['HTTP_X_FORWARDED_FOR'].split(',')[-1].strip()
     except KeyError:
         _addr = environ['REMOTE_ADDR']
-    return "{}:{}".format(_addr, _port)
+    #return "{}:{}".format(_addr, _port)
+    return _addr
 
 
 def rp_support_3rd_party_init_login(environ, start_response):
