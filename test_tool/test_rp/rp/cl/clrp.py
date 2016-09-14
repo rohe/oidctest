@@ -42,7 +42,7 @@ def get_return_types(spec):
         return [x for x in spec.split(',') if x in PROFILES]
 
 
-def run_return_types(test_id, flows, oper_id, kwargs, return_types, single=True):
+def run_return_types(test_id, oper_id, kwargs, return_types, single=True):
     for rtyp in return_types:
         kwargs['profile'] = rtyp
         kwargs['opid'] = oper_id + '_' + rtyp
@@ -62,16 +62,18 @@ def run_return_types(test_id, flows, oper_id, kwargs, return_types, single=True)
 
             res.store_test_info()
             res.print_info(test_id)
+            return True
         else:
             if not tester.match_profile(test_id):
                 continue
-            elif tester.run(tid, **kwargs):
+            elif tester.run(test_id, **kwargs):
                 print('+ {}'.format(test_id))
+                return True
             else:
                 res = Result(sh, SimpleProfileHandler)
                 res.result()
-                if cargs.exit:
-                    break
+                return False
+
 
 if __name__ == '__main__':
     from oic.oic.message import factory as oic_message_factory
@@ -85,6 +87,7 @@ if __name__ == '__main__':
     parser.add_argument('-t', dest="test_id")
     parser.add_argument('-p', dest="profile")
     parser.add_argument('-i', dest="id")
+    parser.add_argument('-g', dest="group")
     parser.add_argument('-x', dest='exit', action='store_true')
     parser.add_argument(dest="config")
     cargs = parser.parse_args()
@@ -118,32 +121,37 @@ if __name__ == '__main__':
               "check_factory": check.factory, "cache": {},
               'profile_handler': SimpleProfileHandler}
 
-    rtypes = []
     if cargs.profile:
         rtypes = [cargs.profile]
     else:
+        rtypes = ['C']
+
+    if cargs.test_id:
         try:
             rtypes = get_return_types(FLOWS['Flows'][cargs.test_id]['profile'])
         except KeyError:
             print('No such test ID')
             exit()
 
-    if cargs.test_id:
         if len(rtypes) == 1:
-            run_return_types(cargs.test_id, FLOWS['Flows'], cargs.id, kwargs,
+            run_return_types(cargs.test_id, cargs.id, kwargs,
                              return_types=rtypes)
         else:
-            run_return_types(cargs.test_id, FLOWS['Flows'], cargs.id, kwargs,
-                             rtypes, False)
+            _res = run_return_types(cargs.test_id, cargs.id, kwargs, rtypes,
+                                    False)
+            if cargs.exit and _res is False:
+                exit()
     else:
         _sh = SessionHandler(**kwargs)
         _sh.init_session(profile=rtypes[0])
 
         if cargs.group:
-            test_ids = [t for t in _sh["flow_names"] if t.startswith(cargs.group)]
+            test_ids = [t for t in _sh["flow_names"] if
+                        t.startswith(cargs.group)]
         else:
             test_ids = _sh["flow_names"]
 
         for tid in test_ids:
-            run_return_types(tid, FLOWS['Flows'], cargs.id, kwargs, rtypes,
-                             False)
+            _res = run_return_types(tid, cargs.id, kwargs, rtypes, False)
+            if cargs.exit and _res is False:
+                exit(-1)
