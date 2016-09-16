@@ -5,6 +5,7 @@ from oic import rndstr
 from oic.oic import OIDCONF_PATTERN
 from oic.utils.sdb import SessionDB
 from oic.utils.webfinger import WF_URL
+from oidctest import UnknownTestID
 from oidctest.rp.provider import Provider
 
 __author__ = 'roland'
@@ -131,7 +132,7 @@ def setup_op(mode, com_args, op_arg, trace, test_conf):
     try:
         _tc = test_conf[mode['test_id']]
     except KeyError:
-        raise UnknowTestID(mode['test_id'])
+        raise UnknownTestID(mode['test_id'])
 
     for _typ in ["signing_alg", "encryption_alg", "encryption_enc"]:
         try:

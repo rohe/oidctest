@@ -4,7 +4,7 @@ import logging
 from otest import Done
 from otest import session
 
-#from oidctest.op.prof_util import map_prof
+from oidctest.op.prof_util import map_prof
 
 __author__ = 'roland'
 
@@ -21,15 +21,6 @@ class Node(object):
         self.rmc = False
         self.experr = False
         self.complete = False
-
-
-def map_prof(a, b):
-    if b == '*':
-        return True
-    elif a in b.split(','):
-        return True
-    else:
-        return False
 
 
 class SessionHandler(session.SessionHandler):

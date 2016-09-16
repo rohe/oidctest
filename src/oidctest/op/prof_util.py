@@ -62,10 +62,13 @@ def to_code(pdict):
     return "".join(code)
 
 
-def map_prof(a, b):
-    if a == b:
-        return True
+def _cmp_prof(a, b):
+    """
 
+    :param a: list of strings
+    :param b: list of strings
+    :return: True/False if a maps to b
+    """
     # basic, implicit, hybrid
     if b[RESPONSE] != "":
         if a[RESPONSE] not in b[RESPONSE].split(','):
@@ -95,6 +98,27 @@ def map_prof(a, b):
             return False
 
     return True
+
+
+def map_prof(a, b):
+    if a == b:
+        return True
+
+    if isinstance(b, list):
+        return _cmp_prof(a, b)
+    elif '.' in b:
+        b = b.split('.')
+        if '.' in a:
+            a = a.split('.')
+        return _cmp_prof(a, b)
+    else:
+        if b == '*':
+            return True
+        elif a in b.split(','):
+            return True
+        else:
+            return False
+
 
 
 def flows(code, ordered_list, flows_):

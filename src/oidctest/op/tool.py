@@ -40,7 +40,7 @@ class ClTester(tool.Tester):
                              msg_factory=msg_factory, cache=cache,
                              **kwargs)
         # self.chk_factory = get_check
-        self.map_prof = session.map_prof
+        self.map_prof = prof_util.map_prof
 
     def match_profile(self, test_id):
         _spec = self.flows[test_id]

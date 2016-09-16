@@ -1008,7 +1008,7 @@ class MultipleSignOn(Error):
         if not res:
             self._message = "No response to get the ID Token from"
             self._status = self.status
-            return ()
+            return {}
 
         idt = res
 
@@ -1049,7 +1049,7 @@ class SameAuthn(Error):
         if not res:
             self._message = "No response to get the ID Token from"
             self._status = self.status
-            return ()
+            return {}
 
         idt = res
 
@@ -1179,7 +1179,7 @@ class CheckUserID(Error):
         if not res:
             self._message = "No response to get the ID Token from"
             self._status = self.status
-            return ()
+            return {}
 
         if len(res) < 2:
             self._status = self.status
@@ -1193,7 +1193,7 @@ class CheckUserID(Error):
         if not rem:
             self._message = "Seems the same ID token was returned"
             self._status = self.status
-            return ()
+            return {}
 
         idt1 = rem[0]
         if len(rem) > 1:
@@ -1202,7 +1202,7 @@ class CheckUserID(Error):
             if rem:
                 self._message = "Too many unique ID tokens"
                 self._status = self.status
-                return ()
+                return {}
 
         try:
             assert idt0["sub"] != idt1["sub"]
@@ -1276,7 +1276,7 @@ class CheckSymSignedIdToken(Error):
         if not res:
             self._message = "No response to get the ID Token from"
             self._status = self.status
-            return ()
+            return {}
 
         idt = res[-1]
 
@@ -1300,7 +1300,7 @@ class CheckESSignedIdToken(Error):
         if not res:
             self._message = "No response to get the ID Token from"
             self._status = self.status
-            return ()
+            return {}
 
         idt = res[-1]
         try:
@@ -1340,7 +1340,7 @@ class CheckEncryptedIDToken(Error):
         if not res:
             self._message = "No response to get the ID Token from"
             self._status = self.status
-            return ()
+            return {}
 
         idt = res[-1]
 
@@ -1364,7 +1364,7 @@ class CheckSignedEncryptedIDToken(Error):
         if not res:
             self._message = "No response to get the ID Token from"
             self._status = self.status
-            return ()
+            return {}
 
         idt = res[-1]
 
@@ -1393,7 +1393,7 @@ class VerifyAud(Error):
         if not res:
             self._message = "No response to get the ID Token from"
             self._status = self.status
-            return ()
+            return {}
 
         aud = [i["aud"] for i in res]
         try:
@@ -1488,7 +1488,7 @@ class VerifyISS(Error):
         if not res:
             self._message = "No response to get the ID Token from"
             self._status = self.status
-            return ()
+            return {}
 
         issuer = get_provider_info(conv)["issuer"]
 
@@ -1677,7 +1677,7 @@ class VerifyIDTokenUserInfoSubSame(Information):
         if not res:
             self._message = "No response to get the ID Token from"
             self._status = self.status
-            return ()
+            return {}
 
         idt_sub = [i["sub"] for i in res]
 
@@ -1728,7 +1728,7 @@ class VerifySignedIdTokenHasKID(Error):
         if not res:
             self._message = "No response to get the ID Token from"
             self._status = self.status
-            return ()
+            return {}
 
         idt = res[-1]
         # doesn't verify signing kid if JWT is signed and then encrypted
@@ -1755,7 +1755,7 @@ class VerifySignedIdToken(Error):
         if not res:
             self._message = "No response to get the ID Token from"
             self._status = self.status
-            return ()
+            return {}
 
         idt = res[-1]
         try:
@@ -1793,7 +1793,7 @@ class VerifyNonce(Error):
         if not res:
             self._message = "No response to get the ID Token from"
             self._status = self.status
-            return ()
+            return {}
 
         idt = res[-1]
         try:
@@ -1822,7 +1822,7 @@ class VerifyUnSignedIdToken(Error):
         if not res:
             self._message = "No response to get the ID Token from"
             self._status = self.status
-            return ()
+            return {}
 
         idt = res[-1]
         try:
@@ -1861,7 +1861,7 @@ class VerifySubValue(Error):
         if not res:
             self._message = "No response to get the ID Token from"
             self._status = self.status
-            return ()
+            return {}
 
         idt = res[-1]
         idt_sub = idt["sub"]
@@ -2082,7 +2082,7 @@ class IsIDTokenSigned(Information):
         if not res:
             self._message = "No response to get the ID Token from"
             self._status = self.status
-            return ()
+            return {}
 
         idt = res[-1]
         try:
