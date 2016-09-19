@@ -49,23 +49,12 @@ def main_setup(args, lookup=None):
     # dealing with authorization
     authz = AuthzHandling()
 
-    kwargs = {
-        "template_lookup": lookup,
-        "template": {"form_post": "form_response.mako"},
-    }
-
     if config.USERINFO == "SIMPLE":
         # User info is a simple dictionary in this case statically defined in
         # the configuration file
         userinfo = UserInfo(config.USERDB)
     else:
         userinfo = None
-
-    # Should I care about verifying the certificates used by other entities
-    if args.insecure:
-        kwargs["verify_ssl"] = False
-    else:
-        kwargs["verify_ssl"] = True
 
     com_args = {
         "name": config.issuer,
@@ -80,6 +69,12 @@ def main_setup(args, lookup=None):
         "template": {"form_post": "form_response.mako"},
         "jwks_name": "./static/jwks_{}.json"
     }
+
+    # Should I care about verifying the certificates used by other entities
+    if args.insecure:
+        com_args["verify_ssl"] = False
+    else:
+        com_args["verify_ssl"] = True
 
     op_arg = {}
 

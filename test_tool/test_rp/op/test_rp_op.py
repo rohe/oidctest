@@ -138,9 +138,11 @@ def parse_path(path):
 
 
 class Application(object):
-    def __init__(self, test_conf):
+    def __init__(self, test_conf, com_args, op_args):
         self.test_conf = test_conf
         self.op = {}
+        self.com_args = com_args
+        self.op_args = op_args
 
     def op_setup(self, environ, mode, trace, test_conf):
         addr = get_client_address(environ)
@@ -156,12 +158,12 @@ class Application(object):
                 _op_args = {}
                 for param in ['baseurl', 'cookie_name', 'cookie_ttl',
                               'endpoints']:
-                    _op_args[param] = OP_ARG[param]
+                    _op_args[param] = self.op_args[param]
                 for param in ["jwks", "keys"]:
-                    _op_args[param] = OP_ARG["marg"][param]
-                _op = setup_op(mode, COM_ARGS, _op_args, trace, test_conf)
+                    _op_args[param] = self.op_args["marg"][param]
+                _op = setup_op(mode, self.com_args, _op_args, trace, test_conf)
             else:
-                _op = setup_op(mode, COM_ARGS, OP_ARG, trace, test_conf)
+                _op = setup_op(mode, self.com_args, self.op_args, trace, test_conf)
             _op.conv = Conversation(mode["test_id"], _op, None)
             self.op[key] = _op
 
@@ -201,7 +203,7 @@ class Application(object):
             return static(environ, start_response, path)
         elif path.startswith("jwks.json"):
             try:
-                mode, endpoint = extract_mode(OP_ARG["baseurl"])
+                mode, endpoint = extract_mode(self.op_args["baseurl"])
                 trace = Trace(absolut_start=True)
                 op, path = self.op_setup(environ, mode, trace, self.test_conf)
                 jwks = op.generate_jwks(mode)
@@ -232,7 +234,7 @@ class Application(object):
                 resp = BadRequest()
             else:
                 tok = authz[7:]
-                mode, endpoint = extract_mode(OP_ARG["baseurl"])
+                mode, endpoint = extract_mode(self.op_args["baseurl"])
                 _op, _ = self.op_setup(environ, mode, trace, self.test_conf)
                 try:
                     _claims = _op.claim_access_token[tok]
@@ -240,7 +242,8 @@ class Application(object):
                     resp = BadRequest()
                 else:
                     del _op.claim_access_token[tok]
-                    resp = Response(json.dumps(_claims), content='application/json')
+                    resp = Response(json.dumps(_claims),
+                                    content='application/json')
             return resp(environ, start_response)
         elif path == "3rd_party_init_login":
             return rp_support_3rd_party_init_login(environ, start_response)
@@ -313,7 +316,7 @@ class Application(object):
                 LOGGER.info("callback: %s" % callback)
                 try:
                     return callback(environ, start_response, session_info, trace,
-                                    op_arg=OP_ARG, jlog=jlog)
+                                    op_arg=self.op_args, jlog=jlog)
                 except Exception as err:
                     print("%s" % err)
                     message = traceback.format_exception(*sys.exc_info())
@@ -347,14 +350,15 @@ if __name__ == '__main__':
     parser.add_argument(dest="config")
     args = parser.parse_args()
 
-    COM_ARGS, OP_ARG, config = main_setup(args, LOOKUP)
+    _com_args, _op_arg, config = main_setup(args, LOOKUP)
 
-    _app = Application(test_conf=test_config.CONF)
+    _app = Application(test_conf=test_config.CONF, com_args=_com_args,
+                       op_args=_op_arg)
     # Setup the web server
     SRV = wsgiserver.CherryPyWSGIServer(('0.0.0.0', args.port),
                                         _app.application)
 
-    if OP_ARG["baseurl"].startswith("https"):
+    if _op_arg["baseurl"].startswith("https"):
         SRV.ssl_adapter = BuiltinSSLAdapter(config.SERVER_CERT,
                                             config.SERVER_KEY)
         extra = " using SSL/TLS"
