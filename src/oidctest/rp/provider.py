@@ -1,4 +1,5 @@
 import json
+import logging
 import time
 
 from Cryptodome.PublicKey import RSA
@@ -22,6 +23,9 @@ from oic.utils.keyio import keyjar_init
 from otest.events import EV_HTTP_RESPONSE
 
 __author__ = 'roland'
+
+
+logger = logging.getLogger(__name__)
 
 
 class TestError(Exception):
@@ -344,6 +348,7 @@ class Provider(provider.Provider):
             req = AccessTokenRequest().deserialize(request, dtype)
             client_id = self.client_authn(self, req, authn)
         except Exception as err:
+            logger.error(err)
             self.trace.error("Failed to verify client due to: %s" % err)
             return self._error(error="incorrect_behavior",
                                descr="Failed to verify client")
@@ -351,6 +356,7 @@ class Provider(provider.Provider):
         try:
             self._update_client_keys(client_id)
         except TestError:
+            logger.error('No change in client keys')
             return self._error(error="incorrect_behavior",
                                descr="No change in client keys")
 

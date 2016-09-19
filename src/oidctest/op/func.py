@@ -27,7 +27,10 @@ def set_webfinger_resource(oper, args):
         oper.resource = oper.op_args["resource"]
     except KeyError:
         _base = oper.conf.ISSUER
-        oper.resource = os.path.join(_base, oper.conv.operator_id,
+        if oper.conv.operator_id is None:
+            oper.resource = _base
+        else:
+            oper.resource = os.path.join(_base, oper.conv.operator_id,
                                      oper.conv.test_id)
 
 

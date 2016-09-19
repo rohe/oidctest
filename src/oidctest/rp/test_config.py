@@ -36,17 +36,17 @@ CONF = {
         "claims": "normal",
         "behavior": "isso",
         "response_type": ALL,
-        'out_of_scope': [R, A, T, U]
+        # 'out_of_scope': [R, A, T, U]
     },
     "rp-discovery-jwks_uri-keys": {
         "claims": "normal",
         "response_type": ALL,
-        'out_of_scope': [U]
+        # 'out_of_scope': [U]
     },
     "rp-discovery-openid-configuration": {
         "claims": "normal",
         "response_type": ALL,
-        'out_of_scope': [R, A, T, U]
+        # 'out_of_scope': [R, A, T, U]
     },
     "rp-discovery-webfinger-acct": {
         "claims": "normal",
@@ -55,17 +55,17 @@ CONF = {
     "rp-discovery-webfinger-url": {
         "claims": "normal",
         "response_type": ALL,
-        'out_of_scope': [R, A, T, U]
+        # 'out_of_scope': [R, A, T, U]
     },
     "rp-discovery-webfinger-http-href": {
         "claims": "normal",
         "response_type": ALL,
-        'out_of_scope': [R, A, T, U]
+        # 'out_of_scope': [R, A, T, U]
     },
     "rp-discovery-webfinger-unknown-member": {
         "claims": "normal",
         "response_type": ALL,
-        'out_of_scope': [R, A, T, U]
+        # 'out_of_scope': [R, A, T, U]
     },
     "rp-id_token-sig-rs256": {
         "claims": "normal",
@@ -109,13 +109,13 @@ CONF = {
         "claims": "normal",
         "behavior": ["ath"],
         "response_type": [CIT, IT],
-        'out_of_scope': [T, U]
+        # 'out_of_scope': [T, U]
     },
     "rp-id_token-bad-c_hash": {
         "claims": "normal",
         "behavior": ["ch"],
         "response_type": [CIT, CI],
-        'out_of_scope': [T, U]
+        # 'out_of_scope': [T, U]
     },
     "rp-id_token-iat": {
         "claims": "normal",
@@ -136,7 +136,7 @@ CONF = {
         "claims": "normal",
         "behavior": ["issi"],
         "response_type": ALL,
-        'out_of_scope': [U]
+        # 'out_of_scope': [U]
     },
     "rp-id_token-sig+enc": {
         "claims": "normal",

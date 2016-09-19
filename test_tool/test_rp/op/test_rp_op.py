@@ -16,6 +16,7 @@ from oic.utils.http_util import Response
 from oic.utils.http_util import NotFound
 from oic.utils.http_util import ServiceError
 
+from oidctest import UnknownTestID
 from oidctest.endpoints import static
 from oidctest.endpoints import display_log
 from oidctest.endpoints import URLS
@@ -291,7 +292,11 @@ class Application(object):
             session_info.update(mode)
             jlog.id = mode['oper_id']
 
-        _op, path = self.op_setup(environ, mode, trace, self.test_conf)
+        try:
+            _op, path = self.op_setup(environ, mode, trace, self.test_conf)
+        except UnknownTestID as err:
+            resp = BadRequest('Unknown test ID: {}'.format(err.args[0]))
+            return resp(environ, start_response)
 
         session_info["op"] = _op
         session_info["path"] = path

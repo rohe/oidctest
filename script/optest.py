@@ -136,29 +136,32 @@ if __name__ == '__main__':
     else:
         _dir = "./"
 
-    if args.path2port:
-        ppmap = read_path2port_map(args.path2port)
-        _path = ppmap[str(CONF.PORT)]
-        if args.xport:
-            _port = CONF.PORT
-            _base = '{}:{}/{}/'.format(CONF.BASE, str(CONF.PORT), _path)
-        else:
-            _base = '{}/{}/'.format(CONF.BASE, _path)
-            if args.tls:
-                _port = 443
-            else:
-                _port = 80
-    else:
-        _port = CONF.PORT
-        _base = CONF.BASE
-        _path = ''
+    # if args.path2port:
+    #     ppmap = read_path2port_map(args.path2port)
+    #     _path = ppmap[str(CONF.PORT)]
+    #     if args.xport:
+    #         _port = CONF.PORT
+    #         _base = '{}:{}/{}/'.format(CONF.BASE, str(CONF.PORT), _path)
+    #     else:
+    #         _base = '{}/{}/'.format(CONF.BASE, _path)
+    #         if args.tls:
+    #             _port = 443
+    #         else:
+    #             _port = 80
+    # else:
+
+    _port = CONF.PORT
+    _base = CONF.BASE
+    _path = ''
 
     # export JWKS
     if _port not in [443,80]:
-        jwks_uri = "{}:{}/static/jwks_{}.json".format(CONF.BASE, _port, _port)
+        _baseurl = '{}:{}/'.format(CONF.BASE, _port)
+        jwks_uri = "{}static/jwks_{}.json".format(_baseurl, _port)
         f = open('{}/jwks_{}.json'.format(_sdir, _port), "w")
     else:
-        jwks_uri = "{}/static/jwks.json".format(CONF.BASE)
+        _baseurl = '{}/'.format(CONF.BASE)
+        jwks_uri = "{}static/jwks.json".format(_baseurl)
         f = open('{}/jwks.json'.format(_sdir), "w")
     f.write(json.dumps(jwks))
     f.close()
@@ -168,17 +171,17 @@ if __name__ == '__main__':
                             input_encoding='utf-8',
                             output_encoding='utf-8')
 
-    l = [s.format(_base) for s in CONF.REDIRECT_URIS_PATTERN]
+    l = [s.format(_baseurl) for s in CONF.REDIRECT_URIS_PATTERN]
     CONF.INFO['client']['redirect_uris'] = l
 
     # Application arguments
-    app_args = {"base_url": _base, "kidd": kidd, "keyjar": keyjar,
+    app_args = {"base_url": _baseurl, "kidd": kidd, "keyjar": keyjar,
                 "jwks_uri": jwks_uri, "flows": fdef['Flows'], "conf": CONF,
                 "cinfo": CONF.INFO, "order": fdef['Order'],
                 "profiles": profiles, "operation": operations,
                 "profile": args.profile, "msg_factory": oic_message_factory,
                 "lookup": LOOKUP, "desc": fdef['Desc'], "cache": {},
-                'map_prof': PROFILEMAP, 'profile_handler': ProfileHandler}
+                'profile_map': PROFILEMAP, 'profile_handler': ProfileHandler}
 
     WA = WebApplication(sessionhandler=SessionHandler, webio=WebIO,
                         webtester=WebTester, check=check, webenv=app_args,
