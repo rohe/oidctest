@@ -165,7 +165,7 @@ class Provider(provider.Provider):
             self.do_key_rollover(new_keys, "%d")
             self.trace.info("Rotated signing keys")
 
-        if "nokid1jwk" in self.behavior_type:
+        if "nokid1jwks" in self.behavior_type:
             if not alg == "HS256":
                 found_key = None
                 for key in self.keyjar.issuer_keys[""]:
