@@ -296,7 +296,7 @@ def conditional_expect(oper, args):
 def conditional_excecution(oper, arg):
     for key, val in arg.items():
         if key == 'profile':
-            if map_prof(oper.profile, val.split('.')):
+            if not map_prof(oper.profile, val):
                 oper.skip = True
                 return
 
