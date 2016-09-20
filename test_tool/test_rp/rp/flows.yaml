@@ -925,7 +925,7 @@ Flows:
             token_endpoint_auth_method: private_key_jwt
       - SyncAuthn
       - AccessToken:
-          set_request_args:
+          set_op_args:
             authn_method: private_key_jwt
   rp-userinfo-bad-sub-claim:
     desc: Reject UserInfo with Invalid Sub claim
