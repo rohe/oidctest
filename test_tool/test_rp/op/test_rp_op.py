@@ -155,7 +155,7 @@ class Application(object):
             _op = self.op[key]
             _op.trace = trace
         except KeyError:
-            if mode["test_id"] in ['rp-id_token-kid_absent_multiple_jwks']:
+            if mode["test_id"] in ['rp-id_token-kid-absent-multiple-jwks']:
                 _op_args = {}
                 for param in ['baseurl', 'cookie_name', 'cookie_ttl',
                               'endpoints']:
