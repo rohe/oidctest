@@ -1,0 +1,49 @@
+Profile: ['C']
+Test ID: registration
+Test description: Simple code profile with ES256 signatures
+Timestamp: 2016-05-24T13:04:09Z
+
+============================================================
+
+Trace output
+
+Trace init: Tue, 24 May 2016 13:04:09 +0000
+0.024625 Conversation initiated
+0.025458 Running 'Login'
+0.025473 Doing GET on https://localhost:8088/rp?issuer=https%3A%2F%2Flocalhost%3A8091%2Fad3a24052d064ad7ba409012daa08245
+0.082678 Running 'ConfigurationResponse'
+0.125105 Assert VerifyRegistrationResponseTypes
+0.125236 Assert VerifyRegistrationPublicKeyRegistration
+0.148774 Assert VerifyRegistrationRedirectUriScheme
+0.148879 Running 'RegistrationResponse'
+
+
+
+============================================================
+
+Conditions
+
+RegistrationResponse:verify-registration-response_types: status=OK
+RegistrationResponse:verify-registration-public_key-registration: status=OK
+RegistrationResponse:verify-registration-redirect_uri-scheme: status=OK
+
+
+
+============================================================
+
+Events
+1464095049.436691:operation:<class 'otest.rp.operation.Login'>
+1464095049.437039:start_page:https://localhost:8088/rp?issuer=https%3A%2F%2Flocalhost%3A8091%2Fad3a24052d064ad7ba409012daa08245
+1464095049.49391:request:
+1464095049.494177:operation:<class 'otest.rp.operation.ConfigurationResponse'>
+1464095049.495063:response:{"scopes_supported": ["email", "offline_access", "openid", "phone"], "claims_supported": ["email", "email_verified", "name", "phone_number", "phone_number_verified", "sub"], "userinfo_endpoint": "https://localhost:8091/ad3a24052d064ad7ba409012daa08245/userinfo", "revocation_endpoint": "https://localhost:8091/ad3a24052d064ad7ba409012daa08245/revocation", "response_modes_supported": ["form_post", "fragment", "query"], "userinfo_signing_alg_values_supported": ["ES256"], "subject_types_supported": ["pairwise"], "claims_parameter_supported": true, "response_types_supported": ["code", "id_token token", "token"], "token_endpoint": "https://localhost:8091/ad3a24052d064ad7ba409012daa08245/token", "introspection_endpoint": "https://localhost:8091/ad3a24052d064ad7ba409012daa08245/introspection", "authorization_endpoint": "https://localhost:8091/ad3a24052d064ad7ba409012daa08245/authorization", "registration_endpoint": "https://localhost:8091/ad3a24052d064ad7ba409012daa08245/registration", "jwks_uri": "https://localhost:8091/ad3a24052d064ad7ba409012daa08245/static/jwks.json", "id_token_signing_alg_values_supported": ["ES256"], "clientinfo_endpoint": "https://localhost:8091/ad3a24052d064ad7ba409012daa08245/clientinfo", "request_parameter_supported": true, "require_request_uri_registration": true, "grant_types_supported": ["authorization_code", "implicit", "urn:ietf:params:oauth:grant-type:jwt-bearer"], "claim_types_supported": ["normal"], "token_endpoint_auth_methods_supported": ["client_secret_basic"], "version": "3.0", "request_uri_parameter_supported": false, "end_session_endpoint": "https://localhost:8091/ad3a24052d064ad7ba409012daa08245/end_session", "token_endpoint_auth_signing_alg_values_supported": ["ES256"], "issuer": "https://localhost:8091/ad3a24052d064ad7ba409012daa08245", "request_object_signing_alg_values_supported": ["ES256"]}
+1464095049.535926:request:{"post_logout_redirect_uris": ["https://localhost:8088/logout_success/9cd59dad78903679085cc5591f72d77b03f39aa60d265020fb334e2881efde50"], "application_type": "web", "jwks_uri": "https://localhost:8088/static/jwks_uri.json", "response_types": ["code"], "contacts": ["ops@example.com"], "application_name": "idpproxy", "redirect_uris": ["https://localhost:8088/authz_cb/9cd59dad78903679085cc5591f72d77b03f39aa60d265020fb334e2881efde50"]}
+1464095049.536106:protocol request:{'application_name': 'idpproxy', 'application_type': 'web', 'response_types': ['code'], 'jwks_uri': 'https://localhost:8088/static/jwks_uri.json', 'post_logout_redirect_uris': ['https://localhost:8088/logout_success/9cd59dad78903679085cc5591f72d77b03f39aa60d265020fb334e2881efde50'], 'redirect_uris': ['https://localhost:8088/authz_cb/9cd59dad78903679085cc5591f72d77b03f39aa60d265020fb334e2881efde50'], 'contacts': ['ops@example.com']}
+1464095049.536409:operation:<class 'otest.rp.operation.RegistrationResponse'>
+1464095049.536738:condition:RegistrationResponse:verify-registration-response_types: status=OK
+1464095049.560243:condition:RegistrationResponse:verify-registration-public_key-registration: status=OK
+1464095049.560442:condition:RegistrationResponse:verify-registration-redirect_uri-scheme: status=OK
+
+============================================================
+
+RESULT: PARTIAL RESULT

@@ -1,0 +1,35 @@
+registration:
+    offline_access: null
+    response_type:
+      - code
+      - [code, id_token]
+      - [code, id_token, token]
+      - token
+      - [id_token, token]
+    software_statement:
+      - redirect_uris
+      - grant_types
+      - [jwks_uri, jwks]
+      - client_name
+      - client_uri
+    redirect_uri_scheme: null
+    public_key_registration: null
+authorization:
+    offline_access: null
+    state_entropy: 128
+    redirect_uri: null
+token:
+    client_authn: null
+    jwt_assertion:
+      - iss
+      - sub
+      - aud
+      - iat
+      - exp
+      - jti
+    jti_entropy: 128
+    public_key_signature: null
+revocation:
+    client_authn: null
+introspection:
+    client_authn: null

@@ -1,0 +1,49 @@
+Profile: ['C']
+Test ID: registration
+Test description: Simple code profile with ES256 signatures
+Timestamp: 2016-05-24T14:40:27Z
+
+============================================================
+
+Trace output
+
+Trace init: Tue, 24 May 2016 14:40:05 +0000
+0.025336 Conversation initiated
+12.434150 Running 'Login'
+12.434198 Doing GET on https://localhost:8088/rp?issuer=https%3A%2F%2Flocalhost%3A8091%2Fg0ffquDTXH4KSm59ef2KSylW
+18.730655 Running 'ConfigurationResponse'
+21.444412 Assert VerifyRegistrationRedirectUriScheme
+21.445227 Assert VerifyRegistrationPublicKeyRegistration
+21.506843 Assert VerifyRegistrationResponseTypes
+21.507035 Running 'RegistrationResponse'
+
+
+
+============================================================
+
+Conditions
+
+RegistrationResponse:verify-registration-redirect_uri-scheme: status=OK
+RegistrationResponse:verify-registration-public_key-registration: status=OK
+RegistrationResponse:verify-registration-response_types: status=OK
+
+
+
+============================================================
+
+Events
+1464100817.010924:operation:<class 'otest.rp.operation.Login'>
+1464100818.088647:start_page:https://localhost:8088/rp?issuer=https%3A%2F%2Flocalhost%3A8091%2Fg0ffquDTXH4KSm59ef2KSylW
+1464100823.576218:request:
+1464100823.577781:operation:<class 'otest.rp.operation.ConfigurationResponse'>
+1464100824.38854:response:{"claims_parameter_supported": true, "userinfo_signing_alg_values_supported": ["ES256"], "token_endpoint": "https://localhost:8091/g0ffquDTXH4KSm59ef2KSylW/token", "request_object_signing_alg_values_supported": ["ES256"], "request_uri_parameter_supported": false, "registration_endpoint": "https://localhost:8091/g0ffquDTXH4KSm59ef2KSylW/registration", "request_parameter_supported": true, "token_endpoint_auth_methods_supported": ["client_secret_basic"], "authorization_endpoint": "https://localhost:8091/g0ffquDTXH4KSm59ef2KSylW/authorization", "id_token_signing_alg_values_supported": ["ES256"], "response_modes_supported": ["form_post", "fragment", "query"], "issuer": "https://localhost:8091/g0ffquDTXH4KSm59ef2KSylW", "claim_types_supported": ["normal"], "scopes_supported": ["email", "offline_access", "openid", "phone"], "version": "3.0", "grant_types_supported": ["authorization_code", "implicit", "urn:ietf:params:oauth:grant-type:jwt-bearer"], "subject_types_supported": ["pairwise"], "jwks_uri": "https://localhost:8091/g0ffquDTXH4KSm59ef2KSylW/static/jwks.json", "claims_supported": ["email", "email_verified", "name", "phone_number", "phone_number_verified", "sub"], "revocation_endpoint": "https://localhost:8091/g0ffquDTXH4KSm59ef2KSylW/revocation", "userinfo_endpoint": "https://localhost:8091/g0ffquDTXH4KSm59ef2KSylW/userinfo", "introspection_endpoint": "https://localhost:8091/g0ffquDTXH4KSm59ef2KSylW/introspection", "token_endpoint_auth_signing_alg_values_supported": ["ES256"], "require_request_uri_registration": true, "response_types_supported": ["code", "id_token token", "token"], "clientinfo_endpoint": "https://localhost:8091/g0ffquDTXH4KSm59ef2KSylW/clientinfo", "end_session_endpoint": "https://localhost:8091/g0ffquDTXH4KSm59ef2KSylW/end_session"}
+1464100826.261926:request:{"jwks_uri": "https://localhost:8088/static/jwks_uri.json", "application_type": "web", "post_logout_redirect_uris": ["https://localhost:8088/logout_success/33721c44da2aacad35ac9a487560023c117aa270a2323ae2b2564803ba7c6946"], "response_types": ["code"], "redirect_uris": ["https://localhost:8088/authz_cb/33721c44da2aacad35ac9a487560023c117aa270a2323ae2b2564803ba7c6946"], "contacts": ["ops@example.com"]}
+1464100826.262704:protocol request:{'jwks_uri': 'https://localhost:8088/static/jwks_uri.json', 'contacts': ['ops@example.com'], 'post_logout_redirect_uris': ['https://localhost:8088/logout_success/33721c44da2aacad35ac9a487560023c117aa270a2323ae2b2564803ba7c6946'], 'redirect_uris': ['https://localhost:8088/authz_cb/33721c44da2aacad35ac9a487560023c117aa270a2323ae2b2564803ba7c6946'], 'response_types': ['code'], 'application_type': 'web'}
+1464100826.264271:operation:<class 'otest.rp.operation.RegistrationResponse'>
+1464100827.099249:condition:RegistrationResponse:verify-registration-redirect_uri-scheme: status=OK
+1464100827.160794:condition:RegistrationResponse:verify-registration-public_key-registration: status=OK
+1464100827.161477:condition:RegistrationResponse:verify-registration-response_types: status=OK
+
+============================================================
+
+RESULT: PARTIAL RESULT

@@ -1,0 +1,46 @@
+Profile: ['C']
+Test ID: authorization
+Test description: Simple code profile with ES256 signatures
+Timestamp: 2016-05-09T09:21:00Z
+
+============================================================
+
+Trace output
+
+Trace init: Mon, 09 May 2016 09:21:00 +0000
+0.000206 Conversation initiated
+0.000555 Running 'Login'
+0.000572 Doing GET on https://localhost:8088/rp?issuer=https%3A%2F%2Flocalhost%3A8091%2F237a677ea5324cd98c264dbca3ca8e5f
+0.013237 Got a 302 response
+0.013465 Received HTML: <html>
+<head><title>Redirecting to https://localhost:8091/237a677ea5324cd98c264dbca3ca8e5f/authorization?response_type=code&redirect_uri=https%3A%2F%2Flocalhost%3A8088%2Fauthz_cb%2F177e15d242430f9e98ea1fa64dc6915f8b45ca02059b005ff693f7687695d525&scope=openid+profile+email+address+phone&state=W1Mn9rBfGjuFgoR5ak96NAdORCL8rwVA&nonce=w9wbZrKqai3HDtHJR72DvmbXUZPOC12H&client_id=GseE1F2NauEe</title></head>
+<body>
+You are being redirected to <a href="https://localhost:8091/237a677ea5324cd98c264dbca3ca8e5f/authorization?response_type=code&redirect_uri=https%3A%2F%2Flocalhost%3A8088%2Fauthz_cb%2F177e15d242430f9e98ea1fa64dc6915f8b45ca02059b005ff693f7687695d525&scope=openid+profile+email+address+phone&state=W1Mn9rBfGjuFgoR5ak96NAdORCL8rwVA&nonce=w9wbZrKqai3HDtHJR72DvmbXUZPOC12H&client_id=GseE1F2NauEe">https://localhost:8091/237a677ea5324cd98c264dbca3ca8e5f/authorization?response_type=code&redirect_uri=https%3A%2F%2Flocalhost%3A8088%2Fauthz_cb%2F177e15d242430f9e98ea1fa64dc6915f8b45ca02059b005ff693f7687695d525&scope=openid+profile+email+address+phone&state=W1Mn9rBfGjuFgoR5ak96NAdORCL8rwVA&nonce=w9wbZrKqai3HDtHJR72DvmbXUZPOC12H&client_id=GseE1F2NauEe</a>
+</body>
+</html>
+0.024147 Running 'ConfigurationResponse'
+
+
+
+============================================================
+
+Conditions
+
+
+
+
+============================================================
+
+Events
+1462785660.041758:operation:<class 'oidctest.rp.operation.Login'>
+1462785660.0419:start_page:https://localhost:8088/rp?issuer=https%3A%2F%2Flocalhost%3A8091%2F237a677ea5324cd98c264dbca3ca8e5f
+1462785660.05455:http response:<aatest.events.HTTPResponse object at 0x109c2c828>
+1462785660.05459:Cookie:localhost.beaker.session.id=5dedfd915f5c499596e48b94f860651f; Path=/
+1462785660.054779:redirect url:https://localhost:8091/237a677ea5324cd98c264dbca3ca8e5f/authorization?response_type=code&redirect_uri=https%3A%2F%2Flocalhost%3A8088%2Fauthz_cb%2F177e15d242430f9e98ea1fa64dc6915f8b45ca02059b005ff693f7687695d525&scope=openid+profile+email+address+phone&state=W1Mn9rBfGjuFgoR5ak96NAdORCL8rwVA&nonce=w9wbZrKqai3HDtHJR72DvmbXUZPOC12H&client_id=GseE1F2NauEe
+1462785660.05491:request:response_type=code&redirect_uri=https%3A%2F%2Flocalhost%3A8088%2Fauthz_cb%2F177e15d242430f9e98ea1fa64dc6915f8b45ca02059b005ff693f7687695d525&scope=openid+profile+email+address+phone&state=W1Mn9rBfGjuFgoR5ak96NAdORCL8rwVA&nonce=w9wbZrKqai3HDtHJR72DvmbXUZPOC12H&client_id=GseE1F2NauEe
+1462785660.065034:protocol request:{'redirect_uri': 'https://localhost:8088/authz_cb/177e15d242430f9e98ea1fa64dc6915f8b45ca02059b005ff693f7687695d525', 'state': 'W1Mn9rBfGjuFgoR5ak96NAdORCL8rwVA', 'response_type': 'code', 'client_id': 'GseE1F2NauEe', 'scope': 'openid profile email address phone', 'nonce': 'w9wbZrKqai3HDtHJR72DvmbXUZPOC12H'}
+1462785660.06539:operation:<class 'oidctest.rp.operation.ConfigurationResponse'>
+
+============================================================
+
+RESULT: PARTIAL RESULT

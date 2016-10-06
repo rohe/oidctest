@@ -1,0 +1,115 @@
+---
+Flows:
+  RP-Sign-RS256:
+    profiles:
+      - C
+    desc: Simple code profile with RS256 signatures
+    sequence:
+      - Init:
+          set_start_page: ''
+          add_post_condition:
+            http_response:
+                status_code:
+                  - 302
+                  - 303
+      - ConfigurationResponse
+      - RegistrationResponse:
+          add_pre_condition:
+            verify-registration-response_types:
+              allowed:
+                - code
+            verify-registration-redirect_uri-scheme: null
+            verify-registration-public_key-registration: null
+      - AuthorizationResponse:
+          add_pre_condition:
+            verify-authorization-offline-access: null
+            verify-authorization-state-entropy: null
+            verify-authorization-redirect_uri: null
+      - AccessTokenResponse
+      - UserInfoResponse
+  RP-Sign-HS256:
+    profiles:
+      - C
+    desc: Simple code profile with HS256 signatures
+    sequence:
+      - Init:
+          set_start_page: ''
+          add_post_condition:
+            http_response:
+                status_code:
+                  - 302
+                  - 303
+          set_configuration:
+            userinfo_signing_alg_values_supported:
+              - HS256
+            request_object_signing_alg_values_supported:
+              - HS256
+            id_token_signing_alg_values_supported:
+              - HS256
+            token_endpoint_auth_signing_alg_values_supported:
+              - HS256
+          set_op:
+            jwx_def:
+              signing_alg:
+                id_token: HS256
+                userinfo: HS256
+      - ConfigurationResponse
+      - RegistrationResponse:
+          add_pre_condition:
+            verify-registration-response_types:
+              allowed:
+                - code
+            verify-registration-redirect_uri-scheme: null
+            verify-registration-public_key-registration: null
+      - AuthorizationResponse:
+          add_pre_condition:
+            verify-authorization-offline-access: null
+            verify-authorization-state-entropy: null
+            verify-authorization-redirect_uri: null
+      - AccessTokenResponse
+      - UserInfoResponse
+  RP-Sign-ES256:
+    profiles:
+      - C
+    desc: Simple code profile with ES256 signatures
+    sequence:
+      - Init:
+          set_start_page: ''
+          add_post_condition:
+            http_response:
+                status_code:
+                  - 302
+                  - 303
+          set_configuration:
+            userinfo_signing_alg_values_supported:
+              - ES256
+            request_object_signing_alg_values_supported:
+              - ES256
+            id_token_signing_alg_values_supported:
+              - ES256
+            token_endpoint_auth_signing_alg_values_supported:
+              - ES256
+          set_op:
+            jwx_def:
+              signing_alg:
+                id_token: ES256
+                userinfo: ES256
+      - ConfigurationResponse
+      - RegistrationResponse:
+          add_pre_condition:
+            verify-registration-response_types:
+              allowed:
+                - code
+            verify-registration-redirect_uri-scheme: null
+            verify-registration-public_key-registration: null
+      - AuthorizationResponse:
+          add_pre_condition:
+            verify-authorization-offline-access: null
+            verify-authorization-state-entropy: null
+            verify-authorization-redirect_uri: null
+      - AccessTokenResponse
+      - UserInfoResponse
+Order:
+  - RP-Sign
+Desc:
+  Sign: Different signing algorithms
