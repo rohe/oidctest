@@ -407,8 +407,7 @@ class RotateKeys(Operation):
 
         for k in list(kb.keys()):
             k.serialize()
-            k.kid = self.kid_template % kid
-            kid += 1
+            k.add_kid()
             self.conv.entity.kid[k.use][k.kty] = k.kid
         self.conv.entity.keyjar.add_kb("", kb)
 

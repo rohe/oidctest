@@ -1,6 +1,7 @@
 import json
 import logging
 import time
+import copy
 
 from Cryptodome.PublicKey import RSA
 from future.backports.urllib.parse import parse_qs
@@ -18,12 +19,12 @@ from oic.oic.message import AccessTokenRequest
 from oic.oic.message import ProviderConfigurationResponse
 from oic.oic.message import RegistrationResponse
 from oic.oic.message import RegistrationRequest
+from oic.utils import keyio
 from oic.utils.keyio import keyjar_init
 
 from otest.events import EV_HTTP_RESPONSE
 
 __author__ = 'roland'
-
 
 logger = logging.getLogger(__name__)
 
@@ -62,10 +63,12 @@ class Server(oic.Server):
         self.behavior_type = {}
 
     def make_id_token(self, session, loa="2", issuer="",
-                      alg="RS256", code=None, access_token=None,
-                      user_info=None, auth_time=0, exp=None, extra_claims=None):
-        idt = oic.Server.make_id_token(self, session, loa, issuer, alg, code,
-                                       access_token, user_info, auth_time, exp,
+            alg="RS256", code=None, access_token=None,
+            user_info=None, auth_time=0, exp=None, extra_claims=None):
+        idt = oic.Server.make_id_token(self, session, loa, issuer, alg,
+                                       code,
+                                       access_token, user_info, auth_time,
+                                       exp,
                                        extra_claims)
 
         if "ath" in self.behavior_type:  # modify the at_hash if available
@@ -103,12 +106,13 @@ class Server(oic.Server):
 
 class Provider(provider.Provider):
     def __init__(self, name, sdb, cdb, authn_broker, userinfo, authz,
-                 client_authn, symkey, urlmap=None, ca_certs="", keyjar=None,
-                 hostname="", template_lookup=None, template=None,
-                 verify_ssl=True, capabilities=None, **kwargs):
+            client_authn, symkey, urlmap=None, ca_certs="", keyjar=None,
+            hostname="", template_lookup=None, template=None,
+            verify_ssl=True, capabilities=None, **kwargs):
 
         provider.Provider.__init__(
-            self, name, sdb, cdb, authn_broker, userinfo, authz, client_authn,
+            self, name, sdb, cdb, authn_broker, userinfo, authz,
+            client_authn,
             symkey, urlmap, ca_certs, keyjar, hostname, template_lookup,
             template, verify_ssl, capabilities)
 
@@ -137,20 +141,29 @@ class Provider(provider.Provider):
             for item in ["id_token", "userinfo"]:
                 cap_param = '{}_{}_values_supported'.format(item, _typ)
                 try:
-                    self.jwx_def[_typ][item] = self.capabilities[cap_param][0]
+                    self.jwx_def[_typ][item] = self.capabilities[cap_param][
+                        0]
                 except KeyError:
                     self.jwx_def[_typ][item] = ""
 
     def sign_encrypt_id_token(self, sinfo, client_info, areq, code=None,
-                              access_token=None, user_info=None):
+            access_token=None, user_info=None):
         # self._update_client_keys(client_info["client_id"])
 
         return provider.Provider.sign_encrypt_id_token(
             self, sinfo, client_info, areq, code, access_token, user_info)
 
+    def no_kid_keys(self):
+        keys = [copy.copy(k) for k in self.keyjar.get_signing_key()]
+        for k in keys:
+            k.kid = None
+        return keys
+
     def id_token_as_signed_jwt(self, session, loa="2", alg="", code=None,
-                               access_token=None, user_info=None, auth_time=0,
-                               exp=None, extra_claims=None):
+            access_token=None, user_info=None, auth_time=0,
+            exp=None, extra_claims=None, **kwargs):
+
+        kwargs = {}
 
         if "rotsig" in self.behavior_type:  # Rollover signing keys
             if alg == "RS256":
@@ -166,26 +179,29 @@ class Provider(provider.Provider):
             self.trace.info("Rotated signing keys")
 
         if "nokid1jwks" in self.behavior_type:
-            if not alg == "HS256":
-                found_key = None
-                for key in self.keyjar.issuer_keys[""]:
-                    issuer_key = list(key.keys())[0]
-                    if issuer_key.use == "sig" and issuer_key.kty.startswith(
-                            alg[:2]):
-                        issuer_key.kid = None
-                        found_key = key
-                        break
-                self.keyjar.issuer_keys[""] = [found_key]
+            kwargs['keys'] = self.no_kid_keys()
+                # found_key = None
+                # for kb in self.keyjar.issuer_keys[""]:
+                #     issuer_key = list(kb.keys())[0]
+                #     if issuer_key.use == "sig" and \
+                #             issuer_key.kty.startswith(
+                #                 alg[:2]):
+                #         issuer_key.kid = None
+                #         found_key = key
+                #         break
+                # self.keyjar.issuer_keys[""] = [found_key]
 
         if "nokidmuljwks" in self.behavior_type:
-            for key in self.keyjar.issuer_keys[""]:
-                for inner_key in list(key.keys()):
-                    inner_key.kid = None
+            kwargs['keys'] = self.no_kid_keys()
+            # for key in self.keyjar.issuer_keys[""]:
+            #     for inner_key in list(key.keys()):
+            #         inner_key.kid = None
 
         _jws = provider.Provider.id_token_as_signed_jwt(
             self, session, loa=loa, alg=alg, code=code,
-            access_token=access_token, user_info=user_info, auth_time=auth_time,
-            exp=exp, extra_claims=extra_claims)
+            access_token=access_token, user_info=user_info,
+            auth_time=auth_time,
+            exp=exp, extra_claims=extra_claims, **kwargs)
 
         if "idts" in self.behavior_type:  # mess with the signature
             #
@@ -222,7 +238,7 @@ class Provider(provider.Provider):
         return ava
 
     def create_providerinfo(self, pcr_class=ProviderConfigurationResponse,
-                            setup=None):
+            setup=None):
         _response = provider.Provider.create_providerinfo(self, pcr_class,
                                                           setup)
 
@@ -243,7 +259,8 @@ class Provider(provider.Provider):
         except KeyError:
             pass
 
-        # Do initial verification that all endpoints from the client uses https
+        # Do initial verification that all endpoints from the client uses
+        #  https
         for endp in ["redirect_uris", "jwks_uri", "initiate_login_uri"]:
             try:
                 uris = reg_req[endp]
@@ -265,10 +282,12 @@ class Provider(provider.Provider):
         if "jwks_uri" in reg_req:
             if _response.status == "200 OK":
                 # find the client id
-                req_resp = RegistrationResponse().from_json(_response.message)
+                req_resp = RegistrationResponse().from_json(
+                    _response.message)
                 for kb in self.keyjar[req_resp["client_id"]]:
                     if kb.imp_jwks:
-                        self.trace.info("Client JWKS: {}".format(kb.imp_jwks))
+                        self.trace.info(
+                            "Client JWKS: {}".format(kb.imp_jwks))
 
         return _response
 
@@ -315,7 +334,8 @@ class Provider(provider.Provider):
                                    descr="No change in client keys")
 
         _response = provider.Provider.authorization_endpoint(self, request,
-                                                             cookie, **kwargs)
+                                                             cookie,
+                                                             **kwargs)
 
         if "rotenc" in self.behavior_type:  # Rollover encryption keys
             rsa_key = RSAKey(kid="rotated_rsa_{}".format(time.time()),
@@ -343,7 +363,7 @@ class Provider(provider.Provider):
         return _response
 
     def token_endpoint(self, request="", authn=None, dtype='urlencoded',
-                       **kwargs):
+            **kwargs):
         try:
             req = AccessTokenRequest().deserialize(request, dtype)
             client_id = self.client_authn(self, req, authn)
@@ -404,7 +424,8 @@ class Provider(provider.Provider):
                     self.trace.info("Updating client keys")
                     kb.update()
                     if kb.imp_jwks:
-                        self.trace.info("Client JWKS: {}".format(kb.imp_jwks))
+                        self.trace.info(
+                            "Client JWKS: {}".format(kb.imp_jwks))
                 same = 0
                 # Verify that the new keys are not the same
                 for kb in self.keyjar[client_id]:
