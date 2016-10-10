@@ -1,8 +1,10 @@
 # from oic.oic.provider import Provider
+import copy
 import json
 
 from oic import rndstr
 from oic.oic import OIDCONF_PATTERN
+from oic.utils.keyio import KeyJar, KeyBundle
 from oic.utils.sdb import SessionDB
 from oic.utils.webfinger import WF_URL
 from oidctest import UnknownTestID
@@ -102,6 +104,14 @@ def mode2path(mode):
     return path
 
 
+def init_keyjar(op, kj):
+    op.keyjar = KeyJar()
+    for kb in kj.issuer_keys['']:
+        for k in kb.keys():
+            k.inactive_since = 0
+        op.keyjar.add_kb('', copy.copy(kb))
+
+
 def setup_op(mode, com_args, op_arg, trace, test_conf):
     op = Provider(sdb=SessionDB(com_args["baseurl"]), **com_args)
     op.trace = trace
@@ -110,7 +120,10 @@ def setup_op(mode, com_args, op_arg, trace, test_conf):
         _authn.srv = op
 
     for key, val in list(op_arg.items()):
-        setattr(op, key, val)
+        if key == 'keyjar':
+            init_keyjar(op, val)
+        else:
+            setattr(op, key, val)
 
     _name = "jwks_{}.json".format(rndstr())
     filename = "./static/{}".format(_name)

@@ -121,17 +121,19 @@ if __name__ == '__main__':
               "check_factory": check.factory, "cache": {},
               'profile_handler': SimpleProfileHandler}
 
-    if cargs.profile:
-        rtypes = [cargs.profile]
-    else:
-        rtypes = ['C']
-
     if cargs.test_id:
         try:
             rtypes = get_return_types(FLOWS['Flows'][cargs.test_id]['profile'])
         except KeyError:
             print('No such test ID')
             exit()
+
+        if cargs.profile:
+            if cargs.profile not in rtypes:
+                print('Profile not among return_types')
+                exit()
+            else:
+                rtypes = [cargs.profile]
 
         if len(rtypes) == 1:
             run_return_types(cargs.test_id, cargs.id, kwargs,
@@ -142,6 +144,11 @@ if __name__ == '__main__':
             if cargs.exit and _res is False:
                 exit()
     else:
+        if cargs.profile:
+            rtypes = [cargs.profile]
+        else:
+            rtypes = ['C']
+
         _sh = SessionHandler(**kwargs)
         _sh.init_session(profile=rtypes[0])
 

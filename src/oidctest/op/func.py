@@ -293,7 +293,7 @@ def conditional_expect(oper, args):
                 pass
 
 
-def conditional_excecution(oper, arg):
+def conditional_execution(oper, arg):
     for key, val in arg.items():
         if key == 'profile':
             if not map_prof(oper.profile, val):

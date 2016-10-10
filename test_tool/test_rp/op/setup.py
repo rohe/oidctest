@@ -117,7 +117,8 @@ def main_setup(args, lookup=None):
         pass
     else:
         op_arg["jwks"] = jwks
-        op_arg["keys"] = config.keys
+        op_arg['keyjar'] = _op.keyjar
+        #op_arg["keys"] = config.keys
 
     try:
         op_arg["marg"] = multi_keys(com_args, config.multi_keys)

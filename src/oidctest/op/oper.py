@@ -291,6 +291,8 @@ class DisplayUserInfo(Operation):
 
 class UpdateProviderKeys(Operation):
     def __call__(self, *args, **kwargs):
+        keyjar = self.conv.entity.keyjar
+        self.conv.entity.original_keyjar = keyjar.copy()
         issuer = self.conv.entity.provider_info["issuer"]
         # Update all keys
         for keybundle in self.conv.entity.keyjar.issuer_keys[issuer]:

@@ -184,7 +184,7 @@ CONF = {
         "claims": "normal",
         "behavior": ["nonce"],
         # "path": "/_/_/nonce/normal",
-        "response_type": [I, IT, CI, CIT]
+        "response_type": [I, IT, CI, CIT, C]
     },
     "rp-nonce-unless-code-flow": {
         "claims": "normal",
@@ -311,31 +311,31 @@ CONF = {
         "claims": "normal",
         "behavior": ["uisub"],
         # "path": "/_/_/uisub/normal",
-        "response_type": [C, CI, CT, CIT]
+        "response_type": [C, CI, CT, CIT, IT]
     },
     "rp-userinfo-bearer-body": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
-        "response_type": [C, CI, CT, CIT]
+        "response_type": [C, CI, CT, CIT, IT]
     },
     "rp-userinfo-bearer-header": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
-        "response_type": [C, CI, CT, CIT]
+        "response_type": [C, CI, CT, CIT, IT]
     },
     "rp-userinfo-enc": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
-        "response_type": [C, CI, CT, CIT]
+        "response_type": [C, CI, CT, CIT, IT]
     },
     "rp-userinfo-sig+enc": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
-        "response_type": [C, CI, CT, CIT]
+        "response_type": [C, CI, CT, CIT, IT]
     },
     "rp-userinfo-sig": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
-        "response_type": [C, CI, CT, CIT]
+        "response_type": [C, CI, CT, CIT, IT]
     }
 }

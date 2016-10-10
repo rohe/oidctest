@@ -22,7 +22,7 @@ from oidctest.endpoints import display_log
 from oidctest.endpoints import URLS
 from oidctest.response_encoder import ResponseEncoder
 from oidctest.rp import test_config
-from oidctest.rp.mode import extract_mode
+from oidctest.rp.mode import extract_mode, init_keyjar
 from oidctest.rp.mode import setup_op
 
 from otest import Trace
@@ -145,7 +145,7 @@ class Application(object):
         self.com_args = com_args
         self.op_args = op_args
 
-    def op_setup(self, environ, mode, trace, test_conf):
+    def op_setup(self, environ, mode, trace, test_conf, endpoint):
         addr = get_client_address(environ)
         path = '/'.join([mode['oper_id'], mode['test_id']])
 
@@ -154,6 +154,8 @@ class Application(object):
         try:
             _op = self.op[key]
             _op.trace = trace
+            if endpoint == '.well-known/openid-configuration':
+                init_keyjar(_op, self.op_args['keyjar'])
         except KeyError:
             if mode["test_id"] in ['rp-id_token-kid-absent-multiple-jwks']:
                 _op_args = {}
@@ -293,7 +295,8 @@ class Application(object):
             jlog.id = mode['oper_id']
 
         try:
-            _op, path = self.op_setup(environ, mode, trace, self.test_conf)
+            _op, path = self.op_setup(environ, mode, trace, self.test_conf,
+                                      endpoint)
         except UnknownTestID as err:
             resp = BadRequest('Unknown test ID: {}'.format(err.args[0]))
             return resp(environ, start_response)

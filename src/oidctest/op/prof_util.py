@@ -114,11 +114,17 @@ def map_prof(a, b):
     else:
         if b == '*':
             return True
-        elif a in b.split(','):
-            return True
         else:
-            return False
-
+            bl = b.split(',')
+            if isinstance(a, list):
+                if a[0] in bl:
+                    return True
+                else:
+                    return False
+            elif a in bl:
+                return True
+            else:
+                return False
 
 
 def flows(code, ordered_list, flows_):
