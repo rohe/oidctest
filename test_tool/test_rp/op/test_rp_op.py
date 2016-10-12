@@ -155,7 +155,7 @@ class Application(object):
             _op = self.op[key]
             _op.trace = trace
             if endpoint == '.well-known/openid-configuration':
-                init_keyjar(_op, self.op_args['keyjar'])
+                init_keyjar(_op, self.op_args['keyjar'], self.com_args)
         except KeyError:
             if mode["test_id"] in ['rp-id_token-kid-absent-multiple-jwks']:
                 _op_args = {}

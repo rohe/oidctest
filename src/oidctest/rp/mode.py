@@ -104,8 +104,13 @@ def mode2path(mode):
     return path
 
 
-def init_keyjar(op, kj):
+def init_keyjar(op, kj, com_args):
     op.keyjar = KeyJar()
+    try:
+        op.keyjar.verify_ssl = com_args['verify_ssl']
+    except KeyError:
+        pass
+
     for kb in kj.issuer_keys['']:
         for k in kb.keys():
             k.inactive_since = 0
@@ -121,7 +126,7 @@ def setup_op(mode, com_args, op_arg, trace, test_conf):
 
     for key, val in list(op_arg.items()):
         if key == 'keyjar':
-            init_keyjar(op, val)
+            init_keyjar(op, val, com_args)
         else:
             setattr(op, key, val)
 
