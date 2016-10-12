@@ -136,5 +136,5 @@ TOOL_ARGS = {
         (r'^.well-known/openid-configuration', op_info),
         (r'^.well-known/webfinger', webfinger),
         (r'.+\.css$', css),
-    ]
+    ],
 }

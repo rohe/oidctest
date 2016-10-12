@@ -1,0 +1,248 @@
+Issuer: https://localhost:8080/v_1/rp-discovery-openid-configuration
+Profile: {'openid-configuration': 'config', 'response_type': 'code', 'registration': 'dynamic'}
+Test ID: rp-discovery-openid-configuration
+Test description: Uses openid-configuration Discovery Information
+Timestamp: 2016-09-11T15:42:00Z
+
+============================================================
+
+Trace output
+
+Trace init: Sun, 11 Sep 2016 15:42:00 +0000
+0.005115 Conversation initiated
+0.005368 <--<-- 0 --- <class 'oidctest.op.oper.Webfinger'> -->-->
+0.005500 op_args: {}
+0.005504 Running 'Webfinger'
+0.005508 Discovery of resource: https://localhost:8080/v_1/rp-discovery-openid-configuration
+0.126171 <-- https://localhost:8080/v_1/rp-discovery-openid-configuration
+0.126290 <--<-- 1 --- <class 'oidctest.op.oper.Discovery'> -->-->
+0.126348 op_args: {'issuer': 'https://localhost:8080/v_1/rp-discovery-openid-configuration'}
+0.126352 Running 'Discovery'
+0.126359 Running provider_config with kwargs: {'issuer': 'https://localhost:8080/v_1/rp-discovery-openid-configuration'}
+0.230128 ProviderConfigurationResponse: {
+  "acr_values_supported": [
+    "PASSWORD"
+  ],
+  "authorization_endpoint": "https://localhost:8080/v_1/rp-discovery-openid-configuration/authorization",
+  "claim_types_supported": [
+    "normal",
+    "aggregated",
+    "distributed"
+  ],
+  "claims_parameter_supported": true,
+  "claims_supported": [
+    "birthdate",
+    "phone_number",
+    "family_name",
+    "nickname",
+    "middle_name",
+    "website",
+    "profile",
+    "updated_at",
+    "preferred_username",
+    "email_verified",
+    "zoneinfo",
+    "address",
+    "name",
+    "picture",
+    "given_name",
+    "phone_number_verified",
+    "locale",
+    "gender",
+    "email",
+    "sub"
+  ],
+  "end_session_endpoint": "https://localhost:8080/v_1/rp-discovery-openid-configuration/end_session",
+  "grant_types_supported": [
+    "authorization_code",
+    "implicit",
+    "urn:ietf:params:oauth:grant-type:jwt-bearer"
+  ],
+  "id_token_encryption_alg_values_supported": [
+    "RSA1_5",
+    "RSA-OAEP",
+    "A128KW",
+    "A192KW",
+    "A256KW",
+    "ECDH-ES",
+    "ECDH-ES+A128KW",
+    "ECDH-ES+A192KW",
+    "ECDH-ES+A256KW"
+  ],
+  "id_token_encryption_enc_values_supported": [
+    "A128CBC-HS256",
+    "A192CBC-HS384",
+    "A256CBC-HS512",
+    "A128GCM",
+    "A192GCM",
+    "A256GCM"
+  ],
+  "id_token_signing_alg_values_supported": [
+    "RS256",
+    "RS384",
+    "RS512",
+    "ES256",
+    "ES384",
+    "ES512",
+    "HS256",
+    "HS384",
+    "HS512",
+    "PS256",
+    "PS384",
+    "PS512",
+    "none"
+  ],
+  "issuer": "https://localhost:8080/v_1/rp-discovery-openid-configuration",
+  "jwks_uri": "https://localhost:8080/static/jwks_ONkIcN6SacR8O7Kk.json",
+  "registration_endpoint": "https://localhost:8080/v_1/rp-discovery-openid-configuration/registration",
+  "request_object_encryption_alg_values_supported": [
+    "RSA1_5",
+    "RSA-OAEP",
+    "A128KW",
+    "A192KW",
+    "A256KW",
+    "ECDH-ES",
+    "ECDH-ES+A128KW",
+    "ECDH-ES+A192KW",
+    "ECDH-ES+A256KW"
+  ],
+  "request_object_encryption_enc_values_supported": [
+    "A128CBC-HS256",
+    "A192CBC-HS384",
+    "A256CBC-HS512",
+    "A128GCM",
+    "A192GCM",
+    "A256GCM"
+  ],
+  "request_object_signing_alg_values_supported": [
+    "RS256",
+    "RS384",
+    "RS512",
+    "ES256",
+    "ES384",
+    "ES512",
+    "HS256",
+    "HS384",
+    "HS512",
+    "PS256",
+    "PS384",
+    "PS512",
+    "none"
+  ],
+  "request_parameter_supported": true,
+  "request_uri_parameter_supported": true,
+  "require_request_uri_registration": true,
+  "response_modes_supported": [
+    "query",
+    "fragment",
+    "form_post"
+  ],
+  "response_types_supported": [
+    "code",
+    "token",
+    "id_token",
+    "code token",
+    "code id_token",
+    "id_token token",
+    "code token id_token",
+    "none"
+  ],
+  "scopes_supported": [
+    "address",
+    "offline_access",
+    "openid",
+    "profile",
+    "phone",
+    "email",
+    "openid"
+  ],
+  "subject_types_supported": [
+    "public",
+    "pairwise"
+  ],
+  "token_endpoint": "https://localhost:8080/v_1/rp-discovery-openid-configuration/token",
+  "token_endpoint_auth_methods_supported": [
+    "client_secret_post",
+    "client_secret_basic",
+    "client_secret_jwt",
+    "private_key_jwt"
+  ],
+  "token_endpoint_auth_signing_alg_values_supported": [
+    "RS256",
+    "RS384",
+    "RS512",
+    "ES256",
+    "ES384",
+    "ES512",
+    "HS256",
+    "HS384",
+    "HS512",
+    "PS256",
+    "PS384",
+    "PS512"
+  ],
+  "userinfo_encryption_alg_values_supported": [
+    "RSA1_5",
+    "RSA-OAEP",
+    "A128KW",
+    "A192KW",
+    "A256KW",
+    "ECDH-ES",
+    "ECDH-ES+A128KW",
+    "ECDH-ES+A192KW",
+    "ECDH-ES+A256KW"
+  ],
+  "userinfo_encryption_enc_values_supported": [
+    "A128CBC-HS256",
+    "A192CBC-HS384",
+    "A256CBC-HS512",
+    "A128GCM",
+    "A192GCM",
+    "A256GCM"
+  ],
+  "userinfo_endpoint": "https://localhost:8080/v_1/rp-discovery-openid-configuration/userinfo",
+  "userinfo_signing_alg_values_supported": [
+    "RS256",
+    "RS384",
+    "RS512",
+    "ES256",
+    "ES384",
+    "ES512",
+    "HS256",
+    "HS384",
+    "HS512",
+    "PS256",
+    "PS384",
+    "PS512",
+    "none"
+  ],
+  "version": "3.0"
+}
+0.230562 <-- {'acr_values_supported': ['PASSWORD'], 'token_endpoint_auth_methods_supported': ['client_secret_post', 'client_secret_basic', 'client_secret_jwt', 'private_key_jwt'], 'request_object_encryption_alg_values_supported': ['RSA1_5', 'RSA-OAEP', 'A128KW', 'A192KW', 'A256KW', 'ECDH-ES', 'ECDH-ES+A128KW', 'ECDH-ES+A192KW', 'ECDH-ES+A256KW'], 'id_token_encryption_enc_values_supported': ['A128CBC-HS256', 'A192CBC-HS384', 'A256CBC-HS512', 'A128GCM', 'A192GCM', 'A256GCM'], 'claim_types_supported': ['normal', 'aggregated', 'distributed'], 'require_request_uri_registration': True, 'claims_supported': ['birthdate', 'phone_number', 'family_name', 'nickname', 'middle_name', 'website', 'profile', 'updated_at', 'preferred_username', 'email_verified', 'zoneinfo', 'address', 'name', 'picture', 'given_name', 'phone_number_verified', 'locale', 'gender', 'email', 'sub'], 'response_modes_supported': ['query', 'fragment', 'form_post'], 'claims_parameter_supported': True, 'response_types_supported': ['code', 'token', 'id_token', 'code token', 'code id_token', 'id_token token', 'code token id_token', 'none'], 'request_object_encryption_enc_values_supported': ['A128CBC-HS256', 'A192CBC-HS384', 'A256CBC-HS512', 'A128GCM', 'A192GCM', 'A256GCM'], 'subject_types_supported': ['public', 'pairwise'], 'version': '3.0', 'scopes_supported': ['address', 'offline_access', 'openid', 'profile', 'phone', 'email', 'openid'], 'end_session_endpoint': 'https://localhost:8080/v_1/rp-discovery-openid-configuration/end_session', 'userinfo_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512', 'none'], 'id_token_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512', 'none'], 'issuer': 'https://localhost:8080/v_1/rp-discovery-openid-configuration', 'token_endpoint_auth_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512'], 'authorization_endpoint': 'https://localhost:8080/v_1/rp-discovery-openid-configuration/authorization', 'registration_endpoint': 'https://localhost:8080/v_1/rp-discovery-openid-configuration/registration', 'grant_types_supported': ['authorization_code', 'implicit', 'urn:ietf:params:oauth:grant-type:jwt-bearer'], 'request_parameter_supported': True, 'request_uri_parameter_supported': True, 'request_object_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512', 'none'], 'id_token_encryption_alg_values_supported': ['RSA1_5', 'RSA-OAEP', 'A128KW', 'A192KW', 'A256KW', 'ECDH-ES', 'ECDH-ES+A128KW', 'ECDH-ES+A192KW', 'ECDH-ES+A256KW'], 'userinfo_endpoint': 'https://localhost:8080/v_1/rp-discovery-openid-configuration/userinfo', 'jwks_uri': 'https://localhost:8080/static/jwks_ONkIcN6SacR8O7Kk.json', 'userinfo_encryption_alg_values_supported': ['RSA1_5', 'RSA-OAEP', 'A128KW', 'A192KW', 'A256KW', 'ECDH-ES', 'ECDH-ES+A128KW', 'ECDH-ES+A192KW', 'ECDH-ES+A256KW'], 'userinfo_encryption_enc_values_supported': ['A128CBC-HS256', 'A192CBC-HS384', 'A256CBC-HS512', 'A128GCM', 'A192GCM', 'A256GCM'], 'token_endpoint': 'https://localhost:8080/v_1/rp-discovery-openid-configuration/token'}
+0.230692 <--<-- 2 --- <class 'otest.Done'> -->-->
+0.230723 op_args: {}
+0.230727 Running 'Done'
+0.230731 ==== END ====
+
+
+
+============================================================
+
+Conditions
+
+Done: status=OK
+
+
+
+============================================================
+
+Events
+1473608520.485215:issuer:https://localhost:8080/v_1/rp-discovery-openid-configuration
+1473608520.589154:response:{"request_uri_parameter_supported": true, "response_types_supported": ["code", "token", "id_token", "code token", "code id_token", "id_token token", "code token id_token", "none"], "authorization_endpoint": "https://localhost:8080/v_1/rp-discovery-openid-configuration/authorization", "registration_endpoint": "https://localhost:8080/v_1/rp-discovery-openid-configuration/registration", "id_token_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "claims_supported": ["birthdate", "phone_number", "family_name", "nickname", "middle_name", "website", "profile", "updated_at", "preferred_username", "email_verified", "zoneinfo", "address", "name", "picture", "given_name", "phone_number_verified", "locale", "gender", "email", "sub"], "scopes_supported": ["address", "offline_access", "openid", "profile", "phone", "email", "openid"], "require_request_uri_registration": true, "userinfo_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "token_endpoint_auth_methods_supported": ["client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"], "userinfo_signing_alg_values_supported": ["RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "HS256", "HS384", "HS512", "PS256", "PS384", "PS512", "none"], "request_parameter_supported": true, "userinfo_endpoint": "https://localhost:8080/v_1/rp-discovery-openid-configuration/userinfo", "grant_types_supported": ["authorization_code", "implicit", "urn:ietf:params:oauth:grant-type:jwt-bearer"], "claim_types_supported": ["normal", "aggregated", "distributed"], "id_token_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "request_object_signing_alg_values_supported": ["RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "HS256", "HS384", "HS512", "PS256", "PS384", "PS512", "none"], "request_object_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "response_modes_supported": ["query", "fragment", "form_post"], "version": "3.0", "claims_parameter_supported": true, "userinfo_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "token_endpoint": "https://localhost:8080/v_1/rp-discovery-openid-configuration/token", "subject_types_supported": ["public", "pairwise"], "jwks_uri": "https://localhost:8080/static/jwks_ONkIcN6SacR8O7Kk.json", "id_token_signing_alg_values_supported": ["RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "HS256", "HS384", "HS512", "PS256", "PS384", "PS512", "none"], "token_endpoint_auth_signing_alg_values_supported": ["RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "HS256", "HS384", "HS512", "PS256", "PS384", "PS512"], "issuer": "https://localhost:8080/v_1/rp-discovery-openid-configuration", "request_object_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "acr_values_supported": ["PASSWORD"], "end_session_endpoint": "https://localhost:8080/v_1/rp-discovery-openid-configuration/end_session"}
+1473608520.589157:protocol response:{'acr_values_supported': ['PASSWORD'], 'token_endpoint_auth_methods_supported': ['client_secret_post', 'client_secret_basic', 'client_secret_jwt', 'private_key_jwt'], 'request_object_encryption_alg_values_supported': ['RSA1_5', 'RSA-OAEP', 'A128KW', 'A192KW', 'A256KW', 'ECDH-ES', 'ECDH-ES+A128KW', 'ECDH-ES+A192KW', 'ECDH-ES+A256KW'], 'id_token_encryption_enc_values_supported': ['A128CBC-HS256', 'A192CBC-HS384', 'A256CBC-HS512', 'A128GCM', 'A192GCM', 'A256GCM'], 'claim_types_supported': ['normal', 'aggregated', 'distributed'], 'require_request_uri_registration': True, 'claims_supported': ['birthdate', 'phone_number', 'family_name', 'nickname', 'middle_name', 'website', 'profile', 'updated_at', 'preferred_username', 'email_verified', 'zoneinfo', 'address', 'name', 'picture', 'given_name', 'phone_number_verified', 'locale', 'gender', 'email', 'sub'], 'response_modes_supported': ['query', 'fragment', 'form_post'], 'claims_parameter_supported': True, 'response_types_supported': ['code', 'token', 'id_token', 'code token', 'code id_token', 'id_token token', 'code token id_token', 'none'], 'request_object_encryption_enc_values_supported': ['A128CBC-HS256', 'A192CBC-HS384', 'A256CBC-HS512', 'A128GCM', 'A192GCM', 'A256GCM'], 'subject_types_supported': ['public', 'pairwise'], 'version': '3.0', 'scopes_supported': ['address', 'offline_access', 'openid', 'profile', 'phone', 'email', 'openid'], 'end_session_endpoint': 'https://localhost:8080/v_1/rp-discovery-openid-configuration/end_session', 'userinfo_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512', 'none'], 'id_token_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512', 'none'], 'issuer': 'https://localhost:8080/v_1/rp-discovery-openid-configuration', 'token_endpoint_auth_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512'], 'authorization_endpoint': 'https://localhost:8080/v_1/rp-discovery-openid-configuration/authorization', 'registration_endpoint': 'https://localhost:8080/v_1/rp-discovery-openid-configuration/registration', 'grant_types_supported': ['authorization_code', 'implicit', 'urn:ietf:params:oauth:grant-type:jwt-bearer'], 'request_parameter_supported': True, 'request_uri_parameter_supported': True, 'request_object_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512', 'none'], 'id_token_encryption_alg_values_supported': ['RSA1_5', 'RSA-OAEP', 'A128KW', 'A192KW', 'A256KW', 'ECDH-ES', 'ECDH-ES+A128KW', 'ECDH-ES+A192KW', 'ECDH-ES+A256KW'], 'userinfo_endpoint': 'https://localhost:8080/v_1/rp-discovery-openid-configuration/userinfo', 'jwks_uri': 'https://localhost:8080/static/jwks_ONkIcN6SacR8O7Kk.json', 'userinfo_encryption_alg_values_supported': ['RSA1_5', 'RSA-OAEP', 'A128KW', 'A192KW', 'A256KW', 'ECDH-ES', 'ECDH-ES+A128KW', 'ECDH-ES+A192KW', 'ECDH-ES+A256KW'], 'userinfo_encryption_enc_values_supported': ['A128CBC-HS256', 'A192CBC-HS384', 'A256CBC-HS512', 'A128GCM', 'A192GCM', 'A256GCM'], 'token_endpoint': 'https://localhost:8080/v_1/rp-discovery-openid-configuration/token'}
+1473608520.589667:protocol response:{'acr_values_supported': ['PASSWORD'], 'token_endpoint_auth_methods_supported': ['client_secret_post', 'client_secret_basic', 'client_secret_jwt', 'private_key_jwt'], 'request_object_encryption_alg_values_supported': ['RSA1_5', 'RSA-OAEP', 'A128KW', 'A192KW', 'A256KW', 'ECDH-ES', 'ECDH-ES+A128KW', 'ECDH-ES+A192KW', 'ECDH-ES+A256KW'], 'id_token_encryption_enc_values_supported': ['A128CBC-HS256', 'A192CBC-HS384', 'A256CBC-HS512', 'A128GCM', 'A192GCM', 'A256GCM'], 'claim_types_supported': ['normal', 'aggregated', 'distributed'], 'require_request_uri_registration': True, 'claims_supported': ['birthdate', 'phone_number', 'family_name', 'nickname', 'middle_name', 'website', 'profile', 'updated_at', 'preferred_username', 'email_verified', 'zoneinfo', 'address', 'name', 'picture', 'given_name', 'phone_number_verified', 'locale', 'gender', 'email', 'sub'], 'response_modes_supported': ['query', 'fragment', 'form_post'], 'claims_parameter_supported': True, 'response_types_supported': ['code', 'token', 'id_token', 'code token', 'code id_token', 'id_token token', 'code token id_token', 'none'], 'request_object_encryption_enc_values_supported': ['A128CBC-HS256', 'A192CBC-HS384', 'A256CBC-HS512', 'A128GCM', 'A192GCM', 'A256GCM'], 'subject_types_supported': ['public', 'pairwise'], 'version': '3.0', 'scopes_supported': ['address', 'offline_access', 'openid', 'profile', 'phone', 'email', 'openid'], 'end_session_endpoint': 'https://localhost:8080/v_1/rp-discovery-openid-configuration/end_session', 'userinfo_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512', 'none'], 'id_token_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512', 'none'], 'issuer': 'https://localhost:8080/v_1/rp-discovery-openid-configuration', 'token_endpoint_auth_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512'], 'authorization_endpoint': 'https://localhost:8080/v_1/rp-discovery-openid-configuration/authorization', 'registration_endpoint': 'https://localhost:8080/v_1/rp-discovery-openid-configuration/registration', 'grant_types_supported': ['authorization_code', 'implicit', 'urn:ietf:params:oauth:grant-type:jwt-bearer'], 'request_parameter_supported': True, 'request_uri_parameter_supported': True, 'request_object_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512', 'none'], 'id_token_encryption_alg_values_supported': ['RSA1_5', 'RSA-OAEP', 'A128KW', 'A192KW', 'A256KW', 'ECDH-ES', 'ECDH-ES+A128KW', 'ECDH-ES+A192KW', 'ECDH-ES+A256KW'], 'userinfo_endpoint': 'https://localhost:8080/v_1/rp-discovery-openid-configuration/userinfo', 'jwks_uri': 'https://localhost:8080/static/jwks_ONkIcN6SacR8O7Kk.json', 'userinfo_encryption_alg_values_supported': ['RSA1_5', 'RSA-OAEP', 'A128KW', 'A192KW', 'A256KW', 'ECDH-ES', 'ECDH-ES+A128KW', 'ECDH-ES+A192KW', 'ECDH-ES+A256KW'], 'userinfo_encryption_enc_values_supported': ['A128CBC-HS256', 'A192CBC-HS384', 'A256CBC-HS512', 'A128GCM', 'A192GCM', 'A256GCM'], 'token_endpoint': 'https://localhost:8080/v_1/rp-discovery-openid-configuration/token'}
+1473608520.589776:condition:Done: status=OK
+
+============================================================
+
+RESULT: PASSED

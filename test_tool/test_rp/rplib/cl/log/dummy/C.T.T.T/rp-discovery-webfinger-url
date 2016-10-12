@@ -1,0 +1,37 @@
+Issuer: 
+Profile: {'registration': 'dynamic', 'response_type': 'code', 'openid-configuration': 'config'}
+Test ID: rp-discovery-webfinger-url
+Test description: Can Discover Identifiers using URL Syntax
+Timestamp: 2016-09-11T11:41:31Z
+
+============================================================
+
+Trace output
+
+Trace init: Sun, 11 Sep 2016 11:41:31 +0000
+0.005274 Conversation initiated
+0.005739 Running 'Webfinger'
+0.005743 Discovery of resource: https://localhost:8080/verify/rp-discovery-webfinger-url
+0.125874 <-- https://localhost:8080/verify/rp-discovery-webfinger-url
+0.126049 Running 'Done'
+0.126056 ==== END ====
+
+
+
+============================================================
+
+Conditions
+
+Done: status=OK
+
+
+
+============================================================
+
+Events
+1473594091.783064:issuer:https://localhost:8080/verify/rp-discovery-webfinger-url
+1473594091.783241:condition:Done: status=OK
+
+============================================================
+
+RESULT: PASSED

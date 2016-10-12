@@ -1,5 +1,5 @@
 <%!
-  def inputs(form_args):
+def inputs(form_args):
     """
     Creates list of input elements
     """
@@ -11,12 +11,12 @@
 %>
 
 <html>
-<head>
-  <title>Submit This Form</title>
-</head>
-<body onload="javascript:document.forms[0].submit()">
-<form method="post" action=${action}>
-  ${inputs(form_args)}
-</form>
-</body>
+  <head>
+    <title>Submit This Form</title>
+  </head>
+  <body onload="javascript:document.forms[0].submit()">
+    <form method="post" action=${action}>
+        ${inputs(form_args)}
+    </form>
+  </body>
 </html>

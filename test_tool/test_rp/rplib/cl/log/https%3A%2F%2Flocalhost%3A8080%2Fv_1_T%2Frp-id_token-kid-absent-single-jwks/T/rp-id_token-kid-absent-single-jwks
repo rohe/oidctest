@@ -1,0 +1,365 @@
+Issuer: https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks
+Profile: token
+Test ID: rp-id_token-kid-absent-single-jwks
+Test description: If the JWK supplied in jwks_uri only contains a single key the ID Token does not need to contain a kid claim
+Timestamp: 2016-09-14T07:43:27Z
+
+============================================================
+
+Trace output
+
+Trace init: Wed, 14 Sep 2016 07:43:26 +0000
+0.000090 Conversation initiated
+0.000190 <--<-- 0 --- <class 'oidctest.op.oper.Webfinger'> -->-->
+0.000234 op_args: {}
+0.000237 Running 'Webfinger'
+0.000240 Discovery of resource: https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks
+0.000244 Running discover with kwargs: {'principal': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks'}
+0.114103 <-- https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks
+0.114193 <--<-- 1 --- <class 'oidctest.op.oper.Discovery'> -->-->
+0.114252 op_args: {'issuer': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks'}
+0.114257 Running 'Discovery'
+0.114262 Running provider_config with kwargs: {'issuer': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks'}
+0.120846 ProviderConfigurationResponse: {
+  "acr_values_supported": [
+    "PASSWORD"
+  ],
+  "authorization_endpoint": "https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/authorization",
+  "claim_types_supported": [
+    "normal",
+    "aggregated",
+    "distributed"
+  ],
+  "claims_parameter_supported": true,
+  "claims_supported": [
+    "profile",
+    "zoneinfo",
+    "gender",
+    "sub",
+    "middle_name",
+    "email_verified",
+    "address",
+    "birthdate",
+    "locale",
+    "email",
+    "given_name",
+    "family_name",
+    "name",
+    "picture",
+    "preferred_username",
+    "phone_number_verified",
+    "phone_number",
+    "nickname",
+    "website",
+    "updated_at"
+  ],
+  "end_session_endpoint": "https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/end_session",
+  "grant_types_supported": [
+    "authorization_code",
+    "implicit",
+    "urn:ietf:params:oauth:grant-type:jwt-bearer"
+  ],
+  "id_token_encryption_alg_values_supported": [
+    "RSA1_5",
+    "RSA-OAEP",
+    "A128KW",
+    "A192KW",
+    "A256KW",
+    "ECDH-ES",
+    "ECDH-ES+A128KW",
+    "ECDH-ES+A192KW",
+    "ECDH-ES+A256KW"
+  ],
+  "id_token_encryption_enc_values_supported": [
+    "A128CBC-HS256",
+    "A192CBC-HS384",
+    "A256CBC-HS512",
+    "A128GCM",
+    "A192GCM",
+    "A256GCM"
+  ],
+  "id_token_signing_alg_values_supported": [
+    "RS256",
+    "RS384",
+    "RS512",
+    "ES256",
+    "ES384",
+    "ES512",
+    "HS256",
+    "HS384",
+    "HS512",
+    "PS256",
+    "PS384",
+    "PS512",
+    "none"
+  ],
+  "issuer": "https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks",
+  "jwks_uri": "https://localhost:8080/static/jwks_SeThCVmMEyLAPlsH.json",
+  "registration_endpoint": "https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/registration",
+  "request_object_encryption_alg_values_supported": [
+    "RSA1_5",
+    "RSA-OAEP",
+    "A128KW",
+    "A192KW",
+    "A256KW",
+    "ECDH-ES",
+    "ECDH-ES+A128KW",
+    "ECDH-ES+A192KW",
+    "ECDH-ES+A256KW"
+  ],
+  "request_object_encryption_enc_values_supported": [
+    "A128CBC-HS256",
+    "A192CBC-HS384",
+    "A256CBC-HS512",
+    "A128GCM",
+    "A192GCM",
+    "A256GCM"
+  ],
+  "request_object_signing_alg_values_supported": [
+    "RS256",
+    "RS384",
+    "RS512",
+    "ES256",
+    "ES384",
+    "ES512",
+    "HS256",
+    "HS384",
+    "HS512",
+    "PS256",
+    "PS384",
+    "PS512",
+    "none"
+  ],
+  "request_parameter_supported": true,
+  "request_uri_parameter_supported": true,
+  "require_request_uri_registration": true,
+  "response_modes_supported": [
+    "query",
+    "fragment",
+    "form_post"
+  ],
+  "response_types_supported": [
+    "code",
+    "token",
+    "id_token",
+    "code token",
+    "code id_token",
+    "id_token token",
+    "code token id_token",
+    "none"
+  ],
+  "scopes_supported": [
+    "email",
+    "openid",
+    "offline_access",
+    "phone",
+    "address",
+    "profile",
+    "openid"
+  ],
+  "subject_types_supported": [
+    "public",
+    "pairwise"
+  ],
+  "token_endpoint": "https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/token",
+  "token_endpoint_auth_methods_supported": [
+    "client_secret_post",
+    "client_secret_basic",
+    "client_secret_jwt",
+    "private_key_jwt"
+  ],
+  "token_endpoint_auth_signing_alg_values_supported": [
+    "RS256",
+    "RS384",
+    "RS512",
+    "ES256",
+    "ES384",
+    "ES512",
+    "HS256",
+    "HS384",
+    "HS512",
+    "PS256",
+    "PS384",
+    "PS512"
+  ],
+  "userinfo_encryption_alg_values_supported": [
+    "RSA1_5",
+    "RSA-OAEP",
+    "A128KW",
+    "A192KW",
+    "A256KW",
+    "ECDH-ES",
+    "ECDH-ES+A128KW",
+    "ECDH-ES+A192KW",
+    "ECDH-ES+A256KW"
+  ],
+  "userinfo_encryption_enc_values_supported": [
+    "A128CBC-HS256",
+    "A192CBC-HS384",
+    "A256CBC-HS512",
+    "A128GCM",
+    "A192GCM",
+    "A256GCM"
+  ],
+  "userinfo_endpoint": "https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/userinfo",
+  "userinfo_signing_alg_values_supported": [
+    "RS256",
+    "RS384",
+    "RS512",
+    "ES256",
+    "ES384",
+    "ES512",
+    "HS256",
+    "HS384",
+    "HS512",
+    "PS256",
+    "PS384",
+    "PS512",
+    "none"
+  ],
+  "version": "3.0"
+}
+0.121342 <-- {'token_endpoint_auth_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512'], 'version': '3.0', 'require_request_uri_registration': True, 'grant_types_supported': ['authorization_code', 'implicit', 'urn:ietf:params:oauth:grant-type:jwt-bearer'], 'issuer': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks', 'scopes_supported': ['email', 'openid', 'offline_access', 'phone', 'address', 'profile', 'openid'], 'userinfo_encryption_enc_values_supported': ['A128CBC-HS256', 'A192CBC-HS384', 'A256CBC-HS512', 'A128GCM', 'A192GCM', 'A256GCM'], 'id_token_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512', 'none'], 'token_endpoint_auth_methods_supported': ['client_secret_post', 'client_secret_basic', 'client_secret_jwt', 'private_key_jwt'], 'id_token_encryption_alg_values_supported': ['RSA1_5', 'RSA-OAEP', 'A128KW', 'A192KW', 'A256KW', 'ECDH-ES', 'ECDH-ES+A128KW', 'ECDH-ES+A192KW', 'ECDH-ES+A256KW'], 'claim_types_supported': ['normal', 'aggregated', 'distributed'], 'userinfo_encryption_alg_values_supported': ['RSA1_5', 'RSA-OAEP', 'A128KW', 'A192KW', 'A256KW', 'ECDH-ES', 'ECDH-ES+A128KW', 'ECDH-ES+A192KW', 'ECDH-ES+A256KW'], 'response_modes_supported': ['query', 'fragment', 'form_post'], 'response_types_supported': ['code', 'token', 'id_token', 'code token', 'code id_token', 'id_token token', 'code token id_token', 'none'], 'claims_parameter_supported': True, 'userinfo_endpoint': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/userinfo', 'request_object_encryption_enc_values_supported': ['A128CBC-HS256', 'A192CBC-HS384', 'A256CBC-HS512', 'A128GCM', 'A192GCM', 'A256GCM'], 'token_endpoint': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/token', 'end_session_endpoint': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/end_session', 'userinfo_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512', 'none'], 'registration_endpoint': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/registration', 'request_object_encryption_alg_values_supported': ['RSA1_5', 'RSA-OAEP', 'A128KW', 'A192KW', 'A256KW', 'ECDH-ES', 'ECDH-ES+A128KW', 'ECDH-ES+A192KW', 'ECDH-ES+A256KW'], 'request_parameter_supported': True, 'id_token_encryption_enc_values_supported': ['A128CBC-HS256', 'A192CBC-HS384', 'A256CBC-HS512', 'A128GCM', 'A192GCM', 'A256GCM'], 'jwks_uri': 'https://localhost:8080/static/jwks_SeThCVmMEyLAPlsH.json', 'claims_supported': ['profile', 'zoneinfo', 'gender', 'sub', 'middle_name', 'email_verified', 'address', 'birthdate', 'locale', 'email', 'given_name', 'family_name', 'name', 'picture', 'preferred_username', 'phone_number_verified', 'phone_number', 'nickname', 'website', 'updated_at'], 'acr_values_supported': ['PASSWORD'], 'subject_types_supported': ['public', 'pairwise'], 'authorization_endpoint': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/authorization', 'request_uri_parameter_supported': True, 'request_object_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512', 'none']}
+0.121466 <--<-- 2 --- <class 'oidctest.op.oper.Registration'> -->-->
+0.121523 op_args: {}
+0.121527 Running 'Registration'
+0.121535 Running register with kwargs: {'contact': ['foo@example.com'], 'jwks_uri': 'https://localhost:8088/static/jwk.json', 'url': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/registration', 'redirect_uris': ['https://localhost:8088/authz_cb'], 'application_type': 'web'}
+0.133724 RegistrationResponse: {
+  "application_type": "web",
+  "client_id": "P0X82goXAB1H",
+  "client_id_issued_at": 1473839007,
+  "client_secret": "363f159369daef46387f416140b458cbf243118367178682436be652",
+  "client_secret_expires_at": 1473925407,
+  "jwks_uri": "https://localhost:8088/static/jwk.json",
+  "redirect_uris": [
+    "https://localhost:8088/authz_cb"
+  ],
+  "registration_access_token": "iojOaTZFxL88tTTOilH7QB3E8zRQrZvl",
+  "registration_client_uri": "https://localhost:8080/v_1_T/registration?client_id=P0X82goXAB1H",
+  "response_types": [
+    "code"
+  ]
+}
+0.133825 <-- {'client_id_issued_at': 1473839007, 'jwks_uri': 'https://localhost:8088/static/jwk.json', 'registration_client_uri': 'https://localhost:8080/v_1_T/registration?client_id=P0X82goXAB1H', 'token_endpoint_auth_method': 'client_secret_basic', 'client_secret': '363f159369daef46387f416140b458cbf243118367178682436be652', 'application_type': 'web', 'response_types': ['code'], 'client_secret_expires_at': 1473925407, 'client_id': 'P0X82goXAB1H', 'redirect_uris': ['https://localhost:8088/authz_cb'], 'registration_access_token': 'iojOaTZFxL88tTTOilH7QB3E8zRQrZvl'}
+0.133925 <--<-- 3 --- <class 'oidctest.op.oper.SyncAuthn'> -->-->
+0.134203 op_args: {'endpoint': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/authorization'}
+0.134207 Running 'SyncAuthn'
+0.134320 ==================== SyncAuthn ====================
+0.134323 --> URL: https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/authorization?client_id=P0X82goXAB1H&nonce=0pNAN6CCRB5iGELG&state=YLiHRK2SYNB7Fv21&response_type=code&scope=openid&redirect_uri=https%3A%2F%2Flocalhost%3A8088%2Fauthz_cb
+0.140659 <-- RESPONSE: <Response [303]>
+0.140666 <-- CONTENT: <html>
+<head><title>Redirecting to https://localhost:8088/authz_cb?code=Rq3dxDXuIG4dc%2B7Zvj95QVTwAprnUIaJ3K6UuCHqmkDWYrUSCsOYmHO1%2FsAvL7hOIDmHN6aytKYHzLxiO%2Fg9w3kFN9UZYDc6H%2FQXBSHmS%2BPb3mVvhPk4obqgVIk2A73J7SxLz4AeCTqT%2BaxuUrAjrg%3D%3D&client_id=P0X82goXAB1H&scope=openid&state=YLiHRK2SYNB7Fv21&iss=https%3A%2F%2Flocalhost%3A8080%2Fv_1_T%2Frp-id_token-kid-absent-single-jwks</title></head>
+<body>
+You are being redirected to <a href="https://localhost:8088/authz_cb?code=Rq3dxDXuIG4dc%2B7Zvj95QVTwAprnUIaJ3K6UuCHqmkDWYrUSCsOYmHO1%2FsAvL7hOIDmHN6aytKYHzLxiO%2Fg9w3kFN9UZYDc6H%2FQXBSHmS%2BPb3mVvhPk4obqgVIk2A73J7SxLz4AeCTqT%2BaxuUrAjrg%3D%3D&client_id=P0X82goXAB1H&scope=openid&state=YLiHRK2SYNB7Fv21&iss=https%3A%2F%2Flocalhost%3A8080%2Fv_1_T%2Frp-id_token-kid-absent-single-jwks">https://localhost:8088/authz_cb?code=Rq3dxDXuIG4dc%2B7Zvj95QVTwAprnUIaJ3K6UuCHqmkDWYrUSCsOYmHO1%2FsAvL7hOIDmHN6aytKYHzLxiO%2Fg9w3kFN9UZYDc6H%2FQXBSHmS%2BPb3mVvhPk4obqgVIk2A73J7SxLz4AeCTqT%2BaxuUrAjrg%3D%3D&client_id=P0X82goXAB1H&scope=openid&state=YLiHRK2SYNB7Fv21&iss=https%3A%2F%2Flocalhost%3A8080%2Fv_1_T%2Frp-id_token-kid-absent-single-jwks</a>
+</body>
+</html>
+0.140668 <-- REASON: See Other
+0.140683 <-- COOKIES: {'pyoic': '"F78mLpjmhOCVOJfIEcVRg1Ownnz5Hu6i0PQPAjAvtRv8ZC7JHUuRun7hw46aTHmJgWA8uPY03iUulnLhp9h7Wg==|1473839007|0309dc1cbf8cd6f8ad1d675f279e2bf8dce026fc"'}
+0.140693 Running handle_response with kwargs: {'r': <Response [303]>, 'csi': <oic.oic.message.AuthorizationRequest object at 0x106732908>}
+0.140922 AuthorizationResponse: {
+  "client_id": "P0X82goXAB1H",
+  "code": "Rq3dxDXuIG4dc+7Zvj95QVTwAprnUIaJ3K6UuCHqmkDWYrUSCsOYmHO1/sAvL7hOIDmHN6aytKYHzLxiO/g9w3kFN9UZYDc6H/QXBSHmS+Pb3mVvhPk4obqgVIk2A73J7SxLz4AeCTqT+axuUrAjrg==",
+  "iss": "https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks",
+  "scope": "openid",
+  "state": "YLiHRK2SYNB7Fv21"
+}
+0.140987 <-- {'code': 'Rq3dxDXuIG4dc+7Zvj95QVTwAprnUIaJ3K6UuCHqmkDWYrUSCsOYmHO1/sAvL7hOIDmHN6aytKYHzLxiO/g9w3kFN9UZYDc6H/QXBSHmS+Pb3mVvhPk4obqgVIk2A73J7SxLz4AeCTqT+axuUrAjrg==', 'client_id': 'P0X82goXAB1H', 'iss': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks', 'scope': 'openid', 'state': 'YLiHRK2SYNB7Fv21'}
+0.141001 AuthorizationResponse: {
+  "client_id": "P0X82goXAB1H",
+  "code": "Rq3dxDXuIG4dc+7Zvj95QVTwAprnUIaJ3K6UuCHqmkDWYrUSCsOYmHO1/sAvL7hOIDmHN6aytKYHzLxiO/g9w3kFN9UZYDc6H/QXBSHmS+Pb3mVvhPk4obqgVIk2A73J7SxLz4AeCTqT+axuUrAjrg==",
+  "iss": "https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks",
+  "scope": "openid",
+  "state": "YLiHRK2SYNB7Fv21"
+}
+0.141097 <--<-- 4 --- <class 'oidctest.op.oper.AccessToken'> -->-->
+0.141147 op_args: {'state': 'YLiHRK2SYNB7Fv21'}
+0.141151 Running 'AccessToken'
+0.141155 Running _run with kwargs: {}
+0.141160 Access Token Request with op_args: {'state': 'YLiHRK2SYNB7Fv21'}, req_args: {'redirect_uri': 'https://localhost:8088/authz_cb'}
+0.159013 AccessTokenResponse: {
+  "access_token": "KsU2/5J2uLYx5ZnNfBNZZx1UZUKGUxVtRNn925TjUppH9fRwnWZOa9prqD70UoTPWz1ifb83Ct9r1csAAUYHMwnprB2IylB9ElTzvdFO042AvKGyJfYjKroue+NnhAEtqm3SaEIN8Xf+tApxKivvfA==",
+  "id_token": {
+    "claims": {
+      "acr": "PASSWORD",
+      "aud": [
+        "P0X82goXAB1H"
+      ],
+      "auth_time": 1473839007,
+      "exp": 1473925407,
+      "iat": 1473839007,
+      "iss": "https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks",
+      "nonce": "0pNAN6CCRB5iGELG",
+      "sub": "1b2fc9341a16ae4e30082965d537ae47c21a0f27fd43eab78330ed81751ae6db"
+    },
+    "jws header parameters": {
+      "alg": "RS256",
+      "kid": "a1"
+    }
+  },
+  "scope": "openid",
+  "state": "YLiHRK2SYNB7Fv21",
+  "token_type": "Bearer"
+}
+0.159134 AccessTokenResponse: {
+  "access_token": "KsU2/5J2uLYx5ZnNfBNZZx1UZUKGUxVtRNn925TjUppH9fRwnWZOa9prqD70UoTPWz1ifb83Ct9r1csAAUYHMwnprB2IylB9ElTzvdFO042AvKGyJfYjKroue+NnhAEtqm3SaEIN8Xf+tApxKivvfA==",
+  "id_token": {
+    "claims": {
+      "acr": "PASSWORD",
+      "aud": [
+        "P0X82goXAB1H"
+      ],
+      "auth_time": 1473839007,
+      "exp": 1473925407,
+      "iat": 1473839007,
+      "iss": "https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks",
+      "nonce": "0pNAN6CCRB5iGELG",
+      "sub": "1b2fc9341a16ae4e30082965d537ae47c21a0f27fd43eab78330ed81751ae6db"
+    },
+    "jws header parameters": {
+      "alg": "RS256",
+      "kid": "a1"
+    }
+  },
+  "scope": "openid",
+  "state": "YLiHRK2SYNB7Fv21",
+  "token_type": "Bearer"
+}
+0.159267 <--<-- 5 --- <class 'otest.Done'> -->-->
+0.159295 op_args: {}
+0.159298 Running 'Done'
+0.159300 ==== END ====
+
+
+
+============================================================
+
+Conditions
+
+Done: status=OK
+
+
+
+============================================================
+
+Events
+1473839007.110828:response:https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks
+1473839007.11084:issuer:https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks
+1473839007.11756:response:{"token_endpoint_auth_signing_alg_values_supported": ["RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "HS256", "HS384", "HS512", "PS256", "PS384", "PS512"], "id_token_signing_alg_values_supported": ["RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "HS256", "HS384", "HS512", "PS256", "PS384", "PS512", "none"], "response_modes_supported": ["query", "fragment", "form_post"], "request_object_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "userinfo_endpoint": "https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/userinfo", "id_token_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "request_object_signing_alg_values_supported": ["RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "HS256", "HS384", "HS512", "PS256", "PS384", "PS512", "none"], "request_uri_parameter_supported": true, "request_parameter_supported": true, "userinfo_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "claim_types_supported": ["normal", "aggregated", "distributed"], "userinfo_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "claims_parameter_supported": true, "end_session_endpoint": "https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/end_session", "acr_values_supported": ["PASSWORD"], "version": "3.0", "userinfo_signing_alg_values_supported": ["RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "HS256", "HS384", "HS512", "PS256", "PS384", "PS512", "none"], "response_types_supported": ["code", "token", "id_token", "code token", "code id_token", "id_token token", "code token id_token", "none"], "require_request_uri_registration": true, "subject_types_supported": ["public", "pairwise"], "grant_types_supported": ["authorization_code", "implicit", "urn:ietf:params:oauth:grant-type:jwt-bearer"], "authorization_endpoint": "https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/authorization", "token_endpoint_auth_methods_supported": ["client_secret_post", "client_secret_basic", "client_secret_jwt", "private_key_jwt"], "token_endpoint": "https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/token", "jwks_uri": "https://localhost:8080/static/jwks_SeThCVmMEyLAPlsH.json", "issuer": "https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks", "registration_endpoint": "https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/registration", "id_token_encryption_enc_values_supported": ["A128CBC-HS256", "A192CBC-HS384", "A256CBC-HS512", "A128GCM", "A192GCM", "A256GCM"], "request_object_encryption_alg_values_supported": ["RSA1_5", "RSA-OAEP", "A128KW", "A192KW", "A256KW", "ECDH-ES", "ECDH-ES+A128KW", "ECDH-ES+A192KW", "ECDH-ES+A256KW"], "claims_supported": ["profile", "zoneinfo", "gender", "sub", "middle_name", "email_verified", "address", "birthdate", "locale", "email", "given_name", "family_name", "name", "picture", "preferred_username", "phone_number_verified", "phone_number", "nickname", "website", "updated_at"], "scopes_supported": ["email", "openid", "offline_access", "phone", "address", "profile", "openid"]}
+1473839007.117564:protocol response:{'token_endpoint_auth_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512'], 'version': '3.0', 'require_request_uri_registration': True, 'grant_types_supported': ['authorization_code', 'implicit', 'urn:ietf:params:oauth:grant-type:jwt-bearer'], 'issuer': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks', 'scopes_supported': ['email', 'openid', 'offline_access', 'phone', 'address', 'profile', 'openid'], 'userinfo_encryption_enc_values_supported': ['A128CBC-HS256', 'A192CBC-HS384', 'A256CBC-HS512', 'A128GCM', 'A192GCM', 'A256GCM'], 'id_token_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512', 'none'], 'token_endpoint_auth_methods_supported': ['client_secret_post', 'client_secret_basic', 'client_secret_jwt', 'private_key_jwt'], 'id_token_encryption_alg_values_supported': ['RSA1_5', 'RSA-OAEP', 'A128KW', 'A192KW', 'A256KW', 'ECDH-ES', 'ECDH-ES+A128KW', 'ECDH-ES+A192KW', 'ECDH-ES+A256KW'], 'claim_types_supported': ['normal', 'aggregated', 'distributed'], 'userinfo_encryption_alg_values_supported': ['RSA1_5', 'RSA-OAEP', 'A128KW', 'A192KW', 'A256KW', 'ECDH-ES', 'ECDH-ES+A128KW', 'ECDH-ES+A192KW', 'ECDH-ES+A256KW'], 'response_modes_supported': ['query', 'fragment', 'form_post'], 'response_types_supported': ['code', 'token', 'id_token', 'code token', 'code id_token', 'id_token token', 'code token id_token', 'none'], 'claims_parameter_supported': True, 'userinfo_endpoint': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/userinfo', 'request_object_encryption_enc_values_supported': ['A128CBC-HS256', 'A192CBC-HS384', 'A256CBC-HS512', 'A128GCM', 'A192GCM', 'A256GCM'], 'token_endpoint': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/token', 'end_session_endpoint': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/end_session', 'userinfo_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512', 'none'], 'registration_endpoint': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/registration', 'request_object_encryption_alg_values_supported': ['RSA1_5', 'RSA-OAEP', 'A128KW', 'A192KW', 'A256KW', 'ECDH-ES', 'ECDH-ES+A128KW', 'ECDH-ES+A192KW', 'ECDH-ES+A256KW'], 'request_parameter_supported': True, 'id_token_encryption_enc_values_supported': ['A128CBC-HS256', 'A192CBC-HS384', 'A256CBC-HS512', 'A128GCM', 'A192GCM', 'A256GCM'], 'jwks_uri': 'https://localhost:8080/static/jwks_SeThCVmMEyLAPlsH.json', 'claims_supported': ['profile', 'zoneinfo', 'gender', 'sub', 'middle_name', 'email_verified', 'address', 'birthdate', 'locale', 'email', 'given_name', 'family_name', 'name', 'picture', 'preferred_username', 'phone_number_verified', 'phone_number', 'nickname', 'website', 'updated_at'], 'acr_values_supported': ['PASSWORD'], 'subject_types_supported': ['public', 'pairwise'], 'authorization_endpoint': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/authorization', 'request_uri_parameter_supported': True, 'request_object_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512', 'none']}
+1473839007.11813:protocol response:{'token_endpoint_auth_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512'], 'version': '3.0', 'require_request_uri_registration': True, 'grant_types_supported': ['authorization_code', 'implicit', 'urn:ietf:params:oauth:grant-type:jwt-bearer'], 'issuer': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks', 'scopes_supported': ['email', 'openid', 'offline_access', 'phone', 'address', 'profile', 'openid'], 'userinfo_encryption_enc_values_supported': ['A128CBC-HS256', 'A192CBC-HS384', 'A256CBC-HS512', 'A128GCM', 'A192GCM', 'A256GCM'], 'id_token_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512', 'none'], 'token_endpoint_auth_methods_supported': ['client_secret_post', 'client_secret_basic', 'client_secret_jwt', 'private_key_jwt'], 'id_token_encryption_alg_values_supported': ['RSA1_5', 'RSA-OAEP', 'A128KW', 'A192KW', 'A256KW', 'ECDH-ES', 'ECDH-ES+A128KW', 'ECDH-ES+A192KW', 'ECDH-ES+A256KW'], 'claim_types_supported': ['normal', 'aggregated', 'distributed'], 'userinfo_encryption_alg_values_supported': ['RSA1_5', 'RSA-OAEP', 'A128KW', 'A192KW', 'A256KW', 'ECDH-ES', 'ECDH-ES+A128KW', 'ECDH-ES+A192KW', 'ECDH-ES+A256KW'], 'response_modes_supported': ['query', 'fragment', 'form_post'], 'response_types_supported': ['code', 'token', 'id_token', 'code token', 'code id_token', 'id_token token', 'code token id_token', 'none'], 'claims_parameter_supported': True, 'userinfo_endpoint': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/userinfo', 'request_object_encryption_enc_values_supported': ['A128CBC-HS256', 'A192CBC-HS384', 'A256CBC-HS512', 'A128GCM', 'A192GCM', 'A256GCM'], 'token_endpoint': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/token', 'end_session_endpoint': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/end_session', 'userinfo_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512', 'none'], 'registration_endpoint': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/registration', 'request_object_encryption_alg_values_supported': ['RSA1_5', 'RSA-OAEP', 'A128KW', 'A192KW', 'A256KW', 'ECDH-ES', 'ECDH-ES+A128KW', 'ECDH-ES+A192KW', 'ECDH-ES+A256KW'], 'request_parameter_supported': True, 'id_token_encryption_enc_values_supported': ['A128CBC-HS256', 'A192CBC-HS384', 'A256CBC-HS512', 'A128GCM', 'A192GCM', 'A256GCM'], 'jwks_uri': 'https://localhost:8080/static/jwks_SeThCVmMEyLAPlsH.json', 'claims_supported': ['profile', 'zoneinfo', 'gender', 'sub', 'middle_name', 'email_verified', 'address', 'birthdate', 'locale', 'email', 'given_name', 'family_name', 'name', 'picture', 'preferred_username', 'phone_number_verified', 'phone_number', 'nickname', 'website', 'updated_at'], 'acr_values_supported': ['PASSWORD'], 'subject_types_supported': ['public', 'pairwise'], 'authorization_endpoint': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks/authorization', 'request_uri_parameter_supported': True, 'request_object_signing_alg_values_supported': ['RS256', 'RS384', 'RS512', 'ES256', 'ES384', 'ES512', 'HS256', 'HS384', 'HS512', 'PS256', 'PS384', 'PS512', 'none']}
+1473839007.130437:response:{"registration_client_uri": "https://localhost:8080/v_1_T/registration?client_id=P0X82goXAB1H", "client_secret_expires_at": 1473925407, "jwks_uri": "https://localhost:8088/static/jwk.json", "client_id": "P0X82goXAB1H", "registration_access_token": "iojOaTZFxL88tTTOilH7QB3E8zRQrZvl", "application_type": "web", "response_types": ["code"], "client_secret": "363f159369daef46387f416140b458cbf243118367178682436be652", "client_id_issued_at": 1473839007, "redirect_uris": ["https://localhost:8088/authz_cb"]}
+1473839007.130441:protocol response:{'client_id_issued_at': 1473839007, 'jwks_uri': 'https://localhost:8088/static/jwk.json', 'registration_client_uri': 'https://localhost:8080/v_1_T/registration?client_id=P0X82goXAB1H', 'token_endpoint_auth_method': 'client_secret_basic', 'client_secret': '363f159369daef46387f416140b458cbf243118367178682436be652', 'application_type': 'web', 'response_types': ['code'], 'client_secret_expires_at': 1473925407, 'client_id': 'P0X82goXAB1H', 'redirect_uris': ['https://localhost:8088/authz_cb'], 'registration_access_token': 'iojOaTZFxL88tTTOilH7QB3E8zRQrZvl'}
+1473839007.130568:protocol response:{'client_id_issued_at': 1473839007, 'jwks_uri': 'https://localhost:8088/static/jwk.json', 'registration_client_uri': 'https://localhost:8080/v_1_T/registration?client_id=P0X82goXAB1H', 'token_endpoint_auth_method': 'client_secret_basic', 'client_secret': '363f159369daef46387f416140b458cbf243118367178682436be652', 'application_type': 'web', 'response_types': ['code'], 'client_secret_expires_at': 1473925407, 'client_id': 'P0X82goXAB1H', 'redirect_uris': ['https://localhost:8088/authz_cb'], 'registration_access_token': 'iojOaTZFxL88tTTOilH7QB3E8zRQrZvl'}
+1473839007.131036:request:{'client_id': 'P0X82goXAB1H', 'nonce': '0pNAN6CCRB5iGELG', 'redirect_uri': 'https://localhost:8088/authz_cb', 'state': 'YLiHRK2SYNB7Fv21', 'scope': 'openid', 'response_type': 'code'}
+1473839007.137371:http response:<otest.events.HTTPResponse object at 0x106734160>
+1473839007.137638:response:code=Rq3dxDXuIG4dc%2B7Zvj95QVTwAprnUIaJ3K6UuCHqmkDWYrUSCsOYmHO1%2FsAvL7hOIDmHN6aytKYHzLxiO%2Fg9w3kFN9UZYDc6H%2FQXBSHmS%2BPb3mVvhPk4obqgVIk2A73J7SxLz4AeCTqT%2BaxuUrAjrg%3D%3D&client_id=P0X82goXAB1H&scope=openid&state=YLiHRK2SYNB7Fv21&iss=https%3A%2F%2Flocalhost%3A8080%2Fv_1_T%2Frp-id_token-kid-absent-single-jwks
+1473839007.13764:protocol response:{'code': 'Rq3dxDXuIG4dc+7Zvj95QVTwAprnUIaJ3K6UuCHqmkDWYrUSCsOYmHO1/sAvL7hOIDmHN6aytKYHzLxiO/g9w3kFN9UZYDc6H/QXBSHmS+Pb3mVvhPk4obqgVIk2A73J7SxLz4AeCTqT+axuUrAjrg==', 'client_id': 'P0X82goXAB1H', 'iss': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks', 'scope': 'openid', 'state': 'YLiHRK2SYNB7Fv21'}
+1473839007.137719:protocol response:{'code': 'Rq3dxDXuIG4dc+7Zvj95QVTwAprnUIaJ3K6UuCHqmkDWYrUSCsOYmHO1/sAvL7hOIDmHN6aytKYHzLxiO/g9w3kFN9UZYDc6H/QXBSHmS+Pb3mVvhPk4obqgVIk2A73J7SxLz4AeCTqT+axuUrAjrg==', 'client_id': 'P0X82goXAB1H', 'iss': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks', 'scope': 'openid', 'state': 'YLiHRK2SYNB7Fv21'}
+1473839007.137749:response:{'code': 'Rq3dxDXuIG4dc+7Zvj95QVTwAprnUIaJ3K6UuCHqmkDWYrUSCsOYmHO1/sAvL7hOIDmHN6aytKYHzLxiO/g9w3kFN9UZYDc6H/QXBSHmS+Pb3mVvhPk4obqgVIk2A73J7SxLz4AeCTqT+axuUrAjrg==', 'client_id': 'P0X82goXAB1H', 'iss': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks', 'scope': 'openid', 'state': 'YLiHRK2SYNB7Fv21'}
+1473839007.155726:response:{"token_type": "Bearer", "scope": "openid", "access_token": "KsU2/5J2uLYx5ZnNfBNZZx1UZUKGUxVtRNn925TjUppH9fRwnWZOa9prqD70UoTPWz1ifb83Ct9r1csAAUYHMwnprB2IylB9ElTzvdFO042AvKGyJfYjKroue+NnhAEtqm3SaEIN8Xf+tApxKivvfA==", "state": "YLiHRK2SYNB7Fv21", "id_token": "eyJraWQiOiJhMSIsImFsZyI6IlJTMjU2In0.eyJleHAiOiAxNDczOTI1NDA3LCAiYWNyIjogIlBBU1NXT1JEIiwgImlhdCI6IDE0NzM4MzkwMDcsICJub25jZSI6ICIwcE5BTjZDQ1JCNWlHRUxHIiwgInN1YiI6ICIxYjJmYzkzNDFhMTZhZTRlMzAwODI5NjVkNTM3YWU0N2MyMWEwZjI3ZmQ0M2VhYjc4MzMwZWQ4MTc1MWFlNmRiIiwgImF1ZCI6IFsiUDBYODJnb1hBQjFIIl0sICJhdXRoX3RpbWUiOiAxNDczODM5MDA3LCAiaXNzIjogImh0dHBzOi8vbG9jYWxob3N0OjgwODAvdl8xX1QvcnAtaWRfdG9rZW4ta2lkLWFic2VudC1zaW5nbGUtandrcyJ9.QPEfTmS9x9gTc7AFX0pEcuTGt7SKadiP6awJothHJzHxSbuyTCyJ7kKJppViUojflXyVwMEvm6VPyH-fO2eYciRDcIUaHAqFRwi0QiWKUo2cxjL0OaqraD5hGgOdZzazmOX1YMx_G4rOyqtd7LqbbHs7PRNOJk89pNUrjrlKjOQ"}
+1473839007.15573:protocol response:{'token_type': 'Bearer', 'id_token': {'sub': '1b2fc9341a16ae4e30082965d537ae47c21a0f27fd43eab78330ed81751ae6db', 'acr': 'PASSWORD', 'iss': 'https://localhost:8080/v_1_T/rp-id_token-kid-absent-single-jwks', 'iat': 1473839007, 'auth_time': 1473839007, 'exp': 1473925407, 'nonce': '0pNAN6CCRB5iGELG', 'aud': ['P0X82goXAB1H']}, 'access_token': 'KsU2/5J2uLYx5ZnNfBNZZx1UZUKGUxVtRNn925TjUppH9fRwnWZOa9prqD70UoTPWz1ifb83Ct9r1csAAUYHMwnprB2IylB9ElTzvdFO042AvKGyJfYjKroue+NnhAEtqm3SaEIN8Xf+tApxKivvfA==', 'scope': 'openid', 'state': 'YLiHRK2SYNB7Fv21'}
+1473839007.156027:condition:Done: status=OK
+
+============================================================
+
+RESULT: PASSED

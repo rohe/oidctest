@@ -1,0 +1,41 @@
+Issuer: 
+Profile: code id_token token
+Test ID: rp-discovery-webfinger-acct
+Test description: Can Discover Identifiers using acct Syntax
+Timestamp: 2016-09-13T09:51:04Z
+
+============================================================
+
+Trace output
+
+Trace init: Tue, 13 Sep 2016 09:51:04 +0000
+0.000290 Conversation initiated
+0.000397 <--<-- 0 --- <class 'oidctest.op.oper.Webfinger'> -->-->
+0.000457 op_args: {'resource': 'acct:foobar1_CIT.rp-discovery-webfinger-acct@localhost:8080'}
+0.000461 Running 'Webfinger'
+0.000464 Discovery of resource: https://localhost:8080/foobar1_CIT/rp-discovery-webfinger-acct
+0.107066 <-- https://localhost:8080/foobar1_CIT/rp-discovery-webfinger-acct
+0.107146 <--<-- 1 --- <class 'otest.Done'> -->-->
+0.107177 op_args: {}
+0.107181 Running 'Done'
+0.107183 ==== END ====
+
+
+
+============================================================
+
+Conditions
+
+Done: status=OK
+
+
+
+============================================================
+
+Events
+1473760264.929213:issuer:https://localhost:8080/foobar1_CIT/rp-discovery-webfinger-acct
+1473760264.929333:condition:Done: status=OK
+
+============================================================
+
+RESULT: PASSED

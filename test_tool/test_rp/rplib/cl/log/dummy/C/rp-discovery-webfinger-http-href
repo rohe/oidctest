@@ -1,0 +1,42 @@
+Issuer: 
+Profile: code
+Test ID: rp-discovery-webfinger-http-href
+Test description: Complain about href as http URL
+Timestamp: 2016-10-10T17:48:34Z
+
+============================================================
+
+Trace output
+
+Trace init: Mon, 10 Oct 2016 17:48:34 +0000
+0.000127 Conversation initiated
+0.000250 <--<-- 0 --- Webfinger -->-->
+0.000299 op_args: {}
+0.000303 Running 'Webfinger'
+0.000306 Discovery of resource: https://localhost:8080/cl_C/rp-discovery-webfinger-http-href
+0.000311 Running discover with kwargs: {'principal': 'https://localhost:8080/cl_C/rp-discovery-webfinger-http-href'}
+0.009563 Got expected exception: Must be a HTTPS href
+0.009647 <--<-- 1 --- Done -->-->
+0.009681 op_args: {}
+0.009685 Running 'Done'
+0.009687 ==== END ====
+
+
+
+============================================================
+
+Conditions
+
+Done: status=OK
+
+
+
+============================================================
+
+Events
+1476121714.905362:exception:Must be a HTTPS href
+1476121714.905505:condition:Done: status=OK
+
+============================================================
+
+RESULT: PASSED

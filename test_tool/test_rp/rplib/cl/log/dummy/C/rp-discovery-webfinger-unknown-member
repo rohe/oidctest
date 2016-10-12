@@ -1,0 +1,43 @@
+Issuer: 
+Profile: code
+Test ID: rp-discovery-webfinger-unknown-member
+Test description: Can deal with unknown member of JRD
+Timestamp: 2016-10-10T17:48:34Z
+
+============================================================
+
+Trace output
+
+Trace init: Mon, 10 Oct 2016 17:48:34 +0000
+0.000087 Conversation initiated
+0.000184 <--<-- 0 --- Webfinger -->-->
+0.000227 op_args: {}
+0.000230 Running 'Webfinger'
+0.000233 Discovery of resource: https://localhost:8080/cl_C/rp-discovery-webfinger-unknown-member
+0.000238 Running discover with kwargs: {'principal': 'https://localhost:8080/cl_C/rp-discovery-webfinger-unknown-member'}
+0.006701 <-- https://localhost:8080/cl_C/rp-discovery-webfinger-unknown-member
+0.006781 <--<-- 1 --- Done -->-->
+0.006813 op_args: {}
+0.006816 Running 'Done'
+0.006818 ==== END ====
+
+
+
+============================================================
+
+Conditions
+
+Done: status=OK
+
+
+
+============================================================
+
+Events
+1476121714.912987:response:https://localhost:8080/cl_C/rp-discovery-webfinger-unknown-member
+1476121714.912998:issuer:https://localhost:8080/cl_C/rp-discovery-webfinger-unknown-member
+1476121714.913106:condition:Done: status=OK
+
+============================================================
+
+RESULT: PASSED

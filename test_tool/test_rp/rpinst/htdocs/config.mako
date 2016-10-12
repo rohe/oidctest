@@ -47,11 +47,10 @@
         return '<form action="{}/list" method="post">'.format(base)
 %>
 
-
 <!DOCTYPE html>
 <html>
 <head>
-  <title>HEART OAuth2 RP Tests</title>
+  <title>HEART OIDC RP Tests</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Bootstrap -->
   ${boot_strap(base)}
@@ -98,6 +97,7 @@
 <!-- Main component for a primary marketing message or call to action -->
 <div class="jumbotron">
   ${form_action(base)}
+    <input type="hidden" name="test_id" value="${test_id}">
     <b>Issuer:</b> ${issuer}
     <p>
       Service provider start page:<br>
@@ -120,7 +120,11 @@
       Choose profile:
       <select name="profile">
         % for v in profiles:
-          <option value="${v}">${v}</option>
+          % if v == selected:
+            <option value="${v}" selected>${v}</option>
+          % else:
+            <option value="${v}">${v}</option>
+          % endif
         % endfor
       </select>
     </p>

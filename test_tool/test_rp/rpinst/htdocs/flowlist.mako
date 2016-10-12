@@ -116,7 +116,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>HEART OAuth2 RP Tests</title>
+    <title>HEART OIDC RP Tests</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
     ${boot_strap(base)}
@@ -154,7 +154,7 @@
 <body>
 <!-- Main component for a primary marketing message or call to action -->
 <div class="jumbotron">
-    <h1>HEART OAuth2 RP Tests</h1>
+    <h1>HEART OIDC RP Tests</h1>
     <em>Explanations of legends at <a href="#legends">end of page</a></em>
     <hr class="separator">
     <h3>Run <a href="${base}/all">all</a> or chose the next test flow you want to
