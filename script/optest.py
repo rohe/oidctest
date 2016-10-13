@@ -177,7 +177,7 @@ if __name__ == '__main__':
     CONF.INFO['client']['redirect_uris'] = l
 
     # Application arguments
-    app_args = {"base_url": _baseurl, "kidd": kidd, "keyjar": keyjar,
+    app_args = {"base_url": _base, "kidd": kidd, "keyjar": keyjar,
                 "jwks_uri": jwks_uri, "flows": fdef['Flows'], "conf": CONF,
                 "cinfo": CONF.INFO, "order": fdef['Order'],
                 "profiles": profiles, "operation": operations,
