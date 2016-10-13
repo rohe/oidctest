@@ -278,7 +278,7 @@ Flows:
       - Registration:
           set_request_args:
             id_token_encrypted_response_alg: RSA1_5
-            id_token_encrypted_response_enc: A128CBC-HS256,
+            id_token_encrypted_response_enc: A128CBC-HS256
             id_token_signed_response_alg: RS256
           check_support:
             ERROR:
