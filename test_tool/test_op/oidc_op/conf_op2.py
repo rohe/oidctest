@@ -8,9 +8,9 @@ from base_conf import *
 PORT = 9100
 
 # The hostname of the OP to test
-ISS_HOST= "localhost:8092"
+ISS_HOST= "localhost"
 # In the HEART case everyone should use HTTPS but ...
-ISSUER = "https://{}/".format(ISS_HOST)
+ISSUER = "http://{}/oidc_op/".format(ISS_HOST)
 
 # -----------------------------------------------------------------
 # This should not be modified. It's here because of the dependency on PORT
@@ -29,5 +29,6 @@ INFO = {
         "contact": ["foo@example.com"],
         "webfinger_url": "{}diana".format(ISSUER),
         "webfinger_email": "diana@{}".format(ISS_HOST)
-    }
+    },
+    'srv_discovery_url': ISSUER  # Necessary if webfinger is not supported
 }
