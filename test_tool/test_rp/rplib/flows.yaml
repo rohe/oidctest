@@ -478,6 +478,23 @@ Flows:
       - AccessToken:
           conditional_execution:
             profile: 'CIT,CI,C,CT'
+  rp-id_token-sig+enc-a128kw:
+    desc: Can request and use signed and encrypted ID Token
+    profile: '*'
+    sequence:
+      - Webfinger:
+          set_webfinger_resource: null
+      - Discovery:
+          set_discovery_issuer: null
+      - Registration:
+          set_request_args:
+            id_token_signed_response_alg: RS256
+            id_token_encrypted_response_alg: A128KW
+            id_token_encrypted_response_enc: A256CBC-HS512
+      - SyncAuthn
+      - AccessToken:
+          conditional_execution:
+            profile: 'CIT,CI,C,CT'
   rp-id_token-sig-hs256:
     desc: Accept Valid Symmetric ID Token Signature
     profile: I

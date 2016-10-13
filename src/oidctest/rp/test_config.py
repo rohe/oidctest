@@ -337,5 +337,9 @@ CONF = {
         "claims": "normal",
         # "path": "/_/_/_/normal",
         "response_type": [C, CI, CT, CIT, IT]
+    },
+    "rp-id_token-sig+enc-a128kw": {
+        "claims": "normal",
+        "response_type": [C, CI, CT, CIT, IT]
     }
 }
