@@ -18,7 +18,7 @@ def op_choice(base, nodes, test_info, headlines):
 
     for node in nodes:
         # 4 or more parts
-        p1, p2, grp, spec = node.name.split("-", 3)
+        p1, grp, spec = node.name.split("-", 2)
         if not grp == _grp:
             _grp = grp
             element.append("<hr size=2><h3 id='%s'>%s</h3>" % (_grp,
