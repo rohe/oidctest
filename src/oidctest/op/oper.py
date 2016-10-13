@@ -79,7 +79,7 @@ class Webfinger(Operation):
 
     def run(self):
         if not self.dynamic:
-            self.conv.info["issuer"] = self.conf.INFO["srv_discovery_url"]
+            self.conv.info["issuer"] = self.conv.conf.INFO["srv_discovery_url"]
         else:
             _conv = self.conv
             if self.resource:
