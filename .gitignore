@@ -61,3 +61,5 @@ target/
 
 # JWKS
 jwk.json
+
+accounting/
