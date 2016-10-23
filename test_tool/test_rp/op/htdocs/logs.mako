@@ -1,10 +1,10 @@
 <%
-  def display_log(logs):
-    el = "<ul>"
+  def display_log(testid, logs):
+    el = ["<ul>"]
     for name, path in logs:
-        el += '<li><a href="%s">%s</a>' % (path, name)
-    el += "</ul>"
-    return el
+        el.append('<li><a href="/log%s/%s">%s</a>' % (testid, path, name))
+    el.append("</ul>")
+    return "\n".join(el)
 %>
 
 <!DOCTYPE html>
@@ -13,9 +13,9 @@
   <title>OpenID Certification OP Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Bootstrap -->
-  <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+  <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet"
         media="screen">
-  <link href="static/style.css" rel="stylesheet" media="all">
+  <link href="/static/style.css" rel="stylesheet" media="all">
 
   <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
@@ -29,7 +29,7 @@
   <div class="jumbotron">
     <h1>OpenID Certification OP Test logs</h1>
     <h3>A list of test results that are saved on disc:</h3>
-    ${display_log(logs)}
+    ${display_log(testid, logs)}
   </div>
 
 </div> <!-- /container -->

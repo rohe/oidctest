@@ -309,16 +309,27 @@ def css(environ, start_response):
 
 
 def display_log(environ, start_response, lookup):
+    """
+    path = 'log' or path = 'log/tester_id' or path = 'log/tester_id/test_id
+
+    :param environ:
+    :param start_response:
+    :param lookup:
+    :return:
+    """
     path = environ.get('PATH_INFO', '').lstrip('/')
-    if path == "log":
-        tail = environ["REMOTE_ADDR"]
-        path = os.path.join(path, tail)
-    elif path == "logs":
+    if path == "logs":
         path = "log"
 
     if os.path.isfile(path):
         return static(environ, start_response, path)
     elif os.path.isdir(path):
+        if '/' in path:
+            p = path.split('/')
+            tester_id = '/'+p[1]
+        else:
+            tester_id = ''
+
         item = []
         for (dirpath, dirnames, filenames) in os.walk(path):
             if dirnames:
@@ -334,7 +345,7 @@ def display_log(environ, start_response, lookup):
         resp = Response(mako_template="logs.mako",
                         template_lookup=lookup,
                         headers=[])
-        argv = {"logs": item}
+        argv = {"logs": item, 'testid': tester_id}
 
         return resp(environ, start_response, **argv)
     else:
