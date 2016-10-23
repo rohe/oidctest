@@ -233,21 +233,21 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             },
             "rp-response_type-code+id_token": {
                 "short_description": "Can make request using response_type 'code id_token'",
-                "profiles": [IMPLICIT],
+                "profiles": [HYBRID],
                 "detailed_description": "Make an authentication request using the " + HYBRID_FLOW +
                 ", specifying the " + RESPONSE_TYPE + " as 'id_token token'",
                 "expected_result": "An " + IMPLICIT_AUTHENTICATION_RESPONSE + " containing an " + ID_TOKEN_IMPLICIT_FLOW + " and an Access Token."
             },
             "rp-response_type-code+token": {
                 "short_description": "Can make request using response_type 'code token'",
-                "profiles": [IMPLICIT],
+                "profiles": [HYBRID],
                 "detailed_description": "Make an authentication request using the " + HYBRID_FLOW +
                 ", specifying the " + RESPONSE_TYPE + " as 'code token'",
                 "expected_result": "An " + IMPLICIT_AUTHENTICATION_RESPONSE + " containing an authorization code and an Access Token."
             },
             "rp-response_type-code+id_token+token": {
                 "short_description": "Can make request using response_type 'code id_token token'",
-                "profiles": [IMPLICIT],
+                "profiles": [HYBRID],
                 "detailed_description": "Make an authentication request using the " + HYBRID_FLOW +
                 ", specifying the " + RESPONSE_TYPE + " as 'code id_token token'",
                 "expected_result": "An " + IMPLICIT_AUTHENTICATION_RESPONSE + " containing an authorization code, an " + ID_TOKEN_IMPLICIT_FLOW + " and an Access Token."
