@@ -45,21 +45,25 @@ def sort_string(string):
 def response_type_cmp(allowed, offered):
     """
 
-    :param allowed:
-    :param offered:
+    :param allowed: A list of space separated lists of return types
+    :param offered: A space separated list of return types
     :return:
     """
-    ort = [set(r.split(' ')) for r in offered]
-    n = 0
-    for rt in allowed:
-        _rt = set(rt.split(' '))
-        if _rt in ort:
-            n += 1
-
-    if n == len(ort):
-        return True
+    if ' ' in offered:
+        ort = set(offered.split(' '))
     else:
-        return False
+        ort = {offered}
+
+    for rt in allowed:
+        if ' ' in rt:
+            _rt = set(rt.split(' '))
+        else:
+            _rt = {rt}
+
+        if _rt == ort:
+            return True
+
+    return False
 
 
 class Server(oic.Server):
