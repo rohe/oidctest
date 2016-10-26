@@ -324,7 +324,8 @@ class Provider(provider.Provider):
         except KeyError:
             pass
         else:
-            self.trace.error()
+            self.trace.error('Wrong response type: {}'.format(
+                _req['response_type']))
             if f is False:
                 return self._error_response(error="incorrect_behavior",
                                             descr="Wrong response_type")
