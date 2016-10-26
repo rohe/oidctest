@@ -166,7 +166,8 @@ class Application(object):
                     _op_args[param] = self.op_args["marg"][param]
                 _op = setup_op(mode, self.com_args, _op_args, trace, test_conf)
             else:
-                _op = setup_op(mode, self.com_args, self.op_args, trace, test_conf)
+                _op = setup_op(mode, self.com_args, self.op_args, trace,
+                               test_conf)
             _op.conv = Conversation(mode["test_id"], _op, None)
             self.op[key] = _op
 
@@ -208,7 +209,8 @@ class Application(object):
             try:
                 mode, endpoint = extract_mode(self.op_args["baseurl"])
                 trace = Trace(absolut_start=True)
-                op, path, jlog.id = self.op_setup(environ, mode, trace, self.test_conf)
+                op, path, jlog.id = self.op_setup(environ, mode, trace,
+                                                  self.test_conf)
                 jwks = op.generate_jwks(mode)
                 resp = Response(jwks,
                                 headers=[('Content-Type', 'application/json')])
@@ -238,7 +240,8 @@ class Application(object):
             else:
                 tok = authz[7:]
                 mode, endpoint = extract_mode(self.op_args["baseurl"])
-                _op, _, sid = self.op_setup(environ, mode, trace, self.test_conf)
+                _op, _, sid = self.op_setup(environ, mode, trace,
+                                            self.test_conf)
                 try:
                     _claims = _op.claim_access_token[tok]
                 except KeyError:
@@ -258,7 +261,12 @@ class Application(object):
             resp = BadRequest('Illegal path')
             return resp(environ, start_response)
 
-        endpoint = mode['endpoint']
+        try:
+            endpoint = mode['endpoint']
+        except KeyError:
+            jlog.error({'error': 'No endpoint', 'mode': mode})
+            resp = BadRequest('Illegal path')
+            return resp(environ, start_response)
 
         if endpoint == ".well-known/webfinger":
             session_info['endpoint'] = endpoint
@@ -295,8 +303,9 @@ class Application(object):
             jlog.id = mode['oper_id']
 
         try:
-            _op, path, jlog.id = self.op_setup(environ, mode, trace, self.test_conf,
-                                      endpoint)
+            _op, path, jlog.id = self.op_setup(environ, mode, trace,
+                                               self.test_conf,
+                                               endpoint)
         except UnknownTestID as err:
             resp = BadRequest('Unknown test ID: {}'.format(err.args[0]))
             return resp(environ, start_response)
@@ -312,7 +321,8 @@ class Application(object):
                 trace.request("METHOD: %s" % environ["REQUEST_METHOD"])
                 try:
                     trace.request(
-                        "HTTP_AUTHORIZATION: %s" % environ["HTTP_AUTHORIZATION"])
+                        "HTTP_AUTHORIZATION: %s" % environ[
+                            "HTTP_AUTHORIZATION"])
                 except KeyError:
                     pass
 
@@ -323,7 +333,8 @@ class Application(object):
 
                 jlog.info({'callback': callback.__name__})
                 try:
-                    return callback(environ, start_response, session_info, trace,
+                    return callback(environ, start_response, session_info,
+                                    trace,
                                     op_arg=self.op_args, jlog=jlog)
                 except Exception as err:
                     print("%s" % err)
