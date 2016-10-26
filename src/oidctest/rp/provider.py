@@ -49,10 +49,14 @@ def response_type_cmp(allowed, offered):
     :param offered: A space separated list of return types
     :return:
     """
+
     if ' ' in offered:
         ort = set(offered.split(' '))
     else:
-        ort = {offered}
+        try:
+            ort = {offered}
+        except TypeError:  # assume list
+            ort = [set(o.split(' ')) for o in offered][0]
 
     for rt in allowed:
         if ' ' in rt:
