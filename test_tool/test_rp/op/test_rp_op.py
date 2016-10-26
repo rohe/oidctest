@@ -82,7 +82,7 @@ def get_client_address(environ):
         _addr = environ['HTTP_X_FORWARDED_FOR'].split(',')[-1].strip()
     except KeyError:
         _addr = environ['REMOTE_ADDR']
-    #return "{}:{}".format(_addr, _port)
+    # return "{}:{}".format(_addr, _port)
     return _addr
 
 
@@ -150,7 +150,7 @@ class Application(object):
         path = '/'.join([mode['oper_id'], mode['test_id']])
 
         key = "{}:{}".format(addr, path)
-        LOGGER.debug("OP key: {}".format(key))
+        #  LOGGER.debug("OP key: {}".format(key))
         try:
             _op = self.op[key]
             _op.trace = trace
@@ -170,7 +170,7 @@ class Application(object):
             _op.conv = Conversation(mode["test_id"], _op, None)
             self.op[key] = _op
 
-        return _op, path
+        return _op, path, key
 
     def application(self, environ, start_response):
         """
@@ -208,7 +208,7 @@ class Application(object):
             try:
                 mode, endpoint = extract_mode(self.op_args["baseurl"])
                 trace = Trace(absolut_start=True)
-                op, path = self.op_setup(environ, mode, trace, self.test_conf)
+                op, path, jlog.id = self.op_setup(environ, mode, trace, self.test_conf)
                 jwks = op.generate_jwks(mode)
                 resp = Response(jwks,
                                 headers=[('Content-Type', 'application/json')])
@@ -238,7 +238,7 @@ class Application(object):
             else:
                 tok = authz[7:]
                 mode, endpoint = extract_mode(self.op_args["baseurl"])
-                _op, _ = self.op_setup(environ, mode, trace, self.test_conf)
+                _op, _, sid = self.op_setup(environ, mode, trace, self.test_conf)
                 try:
                     _claims = _op.claim_access_token[tok]
                 except KeyError:
@@ -295,7 +295,7 @@ class Application(object):
             jlog.id = mode['oper_id']
 
         try:
-            _op, path = self.op_setup(environ, mode, trace, self.test_conf,
+            _op, path, jlog.id = self.op_setup(environ, mode, trace, self.test_conf,
                                       endpoint)
         except UnknownTestID as err:
             resp = BadRequest('Unknown test ID: {}'.format(err.args[0]))
@@ -321,7 +321,7 @@ class Application(object):
                 except IndexError:
                     environ['oic.url_args'] = endpoint
 
-                LOGGER.info("callback: %s" % callback)
+                jlog.info({'callback': callback.__name__})
                 try:
                     return callback(environ, start_response, session_info, trace,
                                     op_arg=self.op_args, jlog=jlog)

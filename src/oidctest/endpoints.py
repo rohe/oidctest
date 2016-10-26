@@ -87,24 +87,24 @@ def wsgi_wrapper(environ, start_response, func, session_info, trace, jlog):
             return resp(environ, start_response)
 
     trace.request(kwargs["request"])
-    jlog.info({func.__name__: kwargs})
+    jlog.info({'operation': func.__name__, 'kwargs': kwargs})
     args = func(**kwargs)
 
     try:
         resp, state = args
-        jlog.info({'{}-resp'.format(func.__name__): resp2json(resp),
+        jlog.info({'response_to':func.__name__, 'response': resp2json(resp),
                    'state': state})
         trace.reply(resp.message)
         dump_log(session_info, trace)
         return resp(environ, start_response)
     except TypeError:
         resp = args
-        jlog.info({'{}-resp'.format(func.__name__): resp2json(resp)})
+        jlog.info({'response_to':func.__name__, 'response': resp2json(resp)})
         trace.reply(resp.message)
         dump_log(session_info, trace)
         return resp(environ, start_response)
     except Exception as err:
-        # LOGGER.error("%s" % err)
+        jlog.error({'operation': func.__name__, 'err': err})
         trace.error("%s" % err)
         dump_log(session_info, trace)
         raise

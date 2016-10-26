@@ -43,6 +43,12 @@ def sort_string(string):
 
 
 def response_type_cmp(allowed, offered):
+    """
+
+    :param allowed:
+    :param offered:
+    :return:
+    """
     ort = [set(r.split(' ')) for r in offered]
     n = 0
     for rt in allowed:
@@ -318,6 +324,7 @@ class Provider(provider.Provider):
         except KeyError:
             pass
         else:
+            self.trace.error()
             if f is False:
                 return self._error_response(error="incorrect_behavior",
                                             descr="Wrong response_type")

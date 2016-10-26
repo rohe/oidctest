@@ -28,7 +28,7 @@
     <h1>RP test tool</h1>
 
     Before you start testing please read the
-    <a href="https://dirg.org.umu.se/static/oictest/how_to_use_rp_test.html"
+    <a href="http://openid.net/certification/rp_testing/"
        target="_blank">
       "how to use the RPtest"
     </a>
