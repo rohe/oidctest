@@ -9,6 +9,7 @@ import sys
 import traceback
 import logging
 from future.backports.urllib.parse import parse_qs, urlparse
+from oic.oauth2.message import Message
 
 from oic.utils.client_management import CDB
 from oic.utils.http_util import BadRequest
@@ -294,8 +295,11 @@ class Application(object):
                     resp = BadRequest()
                 else:
                     del _op.claim_access_token[tok]
-                    resp = Response(json.dumps(_claims),
-                                    content='application/json')
+                    _info = Message(**_claims)
+                    jwt_key = _op.keyjar.get_signing_key()
+                    resp = Response(_info.to_jwt(key=jwt_key,
+                                                 algorithm="RS256"),
+                                    content='application/jwt')
             return resp(environ, start_response)
 
         if mode:
