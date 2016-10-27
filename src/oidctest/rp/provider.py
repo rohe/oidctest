@@ -239,6 +239,9 @@ class Provider(provider.Provider):
             ava["_claim_sources"] = Message(**a_claims)
         elif "distributed" in self.claims_type:
             urlbase = self.name
+            if urlbase[-1] != '/':
+                urlbase += '/'
+
             _tok = rndstr()
             self.claim_access_token[_tok] = {"age": 30}
             ava["_claim_names"] = Message(age=_src)

@@ -1110,6 +1110,7 @@ Order:
   - rp-key-rotation
   - rp-userinfo
   - rp-self-issued
+  - rp-claims
 Desc:
   rp-discovery: Discovery
   rp-registration: Dynamic Client Registration
@@ -1124,6 +1125,7 @@ Desc:
   rp-key-rotation: Key Rotation
   rp-userinfo: Userinfo Endpoint
   rp-self: Self Issued OP
+  rp-claims: UserInfo claims
   Req: Misc Request Parameters
   OAuth: OAuth behaviors
   ClientAuth: Client Authentication

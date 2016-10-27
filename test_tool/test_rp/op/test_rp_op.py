@@ -231,26 +231,6 @@ class Application(object):
             return response_encoder.return_json(
                 json.dumps({"client_id": client_id,
                             "client_secret": client_secret}))
-        elif path == "claim":
-            authz = environ["HTTP_AUTHORIZATION"]
-            try:
-                assert authz.startswith("Bearer")
-            except AssertionError:
-                resp = BadRequest()
-            else:
-                tok = authz[7:]
-                mode, endpoint = extract_mode(self.op_args["baseurl"])
-                _op, _, sid = self.op_setup(environ, mode, trace,
-                                            self.test_conf)
-                try:
-                    _claims = _op.claim_access_token[tok]
-                except KeyError:
-                    resp = BadRequest()
-                else:
-                    del _op.claim_access_token[tok]
-                    resp = Response(json.dumps(_claims),
-                                    content='application/json')
-            return resp(environ, start_response)
         elif path == "3rd_party_init_login":
             return rp_support_3rd_party_init_login(environ, start_response)
 
@@ -297,6 +277,26 @@ class Application(object):
                 jlog.error({'reason': _msg})
                 resp = ServiceError(_msg)
                 return resp(environ, start_response)
+        elif endpoint == "claim":
+            authz = environ["HTTP_AUTHORIZATION"]
+            try:
+                assert authz.startswith("Bearer")
+            except AssertionError:
+                resp = BadRequest()
+            else:
+                tok = authz[7:]
+                # mode, endpoint = extract_mode(self.op_args["baseurl"])
+                _op, _, sid = self.op_setup(environ, mode, trace,
+                                            self.test_conf, endpoint)
+                try:
+                    _claims = _op.claim_access_token[tok]
+                except KeyError:
+                    resp = BadRequest()
+                else:
+                    del _op.claim_access_token[tok]
+                    resp = Response(json.dumps(_claims),
+                                    content='application/json')
+            return resp(environ, start_response)
 
         if mode:
             session_info.update(mode)

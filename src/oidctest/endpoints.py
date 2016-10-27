@@ -259,7 +259,10 @@ def static(environ, start_response, path):
             start_response('200 OK', [('Content-Type', 'text/css')])
         else:
             start_response('200 OK', [('Content-Type', 'text/plain')])
-        return [text]
+        try:
+            return [text.encode('utf8')]
+        except ValueError:
+            return [text]
     except IOError:
         resp = NotFound()
         return resp(environ, start_response)
