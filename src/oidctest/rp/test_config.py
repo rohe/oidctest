@@ -5,7 +5,7 @@ C = 'code'
 CI = 'code id_token'
 CT = 'code token'
 CIT = 'code id_token token'
-I = 'token'
+I = 'id_token'
 IT = 'id_token token'
 ALL = [C, CI, CT, CIT, I, IT]
 PROFILES = ["C", "CI", "CT", "CIT", "I", "IT"]
@@ -184,12 +184,12 @@ CONF = {
         "claims": "normal",
         "behavior": ["nonce"],
         # "path": "/_/_/nonce/normal",
-        "response_type": [I, IT, CI, CIT, C]
+        "response_type": [I, IT, CI, CIT, CT]
     },
     "rp-nonce-unless-code-flow": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
-        "response_type": [I, IT, CI, CIT]
+        "response_type": [CI, CT, CIT, I, IT]
     },
     "rp-registration-dynamic": {
         "claims": "normal",
