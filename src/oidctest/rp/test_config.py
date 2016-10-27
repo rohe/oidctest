@@ -184,7 +184,7 @@ CONF = {
         "claims": "normal",
         "behavior": ["nonce"],
         # "path": "/_/_/nonce/normal",
-        "response_type": [I, IT, CI, CIT, CT]
+        "response_type": ALL
     },
     "rp-nonce-unless-code-flow": {
         "claims": "normal",
