@@ -14,4 +14,4 @@ If you have not done it yet, read the :ref:`install`
 
    install
    OPtest/index
-   RPtest/index
+   RPlibtest/index
