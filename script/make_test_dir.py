@@ -20,3 +20,6 @@ for _dir in ['static', 'htdocs']:
 for _fname in ['flows.yaml', 'start.sh', 'sslconf.py']:
     _file = os.path.join(_op_dir, _fname)
     shutil.copy(_file, '.')
+
+_file = os.path.join(_op_dir, 'config_examples', 'conf_TT.py')
+shutil.copy(_file, 'conf.py')
