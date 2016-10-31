@@ -48,13 +48,13 @@ To do this you can run the script make_test_dir.py like this::
 
 When this is completed you will have all the necessary files in the
 target directory such that you can change directory to that directory
-and then run otest.py . There is a start.sh script and a configuration file
+and then run the test tool. There is a start.sh script and a configuration file
 copied into the target directory. You should only have to modify the
 configuration file to match your need and then run start.sh. When you have done
 this you should be able to connect to the test tool webpage and start your
 testing.
 
-Logs from the testtool are kept in several places:
+Logs from the testtool are kept in two distinct places:
 
 * server_log
     Here you get the test tools internal log in files with the name
@@ -65,3 +65,6 @@ Logs from the testtool are kept in several places:
     profile and test id. Like this:
     log/https%3A%2F%2Flocalhost%3A8040%2F/C.T.T.T.ns./OP-Response-code
 
+The keys that the tool need for the OIDC communication is created on-the-fly
+for you. The certificates used for SSL/TLS is **not**. So those
+you have to create yourself by hand or get from a provider.
