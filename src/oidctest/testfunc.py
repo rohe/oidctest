@@ -11,7 +11,7 @@ __author__ = 'roland'
 
 
 def resource(oper, args):
-    _p = urlparse(oper.conv.conf.ISSUER)
+    _p = urlparse(oper.conv.test_config['issuer'])
     oper.op_args["resource"] = args["pattern"].format(oper.conv.test_id,
                                                       _p.netloc)
 

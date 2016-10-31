@@ -1,4 +1,5 @@
 from otest import prof_util
+from otest.result import get_issuer
 from otest.time_util import in_a_while
 
 __author__ = 'roland'
@@ -12,11 +13,14 @@ EXTRAS = 5
 
 
 def from_code(code):
-    # Of the form <typ>.<disc>.<reg>.*['+'/'n'/'s'/'se']
+    # Of the form <typ>.<webf>.<disc>.<reg>.*['+'/'n'/'s'/'se']
     # for example:
-    # C.T.T..  - code response_type, dynamic discovery & registration
-    # CIT.T.F.. - response_type=["code","id_token","token"], dynamic discovery
-    #           and static client registration
+    # C.T.T.T..  - code response_type, webfinger & dynamic discovery &
+    #                                   registration
+    # CIT.F.T.F.. - response_type=["code","id_token","token"],
+    #               No webfinger support,
+    #               does dynamic discovery
+    #               and static client registration
 
     p = code.split('.')
 
@@ -202,7 +206,7 @@ class ProfileHandler(prof_util.ProfileHandler):
             try:
                 iss = _conv.entity.provider_info["issuer"]
             except (TypeError, KeyError):
-                iss = ""
+                iss = get_issuer(_conv)
 
             profile = self.to_profile("dict")
 

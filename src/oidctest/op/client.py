@@ -18,19 +18,20 @@ class Client(oic.Client):
 
 
 def make_client(**kw_args):
+    """
+    Have to get own copy of keyjar
+
+    :param kw_args:
+    :return:
+    """
     c_keyjar = kw_args["keyjar"].copy()
     _cli = Client(client_authn_method=CLIENT_AUTHN_METHOD, keyjar=c_keyjar)
-    _cli.kid = kw_args["kidd"]
-    _cli.jwks_uri = kw_args["jwks_uri"]
-    _cli.base_url = kw_args['base_url']
 
-    _cli_info = {}
-    try:
-        _cli_info = kw_args["conf"].INFO["client"]
-    except KeyError:
-        pass
-    else:
-        for arg, val in list(_cli_info.items()):
-            setattr(_cli, arg, val)
+    c_info = {'keyjar': c_keyjar}
+    for arg, val in list(kw_args.items()):
+        if arg in ['keyjar']:
+            continue
+        setattr(_cli, arg, val)
+        c_info[arg] = val
 
-    return _cli, _cli_info
+    return _cli, c_info

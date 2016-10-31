@@ -1,7 +1,7 @@
 <%!
 
-  def do_assertions(events):
-    element = ['<h3>Assertions</h3>','<ul>']
+  def do_conditions(events):
+    element = ['<h3>Conditions</h3>','<ul>']
     for ev in events.get_data('condition'):
       element.append('<li>{}'.format(ev))
     element.append('</ul>')
@@ -53,9 +53,9 @@
   <h2>Test info</h2>
   ${profile_output(profile)}
   <hr>
-  ${do_assertions(events)}
-  <hr>
   ${trace_output(trace)}
+  <hr>
+  ${do_conditions(events)}
   <hr>
   <h3>Result</h3>${result}
 </div> <!-- /container -->

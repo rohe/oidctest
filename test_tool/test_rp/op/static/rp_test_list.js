@@ -2,50 +2,50 @@ var app = angular.module('main', ['ngSanitize']);
 
 app.controller('IndexCtrl', function ($scope, $sce) {
 
-    var OPTIONAL = "(optional)"
-    var REJECTION_ALLOWED = "(rejection allowed)"
-    var ALT_TO_HDR_METHOD = "(alt to hdr method)"
+    var OPTIONAL = "(optional)";
+    var REJECTION_ALLOWED = "(rejection allowed)";
+    var ALT_TO_HDR_METHOD = "(alt to hdr method)";
 
-    var BASIC = {"text": "Basic"}
-    var BASIC_OPTIONAL = {"text": BASIC.text, "optional_text": OPTIONAL}
+    var BASIC = {"text": "Basic"};
+    var BASIC_OPTIONAL = {"text": BASIC.text, "optional_text": OPTIONAL};
     var BASIC_ALT_TO_HDR_METHOD = {
         "text": BASIC.text,
         "optional_text": ALT_TO_HDR_METHOD
-    }
+    };
 
-    var IMPLICIT = {"text": "Implicit"}
-    var IMPLICIT_OPTIONAL = {"text": IMPLICIT.text, "optional_text": OPTIONAL}
+    var IMPLICIT = {"text": "Implicit"};
+    var IMPLICIT_OPTIONAL = {"text": IMPLICIT.text, "optional_text": OPTIONAL};
     var IMPLICIT_REJECTION_ALLOWED = {
         "text": IMPLICIT.text,
         "optional_text": REJECTION_ALLOWED
-    }
+    };
     var IMPLICIT_ALT_TO_HDR_METHOD = {
         "text": IMPLICIT.text,
         "optional_text": ALT_TO_HDR_METHOD
-    }
+    };
 
-    var HYBRID = {"text": "Hybrid"}
-    var HYBRID_OPTIONAL = {"text": HYBRID.text, "optional_text": OPTIONAL}
+    var HYBRID = {"text": "Hybrid"};
+    var HYBRID_OPTIONAL = {"text": HYBRID.text, "optional_text": OPTIONAL};
     var HYBRID_REJECTION_ALLOWED = {
         "text": HYBRID.text,
         "optional_text": REJECTION_ALLOWED
-    }
+    };
     var HYBRID_ALT_TO_HDR_METHOD = {
         "text": HYBRID.text,
         "optional_text": ALT_TO_HDR_METHOD
-    }
+    };
 
-    var SELF_ISSUED = {"text": "Self-issued"}
+    var SELF_ISSUED = {"text": "Self-issued"};
     var SELF_ISSUED_OPTIONAL = {
         "text": SELF_ISSUED.text,
         "optional_text": OPTIONAL
-    }
+    };
 
-    var CONFIG = {"text": "Config"}
-    var CONFIG_OPTIONAL = {"text": CONFIG.text, "optional_text": OPTIONAL}
+    var CONFIG = {"text": "Config"};
+    var CONFIG_OPTIONAL = {"text": CONFIG.text, "optional_text": OPTIONAL};
 
-    var DYNAMIC = {"text": "Dynamic"}
-    var DYNAMIC_OPTIONAL = {"text": DYNAMIC.text, "optional_text": OPTIONAL}
+    var DYNAMIC = {"text": "Dynamic"};
+    var DYNAMIC_OPTIONAL = {"text": DYNAMIC.text, "optional_text": OPTIONAL};
 
     $scope.profiles = [
         {profile: 'All tests'},
@@ -79,9 +79,9 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     };
 
     $scope.get_3rd_party_test = function () {
-        var test_adress = window.location.href
-        test_adress = test_adress.split("/")
-        test_adress = test_adress[0] + "//" + test_adress[2] + "/3rd_party_init_login"
+        var test_adress = window.location.href;
+        test_adress = test_adress.split("/");
+        test_adress = test_adress[0] + "//" + test_adress[2] + "/3rd_party_init_login";
         return test_adress
     };
 
@@ -160,7 +160,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var SIGNING_KEY_ROTATION = convert_to_link(ROTATE_SIGNING_KEY_URL, "rotated signing keys");
     var SIGNED_REQUEST = convert_to_link(JWT_REQUESTS_URL, "signed authentication request");
     var USER_INFO_SUB_CLAIM = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse", "comparing it with the ID Token's 'sub' value");
-    var THIRD_PARTY_LOGIN_TEST = convert_to_link($scope.get_3rd_party_test(), "third-party initiated login test")
+    var THIRD_PARTY_LOGIN_TEST = convert_to_link($scope.get_3rd_party_test(), "third-party initiated login test");
 
     $scope.guidlines = [
         ["Discovery", {

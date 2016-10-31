@@ -10,20 +10,18 @@ import sys
 from oic.utils.keyio import build_keyjar
 from oic.oic.message import factory as oic_message_factory
 
-from aatest.parse_cnf import parse_yaml_conf
-from aatest.utils import SERVER_LOG_FOLDER
-from aatest.utils import setup_common_log
-from aatest.utils import setup_logging
-from otest.rp.setup import read_path2port_map
-
-from oidctest.op.profiles import PROFILEMAP
-
 from otest.aus.app import WebApplication
 from otest.aus.io import WebIO
+from otest.parse_cnf import parse_yaml_conf
+from otest.rp.setup import read_path2port_map
+from otest.utils import SERVER_LOG_FOLDER
+from otest.utils import setup_common_log
+from otest.utils import setup_logging
 
 from oidctest.op import check
 from oidctest.op import oper
 from oidctest.op import func
+from oidctest.op.profiles import PROFILEMAP
 from oidctest.op.prof_util import ProfileHandler
 from oidctest.op.tool import WebTester
 
@@ -77,9 +75,6 @@ if __name__ == '__main__':
     parser.add_argument(dest="config")
     args = parser.parse_args()
 
-    # global ACR_VALUES
-    # ACR_VALUES = CONF.ACR_VALUES
-
     session_opts = {
         'session.type': 'memory',
         'session.cookie_expires': True,
@@ -112,30 +107,17 @@ if __name__ == '__main__':
     else:
         from oidctest.op import oper as operations
 
-
-    if args.profile:
-        TEST_PROFILE = args.profile
-    else:
-        TEST_PROFILE = "C.T.T.T.ns"
-
     # Add own keys for signing/encrypting JWTs
-    jwks, keyjar, kidd = build_keyjar(CONF.keys)
+    jwks, keyjar, kidd = build_keyjar(CONF.KEYS)
 
     if args.staticdir:
         _sdir = args.staticdir
     else:
         _sdir = './static'
 
-    #KEY_EXPORT_URL = "%sstatic/jwk.json" % BASE
-
-    # MAKO setup
-    if args.makodir:
-        _dir = args.makodir
-        if not _dir.endswith("/"):
-            _dir += "/"
-    else:
-        _dir = "./"
-
+    # If this instance is behind a reverse proxy or on its own
+    if CONF.BASE.endswith('/'):
+        CONF.BASE = CONF.BASE[:-1]
     if args.path2port:
         ppmap = read_path2port_map(args.path2port)
         _path = ppmap[str(CONF.PORT)]
@@ -150,15 +132,18 @@ if __name__ == '__main__':
                 _port = 80
     else:
         _port = CONF.PORT
-        _base = CONF.BASE
+        if _port not in [443, 80]:
+            _base = '{}:{}'.format(CONF.BASE, _port)
+        else:
+            _base = CONF.BASE
         _path = ''
 
-    # export JWKS
+    # -------- JWKS ---------------
     _sdir = 'static'
     if args.path2port:
         jwks_uri = "{}{}/jwks_{}.json".format(_base, _sdir, _port)
         f = open('{}/jwks_{}.json'.format(_sdir, _port), "w")
-    elif _port not in [443,80]:
+    elif _port not in [443, 80]:
         jwks_uri = "{}:{}/{}/jwks_{}.json".format(CONF.BASE, _port, _sdir,
                                                   _port)
         f = open('{}/jwks_{}.json'.format(_sdir, _port), "w")
@@ -168,20 +153,49 @@ if __name__ == '__main__':
     f.write(json.dumps(jwks))
     f.close()
 
+    # -------- MAKO setup -----------
+    if args.makodir:
+        _dir = args.makodir
+        if not _dir.endswith("/"):
+            _dir += "/"
+    else:
+        _dir = "./"
+
     LOOKUP = TemplateLookup(directories=[_dir + 'templates', _dir + 'htdocs'],
                             module_directory=_dir + 'modules',
                             input_encoding='utf-8',
                             output_encoding='utf-8')
 
-    l = [s.format(_base) for s in CONF.REDIRECT_URIS_PATTERN]
-    CONF.INFO['client']['redirect_uris'] = l
+    _client_info = CONF.CLIENT
+
+    try:
+        ri = _client_info['registration_info']
+    except KeyError:
+        pass
+    else:
+        ri['redirect_uris'] = [r.format(_base) for r in ri['redirect_uris']]
+        try:
+            ri['post_logout_redirect_uris'] = [r.format(_base) for r in
+                                               ri['post_logout_redirect_uris']]
+        except KeyError:
+            pass
+
+    _base += '/'
+    _client_info.update(
+        {"base_url": _base, 'client_id': _base, "kid": kidd, "keyjar": keyjar,
+         "jwks_uri": jwks_uri}
+    )
+
+    if args.profile:
+        _profile = args.profile
+    else:
+        _profile = CONF.TOOL['profile']
 
     # Application arguments
-    app_args = {"base_url": _base, "kidd": kidd, "keyjar": keyjar,
-                "jwks_uri": jwks_uri, "flows": fdef['Flows'], "conf": CONF,
-                "cinfo": CONF.INFO, "order": fdef['Order'],
+    app_args = {"flows": fdef['Flows'], "conf": CONF,
+                "client_info": _client_info, "order": fdef['Order'],
                 "profiles": profiles, "operation": operations,
-                "profile": args.profile, "msg_factory": oic_message_factory,
+                "profile": _profile, "msg_factory": oic_message_factory,
                 "lookup": LOOKUP, "desc": fdef['Desc'], "cache": {},
                 'profile_map': PROFILEMAP, 'profile_handler': ProfileHandler}
 

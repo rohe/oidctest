@@ -17,10 +17,15 @@ logger = logging.getLogger(__name__)
 
 
 def get_redirect_uris(cinfo):
+    """
+    Used before there is a Conversation instance
+    :param cinfo: Client Configuration Information
+    :return: list of redirect_uris
+    """
     try:
-        return cinfo["client"]["redirect_uris"]
+        return cinfo["registration_info"]["redirect_uris"]
     except KeyError:
-        return cinfo["registered"]["redirect_uris"]
+        return cinfo["registration_response"]["redirect_uris"]
 
 
 class Tester(tool.Tester):
@@ -83,14 +88,15 @@ class WebTester(tool.WebTester):
         self.check_factory = check_factory
         self.map_prof = map_prof or prof_util.map_prof
 
-    def setup(self, test_id, cinfo, **kw_args):
-        redirs = get_redirect_uris(cinfo)
+    def setup(self, test_id, **kw_args):
+        redirs = get_redirect_uris(kw_args["client_info"])
 
         _flow = self.flows[test_id]
-        _cli, _cli_conf = make_client(**kw_args)
+        _cli, _c_info = make_client(**kw_args['client_info'])
         self.conv = Conversation(_flow, _cli, kw_args["msg_factory"],
                                  trace_cls=Trace, callback_uris=redirs)
-        self.conv.entity_config = _cli_conf
+        self.conv.entity_config = _c_info
+        self.conv.tool_config = kw_args['conf'].TOOL
         _cli.conv = self.conv
         _cli.event_store = self.conv.events
         self.sh.session_setup(path=test_id)

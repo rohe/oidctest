@@ -92,19 +92,19 @@ def wsgi_wrapper(environ, start_response, func, session_info, trace, jlog):
 
     try:
         resp, state = args
-        jlog.info({'response_to':func.__name__, 'response': resp2json(resp),
+        jlog.info({'response_from': func.__name__, 'response': resp2json(resp),
                    'state': state})
         trace.reply(resp.message)
         dump_log(session_info, trace)
         return resp(environ, start_response)
     except TypeError:
         resp = args
-        jlog.info({'response_to':func.__name__, 'response': resp2json(resp)})
+        jlog.info({'response_from': func.__name__, 'response': resp2json(resp)})
         trace.reply(resp.message)
         dump_log(session_info, trace)
         return resp(environ, start_response)
     except Exception as err:
-        jlog.error({'operation': func.__name__, 'err': err})
+        jlog.error({'response_from': func.__name__, 'err': err})
         trace.error("%s" % err)
         dump_log(session_info, trace)
         raise
@@ -329,7 +329,7 @@ def display_log(environ, start_response, lookup):
     elif os.path.isdir(path):
         if '/' in path:
             p = path.split('/')
-            tester_id = '/'+p[1]
+            tester_id = '/' + p[1]
         else:
             tester_id = ''
 

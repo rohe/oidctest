@@ -14,7 +14,7 @@
 <head>
   <title>Submit This Form</title>
 </head>
-<body onload="javascript:document.forms[0].submit()">
+<body onload="document.forms[0].submit()">
 <form method="post" action=${action}>
   ${inputs(form_args)}
 </form>

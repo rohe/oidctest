@@ -32,7 +32,7 @@ app.controller('IndexCtrl', function ($scope, $sce, static_client_factory) {
     }
 
     $scope.add_redirect_uri = function () {
-        $scope.redirect_uris.splice(0, 0, makeCopy($scope.new_redirect_uri))
+        $scope.redirect_uris.splice(0, 0, makeCopy($scope.new_redirect_uri));
         $scope.new_redirect_uri = {'value': ''}
     };
 
@@ -47,8 +47,7 @@ app.controller('IndexCtrl', function ($scope, $sce, static_client_factory) {
         }
         return redirect_uris;
 
-    };
-
+    }
     $scope.generate_client_credentials = function () {
         var redirect_uris = convert_to_simple_list($scope.redirect_uris);
         static_client_factory.generate_client_credentials(redirect_uris, $scope.jwks_uri).success(generate_client_credentials_success_callback).error(error_callback);
@@ -68,5 +67,5 @@ app.directive('directiveCallback', function () {
             }
         });
     }
-})
+});
 
