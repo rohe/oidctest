@@ -83,6 +83,38 @@ $ cd oidctest
 $ python setup.py install
 </pre></div>
 </div>
+<p>Once you have oidctest installed you can construct a new directory from which
+to run your test tools.
+To do this you can run the script make_test_dir.py like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ make_test_dir.py &lt;root of the oidctest source tree&gt; &lt;target directory&gt;
+</pre></div>
+</div>
+<p>When this is completed you will have all the necessary files in the
+target directory. Such that you can change directory to that directory
+and then run otest.py . There is a start.sh script and a configuration file
+copied into the target directory. You should only have to modify the
+configuration file to match your need and then run start.sh. When you have done
+this you should be able to connect to the test tool webpage and start your
+testing.</p>
+<p>Logs from the testtool are kept in several places:</p>
+<ul>
+<li><dl class="first docutils">
+<dt>server_log</dt>
+<dd><p class="first last">Here you get the test tools internal log in files with the name
+&#8216;rp_&lt;port number&gt;.log . So different entities gets separate log files</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>log</dt>
+<dd><p class="first last">This is where the logs that the tester have access to are kept.
+logfiles are stored in a directory tree constructed from issuer id,
+profile and test id. Like this:
+log/https%3A%2F%2Flocalhost%3A8040%2F/C.T.T.T.ns./OP-Response-code</p>
+</dd>
+</dl>
+</li>
+</ul>
 </div>
 </div>
 </div>
