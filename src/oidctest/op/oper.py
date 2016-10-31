@@ -144,7 +144,8 @@ class Registration(Operation):
         else:
             self.conv.trace.info("Relying on static registration")
             self.conv.entity.store_registration_info(
-                RegistrationResponse(**self.conf.CLIENT["registration_response"]))
+                RegistrationResponse(
+                    **self.conf.CLIENT["registration_response"]))
 
     def op_setup(self):
         if self.dynamic:
