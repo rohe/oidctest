@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Quick install guide &#8212; OIDCtest 0.5.0 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.5.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="top" title="OIDCtest 0.5.0 documentation" href="../index.html" />
+    <link rel="up" title="How to use OIDCtest" href="index.html" />
+    <link rel="next" title="How to run OP testing using OIDCtest" href="OPtest/index.html" />
+    <link rel="prev" title="How to use OIDCtest" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="quick-install-guide">
+<span id="install"></span><h1>Quick install guide<a class="headerlink" href="#quick-install-guide" title="Permalink to this headline">¶</a></h1>
+<p>For all this to work you need to have Python installed.
+The development has been done using 3.5 .
+It&#8217;s made to also work with 2.7 .</p>
+<div class="section" id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>For installing OIDCtest you will need</p>
+<ul class="simple">
+<li>otest</li>
+<li>oic</li>
+<li>jwkest</li>
+</ul>
+<div class="section" id="otest">
+<h3>otest<a class="headerlink" href="#otest" title="Permalink to this headline">¶</a></h3>
+<p>This you have to get from github:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ git clone https://github.com/rohe/otest
+$ cd otest
+$ python setup.py install
+</pre></div>
+</div>
+</div>
+<div class="section" id="oic-and-jwkest">
+<h3>oic and jwkest<a class="headerlink" href="#oic-and-jwkest" title="Permalink to this headline">¶</a></h3>
+<p>Both of these should be pulled in from pypi when you install <em>otest</em> .
+If not you can get them from PyPi:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ pip install jwkest
+$ pip install oic
+</pre></div>
+</div>
+</div>
+<div class="section" id="oidctest">
+<h3>oidctest<a class="headerlink" href="#oidctest" title="Permalink to this headline">¶</a></h3>
+<p>Must be gotten from github:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ git clone https://github.com/rohe/oidctest
+$ cd oidctest
+$ python setup.py install
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Quick install guide</a><ul>
+<li><a class="reference internal" href="#prerequisites">Prerequisites</a><ul>
+<li><a class="reference internal" href="#otest">otest</a></li>
+<li><a class="reference internal" href="#oic-and-jwkest">oic and jwkest</a></li>
+<li><a class="reference internal" href="#oidctest">oidctest</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">How to use OIDCtest</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">How to use OIDCtest</a></li>
+      <li>Next: <a href="OPtest/index.html" title="next chapter">How to run OP testing using OIDCtest</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/OIDCtesting/install.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2016, Roland Hedberg.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.4.8</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.9</a>
+      
+      |
+      <a href="../_sources/OIDCtesting/install.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
