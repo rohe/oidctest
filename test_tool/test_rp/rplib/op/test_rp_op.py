@@ -385,7 +385,8 @@ if __name__ == '__main__':
 
     if _op_arg["baseurl"].startswith("https"):
         SRV.ssl_adapter = BuiltinSSLAdapter(config.SERVER_CERT,
-                                            config.SERVER_KEY)
+                                            config.SERVER_KEY,
+                                            config.CA_BUNDLE)
         extra = " using SSL/TLS"
     else:
         extra = ""
