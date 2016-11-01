@@ -20,7 +20,7 @@ from oic.oic.message import ProviderConfigurationResponse
 from oic.oic.message import RegistrationResponse
 from oic.oic.message import RegistrationRequest
 from oic.utils import keyio
-from oic.utils.keyio import keyjar_init
+from oic.utils.keyio import keyjar_init, key_summary
 
 from otest.events import EV_HTTP_RESPONSE
 
@@ -77,8 +77,8 @@ class Server(oic.Server):
         self.behavior_type = {}
 
     def make_id_token(self, session, loa="2", issuer="",
-            alg="RS256", code=None, access_token=None,
-            user_info=None, auth_time=0, exp=None, extra_claims=None):
+                      alg="RS256", code=None, access_token=None,
+                      user_info=None, auth_time=0, exp=None, extra_claims=None):
         idt = oic.Server.make_id_token(self, session, loa, issuer, alg,
                                        code,
                                        access_token, user_info, auth_time,
@@ -120,9 +120,9 @@ class Server(oic.Server):
 
 class Provider(provider.Provider):
     def __init__(self, name, sdb, cdb, authn_broker, userinfo, authz,
-            client_authn, symkey, urlmap=None, ca_certs="", keyjar=None,
-            hostname="", template_lookup=None, template=None,
-            verify_ssl=True, capabilities=None, **kwargs):
+                 client_authn, symkey, urlmap=None, ca_certs="", keyjar=None,
+                 hostname="", template_lookup=None, template=None,
+                 verify_ssl=True, capabilities=None, **kwargs):
 
         provider.Provider.__init__(
             self, name, sdb, cdb, authn_broker, userinfo, authz,
@@ -161,7 +161,7 @@ class Provider(provider.Provider):
                     self.jwx_def[_typ][item] = ""
 
     def sign_encrypt_id_token(self, sinfo, client_info, areq, code=None,
-            access_token=None, user_info=None):
+                              access_token=None, user_info=None):
         # self._update_client_keys(client_info["client_id"])
 
         return provider.Provider.sign_encrypt_id_token(
@@ -174,8 +174,8 @@ class Provider(provider.Provider):
         return keys
 
     def id_token_as_signed_jwt(self, session, loa="2", alg="", code=None,
-            access_token=None, user_info=None, auth_time=0,
-            exp=None, extra_claims=None, **kwargs):
+                               access_token=None, user_info=None, auth_time=0,
+                               exp=None, extra_claims=None, **kwargs):
 
         kwargs = {}
 
@@ -194,20 +194,20 @@ class Provider(provider.Provider):
 
         if "nokid1jwks" in self.behavior_type:
             kwargs['keys'] = self.no_kid_keys()
-                # found_key = None
-                # for kb in self.keyjar.issuer_keys[""]:
-                #     issuer_key = list(kb.keys())[0]
-                #     if issuer_key.use == "sig" and \
-                #             issuer_key.kty.startswith(
-                #                 alg[:2]):
-                #         issuer_key.kid = None
-                #         found_key = key
-                #         break
-                # self.keyjar.issuer_keys[""] = [found_key]
+            # found_key = None
+            # for kb in self.keyjar.key_summary[""]:
+            #     issuer_key = list(kb.keys())[0]
+            #     if issuer_key.use == "sig" and \
+            #             issuer_key.kty.startswith(
+            #                 alg[:2]):
+            #         issuer_key.kid = None
+            #         found_key = key
+            #         break
+            # self.keyjar.key_summary[""] = [found_key]
 
         if "nokidmuljwks" in self.behavior_type:
             kwargs['keys'] = self.no_kid_keys()
-            # for key in self.keyjar.issuer_keys[""]:
+            # for key in self.keyjar.key_summary[""]:
             #     for inner_key in list(key.keys()):
             #         inner_key.kid = None
 
@@ -255,7 +255,7 @@ class Provider(provider.Provider):
         return ava
 
     def create_providerinfo(self, pcr_class=ProviderConfigurationResponse,
-            setup=None):
+                            setup=None):
         _response = provider.Provider.create_providerinfo(self, pcr_class,
                                                           setup)
 
@@ -368,6 +368,9 @@ class Provider(provider.Provider):
             self.trace.info("New encryption keys: {}".format(new_keys))
             self.do_key_rollover(new_keys, "%d")
             self.trace.info("Rotated encryption keys")
+            logger.info(
+                'Rotated OP enc keys, new set: {}'.format(
+                    key_summary(self.keyjar, '')))
 
         # This is just for logging purposes
         try:
@@ -382,7 +385,7 @@ class Provider(provider.Provider):
         return _response
 
     def token_endpoint(self, request="", authn=None, dtype='urlencoded',
-            **kwargs):
+                       **kwargs):
         try:
             req = AccessTokenRequest().deserialize(request, dtype)
             client_id = self.client_authn(self, req, authn)

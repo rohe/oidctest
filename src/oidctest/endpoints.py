@@ -12,6 +12,7 @@ from oic.utils.http_util import Unauthorized
 from oic.utils.http_util import NotFound
 from oic.utils.http_util import ServiceError
 from oic.utils.http_util import BadRequest
+from oic.utils.keyio import key_summary
 from oic.utils.webfinger import OIC_ISSUER
 from oic.utils.webfinger import WebFinger
 # All endpoints the OpenID Connect Provider should answer on
@@ -25,7 +26,7 @@ from otest import resp2json
 
 __author__ = 'roland'
 
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 HEADER = "---------- %s ----------"
 
@@ -114,7 +115,7 @@ def wsgi_wrapper(environ, start_response, func, session_info, trace, jlog):
 def token(environ, start_response, session_info, trace, jlog, **kwargs):
     trace.info(HEADER % "AccessToken")
     _op = session_info["op"]
-
+    logger.info('OP keys:{}'.format(key_summary(_op.keyjar, '')))
     return wsgi_wrapper(environ, start_response, _op.token_endpoint,
                         session_info, trace, jlog)
 
@@ -123,7 +124,7 @@ def token(environ, start_response, session_info, trace, jlog, **kwargs):
 def authorization(environ, start_response, session_info, trace, jlog, **kwargs):
     trace.info(HEADER % "Authorization")
     _op = session_info["op"]
-
+    logger.info('OP keys:{}'.format(key_summary(_op.keyjar, '')))
     return wsgi_wrapper(environ, start_response, _op.authorization_endpoint,
                         session_info, trace, jlog)
 
@@ -132,6 +133,7 @@ def authorization(environ, start_response, session_info, trace, jlog, **kwargs):
 def userinfo(environ, start_response, session_info, trace, jlog, **kwargs):
     trace.info(HEADER % "UserInfo")
     _op = session_info["op"]
+    logger.info('OP keys:{}'.format(key_summary(_op.keyjar, '')))
     return wsgi_wrapper(environ, start_response, _op.userinfo_endpoint,
                         session_info, trace, jlog)
 
@@ -145,6 +147,7 @@ def op_info(environ, start_response, session_info, trace, jlog, **kwargs):
     except KeyError:
         pass
     _op = session_info["op"]
+    logger.info('OP keys:{}'.format(key_summary(_op.keyjar, '')))
     return wsgi_wrapper(environ, start_response, _op.providerinfo_endpoint,
                         session_info, trace, jlog)
 
@@ -243,7 +246,7 @@ def static_file(path):
 
 # noinspection PyUnresolvedReferences
 def static(environ, start_response, path):
-    LOGGER.info("[static]sending: %s" % (path,))
+    logger.info("[static]sending: %s" % (path,))
 
     try:
         text = open(path).read()

@@ -471,25 +471,12 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "detailed_description": "Request an ID Token and verify its signature. Make a new authentication and retrieve another ID Token and verify its signature.",
                 "expected_result": "Successfully verify both ID Token signatures, fetching the " + SIGNING_KEY_ROTATION + " if the 'kid' claim in the JOSE header is unknown."
             },
-            "rp-key-rotation-rp-sign-key": {
-                "short_description": "Can rotate signing keys",
-                "profiles": [DYNAMIC],
-                "detailed_description": "Make a " + SIGNED_REQUEST + ". " + ROTATE_SIGNING_KEYS + " at the Relying Party's 'jwks_uri' after it has been used by OpenID Connect Provider. " +
-                "Make a new signed authentication request.",
-                "expected_result": "The OpenID Connect Provider successfully uses the rotated signing key: a successful authentication response to both authentication requests signed using the rotated signing key."
-            },
             "rp-key-rotation-op-enc-key": {
                 "short_description": "Supports rotation of provider's asymmetric encryption keys",
                 "detailed_description": "Fetch the issuer's keys from the 'jwks_uri' and make an " + ENCRYPTED_REQUEST + " using the issuer's encryption keys. " +
                 "Fetch the issuer's keys from the jwks_uri again, and make a new encrypted request using the rotated encryption keys.",
                 "expected_result": "A successful authentication response to both authentication requests encrypted using rotated encryption keys."
             },
-            "rp-key-rotation-rp-enc-key": {
-                "short_description": "Can rotate encryption keys",
-                "detailed_description": "Request an encrypted ID Token and decrypt it. " + ROTATE_ENCRYPTION_KEYS + " at the Relying Party's 'jwks_uri' after it has been used by the OpenID Connect Provider. " +
-                "Make a new request for an encrypted ID Token and decrypt it using the rotated decryption key.",
-                "expected_result": "The OpenID Connect Provider successfully uses the rotated key: the first ID Token can decrypted using the first key and the second ID Token can be decrypted using the rotated key."
-            }
         }],
         ["Claim Types", {
             "rp-claims-aggregated": {

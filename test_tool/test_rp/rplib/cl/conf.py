@@ -10,28 +10,22 @@ SERVER_KEY = "../certs/server.key"
 CA_BUNDLE = None
 VERIFY_SSL = False
 
-ISSUER = "https://localhost:8080/"
-# ISSUER = "https://rp.certification.openid.net:8080/"
-
 KEY_EXPORT_URL = "%sstatic/jwk.json" % BASE
 
-keys = [
-    {
-        "type": "RSA",
-        "key": "../keys/pyoidc_enc",
-        "use": ["enc"],
-    },
-    {
-        "type": "RSA",
-        "key": "../keys/pyoidc_sig",
-        "use": ["sig"],
-    },
+KEYS = [
+    {"type": "RSA", "key": "../keys/pyoidc_enc", "use": ["enc"]},
+    {"type": "RSA", "key": "../keys/pyoidc_sig", "use": ["sig"]},
     {"type": "EC", "crv": "P-256", "use": ["sig"]},
     {"type": "EC", "crv": "P-256", "use": ["enc"]}
 ]
 
-INFO = {
-    "client": {
+TOOL = {
+    'issuer': "https://localhost:8080/",
+    'webfinger_url': 'https://localhost:8080/'
+}
+
+CLIENT = {
+    "registration_info": {
         "redirect_uris": ["%sauthz_cb" % BASE],
         "application_type": "web",
         "contact": ["foo@example.com"]

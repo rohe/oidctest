@@ -16,6 +16,7 @@ from oic.utils.http_util import BadRequest
 from oic.utils.http_util import Response
 from oic.utils.http_util import NotFound
 from oic.utils.http_util import ServiceError
+from oic.utils.keyio import key_summary
 
 from oidctest import UnknownTestID
 from oidctest.endpoints import static
@@ -76,13 +77,13 @@ LOOKUP = TemplateLookup(directories=[ROOT + 'templates', ROOT + 'htdocs'],
 
 def get_client_address(environ):
     try:
-        _port = environ['REMOTE_PORT']
-    except KeyError:
-        _port = '?'
-    try:
         _addr = environ['HTTP_X_FORWARDED_FOR'].split(',')[-1].strip()
     except KeyError:
         _addr = environ['REMOTE_ADDR']
+    # try:
+    #     _port = environ['REMOTE_PORT']
+    # except KeyError:
+    #     _port = '?'
     # return "{}:{}".format(_addr, _port)
     return _addr
 
@@ -170,6 +171,7 @@ class Application(object):
                 _op = setup_op(mode, self.com_args, self.op_args, trace,
                                test_conf)
             _op.conv = Conversation(mode["test_id"], _op, None)
+            _op.orig_keys = key_summary(_op.keyjar, '').split(', ')
             self.op[key] = _op
 
         return _op, path, key

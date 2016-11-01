@@ -56,17 +56,20 @@ class ClTester(tool.Tester):
             logger.info("Test doesn't match the profile")
             return True
 
-        redirs = get_redirect_uris(kw_args['cinfo'])
+        redirs = get_redirect_uris(kw_args['client_info'])
 
         self.sh.session_setup(path=test_id)
         _flow = self.flows[test_id]
-        (_cli, _reg_info) = make_client(**kw_args)
+        _cli, _c_info = make_client(**kw_args['client_info'])
         self.conv = Conversation(_flow, _cli,
                                  msg_factory=kw_args["msg_factory"],
                                  callback_uris=redirs, trace_cls=Trace,
                                  opid=kw_args['opid'])
         _cli.conv = self.conv
+        _cli.event_store = self.conv.events
+        self.conv.entity_config = _c_info
         self.conv.sequence = self.sh["sequence"]
+        self.conv.tool_config = kw_args['conf'].TOOL
         self.sh["conv"] = self.conv
 
         # noinspection PyTypeChecker

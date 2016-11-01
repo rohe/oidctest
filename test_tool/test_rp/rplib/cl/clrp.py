@@ -61,7 +61,7 @@ def run_return_types(test_id, oper_id, kwargs, return_types, single=True):
             tester.run(test_id, **kwargs)
 
             res.store_test_info()
-            res.print_info(test_id)
+            res.write_info(test_id)
             return True
         else:
             if not tester.match_profile(test_id):
@@ -104,7 +104,7 @@ if __name__ == '__main__':
         setup_logger(logger)
 
     # Add own keys for signing/encrypting JWTs
-    jwks, keyjar, kidd = build_keyjar(CONF.keys)
+    jwks, keyjar, kidd = build_keyjar(CONF.KEYS)
 
     # export JWKS
     p = urlparse(CONF.KEY_EXPORT_URL)
@@ -113,15 +113,22 @@ if __name__ == '__main__':
     f.close()
     jwks_uri = p.geturl()
 
-    kwargs = {"base_url": CONF.BASE, "kidd": kidd, "keyjar": keyjar,
-              "jwks_uri": jwks_uri, "flows": FLOWS['Flows'], "conf": CONF,
-              "cinfo": CONF.INFO, "order": FLOWS['Order'],
-              "desc": FLOWS['Desc'], "profiles": profiles, "operation": oper,
-              "msg_factory": oic_message_factory,
-              "check_factory": check.factory, "cache": {},
-              'profile_handler': SimpleProfileHandler}
+    _client_info = CONF.CLIENT
+    _client_info.update(
+        {
+            "base_url": CONF.BASE, "kidd": kidd, "keyjar": keyjar,
+            "jwks_uri": jwks_uri,
+        })
+
+    kwargs = {
+        "flows": FLOWS['Flows'], "conf": CONF,
+        "client_info": _client_info, "order": FLOWS['Order'],
+        "desc": FLOWS['Desc'], "profiles": profiles, "operation": oper,
+        "msg_factory": oic_message_factory, "check_factory": check.factory,
+        "cache": {}, 'profile_handler': SimpleProfileHandler}
 
     if cargs.test_id:
+        rtypes = []
         try:
             rtypes = get_return_types(FLOWS['Flows'][cargs.test_id]['profile'])
         except KeyError:
