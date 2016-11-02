@@ -157,8 +157,16 @@ class Application(object):
             _op = self.op[key]
             _op.trace = trace
             if endpoint == '.well-known/openid-configuration':
-                init_keyjar(_op, self.op_args['keyjar'], self.com_args)
-                write_jwks_uri(_op, self.op_args)
+                if mode["test_id"] == 'rp-id_token-kid-absent-multiple-jwks':
+                    setattr(_op, 'keys', self.op_args['marg']['keys'])
+                    _op_args = {
+                        'baseurl': self.op_args['baseurl'],
+                        'jwks': self.op_args['marg']['jwks']
+                    }
+                    write_jwks_uri(_op, _op_args)
+                else:
+                    init_keyjar(_op, self.op_args['keyjar'], self.com_args)
+                    write_jwks_uri(_op, self.op_args)
         except KeyError:
             if mode["test_id"] in ['rp-id_token-kid-absent-multiple-jwks']:
                 _op_args = {}
