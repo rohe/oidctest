@@ -83,6 +83,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-y', dest='yaml_flows')
+    parser.add_argument('-k', dest="insecure", action='store_true')
     parser.add_argument('-l', dest="log_name")
     parser.add_argument('-t', dest="test_id")
     parser.add_argument('-p', dest="profile")
@@ -119,6 +120,8 @@ if __name__ == '__main__':
             "base_url": CONF.BASE, "kidd": kidd, "keyjar": keyjar,
             "jwks_uri": jwks_uri,
         })
+    if cargs.insecure:
+        _client_info['verify_ssl'] = False
 
     kwargs = {
         "flows": FLOWS['Flows'], "conf": CONF,
