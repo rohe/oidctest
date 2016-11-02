@@ -168,18 +168,18 @@ CONF = {
         # "path": "/_/_/rotsig/normal",
         "response_type": [C]
     },
-    "rp-key-rotation-rp-enc-key": {
-        "claims": "normal",
-        "behavior": ["updkeys"],
-        # "path": "/_/_/updkeys/normal",
-        "response_type": [C, CT]
-    },
-    "rp-key-rotation-rp-sign-key": {
-        "claims": "normal",
-        "behavior": ["updkeys"],
-        # "path": "/_/_/updkeys/normal",
-        "response_type": ALL
-    },
+    # "rp-key-rotation-rp-enc-key": {
+    #     "claims": "normal",
+    #     "behavior": ["updkeys"],
+    #     # "path": "/_/_/updkeys/normal",
+    #     "response_type": [C, CT]
+    # },
+    # "rp-key-rotation-rp-sign-key": {
+    #     "claims": "normal",
+    #     "behavior": ["updkeys"],
+    #     # "path": "/_/_/updkeys/normal",
+    #     "response_type": ALL
+    # },
     "rp-nonce-invalid": {
         "claims": "normal",
         "behavior": ["nonce"],
