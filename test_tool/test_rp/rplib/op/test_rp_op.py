@@ -24,7 +24,7 @@ from oidctest.endpoints import display_log
 from oidctest.endpoints import URLS
 from oidctest.response_encoder import ResponseEncoder
 from oidctest.rp import test_config
-from oidctest.rp.mode import extract_mode, init_keyjar
+from oidctest.rp.mode import extract_mode, init_keyjar, write_jwks_uri
 from oidctest.rp.mode import setup_op
 
 from otest import Trace
@@ -158,6 +158,7 @@ class Application(object):
             _op.trace = trace
             if endpoint == '.well-known/openid-configuration':
                 init_keyjar(_op, self.op_args['keyjar'], self.com_args)
+                write_jwks_uri(_op, self.op_args)
         except KeyError:
             if mode["test_id"] in ['rp-id_token-kid-absent-multiple-jwks']:
                 _op_args = {}
@@ -356,8 +357,6 @@ class Application(object):
 
 
 # ----------------------------------------------------------------------------
-
-
 
 if __name__ == '__main__':
     import argparse
