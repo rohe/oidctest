@@ -307,14 +307,6 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "An authentication response to the signed request passed using the request_uri request parameter."
             }
         }],
-        ["Third Party Initiated Login", {
-            "rp-support-3rd-party-init-login": {
-                "short_description": "Supports third-party initiated login",
-                "detailed_description": "Receive a " + THIRD_PARTY_INITIATED_LOGIN + " request and send authentication request to the specified OpenID Connect Provider. " +
-                "Go to " + THIRD_PARTY_LOGIN_TEST + " to start the test",
-                "expected_result": "An authentication response."
-            }
-        }],
         ["scope Request Parameter", {
             "rp-scope-userinfo-claims": {
                 "short_description": "Can request and use claims using scope values",
@@ -392,7 +384,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "expected_result": "Accept the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
             "rp-id_token-sig-hs256": {
-                "short_description": "",
+                "short_description": "Accepts ID Token with valid symmetric 'HS256' signature",
                 "detailed_description": "Accepts ID Token with valid symmetric 'HS256' signature" +
                 "Decrypt the returned the ID Token and verify its signature using the keys published by the Issuer.",
                 "expected_result": "Accept the ID Token after doing " + ID_TOKEN_VALIDATION + "."
@@ -461,7 +453,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "short_description": "Rejects ID Token without 'kid' claim in JOSE header if multiple JWKs supplied in 'jwks_uri'",
                 "profiles": [BASIC_OPTIONAL, IMPLICIT_REJECTION_ALLOWED, HYBRID_REJECTION_ALLOWED],
                 "detailed_description": "Request an ID token and verify its signature using the keys provided by the Issuer.",
-                "expected_result": "Identify that the 'kid' value is missing from the JOSE header and that the Issuer publishes " + MULITPLE_KEYS_JWKS + " (referenced by 'jwks_uri'). Reject the ID Token since it can not be determined which key to use to verify the signature."
+                "expected_result": "Identify that the 'kid' value is missing from the JOSE header and that the Issuer publishes " + MULITPLE_KEYS_JWKS + " (referenced by 'jwks_uri'). The RP can do one of two things; reject the ID Token since it can not by using the kid determined which key to use to verify the signature. Or it can just test all possible keys and hit upon one that works, which it will in this case."
             }
         }],
         ["Key Rotation", {
