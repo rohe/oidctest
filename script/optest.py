@@ -57,6 +57,7 @@ if __name__ == '__main__':
     from cherrypy import wsgiserver
 
     parser = argparse.ArgumentParser()
+    parser.add_argument('-k', dest='insecure', action='store_true')
     parser.add_argument('-o', dest='operations')
     parser.add_argument('-f', dest='flows', action='append')
     parser.add_argument('-p', dest='profile')
@@ -84,6 +85,9 @@ if __name__ == '__main__':
     app_args.update(
         {"msg_factory": oic_message_factory, 'profile_map': PROFILEMAP,
          'profile_handler': ProfileHandler})
+
+    if args.insecure:
+        app_args['client_info']['verify_ssl'] = False
 
     WA = WebApplication(sessionhandler=SessionHandler, webio=WebIO,
                         webtester=WebTester, check=check, webenv=app_args,

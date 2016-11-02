@@ -25,7 +25,13 @@ def make_client(**kw_args):
     :return:
     """
     c_keyjar = kw_args["keyjar"].copy()
-    _cli = Client(client_authn_method=CLIENT_AUTHN_METHOD, keyjar=c_keyjar)
+    args = {'client_authn_method': CLIENT_AUTHN_METHOD, 'keyjar': c_keyjar}
+    try:
+        args['verify_ssl'] = kw_args['verify_ssl']
+    except KeyError:
+        pass
+
+    _cli = Client(**args)
 
     c_info = {'keyjar': c_keyjar}
     for arg, val in list(kw_args.items()):
