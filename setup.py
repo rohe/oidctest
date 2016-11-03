@@ -44,5 +44,5 @@ setup(
         'otest'
     ],
     zip_safe=False,
-    scripts=['script/optest.py']
+    scripts=['script/optest.py', 'script/make_test_dir.py']
 )

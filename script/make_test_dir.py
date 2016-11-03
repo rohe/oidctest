@@ -3,6 +3,7 @@
 import sys
 import os
 import shutil
+import fileinput
 
 _distroot = sys.argv[1]
 _root = sys.argv[2]
@@ -23,3 +24,7 @@ for _fname in ['flows.yaml', 'start.sh', 'sslconf.py']:
 
 _file = os.path.join(_op_dir, 'config_examples', 'conf_TT.py')
 shutil.copy(_file, 'conf.py')
+
+for line in fileinput.input("conf.py", inplace=True):
+    l = line.replace("../keys/", "./keys/").rstrip('\n')
+    print(l)
