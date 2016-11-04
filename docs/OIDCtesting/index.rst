@@ -1,5 +1,4 @@
-.. _oidctesting:
-
+===================
 How to use OIDCtest
 ===================
 

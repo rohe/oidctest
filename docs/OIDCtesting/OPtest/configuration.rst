@@ -68,7 +68,7 @@ profile
 ~~~~~~~
 The default profile which is always used as the starting point when
 a test instance is restarted and no profile is given as a command argument.
-
+More about profile in :ref:`run_profile` .
 
 Part three
 ----------
