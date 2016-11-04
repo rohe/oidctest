@@ -4,9 +4,11 @@ import os
 import argparse
 import logging
 
+from oic.oic import Client
 from oic.oic.message import factory as oic_message_factory
 
 from otest.aus.app import WebApplication
+from otest.aus.client import Factory
 from otest.aus.io import WebIO
 from otest.conf_setup import construct_app_args
 from otest.utils import SERVER_LOG_FOLDER
@@ -84,7 +86,8 @@ if __name__ == '__main__':
     # Application arguments
     app_args.update(
         {"msg_factory": oic_message_factory, 'profile_map': PROFILEMAP,
-         'profile_handler': ProfileHandler})
+         'profile_handler': ProfileHandler,
+         'client_factory': Factory(Client)})
 
     if args.insecure:
         app_args['client_info']['verify_ssl'] = False
