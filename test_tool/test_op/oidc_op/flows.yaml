@@ -384,7 +384,7 @@ Flows:
           - AccessTokenResponse
           - AuthorizationResponse
       verify-signed-idtoken-has-kid: null
-  OP-IDToken-null:
+  OP-IDToken-none:
     desc: Unsecured ID Token signature with null [Basic]
     profile: C.T.T.T.n
     sequence:
@@ -1795,7 +1795,7 @@ Flows:
         response_cls:
           - AuthorizationResponse
           - AccessTokenResponse
-  OP-prompt-null-LoggedIn:
+  OP-prompt-none-LoggedIn:
     desc: Request with prompt=none when logged in [Basic, Implicit, Hybrid]
     mti:
       all: MUST
@@ -1819,7 +1819,7 @@ Flows:
         response_cls:
           - AuthorizationResponse
           - AccessTokenResponse
-  OP-prompt-null-NotLoggedIn:
+  OP-prompt-none-NotLoggedIn:
     desc: Request with prompt=none when not logged in [Basic, Implicit, Hybrid]
     mti:
       all: MUST
