@@ -4,10 +4,10 @@
 <head>
   <title>OpenID Certification OP Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="static/opresultqr.css" rel="stylesheet" media="screen">
+  <link href="/static/opresultqr.css" rel="stylesheet" media="screen">
 
   <!-- Bootstrap -->
-  <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet"
+  <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet"
         media="screen">
 
   <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
