@@ -62,4 +62,5 @@ target/
 # JWKS
 jwk.json
 
-accounting/
+accounting
+parse_log

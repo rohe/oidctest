@@ -78,9 +78,7 @@ class Webfinger(Operation):
         self.dynamic = inut.profile_handler.webfinger(self.profile)
 
     def run(self):
-        if not self.dynamic:
-            self.conv.info["issuer"] = self.conv.conf.INFO["srv_discovery_url"]
-        else:
+        if self.dynamic:
             _conv = self.conv
             if self.resource:
                 principal = self.resource
@@ -97,6 +95,9 @@ class Webfinger(Operation):
                 _conv.info["issuer"] = issuer
                 _conv.events.store('issuer', issuer,
                                    sender=self.__class__.__name__)
+        else:
+            self.conv.trace.info("Not using WebFinger")
+            self.conv.info["issuer"] = self.conv.get_tool_attribute("issuer")
 
     def op_setup(self):
         # try:
@@ -116,8 +117,9 @@ class Discovery(Operation):
             self.catch_exception(self.conv.entity.provider_config,
                                  **self.op_args)
         else:
+            self.conv.trace.info("Not doing dynamic discovery")
             self.conv.entity.provider_info = ProviderConfigurationResponse(
-                **self.conf.INFO["provider_info"]
+                **self.conv.entity_config["provider_info"]
             )
 
     def op_setup(self):
@@ -140,12 +142,14 @@ class Registration(Operation):
         if self.dynamic:
             self.catch_exception(self.conv.entity.register, **self.req_args)
         else:
+            self.conv.trace.info("Relying on static registration")
             self.conv.entity.store_registration_info(
-                RegistrationResponse(**self.conf.INFO["registered"]))
+                RegistrationResponse(
+                    **self.conf.CLIENT["registration_response"]))
 
     def op_setup(self):
         if self.dynamic:
-            self.req_args.update(self.conf.INFO["client"])
+            self.req_args.update(self.conv.entity_config["registration_info"])
             self.req_args["url"] = self.conv.entity.provider_info[
                 "registration_endpoint"]
             if self.conv.entity.jwks_uri:

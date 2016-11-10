@@ -33,12 +33,16 @@ setup(
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python :: 2.7",
-        "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
         "Topic :: Software Development :: Libraries :: Python Modules"],
     install_requires=[
         "argparse",
-        "requests >= 2.0.0", 'future',
+        "requests >= 2.0.0",
+        'future',
+        'CherryPy',
+        'oic >= 0.9.1',
+        'otest'
     ],
     zip_safe=False,
-    scripts=['script/optest.py']
+    scripts=['script/optest.py', 'script/make_test_dir.py']
 )

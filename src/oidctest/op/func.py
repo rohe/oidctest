@@ -13,10 +13,12 @@ from otest.check import State
 from otest.check import STATUSCODE_TRANSL
 from otest.events import EV_CONDITION
 from otest.events import EV_RESPONSE
+from otest.result import get_issuer
 
 from oidctest.op.check import get_id_tokens
 from oidctest.op.prof_util import map_prof
 from oidctest.op.tool import get_redirect_uris
+
 from past.types import basestring
 
 __author__ = 'roland'
@@ -26,21 +28,27 @@ def set_webfinger_resource(oper, args):
     try:
         oper.resource = oper.op_args["resource"]
     except KeyError:
-        _base = oper.conf.ISSUER
-        if oper.conv.operator_id is None:
-            oper.resource = _base
-        else:
-            oper.resource = os.path.join(_base, oper.conv.operator_id,
-                                     oper.conv.test_id)
+        if oper.dynamic:
+            _base = oper.conv.get_tool_attribute("webfinger_url",
+                                                 "webfinger_email")
+            if _base is None:
+                raise AttributeError(
+                    'Trying to run WebFinger without a URI to use')
+
+            if oper.conv.operator_id is None:
+                oper.resource = _base
+            else:
+                oper.resource = os.path.join(_base, oper.conv.operator_id,
+                                             oper.conv.test_id)
 
 
 def set_discovery_issuer(oper, args):
     if oper.dynamic:
-        oper.op_args["issuer"] = oper.conv.info["issuer"]
+        oper.op_args["issuer"] = get_issuer(oper.conv)
 
 
 def redirect_uri_with_query_component(oper, args):
-    ru = get_redirect_uris(oper.conf.INFO)[0]
+    ru = oper.conv.get_redirect_uris()[0]
     ru += "?%s" % urlencode(args)
     oper.req_args.update({"redirect_uri": ru})
 
@@ -90,13 +98,15 @@ def check_support(oper, args):
 
 def set_principal(oper, args):
     try:
-        oper.req_args["principal"] = oper.conv.entity_config[args["param"]]
+        _val = getattr(oper.conf, args['param'])
     except KeyError:
         raise ConfigurationError("Missing parameter: %s" % args["param"])
+    else:
+        oper.req_args["principal"] = _val
 
 
 def set_uri(oper, args):
-    ru = get_redirect_uris(oper.conf.INFO)[0]
+    ru = oper.conv.get_redirect_uris()[0]
     p = urlparse(ru)
     oper.req_args[args[0]] = "%s://%s/%s" % (p.scheme, p.netloc, args[1])
 
@@ -167,7 +177,7 @@ def login_hint(oper, args):
     _iss = oper.conv.entity.provider_info["issuer"]
     p = urlparse(_iss)
     try:
-        hint = oper.conv.entity_config["login_hint"]
+        hint = oper.conv.get_tool_attribute("login_hint")
     except KeyError:
         hint = "buffy@%s" % p.netloc
     else:
@@ -178,46 +188,23 @@ def login_hint(oper, args):
 
 
 def ui_locales(oper, args):
-    try:
-        uil = oper.conv.entity_config["ui_locales"]
-    except KeyError:
-        try:
-            uil = oper.conv.entity_config["locales"]
-        except KeyError:
-            uil = ["se"]
-
-    oper.req_args["ui_locales"] = uil
+    oper.req_args["ui_locales"] = oper.conv.get_tool_attribute(
+        "ui_locales", 'locales', default=['se'])
 
 
 def claims_locales(oper, args):
-    try:
-        loc = oper.conv.entity_config["claims_locales"]
-    except KeyError:
-        try:
-            loc = oper.conv.entity_config["locales"]
-        except KeyError:
-            loc = ["se"]
-
-    oper.req_args["claims_locales"] = loc
+    oper.req_args["claims_locales"] = oper.conv.get_tool_attribute(
+        "claims_locales", 'locales', default=['se'])
 
 
 def acr_value(oper, args):
-    try:
-        acr = oper.conv.entity_config["acr_value"]
-    except KeyError:
-        try:
-            acr = oper.conv.entity.provider_info["acr_values_supported"]
-        except (KeyError, AttributeError):
-            acr = ["1", "2"]
-
-    oper.req_args["acr_values"] = acr
+    oper.req_args["acr_values"] = oper.conv.get_tool_attribute(
+        "acr_value", "acr_values_supported", default=["1", "2"])
 
 
 def specific_acr_claims(oper, args):
-    try:
-        _acrs = oper.conv.entity_config["acr_values"]
-    except KeyError:
-        _acrs = ["2"]
+    _acrs = oper.req_args["acr_values"] = oper.conv.get_tool_attribute(
+        "acr_value", "acr_values_supported", default=["2"])
 
     oper.req_args["claims"] = {"id_token": {"acr": {"values": _acrs}}}
 
@@ -240,13 +227,13 @@ def multiple_return_uris(oper, args):
 
 
 def redirect_uris_with_query_component(oper, kwargs):
-    ru = get_redirect_uris(oper.conf.INFO)[0]
+    ru = oper.conv.get_redirect_uris()[0]
     ru += "?%s" % urlencode(kwargs)
     oper.req_args["redirect_uris"] = ru
 
 
 def redirect_uris_with_fragment(oper, kwargs):
-    ru = get_redirect_uris(oper.conf.INFO)[0]
+    ru = oper.conv.get_redirect_uris()[0]
     ru += "#" + ".".join(["%s%s" % (x, y) for x, y in list(kwargs.items())])
     oper.req_args["redirect_uris"] = ru
 
@@ -256,10 +243,11 @@ def request_in_file(oper, kwargs):
 
 
 def resource(oper, args):
-    _p = urlparse(oper.conv.conf.ISSUER)
+    _p = urlparse(get_issuer(oper.conv))
     oper.op_args["resource"] = args["pattern"].format(
         test_id=oper.conv.test_id, host=_p.netloc,
         oper_id=oper.conv.operator_id)
+
 
 def expect_exception(oper, args):
     oper.expect_exception = args

@@ -12,6 +12,7 @@ from oic.utils.http_util import Unauthorized
 from oic.utils.http_util import NotFound
 from oic.utils.http_util import ServiceError
 from oic.utils.http_util import BadRequest
+from oic.utils.keyio import key_summary
 from oic.utils.webfinger import OIC_ISSUER
 from oic.utils.webfinger import WebFinger
 # All endpoints the OpenID Connect Provider should answer on
@@ -25,7 +26,7 @@ from otest import resp2json
 
 __author__ = 'roland'
 
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 HEADER = "---------- %s ----------"
 
@@ -87,24 +88,24 @@ def wsgi_wrapper(environ, start_response, func, session_info, trace, jlog):
             return resp(environ, start_response)
 
     trace.request(kwargs["request"])
-    jlog.info({func.__name__: kwargs})
+    jlog.info({'operation': func.__name__, 'kwargs': kwargs})
     args = func(**kwargs)
 
     try:
         resp, state = args
-        jlog.info({'{}-resp'.format(func.__name__): resp2json(resp),
+        jlog.info({'response_from': func.__name__, 'response': resp2json(resp),
                    'state': state})
         trace.reply(resp.message)
         dump_log(session_info, trace)
         return resp(environ, start_response)
     except TypeError:
         resp = args
-        jlog.info({'{}-resp'.format(func.__name__): resp2json(resp)})
+        jlog.info({'response_from': func.__name__, 'response': resp2json(resp)})
         trace.reply(resp.message)
         dump_log(session_info, trace)
         return resp(environ, start_response)
     except Exception as err:
-        # LOGGER.error("%s" % err)
+        jlog.error({'response_from': func.__name__, 'err': err})
         trace.error("%s" % err)
         dump_log(session_info, trace)
         raise
@@ -114,7 +115,7 @@ def wsgi_wrapper(environ, start_response, func, session_info, trace, jlog):
 def token(environ, start_response, session_info, trace, jlog, **kwargs):
     trace.info(HEADER % "AccessToken")
     _op = session_info["op"]
-
+    logger.info('OP keys:{}'.format(key_summary(_op.keyjar, '')))
     return wsgi_wrapper(environ, start_response, _op.token_endpoint,
                         session_info, trace, jlog)
 
@@ -123,7 +124,7 @@ def token(environ, start_response, session_info, trace, jlog, **kwargs):
 def authorization(environ, start_response, session_info, trace, jlog, **kwargs):
     trace.info(HEADER % "Authorization")
     _op = session_info["op"]
-
+    logger.info('OP keys:{}'.format(key_summary(_op.keyjar, '')))
     return wsgi_wrapper(environ, start_response, _op.authorization_endpoint,
                         session_info, trace, jlog)
 
@@ -132,6 +133,7 @@ def authorization(environ, start_response, session_info, trace, jlog, **kwargs):
 def userinfo(environ, start_response, session_info, trace, jlog, **kwargs):
     trace.info(HEADER % "UserInfo")
     _op = session_info["op"]
+    logger.info('OP keys:{}'.format(key_summary(_op.keyjar, '')))
     return wsgi_wrapper(environ, start_response, _op.userinfo_endpoint,
                         session_info, trace, jlog)
 
@@ -145,6 +147,7 @@ def op_info(environ, start_response, session_info, trace, jlog, **kwargs):
     except KeyError:
         pass
     _op = session_info["op"]
+    logger.info('OP keys:{}'.format(key_summary(_op.keyjar, '')))
     return wsgi_wrapper(environ, start_response, _op.providerinfo_endpoint,
                         session_info, trace, jlog)
 
@@ -243,7 +246,7 @@ def static_file(path):
 
 # noinspection PyUnresolvedReferences
 def static(environ, start_response, path):
-    LOGGER.info("[static]sending: %s" % (path,))
+    logger.info("[static]sending: %s" % (path,))
 
     try:
         text = open(path).read()
@@ -259,7 +262,10 @@ def static(environ, start_response, path):
             start_response('200 OK', [('Content-Type', 'text/css')])
         else:
             start_response('200 OK', [('Content-Type', 'text/plain')])
-        return [text]
+        try:
+            return [text.encode('utf8')]
+        except ValueError:
+            return [text]
     except IOError:
         resp = NotFound()
         return resp(environ, start_response)
@@ -309,16 +315,27 @@ def css(environ, start_response):
 
 
 def display_log(environ, start_response, lookup):
+    """
+    path = 'log' or path = 'log/tester_id' or path = 'log/tester_id/test_id
+
+    :param environ:
+    :param start_response:
+    :param lookup:
+    :return:
+    """
     path = environ.get('PATH_INFO', '').lstrip('/')
-    if path == "log":
-        tail = environ["REMOTE_ADDR"]
-        path = os.path.join(path, tail)
-    elif path == "logs":
+    if path == "logs":
         path = "log"
 
     if os.path.isfile(path):
         return static(environ, start_response, path)
     elif os.path.isdir(path):
+        if '/' in path:
+            p = path.split('/')
+            tester_id = '/' + p[1]
+        else:
+            tester_id = ''
+
         item = []
         for (dirpath, dirnames, filenames) in os.walk(path):
             if dirnames:
@@ -334,7 +351,7 @@ def display_log(environ, start_response, lookup):
         resp = Response(mako_template="logs.mako",
                         template_lookup=lookup,
                         headers=[])
-        argv = {"logs": item}
+        argv = {"logs": item, 'testid': tester_id}
 
         return resp(environ, start_response, **argv)
     else:

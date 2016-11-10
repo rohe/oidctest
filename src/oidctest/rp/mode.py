@@ -117,6 +117,17 @@ def init_keyjar(op, kj, com_args):
         op.keyjar.add_kb('', copy.copy(kb))
 
 
+def write_jwks_uri(op, op_arg):
+    _name = "jwks_{}.json".format(rndstr())
+    filename = "./static/{}".format(_name)
+    with open(filename, "w") as f:
+        f.write(json.dumps(op_arg["jwks"]))
+    f.close()
+
+    op.jwks_uri = "{}static/{}".format(op_arg["baseurl"], _name)
+    op.jwks_name = filename
+
+
 def setup_op(mode, com_args, op_arg, trace, test_conf):
     op = Provider(sdb=SessionDB(com_args["baseurl"]), **com_args)
     op.trace = trace
@@ -130,14 +141,7 @@ def setup_op(mode, com_args, op_arg, trace, test_conf):
         else:
             setattr(op, key, val)
 
-    _name = "jwks_{}.json".format(rndstr())
-    filename = "./static/{}".format(_name)
-    with open(filename, "w") as f:
-        f.write(json.dumps(op_arg["jwks"]))
-    f.close()
-
-    op.jwks_uri = "{}static/{}".format(op_arg["baseurl"], _name)
-    op.jwks_name = filename
+    write_jwks_uri(op, op_arg)
 
     if op.baseurl.endswith("/"):
         div = ""

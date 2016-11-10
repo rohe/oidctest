@@ -582,73 +582,6 @@ Flows:
       - RestoreKeyJar:
           set_op_args:
             jwks_path: static/jwk.json
-  rp-key-rotation-rp-enc-key:
-    desc: Can Request and Use Encrypted UserInfo Response
-    profile: C,CT
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration:
-          set_jwks_uri: null
-          set_request_args:
-            userinfo_encrypted_response_alg: RSA1_5
-            userinfo_encrypted_response_enc: A128CBC-HS256
-      - SyncAuthn
-      - AccessToken
-      - UserInfo
-      - RotateKey:
-          set_op_args:
-            jwks_path: static/jwk.json
-            new_key:
-              bits: 2048
-              type: RSA
-              use:
-                - enc
-            new_kid: rotated_enc_key
-            old_key:
-              alg: RSA1_5
-              use: enc
-      - SyncAuthn
-      - AccessToken
-      - UserInfo
-      - RestoreKeyJar:
-          set_op_args:
-            jwks_path: static/jwk.json
-  rp-key-rotation-rp-sign-key:
-    desc: Can Request and Use Encrypted UserInfo Response
-    profile: '*'
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration:
-          set_jwks_uri: null
-      - SyncAuthn:
-          set_op_args:
-            request_method: request
-            request_object_signing_alg: ES256
-      - RotateKey:
-          set_op_args:
-            jwks_path: static/jwk.json
-            new_key:
-              crv: P-256
-              type: EC
-              use:
-                - sig
-            new_kid: rotated_sig_key
-            old_key:
-              alg: ES256
-              use: sig
-      - SyncAuthn:
-          set_op_args:
-            request_method: request
-            request_object_signing_alg: ES256
-      - RestoreKeyJar:
-          set_op_args:
-            jwks_path: static/jwk.json
   rp-nonce-invalid:
     desc: If a nonce value was sent in the Authentication Request the Relying Party
       must validate the nonce returned in the ID Token.
@@ -1110,6 +1043,7 @@ Order:
   - rp-key-rotation
   - rp-userinfo
   - rp-self-issued
+  - rp-claims
 Desc:
   rp-discovery: Discovery
   rp-registration: Dynamic Client Registration
@@ -1124,6 +1058,7 @@ Desc:
   rp-key-rotation: Key Rotation
   rp-userinfo: Userinfo Endpoint
   rp-self: Self Issued OP
+  rp-claims: UserInfo claims
   Req: Misc Request Parameters
   OAuth: OAuth behaviors
   ClientAuth: Client Authentication

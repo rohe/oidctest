@@ -165,7 +165,7 @@ Flows:
     sequence:
       - Webfinger:
           set_principal:
-            param: webfinger_url
+            param: WEBFINGER_URL
     assert: null
   OP-Discovery-WebFinger-Email:
     desc: Can discover identifiers using e-mail syntax [Dynamic]
@@ -173,7 +173,7 @@ Flows:
     sequence:
       - Webfinger:
           set_principal:
-            param: webfinger_email
+            param: WEBFINGER_EMAIL
     assert: null
   OP-Discovery-claims_supported:
     desc: Verify that claims_supported is published [Config, Dynamic]
