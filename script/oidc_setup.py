@@ -33,7 +33,8 @@ def copy_if_not_same(src, dst, overwrite=False):
 
 def oidc_op_setup(distroot):
     for _dir in ['certs', 'keys', 'server_log', 'log']:
-        os.mkdir(_dir)
+        if os.path.isdir(_dir) is False:
+            os.mkdir(_dir)
 
     _dir = 'htdocs'
     _op_dir = os.path.join(distroot['oidc'], 'test_tool', 'test_op', 'oidc_op',
@@ -67,7 +68,8 @@ def oidc_rpinst_setup(distroot):
     _op_dir = os.path.join(distroot['oidc'], 'test_tool', 'test_rp', 'rpinst')
     for _dir in ['static', 'htdocs']:
         _src = os.path.join(_op_dir, _dir)
-        shutil.copytree(_src, _dir)
+        if os.path.isdir(_dir) is False:
+            shutil.copytree(_src, _dir)
 
     for _fname in ['flows.yaml', 'run.sh', 'example_conf.py', 'profiles.json',
                    'heart_interop_ports.csv']:
