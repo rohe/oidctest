@@ -49,9 +49,9 @@ def oidc_op_setup(distroot):
         shutil.copytree(_op_dir, _dir)
 
     _op_dir = os.path.join(distroot['oidc'], 'test_tool', 'test_op', 'oidc_op')
-    for _fname in ['flows.yaml', 'start.sh', 'sslconf.py']:
+    for _fname in ['flows.yaml', 'run.sh', 'sslconf.py']:
         _file = os.path.join(_op_dir, _fname)
-        copy_if_not_same(_file, '.')
+        copy_if_not_same(_file, _fname)
 
     _file = os.path.join(_op_dir, 'config_examples', 'conf_TT.py')
     if copy_if_not_same(_file, 'example_conf.py'):
@@ -74,7 +74,7 @@ def oidc_rpinst_setup(distroot):
     for _fname in ['flows.yaml', 'run.sh', 'example_conf.py', 'profiles.json',
                    'heart_interop_ports.csv']:
         _file = os.path.join(_op_dir, _fname)
-        copy_if_not_same(_file, '.')
+        copy_if_not_same(_file, _fname)
 
 
 def oidc_rplib_setup(distroot):
@@ -92,7 +92,7 @@ def oidc_rplib_setup(distroot):
 
     for _fname in ['run.sh', 'example_conf.py', 'test_rp_op.py', 'setup.py']:
         _file = os.path.join(_op_dir, _fname)
-        copy_if_not_same(_file, '.')
+        copy_if_not_same(_file, _fname)
 
 
 DIR = {

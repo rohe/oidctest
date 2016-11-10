@@ -29,8 +29,10 @@ PROFILEMAP = {
         "C": {set_request_args: {"response_type": ["code"],
                                  "scope": ["openid"]},
               check_endpoint: "authorization_endpoint"},
-        "I": {set_request_args: {"response_type": ["token"],
+        "I": {set_request_args: {"response_type": ["id_token"],
                                  "scope": ["openid"]}},
+        # "T": {set_request_args: {"response_type": ["token"],
+        #                          "scope": ["openid"]}},
         "IT": {set_request_args: {"response_type": ["id_token", "token"],
                                   "scope": ["openid"]}},
         "CI": {set_request_args: {"response_type": ["code", "id_token"],
@@ -44,8 +46,10 @@ PROFILEMAP = {
     AsyncAuthn: {
         "C": {set_request_args: {"response_type": ["code"],
                                  "scope": ["openid"]}},
-        "I": {set_request_args: {"response_type": ["token"],
+        "I": {set_request_args: {"response_type": ["id_token"],
                                  "scope": ["openid"]}},
+        #"T": {set_request_args: {"response_type": ["token"],
+        #                         "scope": ["openid"]}},
         "IT": {set_request_args: {"response_type": ["id_token", "token"],
                                   "scope": ["openid"]}},
         "CI": {set_request_args: {"response_type": ["code", "id_token"],
@@ -93,7 +97,7 @@ PROFILEMAP = {
 
         "I": {
             set_request_args: {
-                "response_types": ["token"],
+                "response_types": ["id_token"],
                 "grant_types": ["implicit"],
                 # don't register any
                 # "token_endpoint_auth_method": {},
