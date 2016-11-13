@@ -33,6 +33,7 @@ from otest.aus.request import AsyncGetRequest
 from otest.aus.request import SyncPostRequest
 from otest.aus.request import same_issuer
 from otest.events import EV_PROTOCOL_RESPONSE
+from otest.events import EV_RESPONSE
 
 from oidctest.op.prof_util import RESPONSE
 
@@ -249,8 +250,8 @@ class AccessToken(SyncPostRequest):
             raise IssuerMismatch(" {} != {}".format(self.conv.info["issuer"],
                                                     atr["id_token"]["iss"]))
 
-        self.conv.trace.response(atr)
-        assert isinstance(atr, AccessTokenResponse)
+        #assert isinstance(atr, AccessTokenResponse)
+        return atr
 
 
 class UserInfo(SyncGetRequest):
@@ -272,10 +273,11 @@ class UserInfo(SyncGetRequest):
             if "_claim_sources" in response:
                 user_info = self.conv.entity.unpack_aggregated_claims(response)
                 user_info = self.conv.entity.fetch_distributed_claims(user_info)
+                self.conv.events.store(EV_RESPONSE, user_info)
 
             self.conv.entity.userinfo = response
 
-        self.conv.trace.response(response)
+        return response
 
     @staticmethod
     def _verify_subject_identifier(client, user_info):
