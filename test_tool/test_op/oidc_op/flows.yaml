@@ -215,7 +215,9 @@ Flows:
             id_token_signed_response_alg: ES256
       - AsyncAuthn:
           set_response_where: null
-      - AccessToken
+      - AccessToken:
+          conditional_execution:
+            profile: 'CIT,CI,C,CT'
     assert:
       verify-idtoken-is-signed:
         alg: ES256
@@ -236,7 +238,9 @@ Flows:
             id_token_signed_response_alg: HS256
       - AsyncAuthn:
           set_response_where: null
-      - AccessToken
+      - AccessToken:
+          conditional_execution:
+            profile: 'CIT,CI,C,CT'
     assert:
       verify-idtoken-is-signed:
         alg: HS256
@@ -259,7 +263,9 @@ Flows:
             id_token_signed_response_alg: RS256
       - AsyncAuthn:
           set_response_where: null
-      - AccessToken
+      - AccessToken:
+          conditional_execution:
+            profile: 'CIT,CI,C,CT'
     assert:
       verify-idtoken-is-signed:
         alg: RS256
@@ -287,7 +293,9 @@ Flows:
               id_token_signing_alg_values_supported: RS256
       - AsyncAuthn:
           set_response_where: null
-      - AccessToken
+      - AccessToken:
+          conditional_execution:
+            profile: 'CIT,CI,C,CT'
     assert:
       signed-encrypted-idtoken:
         enc_alg: RSA1_5
@@ -299,7 +307,7 @@ Flows:
           - AccessTokenResponse
   OP-IDToken-C-Signature:
     desc: Does the OP sign the ID Token and with what [Basic, Implicit, Hybrid]
-    profile: 'C,CI,CT...'
+    profile: '...'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -308,29 +316,15 @@ Flows:
       - Registration
       - AsyncAuthn:
           set_response_where: null
-      - AccessToken
+      - AccessToken:
+          conditional_execution:
+            profile: 'CIT,CI,C,CT'
     assert:
       is-idtoken-signed:
         alg: RS256
       verify-response:
         response_cls:
           - AccessTokenResponse
-  OP-IDToken-I-Signature:
-    desc: Does the OP sign the ID Token and with what [Basic, Implicit, Hybrid]
-    profile: 'CIT,IT,I...'
-    sequence:
-      - Webfinger:
-          set_webfinger_resource: null
-      - Discovery:
-          set_discovery_issuer: null
-      - Registration
-      - AsyncAuthn:
-          set_response_where: null
-    assert:
-      is-idtoken-signed:
-        alg: RS256
-      verify-response:
-        response_cls:
           - AuthorizationResponse
   OP-IDToken-at_hash:
     desc: ID Token has at_hash when ID Token and Access Token returned from Authorization
@@ -377,7 +371,9 @@ Flows:
       - Registration
       - AsyncAuthn:
           set_response_where: null
-      - AccessToken
+      - AccessToken:
+          conditional_execution:
+            profile: 'CIT,CI,C,CT'
     assert:
       verify-response:
         response_cls:
@@ -386,7 +382,7 @@ Flows:
       verify-signed-idtoken-has-kid: null
   OP-IDToken-none:
     desc: Unsecured ID Token signature with null [Basic]
-    profile: C.T.T.T.n
+    profile: .T.T.T.n
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -400,7 +396,9 @@ Flows:
                 id_token_signing_alg_values_supported: null
       - AsyncAuthn:
           set_response_where: null
-      - AccessToken
+      - AccessToken:
+          conditional_execution:
+            profile: 'CIT,CI,C,CT'
     assert:
       unsigned-idtoken: null
       verify-response:
