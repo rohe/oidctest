@@ -11,7 +11,7 @@ from otest.aus.app import WebApplication
 from otest.aus.client import Factory
 from otest.aus.io import WebIO
 from otest.conf_setup import construct_app_args
-from otest.utils import SERVER_LOG_FOLDER
+from otest.utils import SERVER_LOG_FOLDER, setup_logging
 from otest.utils import setup_common_log
 
 from oidctest.op import check
@@ -91,6 +91,8 @@ if __name__ == '__main__':
 
     if args.insecure:
         app_args['client_info']['verify_ssl'] = False
+
+    setup_logging("%s/rp_%s.log" % (SERVER_LOG_FOLDER, _conf.PORT), logger)
 
     WA = WebApplication(sessionhandler=SessionHandler, webio=WebIO,
                         webtester=WebTester, check=check, webenv=app_args,
