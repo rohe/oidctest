@@ -265,7 +265,7 @@ class UserInfo(SyncGetRequest):
 
         response = self.conv.entity.do_user_info_request(**args)
         if self.expect_error:
-            response = self.expected_error_response(response)
+            _ = self.expected_error_response(response)
         else:
             if isinstance(response, ErrorResponse):
                 raise Break("Unexpected error response")
@@ -276,8 +276,8 @@ class UserInfo(SyncGetRequest):
                 self.conv.events.store(EV_RESPONSE, user_info)
 
             self.conv.entity.userinfo = response
-
-        return response
+            self.conv.events.store(EV_PROTOCOL_RESPONSE, response)
+        #return response
 
     @staticmethod
     def _verify_subject_identifier(client, user_info):
