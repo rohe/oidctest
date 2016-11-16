@@ -59,7 +59,8 @@ class ClTester(tool.Tester):
 
         self.sh.session_setup(path=test_id)
         _flow = self.flows[test_id]
-        _cli, _c_info = make_client(**kw_args['client_info'])
+        _cli, _c_info = kw_args['client_factory'].make_client(
+            **kw_args['client_info'])
         self.conv = Conversation(_flow, _cli,
                                  msg_factory=kw_args["msg_factory"],
                                  callback_uris=redirs, trace_cls=Trace,
