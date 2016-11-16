@@ -391,7 +391,7 @@ Flows:
   rp-id_token-sub:
     desc: The Relying Party should request an ID token and reject it if the sub
       claim is missing
-    profile: C,CT
+    profile: C,I,IT,CI,CT,CIT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -402,8 +402,6 @@ Flows:
           conditional_expect_exception:
             condition:
               response_type:
-                -
-                  - token
                 -
                   - code
                   - id_token
@@ -417,6 +415,17 @@ Flows:
                   - code
                   - id_token
             exception: MissingRequiredAttribute
+      - AccessToken:
+          conditional_execution:
+            profile: 'C,CT'
+          conditional_expect_exception:
+            condition:
+              response_type:
+                -
+                  - code
+                -
+                  - code
+                  - token
   rp-id_token-bad-c_hash:
     desc: The Relying Party should request an ID token and reject it if the
       c_hash claim is incorrect

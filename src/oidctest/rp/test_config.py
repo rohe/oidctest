@@ -154,7 +154,7 @@ CONF = {
         "claims": "normal",
         "behavior": ["itsub"],
         # "path": "/_/_/itsub/normal",
-        "response_type": [C, CT]
+        "response_type": ALL
     },
     "rp-key-rotation-op-enc-key": {
         "claims": "normal",
