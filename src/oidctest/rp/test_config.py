@@ -18,11 +18,11 @@ U = 'userinfo_endpoint'
 CONF = {
     "rp-claims-aggregated": {
         "claims": "aggregated",
-        "response_type": [C, CI, CT, CIT],
+        "response_type": [C, IT, CI, CT, CIT],
     },
     "rp-claims-distributed": {
         "claims": "distributed",
-        "response_type": [C, CI, CT, CIT]
+        "response_type": [C, IT, CI, CT, CIT]
     },
     "rp-claims_request-id_token": {
         "claims": "normal",
