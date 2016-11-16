@@ -38,7 +38,7 @@ def oidc_op_setup(distroot):
 
     _dir = 'htdocs'
     _op_dir = os.path.join(distroot['oidc'], 'test_tool', 'test_op', 'oidc_op',
-                           'heart_mako', _dir)
+                           _dir)
     if os.path.isdir(_dir) is False:
         shutil.copytree(_op_dir, _dir)
 
