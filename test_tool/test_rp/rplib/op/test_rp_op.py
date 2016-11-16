@@ -19,7 +19,7 @@ from oic.utils.http_util import ServiceError
 from oic.utils.keyio import key_summary
 
 from oidctest import UnknownTestID
-from oidctest.endpoints import static
+from oidctest.endpoints import static, clear_log, make_tar
 from oidctest.endpoints import display_log
 from oidctest.endpoints import URLS
 from oidctest.response_encoder import ResponseEncoder
@@ -213,8 +213,14 @@ class Application(object):
 
         if path.startswith("static/"):
             return static(environ, start_response, path)
+        elif path.startswith("tar/"):
+            return static(environ, start_response, path)
         elif path.startswith("log"):
-            return display_log(environ, start_response, lookup=LOOKUP)
+            return display_log(path, environ, start_response, lookup=LOOKUP)
+        elif path.startswith('clear/'):
+            return clear_log(path, environ, start_response, lookup=LOOKUP)
+        elif path.startswith('mktar/'):
+            return make_tar(path, environ, start_response, lookup=LOOKUP)
         elif path.startswith("_static/"):
             return static(environ, start_response, path)
         elif path.startswith("jwks.json"):

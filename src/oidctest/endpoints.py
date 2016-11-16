@@ -1,12 +1,13 @@
 import json
 import logging
 import os
+import shutil
 
 from future.backports.urllib.parse import urlparse
 
 from oic.oauth2.provider import error_response
 
-from oic.utils.http_util import extract_from_request
+from oic.utils.http_util import extract_from_request, SeeOther
 from oic.utils.http_util import Response
 from oic.utils.http_util import Unauthorized
 from oic.utils.http_util import NotFound
@@ -23,6 +24,8 @@ from oic.oic.provider import UserinfoEndpoint
 from oic.oic.provider import RegistrationEndpoint
 
 from otest import resp2json
+
+from oidctest.utils import create_rp_tar_archive
 
 __author__ = 'roland'
 
@@ -260,6 +263,8 @@ def static(environ, start_response, path):
             start_response('200 OK', [('Content-Type', 'text/plain')])
         elif path.endswith(".css"):
             start_response('200 OK', [('Content-Type', 'text/css')])
+        elif path.endswith(".tar"):
+            start_response('200 OK', [('Content-Type', 'application/x-tar')])
         else:
             start_response('200 OK', [('Content-Type', 'text/plain')])
         try:
@@ -313,8 +318,38 @@ def css(environ, start_response):
 
 # ----------------------------------------------------------------------------
 
+def clear_log(path, environ, start_response, lookup):
+    # verify that the path is reasonable
+    head, tail = os.path.split(path)
+    if head != 'clear':  # don't do anything
+        resp = NotFound(environ["PATH_INFO"])
+        return resp(environ, start_response)
 
-def display_log(environ, start_response, lookup):
+    create_rp_tar_archive(tail, True)
+
+    wd = os.getcwd()
+    _dir = os.path.join(wd, 'log', tail)
+    if os.path.isdir(_dir):
+        shutil.rmtree(_dir)
+
+    return display_log('log', environ, start_response, lookup)
+
+
+def make_tar(path, environ, start_response, lookup):
+    # verify that the path is reasonable
+    head, tail = os.path.split(path)
+    if head != 'mktar':  # don't do anything
+        resp = NotFound(environ["PATH_INFO"])
+        return resp(environ, start_response)
+
+    tpath = create_rp_tar_archive(tail)
+
+    # Do a redirect to where the tarfile resides ?
+    resp = SeeOther(tpath)
+    return resp(environ, start_response)
+
+
+def display_log(path, environ, start_response, lookup):
     """
     path = 'log' or path = 'log/tester_id' or path = 'log/tester_id/test_id
 
@@ -323,7 +358,6 @@ def display_log(environ, start_response, lookup):
     :param lookup:
     :return:
     """
-    path = environ.get('PATH_INFO', '').lstrip('/')
     if path == "logs":
         path = "log"
 

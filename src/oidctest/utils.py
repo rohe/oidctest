@@ -2,6 +2,8 @@ import logging
 import os
 import pkgutil
 import tarfile
+
+import time
 from six.moves.urllib.parse import quote_plus
 # from urllib.parse import quote_plus
 
@@ -23,16 +25,17 @@ def setup_logging(logfile, log):
     log.setLevel(logging.DEBUG)
 
 
-def mk_tardir(issuer, test_profile):
+def mk_tardir(*args):
     wd = os.getcwd()
 
+    _args = list(args)
     tardirname = wd
-    for part in ["tar", issuer, test_profile]:
+    for part in _args:
         tardirname = os.path.join(tardirname, part)
         if not os.path.isdir(tardirname):
             os.mkdir(tardirname)
 
-    logdirname = os.path.join(wd, "log", issuer, test_profile)
+    logdirname = os.path.join(wd, "log", _args[-1])
     for item in os.listdir(logdirname):
         if item.startswith("."):
             continue
@@ -62,6 +65,43 @@ def create_tar_archive(issuer, test_profile):
             tar.add(fn)
     tar.close()
     os.chdir(wd)
+
+
+def create_rp_tar_archive(userid, backup=False):
+    # links all the logfiles in log/<tester_id>/<test_id> to
+    # tar/<tester_id>/<test_id>
+    #mk_tardir('backup', userid)
+
+    wd = os.getcwd()
+    if backup:
+        _dir = os.path.join(wd, "backup", userid)
+        tname = "{}.{}.tar".format(userid, time.time())
+        tpath = '/{}/{}'.format('backup', tname)
+    else:
+        _dir = os.path.join(wd, "tar")
+        tname = "{}.tar".format(userid)
+        tpath = '/{}/{}'.format('tar', tname)
+
+    if not os.path.isdir(_dir):
+        os.makedirs(_dir)
+
+    os.chdir(_dir)
+
+    tar = tarfile.open(tname, "w")
+
+    os.chdir(os.path.join(wd, 'log'))
+    for item in os.listdir(userid):
+        if item.startswith("."):
+            continue
+
+        fn = os.path.join(userid, item)
+
+        if os.path.isfile(fn):
+            tar.add(fn)
+    tar.close()
+    os.chdir(wd)
+
+    return tpath
 
 
 def not_logging(logfile, logger):

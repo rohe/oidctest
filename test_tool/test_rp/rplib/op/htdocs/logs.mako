@@ -30,6 +30,18 @@
     <h1>OpenID Certification OP Test logs</h1>
     <h3>A list of test results that are saved on disc:</h3>
     ${display_log(testid, logs)}
+      % if testid != '':
+          <%
+              cl_url = "/clear%s" % (testid)
+              tar_url = "/mktar%s" % (testid)
+              %>
+          <p>
+              <a href=${cl_url}><b>Clear all test logs</b></a>
+          </p>
+          <p>
+              <a href=${tar_url}><b>Download tar file</b></a>
+          </p>
+      % endif
   </div>
 
 </div> <!-- /container -->
