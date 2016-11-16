@@ -8,8 +8,10 @@ import logging
 import argparse
 
 from future.backports.urllib.parse import urlparse
+from oic.oic import Client
 
 from oic.utils.keyio import build_keyjar
+from otest.aus.client import Factory
 
 from otest.parse_cnf import parse_yaml_conf
 from otest.common import setup_logger
@@ -128,7 +130,9 @@ if __name__ == '__main__':
         "client_info": _client_info, "order": FLOWS['Order'],
         "desc": FLOWS['Desc'], "profiles": profiles, "operation": oper,
         "msg_factory": oic_message_factory, "check_factory": check.factory,
-        "cache": {}, 'profile_handler': SimpleProfileHandler}
+        "cache": {}, 'profile_handler': SimpleProfileHandler,
+        'client_factory': Factory(Client)
+    }
 
     if cargs.test_id:
         rtypes = []
