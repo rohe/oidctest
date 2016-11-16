@@ -17,7 +17,6 @@ from otest.result import get_issuer
 
 from oidctest.op.check import get_id_tokens
 from oidctest.op.prof_util import map_prof
-from oidctest.op.tool import get_redirect_uris
 
 from past.types import basestring
 
@@ -98,7 +97,7 @@ def check_support(oper, args):
 
 def set_principal(oper, args):
     try:
-        _val = getattr(oper.conf, args['param'])
+        _val = oper.conf.TOOL[args['param']]
     except KeyError:
         raise ConfigurationError("Missing parameter: %s" % args["param"])
     else:
