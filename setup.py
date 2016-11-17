@@ -25,7 +25,7 @@ setup(
     description="Test framework for testing OpenID Connect provider and "
                 "relaying party implementations",
     author="Roland Hedberg",
-    author_email="roland.hedberg@umu.se",
+    author_email="roland@catalogix.se",
     license="Apache 2.0",
     packages=find_packages('src'),
     package_dir={"": "src"},
