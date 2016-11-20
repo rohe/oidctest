@@ -52,12 +52,38 @@
     return "\n".join(elements)
 %>
 
+<%!
+  from oic.oauth2 import Message
+  from otest import jsonconv
+
+  def print_events(events):
+    elements = ['<style> table { table-layout: fixed; table th, table td { overflow: hidden; } </style>', '<table class="table table-bordered">', "<thead>", '<tr><th style="width: 5%">Elapsed time</th>', '<th style="width: 15%">Event</th>', '<th style="width: 50%">Info</th></tr></thead>']
+    for cl,typ,data in events:
+      if isinstance(data, Message):
+        _dat = jsonconv.json2html.convert(data.to_json())
+          # root_table_attributes='class="table table-bordered"')
+        elements.append('<tr><td>{}</td><td>{}</td><td>{}</td></tr>'.format(
+          round(cl,3),typ,_dat))
+      else:
+        elements.append('<tr>')
+        if typ == 'http request':
+          elements.append('<div class="bg-success text-white">')
+        elements.append('<td>{}</td><td>{}</td><td>{}</td>'.format(
+          round(cl,3),typ,data))
+        if typ == 'http request':
+          elements.append('</div>')
+        elements.append('</tr>')
+    elements.append('</table')
+    return "\n".join(elements)
+%>
+
 
 <!DOCTYPE html>
 <html>
 <head>
   <title>HEART OIDC RP Tests</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+  <meta name="viewport" content="initial-scale=1.0">
   ${boot_strap(base)}
   <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!--[if lt IE 9]>
@@ -102,14 +128,10 @@
 <!-- Main component for a primary marketing message or call to action -->
 <div class="jumbotron">
   ${print_dict(profile)}
-  <hr>
-  % for item in trace:
-    ${item}<br>
-  % endfor
-  <hr>
-  ${events}
-  <hr>
-  ${result}
+  <p>
+  ${print_events(events)}
+  <p>
+  <b>${result}</b>
 </div>
 ${postfix(base)}
 </body>
