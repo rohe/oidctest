@@ -1,8 +1,13 @@
 #!/usr/bin/env python
+import importlib
 import logging
 
 import argparse
+
+from mako.lookup import TemplateLookup
 from otest.utils import setup_logging
+
+from oidctest.app_conf import Application
 
 logger = logging.getLogger(__name__)
 
@@ -11,17 +16,9 @@ if __name__ == '__main__':
     from cherrypy import wsgiserver
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-k', dest='insecure', action='store_true')
-    parser.add_argument('-o', dest='operations')
-    parser.add_argument('-f', dest='flows', action='append')
-    parser.add_argument('-p', dest='profile')
-    parser.add_argument('-P', dest='profiles')
-    parser.add_argument('-M', dest='makodir')
-    parser.add_argument('-S', dest='staticdir')
-    parser.add_argument('-s', dest='tls', action='store_true')
-    parser.add_argument(
-        '-x', dest='xport', action='store_true', help='ONLY for testing')
-    parser.add_argument('-m', dest='path2port')
+    parser.add_argument('-p', dest='port', default=80)
+    parser.add_argument('-t', dest='tls', action='store_true')
+    parser.add_argument('-T', dest='template_dir', action='store_true')
     parser.add_argument(dest="config")
     args = parser.parse_args()
 
@@ -34,13 +31,24 @@ if __name__ == '__main__':
 
     setup_logging("conf.log", logger)
 
-    app = Application(sessionhandler=SessionHandler, webio=WebIO,
-                        webtester=WebTester, check=check, webenv=app_args,
-                        pick_grp=pick_grp, path=_path)
+    _conf = importlib.import_module(args.config)
+
+    if args.template_dir:
+        _dir = args.template_dir
+    else:
+        _dir = _conf.TEMPLATE_DIR
+
+    mako_lookup = TemplateLookup(
+        directories=[_dir + 'templates', _dir + 'htdocs'],
+        module_directory=_dir + 'modules', input_encoding='utf-8',
+        output_encoding='utf-8')
+
+    app = Application(mako_lookup, def_conf=_conf.DEFAULT_CONFIG_FILE,
+                      ent_path=_conf.ENT_PATH)
 
     SRV = wsgiserver.CherryPyWSGIServer(
-        ('0.0.0.0', _conf.PORT),
-        SessionMiddleware(WA.application, session_opts))
+        ('0.0.0.0', int(args.port)),
+        SessionMiddleware(app.application, session_opts))
 
     if args.tls:
         from cherrypy.wsgiserver.ssl_builtin import BuiltinSSLAdapter
@@ -51,9 +59,9 @@ if __name__ == '__main__':
     else:
         extra = ""
 
-    txt = "OP test server started, listening on port:%s%s" % (_conf.PORT, extra)
+    txt = "Configuration server started, listening on port:%s%s" % (
+        args.port, extra)
     logger.info(txt)
-    print(app_args['client_info']['base_url'])
     print(txt)
     try:
         SRV.start()
