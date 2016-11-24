@@ -161,7 +161,7 @@ Flows:
         err_status: 3
   OP-Discovery-WebFinger:
     desc: Can discover identifiers using URL syntax [Dynamic]
-    profile: ..T...+
+    profile: .T....+
     sequence:
       - Webfinger:
           set_principal:
@@ -169,7 +169,7 @@ Flows:
     assert: null
   OP-Discovery-WebFinger-Email:
     desc: Can discover identifiers using e-mail syntax [Dynamic]
-    profile: ..T...+
+    profile: .T....+
     sequence:
       - Webfinger:
           set_principal:
@@ -252,7 +252,7 @@ Flows:
     desc: Asymmetric ID Token signature with RS256 [Dynamic]
     mti:
       all: MUST
-    profile: ..T.s
+    profile: ...T.s
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -382,7 +382,7 @@ Flows:
       verify-signed-idtoken-has-kid: null
   OP-IDToken-none:
     desc: Unsecured ID Token signature with null [Basic]
-    profile: .T.T.T.n
+    profile: ...T.n
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -513,7 +513,7 @@ Flows:
     desc: Verify that registration_endpoint is published [Dynamic]
     mti:
       Dynamic: MUST
-    profile: ..T.T
+    profile: ..T.
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -704,7 +704,7 @@ Flows:
     note: This test verifies that an OP displays a link to the RP's policy document.
       To make sure you get a fresh login page, you need to remove any cookies you may
       have received from the OP before proceeding.
-    profile: ..T.
+    profile: ...T
     sequence:
       - Note
       - Webfinger:
@@ -1105,7 +1105,7 @@ Flows:
       the server to rotate the keys while running the test, then you will have to self-assert
       that your deployment can do OP signing key rotation as part of your certification
       application.
-    profile: ..T.T.s
+    profile: ..T..s
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -1201,7 +1201,7 @@ Flows:
         status: 2
   OP-UserInfo-Enc:
     desc: Can provide encrypted UserInfo response [Extra]
-    profile: C,IT,CI,CT,CIT....e.+
+    profile: C,IT,CI,CT,CIT...T.e.+
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -1304,7 +1304,7 @@ Flows:
           - OpenIDSchema
   OP-UserInfo-SigEnc:
     desc: Can provide signed and encrypted UserInfo response [Extra]
-    profile: C,IT,CI,CT,CIT....se.+
+    profile: C,IT,CI,CT,CIT...T.se.+
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -2022,7 +2022,7 @@ Flows:
           - invalid_redirect_uri
   OP-request-Sig:
     desc: Support request request parameter with signed request [Extra]
-    profile: '....s.+'
+    profile: '...T.s.+'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -2046,7 +2046,7 @@ Flows:
           - request_not_supported
   OP-request-Support:
     desc: Support request request parameter [Extra]
-    profile: '.....+'
+    profile: '..T...+'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -2058,7 +2058,7 @@ Flows:
   OP-request-Unsigned:
     desc: Support request request parameter with unsigned request [Basic, Implicit,
       Hybrid, Dynamic]
-    profile: '...'
+    profile: '...T'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -2172,7 +2172,7 @@ Flows:
           - request_uri_not_supported
   OP-request_uri-Support:
     desc: Support request_uri request parameter [Dynamic]
-    profile: '...T'
+    profile: '..T.'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -2184,7 +2184,7 @@ Flows:
   OP-request_uri-Unsigned:
     desc: Support request_uri request parameter with unsigned request [Basic, Implicit,
       Hybrid]
-    profile: '...F'
+    profile: '...T'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
