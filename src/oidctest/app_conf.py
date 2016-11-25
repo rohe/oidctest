@@ -51,8 +51,8 @@ def create_model(profile, tag='default'):
     p = profile.split('.')
     res['tool']['profile'] = profile
     res['tool']['issuer'] = 'Your OPs issuer id goes here'
-    res['tool']['tag'] = 'default'
 
+    res['tool']['tag'] = tag
     if p[2] == 'F':
         econf = empty_conf(ProviderConfigurationResponse)
         try:
@@ -260,11 +260,18 @@ class Application(object):
             resp = NotFound()
             return resp(io.environ, io.start_response)
 
-    def do_entity_configuration(self, io):
+    def basic_entity_configuration(self, io):
         q = parse_qs(io.environ.get('QUERY_STRING'))
-        fp = open(self.def_conf, 'r')
-        _ent_conf = json.load(fp)
-        fp.close()
+
+        # construct profile
+        profile = [q['return_type'][0]]
+        for p in ['webfinger', 'discovery', 'registration']:
+            if p in q:
+                profile.append('T')
+            else:
+                profile.append('F')
+
+        ent_conf = create_model(profile)
 
         _ent_conf['tool']['instance_id'] = q['tag'][0]
         _ent_conf['tool']['issuer'] = q['iss'][0]
@@ -312,7 +319,7 @@ class Application(object):
         elif path.startswith('form/'):
             return self.form_handling(path, _io)
         elif path == 'create':
-            loc = self.do_entity_configuration(_io)
+            loc = self.basic_entity_configuration(_io)
             resp = SeeOther(loc)
             return resp(_io.environ, _io.start_response)
         elif path.startswith('model/'):
