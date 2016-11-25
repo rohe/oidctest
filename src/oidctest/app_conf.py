@@ -116,9 +116,14 @@ class REST(object):
         """
         fname = self.entity_file_name(qiss, qtag)
         if fname:
-            _data = open(fname, 'r').read()
-            _js = json.loads(_data)
-            return _js
+            try:
+                _data = open(fname, 'r').read()
+            except FileNotFoundError:
+                return None
+            try:
+                return json.loads(_data)
+            except Exception as err:
+                return None
         else:
             return None
 
@@ -168,7 +173,7 @@ class REST(object):
         fname = self.entity_file_name(qiss, qtag)
         if os.path.isfile(fname):
             os.unlink(fname)
-            return True
+        # If it doesn't exit don't tell because it leaks information.
         return Response('OK')
 
     def write(self, qiss, qtag, ent_conf):
@@ -361,11 +366,12 @@ class Application(object):
             _iss, _tag = get_iss_and_tag(path)
             _qiss = quote_plus(_iss)
             _qtag = quote_plus(_tag)
+            _path = '/{}/{}'.format(_qiss, _qtag)
             _met = environ.get('REQUEST_METHOD')
             if _met == 'GET':
-                resp = self.rest.read(_qiss, _qtag, path)
+                resp = self.rest.read(_qiss, _qtag, _path)
             elif _met == 'POST':
-                resp = self.rest.replace(_qiss, _qtag, get_post(environ), path)
+                resp = self.rest.replace(_qiss, _qtag, get_post(environ), _path)
             elif _met == 'PUT':
                 resp = self.rest.store(_qiss, _qtag, get_post(environ))
             elif _met == 'DELETE':
