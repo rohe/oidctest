@@ -20,9 +20,30 @@
 %>
 
 <%
-    def form_action(base):
-        return '<form action="{}/create" method="post">'.format(base)
-%>
+  def display_form(headline, dic):
+    lines = ['<h3>{}</h3>'.format(headline)]
+    lines.append('<table>')
+    for key, val in dic.items():
+      lines.append('<tr><th>{}</th><td><input type="text" name="{}" value="{}"></td></tr>'.format(key,key,val))
+    lines.append('</table>')
+    return lines
+
+  headline = {
+    'tool': "",
+    "registration_response": "",
+    "provider_info": ""
+    }
+
+  def display(base, iss, tag, dicts):
+    lines = []
+    lines.append('<form action="{}/{}/{}" method="post">'.format(base,iss,tag))
+    for item, info in dicts.items():
+      lines.append('<br>')
+      lines.extend(display_form(headline[item], info))
+    lines.append('<input type="submit" value="Submit">')
+    lines.append('</form>')
+    return "\n".join(lines)
+  %>
 
 <!DOCTYPE html>
 <html>
@@ -75,26 +96,11 @@
 <div class="jumbotron">
   <h2>OpenID Connect Provider Certification</h2>
         <br>
-
         <p>
-            This is a tool used for testing the compliance of an OpenID Connect Provider with the
-            OpenID Connect specifications. In order to start testing you need to configure a test
-            instance. Enter the issuer URL to the OpenID Connect Provider you want to test.
+            On this page you are expected to configure your instance of the test tool
         </p>
         <br>
-  ${form_action(base)}
-    <b>Issuer URL (without .well-known):</b>
-    <input type="text" name="issuer_id">
-    <p>
-      Chose what your OP supports:
-      <ul>
-  <li><input type="checkbox" name="webfinger">WebFinger</li>
-  <li><input type="checkbox" name="discovery">Dynamic Provider Information discovery</li>
-  <li><input type="checkbox" name="registration">Dynamic Client Registration</li>
-</ul>
-      </p>
-    <input type="submit" value="Submit">
-  </form>
+      ${display(base, iss, tag, dicts)}
 </div>
 <script src="/static/jquery.min.1.9.1.js"></script>
 <script src="/static/bootstrap/js/bootstrap.min.js"></script>

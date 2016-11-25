@@ -83,19 +83,24 @@
         </p>
         <br>
   ${form_action(base)}
-    <b>Issuer URL (without .well-known):</b>
+    <h3>Issuer URL (without .well-known):</h3>
     <input type="text" name="iss">
-    <b>An identifier of this specific configuration in the case that you want to have more then one</b>
+    <br>
+    <h3>An identifier of this specific configuration in the case that you want to have more then one</h3>
     <input type="text" name="tag" value="default">
+  <br>
     <p>
-      Chose what your OP supports:
+      Choose what your OP supports:
       <table border="1">
-            <tr><th>WebFinger</th><td><input type="checkbox" name="webfinger"></td></tr>
+            <tr><th>WebFinger</th><td style="width:30px"><input type="checkbox" name="webfinger"></td></tr>
             <tr><th>Dynamic Provider Information discovery</th><td><input type="checkbox" name="discovery"></td></tr>
             <tr><th>Dynamic Client Registration</th><td><input type="checkbox" name="registration"></td></tr>
     </table>
+  <br>
+  <h3>Choose a return type</h3>
+  <br>
     <table broder="1">
-            <tr><th>Return type</th><td>
+            <tr><th style="width:100px">Return type</th><td>
                 <input type="radio" name="return_type" value="C"> Code <br>
                 <input type="radio" name="return_type" value="I"> IdToken <br>
                 <input type="radio" name="return_type" value="IT"> IdToken Token <br>
