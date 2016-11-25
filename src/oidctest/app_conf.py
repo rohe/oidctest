@@ -7,7 +7,7 @@ from future.backports.urllib.parse import quote_plus
 from future.backports.urllib.parse import unquote_plus
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationRequest
-from oic.utils.http_util import get_post, BadRequest, ServiceError
+from oic.utils.http_util import get_post, BadRequest, ServiceError, Created
 from oic.utils.http_util import NotFound
 from oic.utils.http_util import Response
 from oic.utils.http_util import SeeOther
@@ -21,12 +21,13 @@ tool_conf = ['acr_values', 'claims_locales', 'instance_id', 'issuer',
 
 def get_iss_and_tag(path):
     p = path.split('/')
+
     try:
-        iss = p[2]
+        iss = p[-2]
     except IndexError:
         iss = ''
     try:
-        tag = p[3]
+        tag = p[-1]
     except IndexError:
         tag = ''
 
@@ -83,7 +84,8 @@ def verify_profile(profile):
 
 
 class REST(object):
-    def __init__(self, entpath='entities'):
+    def __init__(self, base_url, entpath='entities'):
+        self.base_url = base_url
         self.entpath = entpath
 
     def entity_file_name(self, iss, tag):
@@ -105,38 +107,69 @@ class REST(object):
     def entity_dir(self, iss):
         return os.path.join(self.entpath, iss)
 
-    def read(self, iss, tag):
-        fname = self.entity_file_name(iss, tag)
+    def read_conf(self, qiss, qtag):
+        """
+
+        :param qiss: OP issuer qoute_plus converted
+        :param qtag: test instance tag quote_plus converted
+        :return: Returns the instance configuration as a dictionary
+        """
+        fname = self.entity_file_name(qiss, qtag)
         if fname:
-            fp = open(fname, 'r')
-            _data = json.load(fp)
-            fp.close()
-            return _data
+            _data = open(fname, 'r').read()
+            _js = json.loads(_data)
+            return _js
         else:
             return None
 
-    def replace(self, qiss, qtag, info):
+    def read(self, qiss, qtag, path):
+        """
+
+        :param qiss: OP issuer qoute_plus converted
+        :param qtag: test instance tag quote_plus converted
+        :param path: The HTTP request path
+        :return: A HTTP response
+        """
+        _jsinfo = self.read_conf(qiss, qtag)
+        if _jsinfo:
+            resp = Response(json.dumps(_jsinfo), content='application/json')
+        else:
+            resp = NotFound('Could not find {}'.format(path))
+        return resp
+
+    def replace(self, qiss, qtag, info, path):
         # read entity configuration and replace if changed
         try:
             _js = json.loads(info)
         except Exception as err:
-            resp = BadRequest(err)
-            return
+            return BadRequest(err)
+
+        _js0 = self.read_conf(qiss, qtag)
+        if _js == _js0:  # don't bother
+            pass
         else:
-            self.write(qiss, qtag, _js)
-            resp = Response()
-        return resp
+            self.write(qiss, qtag, json.dumps(_js))
+
+        return Response('OK')
 
     def store(self, qiss, qtag, info):
-        pass
+        """
+
+        :param qiss: OP issuer qoute_plus converted
+        :param qtag: test instance tag quote_plus converted
+        :param info: test instance configuration as JSON document
+        :return: HTTP Created is successful
+        """
+        self.write(qiss, qtag, info)
+        fname = '{}{}/{}'.format(self.base_url, qiss, qtag)
+        return Created(fname)
 
     def delete(self, qiss, qtag):
         fname = self.entity_file_name(qiss, qtag)
         if os.path.isfile(fname):
             os.unlink(fname)
             return True
-        else:
-            return False
+        return Response('OK')
 
     def write(self, qiss, qtag, ent_conf):
         fdir = self.entity_dir(qiss)
@@ -145,7 +178,10 @@ class REST(object):
 
         fname = os.path.join(fdir, qtag)
         fp = open(fname, 'w')
-        json.dump(ent_conf, fp)
+        if isinstance(ent_conf, dict):
+            json.dump(ent_conf, fp)
+        else:
+            fp.write(ent_conf)
         fp.close()
 
 
@@ -238,12 +274,11 @@ class IO(object):
 
 
 class Application(object):
-    def __init__(self, baseurl, lookup, def_conf, ent_path):
+    def __init__(self, baseurl, lookup, ent_path):
         self.baseurl = baseurl
         self.lookup = lookup
-        self.def_conf = def_conf
         # self.ent_path = ent_path
-        self.rest = REST(ent_path)
+        self.rest = REST(baseurl, ent_path)
 
     def form_handling(self, path, io):
         iss, tag = get_iss_and_tag(path)
@@ -264,32 +299,19 @@ class Application(object):
         q = parse_qs(io.environ.get('QUERY_STRING'))
 
         # construct profile
-        profile = [q['return_type'][0]]
+        ppiece = [q['return_type'][0]]
         for p in ['webfinger', 'discovery', 'registration']:
             if p in q:
-                profile.append('T')
+                ppiece.append('T')
             else:
-                profile.append('F')
+                ppiece.append('F')
 
-        ent_conf = create_model(profile)
+        profile = '.'.join(ppiece)
+        _ent_conf = create_model(profile)
 
         _ent_conf['tool']['instance_id'] = q['tag'][0]
         _ent_conf['tool']['issuer'] = q['iss'][0]
-        profile = [q['return_type'][0]]
-        for p in ['webfinger', 'discovery', 'registration']:
-            if p in q:
-                profile.append('T')
-            else:
-                profile.append('F')
-
-        _ent_conf['tool']['profile'] = '.'.join(profile)
-
-        if 'registration' not in q:
-            _ent_conf['client']['registration_response'] = empty_conf(
-                RegistrationRequest)
-        if 'discovery' not in q:
-            _ent_conf['client']['provider_info'] = empty_conf(
-                ProviderConfigurationResponse)
+        _ent_conf['tool']['profile'] = profile
 
         _qiss = quote_plus(q['iss'][0])
         _qtag = quote_plus(q['tag'][0])
@@ -337,15 +359,18 @@ class Application(object):
         else:
             # check if this a REST request
             _iss, _tag = get_iss_and_tag(path)
-            try:
-                _conf = self.rest.read(
-                    quote_plus(unquote_plus(_iss)),
-                    quote_plus(unquote_plus(_tag)))
-            except:
-                resp = NotFound(path)
-                return resp(environ, start_response)
+            _qiss = quote_plus(_iss)
+            _qtag = quote_plus(_tag)
+            _met = environ.get('REQUEST_METHOD')
+            if _met == 'GET':
+                resp = self.rest.read(_qiss, _qtag, path)
+            elif _met == 'POST':
+                resp = self.rest.replace(_qiss, _qtag, get_post(environ), path)
+            elif _met == 'PUT':
+                resp = self.rest.store(_qiss, _qtag, get_post(environ))
+            elif _met == 'DELETE':
+                resp = self.rest.delete(_qiss, _qtag)
             else:
-                if environ.get('REQUEST_METHOD') == 'POST':
-                    self.rest.replace(quote_plus(unquote_plus(_iss)),
-                                      quote_plus(unquote_plus(_tag)),
-                                      get_post(environ))
+                resp = BadRequest('Unsupported request method')
+
+            return resp(environ, start_response)

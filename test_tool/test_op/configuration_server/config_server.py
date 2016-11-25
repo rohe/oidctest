@@ -59,7 +59,6 @@ if __name__ == '__main__':
         output_encoding='utf-8')
 
     app = Application(_base_url, mako_lookup,
-                      def_conf=_conf.DEFAULT_CONFIG_FILE,
                       ent_path=_conf.ENT_PATH)
 
     SRV = wsgiserver.CherryPyWSGIServer(
