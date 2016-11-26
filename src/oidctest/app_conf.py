@@ -43,8 +43,10 @@ def empty_conf(cls):
 def create_model(profile, tag='default'):
     """
 
-    :param profile:
-    :return:
+    :param profile:  test instance profile
+    :param tag:  test instance tag
+    :return:  json document that can be used as a model for creating a
+        test instance configuration
     """
     res = {}
     _tool = json.load(open('entity_info/tool.json', 'r'))
@@ -106,6 +108,16 @@ class REST(object):
 
     def entity_dir(self, iss):
         return os.path.join(self.entpath, iss)
+
+    def construct_config(self, qiss, qtag):
+        _conf = json.loads(open('entity_info/common.json', 'r').read())
+        _econf = self.read_conf(qiss, qtag)
+        if _econf['tool']['profile'].split('.')[-1] == 'T':
+            reg_info = json.loads(
+                open('entity_info/registration_info.json', 'r').read())
+            _conf['client']['registration_info'] = reg_info['registration_info']
+        _conf['tool'] = _econf['tool']
+        return _conf
 
     def read_conf(self, qiss, qtag):
         """
