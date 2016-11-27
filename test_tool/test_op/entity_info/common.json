@@ -1,34 +1,4 @@
 {
-  "keys": [
-    {
-      "key": "../keys/enc.key",
-      "type": "RSA",
-      "use": [
-        "enc"
-      ]
-    },
-    {
-      "key": "../keys/sig.key",
-      "type": "RSA",
-      "use": [
-        "sig"
-      ]
-    },
-    {
-      "crv": "P-256",
-      "type": "EC",
-      "use": [
-        "sig"
-      ]
-    },
-    {
-      "crv": "P-256",
-      "type": "EC",
-      "use": [
-        "enc"
-      ]
-    }
-  ],
   "client": {
     "behaviour": {
       "scope": [

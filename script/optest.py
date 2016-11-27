@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-
+import importlib
 import os
 import argparse
 import logging
 
+import sys
+from future.backports.urllib.parse import quote_plus
 from oic.oic import Client
 from oic.oic.message import factory as oic_message_factory
 
@@ -14,6 +16,7 @@ from otest.conf_setup import construct_app_args
 from otest.utils import SERVER_LOG_FOLDER, setup_logging
 from otest.utils import setup_common_log
 
+from oidctest.app_conf import REST
 from oidctest.op import check
 from oidctest.op import oper
 from oidctest.op import func
@@ -60,13 +63,14 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-k', dest='insecure', action='store_true')
-    parser.add_argument('-o', dest='operations')
+    parser.add_argument('-i', dest='issuer')
     parser.add_argument('-f', dest='flows', action='append')
-    parser.add_argument('-p', dest='profile')
-    parser.add_argument('-P', dest='profiles')
+    parser.add_argument('-p', dest='port', type=int)
+    parser.add_argument('-P', dest='profile')
     parser.add_argument('-M', dest='makodir')
     parser.add_argument('-S', dest='staticdir')
     parser.add_argument('-s', dest='tls', action='store_true')
+    parser.add_argument('-t', dest='tag')
     parser.add_argument(
         '-x', dest='xport', action='store_true', help='ONLY for testing')
     parser.add_argument('-m', dest='path2port')
@@ -80,7 +84,24 @@ if __name__ == '__main__':
         'session.timeout': 900
     }
 
-    _path, app_args = construct_app_args(args, oper, func, profiles)
+    sys.path.insert(0, ".")
+    CONF = importlib.import_module(args.config)
+
+    rest = REST(None, CONF.ENT_PATH, CONF.ENT_INFO)
+    if args.tag:
+        qtag = quote_plus(args.tag)
+    else:
+        qtag = 'default'
+
+    ent_conf = None
+    try:
+        ent_conf = rest.construct_config(quote_plus(args.issuer), qtag)
+    except Exception as err:
+        print(err)
+        exit()
+
+    _path, app_args = construct_app_args(args, CONF, oper, func, profiles,
+                                         ent_conf)
     _conf = app_args['conf']
 
     # Application arguments
@@ -92,14 +113,14 @@ if __name__ == '__main__':
     if args.insecure:
         app_args['client_info']['verify_ssl'] = False
 
-    setup_logging("%s/rp_%s.log" % (SERVER_LOG_FOLDER, _conf.PORT), logger)
+    setup_logging("%s/rp_%s.log" % (SERVER_LOG_FOLDER, args.port), logger)
 
     WA = WebApplication(sessionhandler=SessionHandler, webio=WebIO,
                         webtester=WebTester, check=check, webenv=app_args,
                         pick_grp=pick_grp, path=_path)
 
     SRV = wsgiserver.CherryPyWSGIServer(
-        ('0.0.0.0', _conf.PORT),
+        ('0.0.0.0', args.port),
         SessionMiddleware(WA.application, session_opts))
 
     if args.tls:
@@ -111,9 +132,9 @@ if __name__ == '__main__':
     else:
         extra = ""
 
-    txt = "OP test server started, listening on port:%s%s" % (_conf.PORT, extra)
+    txt = "OP test server started, listening on port:%s%s" % (args.port, extra)
     logger.info(txt)
-    print(app_args['client_info']['base_url'])
+    print('base_url: {}'.format(app_args['client_info']['base_url']))
     print(txt)
     try:
         SRV.start()

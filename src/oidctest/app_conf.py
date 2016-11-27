@@ -2,6 +2,7 @@ import json
 import logging
 import os
 
+import sys
 from future.backports.urllib.parse import parse_qs
 from future.backports.urllib.parse import quote_plus
 from future.backports.urllib.parse import unquote_plus
@@ -86,9 +87,10 @@ def verify_profile(profile):
 
 
 class REST(object):
-    def __init__(self, base_url, entpath='entities'):
+    def __init__(self, base_url, entpath='entities', entinfo='entity_info'):
         self.base_url = base_url
         self.entpath = entpath
+        self.entinfo = entinfo
 
     def entity_file_name(self, iss, tag):
         """
@@ -110,11 +112,13 @@ class REST(object):
         return os.path.join(self.entpath, iss)
 
     def construct_config(self, qiss, qtag):
-        _conf = json.loads(open('entity_info/common.json', 'r').read())
+        _conf = json.loads(
+            open('{}/common.json'.format(self.entinfo), 'r').read())
         _econf = self.read_conf(qiss, qtag)
         if _econf['tool']['profile'].split('.')[-1] == 'T':
             reg_info = json.loads(
-                open('entity_info/registration_info.json', 'r').read())
+                open('{}/registration_info.json'.format(
+                    self.entinfo), 'r').read())
             _conf['client']['registration_info'] = reg_info['registration_info']
         _conf['tool'] = _econf['tool']
         return _conf
@@ -130,8 +134,16 @@ class REST(object):
         if fname:
             try:
                 _data = open(fname, 'r').read()
-            except FileNotFoundError:
-                return None
+            except Exception as err:
+                if sys.version[0] == '2':
+                    if isinstance(err, IOError):
+                        return None
+                    else:
+                        raise
+                elif isinstance(err, FileNotFoundError):
+                    return None
+                else:
+                    raise
             try:
                 return json.loads(_data)
             except Exception as err:
