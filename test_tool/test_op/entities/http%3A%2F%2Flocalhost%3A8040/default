@@ -2,7 +2,8 @@
   "tool": {
     "issuer": "http://localhost:8040",
     "instance_id": "default",
-    "profile": "C.T.T.T"
+    "profile": "C.T.T.T",
+    "webfinger_email": "diana@localhost:8040"
   },
   "client": {
     "registration_info": {

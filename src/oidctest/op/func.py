@@ -32,7 +32,9 @@ def set_webfinger_resource(oper, args):
                                                  "webfinger_email")
             if _base is None:
                 raise AttributeError(
-                    'Trying to run WebFinger without a URI to use')
+                    'If you want to do dynamic webfinger discovery you must '
+                    'define "webfinger_url" or "webfinger_email" in the '
+                    '"tool" configuration')
 
             if oper.conv.operator_id is None:
                 oper.resource = _base
@@ -97,7 +99,7 @@ def check_support(oper, args):
 
 def set_principal(oper, args):
     try:
-        _val = oper.conf.TOOL[args['param']]
+        _val = oper.tool_conf[args['param']]
     except KeyError:
         raise ConfigurationError("Missing parameter: %s" % args["param"])
     else:
