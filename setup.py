@@ -45,5 +45,5 @@ setup(
     ],
     zip_safe=False,
     scripts=['script/optest.py', 'script/make_test_dir.py',
-             'script/oidc_setup.py']
+             'script/oidc_setup.py', 'script/make_entity_info.py']
 )

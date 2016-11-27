@@ -1,0 +1,11 @@
+{
+  "tool": {
+    "webfinger_email": "diana@localhost:8040",
+    "sig": true,
+    "tag": "default",
+    "enc": true,
+    "profile": "C.T.T.T",
+    "extra": false,
+    "issuer": "http://localhost:8040"
+  }
+}

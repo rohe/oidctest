@@ -7,7 +7,7 @@ from future.backports.urllib.parse import parse_qs
 from future.backports.urllib.parse import quote_plus
 from future.backports.urllib.parse import unquote_plus
 from oic.oic import ProviderConfigurationResponse
-from oic.oic import RegistrationRequest
+from oic.oic import RegistrationResponse
 from oic.utils.http_util import get_post, BadRequest, ServiceError, Created
 from oic.utils.http_util import NotFound
 from oic.utils.http_util import Response
@@ -36,12 +36,10 @@ def get_iss_and_tag(path):
 
 
 def empty_conf(cls):
-    res = [(k, '') for k in cls.c_param.keys()]
-    _dres = dict(res)
-    return _dres
+    return dict([(k, '') for k in cls.c_param.keys()])
 
 
-def create_model(profile, tag='default'):
+def create_model(profile, tag='default', ent_info_path='entity_info'):
     """
 
     :param profile:  test instance profile
@@ -50,7 +48,7 @@ def create_model(profile, tag='default'):
         test instance configuration
     """
     res = {}
-    _tool = json.load(open('entity_info/tool.json', 'r'))
+    _tool = json.load(open('{}/tool.json'.format(ent_info_path), 'r'))
     res['tool'] = _tool['tool']
     p = profile.split('.')
     res['tool']['profile'] = profile
@@ -65,7 +63,7 @@ def create_model(profile, tag='default'):
             res['client'] = {'provider_info': econf}
 
     if p[3] == 'F':
-        econf = empty_conf(RegistrationRequest)
+        econf = empty_conf(RegistrationResponse)
         try:
             res['client']['registration_response'] = econf
         except KeyError:

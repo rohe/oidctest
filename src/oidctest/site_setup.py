@@ -1,9 +1,9 @@
-import sys
 import os
 import shutil
 import fileinput
 import filecmp
 import datetime
+import subprocess
 
 
 def modification_date(filename):
@@ -30,32 +30,34 @@ def copy_if_not_same(src, dst, overwrite=False):
 
 
 def oidc_op_setup(distroot):
-    for _dir in ['certs', 'keys', 'server_log', 'log']:
+    for _dir in ['certs', 'keys', 'server_log', 'log', 'entities']:
         if os.path.isdir(_dir) is False:
             os.mkdir(_dir)
 
-    _dir = 'htdocs'
-    _op_dir = os.path.join(distroot, 'test_tool', 'test_op', 'oidc_op',
-                           _dir)
-    if os.path.isdir(_dir) is False:
-        shutil.copytree(_op_dir, _dir)
+    for _dir in ['entity_info']:
+        _op_dir = os.path.join(distroot, 'test_tool', 'test_op', _dir)
+        if os.path.isdir(_dir) is False:
+            shutil.copytree(_op_dir, _dir)
 
-    _dir = 'static'
-    _op_dir = os.path.join(distroot, 'test_tool', 'test_op',
-                           'oidc_op', _dir)
-    if os.path.isdir(_dir) is False:
-        shutil.copytree(_op_dir, _dir)
+    for _dir in ['htdocs', 'static', 'entity_info']:
+        _op_dir = os.path.join(distroot, 'test_tool', 'test_op', 'oidc_op',
+                               _dir)
+        if os.path.isdir(_dir) is False:
+            shutil.copytree(_op_dir, _dir)
 
     _op_dir = os.path.join(distroot, 'test_tool', 'test_op', 'oidc_op')
-    for _fname in ['flows.yaml', 'run.sh', 'sslconf.py']:
+    for _fname in ['flows.yaml', 'run.sh', 'path2port.csv',
+                   'example_config.py']:
         _file = os.path.join(_op_dir, _fname)
         copy_if_not_same(_file, _fname)
 
-    _file = os.path.join(_op_dir, 'config_examples', 'conf_TT.py')
-    if copy_if_not_same(_file, 'example_conf.py'):
-        for line in fileinput.input("example_conf.py", inplace=True):
-            l = line.replace("../keys/", "./keys/").rstrip('\n')
-            print(l)
+    subprocess.call(
+        ["make_entity_info.py", "-i", "https://example.com", "-p", "C.T.T.T",
+         "-s", "-e", "-w", "diana@localhost:8040", "-t", "CTTT"])
+
+    subprocess.call(
+        ["make_entity_info.py", "-i", "https://example.com", "-p", "C.F.T.F",
+         "-t", "CFTF"])
 
 
 def oidc_rpinst_setup(distroot):
@@ -91,4 +93,3 @@ def oidc_rplib_setup(distroot):
     for _fname in ['run.sh', 'example_conf.py', 'test_rp_op.py', 'setup.py']:
         _file = os.path.join(_op_dir, _fname)
         copy_if_not_same(_file, _fname)
-
