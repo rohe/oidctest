@@ -19,7 +19,7 @@ if __name__ == '__main__':
     parser.add_argument('-b', dest='base_url')
     parser.add_argument('-p', dest='port', default=80)
     parser.add_argument('-t', dest='tls', action='store_true')
-    parser.add_argument('-T', dest='template_dir', action='store_true')
+    parser.add_argument('-T', dest='template_dir')
     parser.add_argument(dest="config")
     args = parser.parse_args()
 
@@ -38,6 +38,8 @@ if __name__ == '__main__':
         _dir = args.template_dir
     else:
         _dir = _conf.TEMPLATE_DIR
+    if not _dir.endswith('/'):
+        _dir += '/'
 
     if args.base_url:
         _base_url = args.base_url
@@ -59,7 +61,7 @@ if __name__ == '__main__':
         output_encoding='utf-8')
 
     app = Application(_base_url, mako_lookup,
-                      ent_path=_conf.ENT_PATH)
+                      ent_path=_conf.ENT_PATH, ent_info=_conf.ENT_INFO)
 
     SRV = wsgiserver.CherryPyWSGIServer(
         ('0.0.0.0', int(args.port)),

@@ -301,11 +301,11 @@ class IO(object):
 
 
 class Application(object):
-    def __init__(self, baseurl, lookup, ent_path):
+    def __init__(self, baseurl, lookup, ent_path, ent_info):
         self.baseurl = baseurl
         self.lookup = lookup
         # self.ent_path = ent_path
-        self.rest = REST(baseurl, ent_path)
+        self.rest = REST(baseurl, ent_path, ent_info)
 
     def form_handling(self, path, io):
         iss, tag = get_iss_and_tag(path)

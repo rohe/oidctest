@@ -9,6 +9,6 @@ CERT_CHAIN = None
 VERIFY_SSL = False
 
 BASE_URL = 'http://localhost'
-TEMPLATE_DIR = './'
+TEMPLATE_DIR = './oidf_mako'
 ENT_PATH = '../entities'
 ENT_INFO = '../entity_info'
