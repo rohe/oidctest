@@ -2,12 +2,16 @@ import importlib
 import json
 import logging
 import os
+import re
 import subprocess
 
 import sys
+
+import time
 from future.backports.urllib.parse import parse_qs
 from future.backports.urllib.parse import quote_plus
 from future.backports.urllib.parse import unquote_plus
+from future.types.newstr import unicode
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
 from oic.utils.http_util import get_post, BadRequest, ServiceError, Created
@@ -22,6 +26,8 @@ logger = logging.getLogger(__name__)
 class OutOfRange(Exception):
     pass
 
+
+port_pattern = re.compile('-p (\d*) ')
 
 tool_conf = ['acr_values', 'claims_locales', 'issuer',
              'login_hint', 'profile', 'ui_locales', 'webfinger_email',
@@ -374,6 +380,25 @@ class Application(object):
         if not self.test_tool_base.endswith('/'):
             self.test_tool_base += '/'
 
+        try:
+            byt = subprocess.check_output(['pgrep', '-f', '-l', 'optest.py'],
+                                          universal_newlines=True)
+        except subprocess.CalledProcessError:
+            pass
+        else:
+            lin = unicode(byt)
+            for l in lin.split('\n'):
+                m = port_pattern.search(l)
+                if m:
+                    _port = m.group(1)
+                    try:
+                        for key,val in self.assigned_ports.items():
+                            if val == _port:
+                                self.running_processes[key] = _port
+                                break
+                    except KeyError:
+                        logger.warning('unregistered optest process')
+
     def get_port(self, iss, tag):
         _key = '{}:{}'.format(iss, tag)
         try:
@@ -399,6 +424,9 @@ class Application(object):
                     if _port > self.port_max:
                         raise OutOfRange('Out of ports')
                     self.assigned_ports[_key] = _port
+            fp = open('assigned_ports.json', 'w')
+            fp.write(json.dumps(self.assigned_ports))
+            fp.close()
         return _port
 
     def return_port(self, iss, tag):
@@ -444,14 +472,17 @@ class Application(object):
 
         if False:  # Only on Windows
             DETACHED_PROCESS = 0x00000008
-            pid = subprocess.Popen(args, creationflags=DETACHED_PROCESS).pid
+            process = subprocess.Popen(args, creationflags=DETACHED_PROCESS).pid
         else:
-            pid = subprocess.Popen(args).pid
+            process = subprocess.Popen(args, stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE)
+            #  continues immediately
 
-        if pid:
-            logger.info("process id: {}".format(pid))
-            self.running_processes['{}:{}'.format(iss,tag)] = pid
+        if process.pid:
+            logger.info("process id: {}".format(process.pid))
+            self.running_processes['{}:{}'.format(iss,tag)] = process.pid
 
+        time.sleep(5)
         return url
 
     def form_handling(self, path, io):
