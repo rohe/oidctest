@@ -475,6 +475,10 @@ class Application(object):
         else:
             url = '{}:{}'.format(self.test_tool_base[:-1], _port)
 
+        _econf = self.rest.read_conf(iss, tag)
+        if _econf['tool']['insecure']:
+            args.append('-k')
+
         args.append(self.test_tool_conf)
 
         _key = '{}:{}'.format(iss,tag)

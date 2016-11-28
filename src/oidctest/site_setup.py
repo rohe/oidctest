@@ -37,7 +37,7 @@ def oidc_op_setup(distroot):
 
     os.chdir('server')
 
-    for _dir in ['certs', 'keys', 'server_log', 'log', 'entities']:
+    for _dir in ['certs', 'keys', 'server_log', 'log', 'entities', 'jwks']:
         if os.path.isdir(_dir) is False:
             os.mkdir(_dir)
 
