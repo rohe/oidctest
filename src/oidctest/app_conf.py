@@ -441,9 +441,13 @@ class Application(object):
             subprocess.call(['kill', pid])
 
         logger.info(args)
-        if False:
-        DETACHED_PROCESS = 0x00000008
-        pid = subprocess.Popen(args, creationflags=DETACHED_PROCESS).pid
+
+        if False:  # Only on Windows
+            DETACHED_PROCESS = 0x00000008
+            pid = subprocess.Popen(args, creationflags=DETACHED_PROCESS).pid
+        else:
+            pid = subprocess.Popen(args).pid
+
         if pid:
             logger.info("process id: {}".format(pid))
             self.running_processes['{}:{}'.format(iss,tag)] = pid
