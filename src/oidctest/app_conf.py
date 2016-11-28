@@ -64,7 +64,10 @@ def expand_dict(info):
         if len(val) == 1:
             val = val[0]
         else:
-            val = ','.join(val)
+            if b == 'tag':
+                val = val[0]
+            else:
+                val = ','.join(val)
         if val == 'False':
             val = False
         elif val == 'True':
@@ -369,7 +372,22 @@ class Application(object):
         self.port_min = port_min
         self.port_max = port_max
         self.test_tool_conf = test_tool_conf
-        self.assigned_ports = {}
+
+        try:
+            _ass = open('assigned_ports.json').read()
+        except Exception as err:
+            if sys.version[0] == '2':
+                if isinstance(err, IOError):
+                    self.assigned_ports = {}
+                else:
+                    raise
+            elif isinstance(err, FileNotFoundError):
+                self.assigned_ports = {}
+            else:
+                raise
+        else:
+            self.assigned_ports = json.loads(_ass)
+
         self.running_processes = {}
         # self.ent_path = ent_path
         self.rest = REST(baseurl, ent_path, ent_info)
@@ -391,10 +409,11 @@ class Application(object):
                 m = port_pattern.search(l)
                 if m:
                     _port = m.group(1)
+                    _pid = l.split(' ')[0]
                     try:
                         for key,val in self.assigned_ports.items():
                             if val == _port:
-                                self.running_processes[key] = _port
+                                self.running_processes[key] = _pid
                                 break
                     except KeyError:
                         logger.warning('unregistered optest process')
