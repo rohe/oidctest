@@ -9,7 +9,7 @@ from otest.utils import setup_logging
 
 from oidctest.app_conf import Application
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('')
 
 if __name__ == '__main__':
     from beaker.middleware import SessionMiddleware
@@ -17,6 +17,9 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-b', dest='base_url')
+    parser.add_argument('-c', dest='test_tool_conf')
+    parser.add_argument('-f', dest='flows', action='append')
+    parser.add_argument('-m', dest='path2port')
     parser.add_argument('-p', dest='port', default=80)
     parser.add_argument('-t', dest='tls', action='store_true')
     parser.add_argument('-T', dest='template_dir')
@@ -55,13 +58,31 @@ if __name__ == '__main__':
             else:
                 _base_url = _conf.BASE_URL
 
+    if args.path2port:
+        _p2p = args.path2port
+    else:
+        _p2p = _conf.PATH2PORT
+    if _p2p:
+        port_min = _conf.PORT_MIN
+        port_max = _conf.PORT_MAX
+    else:
+        port_min = port_max = 0
+
+    if args.flows:
+        _flows = args.flows
+    else:
+        _flows = _conf.FLOWS
+
     mako_lookup = TemplateLookup(
         directories=[_dir + 'templates', _dir + 'htdocs'],
         module_directory=_dir + 'modules', input_encoding='utf-8',
         output_encoding='utf-8')
 
     app = Application(_base_url, mako_lookup,
-                      ent_path=_conf.ENT_PATH, ent_info=_conf.ENT_INFO)
+                      ent_path=_conf.ENT_PATH, ent_info=_conf.ENT_INFO,
+                      flows=_flows, path2port=_p2p, mako_dir=_dir,
+                      port_min=port_min, port_max=port_max,
+                      test_tool_conf=args.test_tool_conf)
 
     SRV = wsgiserver.CherryPyWSGIServer(
         ('0.0.0.0', int(args.port)),

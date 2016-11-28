@@ -1,6 +1,8 @@
+import importlib
 import json
 import logging
 import os
+import subprocess
 
 import sys
 from future.backports.urllib.parse import parse_qs
@@ -12,12 +14,18 @@ from oic.utils.http_util import get_post, BadRequest, ServiceError, Created
 from oic.utils.http_util import NotFound
 from oic.utils.http_util import Response
 from oic.utils.http_util import SeeOther
+from otest.rp.setup import read_path2port_map
 
 logger = logging.getLogger(__name__)
 
-tool_conf = ['acr_values', 'claims_locales', 'instance_id', 'issuer',
+
+class OutOfRange(Exception):
+    pass
+
+
+tool_conf = ['acr_values', 'claims_locales', 'issuer',
              'login_hint', 'profile', 'ui_locales', 'webfinger_email',
-             'webfinger_url']
+             'webfinger_url', 'insecure', 'tag']
 
 
 def get_iss_and_tag(path):
@@ -33,6 +41,48 @@ def get_iss_and_tag(path):
         tag = ''
 
     return unquote_plus(iss), unquote_plus(tag)
+
+
+def expand_dict(info):
+    """
+    converts a dictionary with keys of the for a:b to a dictionary of 
+    dictionaries
+    
+    :param info: dictionary 
+    :return: dictionary of dictionaries
+    """
+
+    res = {}
+    for key, val in info.items():
+        a, b = key.split(':')
+        if len(val) == 1:
+            val = val[0]
+        else:
+            val = ','.join(val)
+        if val == 'False':
+            val = False
+        elif val == 'True':
+            val = True
+        try:
+            res[a][b] = val
+        except KeyError:
+            res[a] = {b: val}
+    return res
+
+
+def implode_dict(dictdict):
+    """
+    converts a dictionary of dictionaries into a one level dictionary
+
+    :param dictdict: dictionary
+    :return: dictionary of dictionaries
+    """
+
+    res = {}
+    for key, val in dictdict.items():
+        for a, b in val.items():
+            res['{}:{}'.format(key, a)] = val
+    return res
 
 
 def empty_conf(cls):
@@ -271,7 +321,7 @@ class IO(object):
 
         qiss = quote_plus(iss)
         qtag = quote_plus(tag)
-        _conf = self.rest.read(qiss, qtag)
+        _conf = self.rest.read_conf(qiss, qtag)
         # provider_info and registration_response
         dicts = {'tool': _conf['tool']}
         for item in tool_conf:
@@ -301,11 +351,104 @@ class IO(object):
 
 
 class Application(object):
-    def __init__(self, baseurl, lookup, ent_path, ent_info):
+    def __init__(self, baseurl, lookup, ent_path, ent_info, flows,
+                 path2port=None, mako_dir='', port_min=60000, port_max=61000,
+                 test_tool_conf=''):
         self.baseurl = baseurl
         self.lookup = lookup
+        self.ent_info = ent_info
+        self.flows = flows
+        self.path2port = path2port
+        self.mako_dir = mako_dir
+        self.port_min = port_min
+        self.port_max = port_max
+        self.test_tool_conf = test_tool_conf
+        self.assigned_ports = {}
+        self.running_processes = {}
         # self.ent_path = ent_path
         self.rest = REST(baseurl, ent_path, ent_info)
+
+        sys.path.insert(0, ".")
+        ttc = importlib.import_module(test_tool_conf)
+        self.test_tool_base = ttc.BASE
+        if not self.test_tool_base.endswith('/'):
+            self.test_tool_base += '/'
+
+    def get_port(self, iss, tag):
+        _key = '{}:{}'.format(iss, tag)
+        try:
+            _port = self.assigned_ports[_key]
+        except KeyError:
+            if self.assigned_ports == {}:
+                _port = self.port_min
+                self.assigned_ports[_key] = _port
+            else:
+                pl = list(self.assigned_ports.values())
+                pl.sort()
+                if pl[0] != self.port_min:
+                    _port = self.port_min
+                    self.assigned_ports[_key] = _port
+                else:
+                    _port = self.port_min
+                    for p in pl:
+                        if p == _port:
+                            _port += 1
+                            continue
+                        else:
+                            break
+                    if _port > self.port_max:
+                        raise OutOfRange('Out of ports')
+                    self.assigned_ports[_key] = _port
+        return _port
+
+    def return_port(self, iss, tag):
+        _key = '{}:{}'.format(iss, tag)
+        try:
+            del self.assigned_ports[_key]
+        except KeyError:
+            pass
+
+    def run_test_instance(self, iss, tag):
+        _port = self.get_port(iss, tag)
+        args = ["optest.py", "-i", unquote_plus(iss), "-t", unquote_plus(tag),
+                "-p", str(_port), "-M", self.mako_dir]
+        for _fl in self.flows:
+            args.extend(["-f", _fl])
+        if self.path2port:
+            args.extend(["-m", self.path2port])
+            ppmap = read_path2port_map(self.path2port)
+            try:
+                _path = ppmap[str(_port)]
+            except KeyError:
+                _errtxt = 'Port not in path2port map file {}'.format(
+                    self.path2port)
+                logger.error(_errtxt)
+                return ServiceError(_errtxt)
+            url = '{}{}'.format(self.test_tool_base, _path)
+        else:
+            url = '{}:{}'.format(self.test_tool_base[:-1], _port)
+
+        args.append(self.test_tool_conf)
+
+        _key = '{}:{}'.format(iss,tag)
+        # If already running - kill
+        try:
+            pid = self.running_processes[_key]
+        except KeyError:
+            pass
+        else:
+            logger.info('kill {}'.format(pid))
+            subprocess.call(['kill', pid])
+
+        logger.info(args)
+        if False:
+        DETACHED_PROCESS = 0x00000008
+        pid = subprocess.Popen(args, creationflags=DETACHED_PROCESS).pid
+        if pid:
+            logger.info("process id: {}".format(pid))
+            self.running_processes['{}:{}'.format(iss,tag)] = pid
+
+        return url
 
     def form_handling(self, path, io):
         iss, tag = get_iss_and_tag(path)
@@ -334,9 +477,9 @@ class Application(object):
                 ppiece.append('F')
 
         profile = '.'.join(ppiece)
-        _ent_conf = create_model(profile)
+        _ent_conf = create_model(profile, ent_info_path=self.ent_info)
 
-        _ent_conf['tool']['instance_id'] = q['tag'][0]
+        _ent_conf['tool']['tag'] = q['tag'][0]
         _ent_conf['tool']['issuer'] = q['iss'][0]
         _ent_conf['tool']['profile'] = profile
 
@@ -370,6 +513,20 @@ class Application(object):
         elif path == 'create':
             loc = self.basic_entity_configuration(_io)
             resp = SeeOther(loc)
+            return resp(_io.environ, _io.start_response)
+        elif path.startswith('run/'):
+            _iss, _tag = get_iss_and_tag(path)
+            if _iss == '' or _tag == '':
+                resp = BadRequest('Path must be of the form /run/<iss>/<tag>')
+                return resp(environ, start_response)
+            _qiss = quote_plus(_iss)
+            _qtag = quote_plus(_tag)
+            _info = parse_qs(get_post(environ))
+            ent_conf = expand_dict(_info)
+            self.rest.write(_qiss, _qtag, ent_conf)
+            resp = self.run_test_instance(_qiss, _qtag)
+            if not isinstance(resp, Response):
+                resp = SeeOther(resp)
             return resp(_io.environ, _io.start_response)
         elif path.startswith('model/'):
             p = path.split('/')

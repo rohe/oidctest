@@ -5,6 +5,7 @@
     "issuer": "https://localhost:8040/",
     "sig": false,
     "enc": false,
-    "extra": false
+    "extra": false,
+    "insecure": false
   }
 }
