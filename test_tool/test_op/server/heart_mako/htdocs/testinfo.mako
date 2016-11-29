@@ -1,7 +1,7 @@
 <%!
 
-from aatest.check import STATUSCODE
-from aatest import summation
+from otest.check import STATUSCODE
+from otest import summation
 
 def do_assertions(out):
   return summation.condition(out, True)

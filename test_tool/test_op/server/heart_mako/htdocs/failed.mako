@@ -1,6 +1,6 @@
 <%!
 
-from aatest.check import STATUSCODE
+from otest.check import STATUSCODE
 
 def test_output(out):
     """
