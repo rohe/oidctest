@@ -14,7 +14,6 @@ class Client(oic.Client):
     def store_response(self, clinst, text):
         self.conv.events.store(EV_RESPONSE, text)
         self.conv.events.store(EV_PROTOCOL_RESPONSE, clinst)
-        self.conv.trace.response(clinst)
 
 
 def make_client(**kw_args):

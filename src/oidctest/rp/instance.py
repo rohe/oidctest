@@ -44,7 +44,6 @@ class Instances(object):
         _conv = Conversation(None, op, None)
         _conv.events = self.as_args['event_db']
         _conv.data = self.data
-        op.trace = _conv.trace
 
         sh = SessionHandler(flows=self.flows, order=self.order)
         sh.init_session(self.profile)

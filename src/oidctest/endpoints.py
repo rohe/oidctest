@@ -24,6 +24,7 @@ from oic.oic.provider import UserinfoEndpoint
 from oic.oic.provider import RegistrationEndpoint
 
 from otest import resp2json
+from otest.events import EV_REQUEST_ARGS, EV_RESPONSE, EV_EXCEPTION
 
 from oidctest.utils import create_rp_tar_archive
 
@@ -34,7 +35,7 @@ logger = logging.getLogger(__name__)
 HEADER = "---------- %s ----------"
 
 
-def dump_log(session_info, trace):
+def dump_log(session_info, events):
     try:
         file_name = os.path.join("log", session_info["oper_id"],
                                  session_info["test_id"])
@@ -60,7 +61,7 @@ def dump_log(session_info, trace):
                 file_name, err)
             raise
 
-    fp.write("{0}".format(trace))
+    fp.write("{0}".format(events))
     fp.write("\n\n")
     fp.close()
 
@@ -75,7 +76,7 @@ def find_identifier(uri):
         return l
 
 
-def wsgi_wrapper(environ, start_response, func, session_info, trace, jlog):
+def wsgi_wrapper(environ, start_response, func, session_info, events, jlog):
     kwargs = extract_from_request(environ)
 
     kwargs['test_cnf'] = session_info['test_conf']
@@ -90,7 +91,7 @@ def wsgi_wrapper(environ, start_response, func, session_info, trace, jlog):
                 descr='You should not talk to this endpoint in this test')
             return resp(environ, start_response)
 
-    trace.request(kwargs["request"])
+    events.store(EV_REQUEST_ARGS, kwargs["request"])
     jlog.info({'operation': func.__name__, 'kwargs': kwargs})
     args = func(**kwargs)
 
@@ -98,19 +99,19 @@ def wsgi_wrapper(environ, start_response, func, session_info, trace, jlog):
         resp, state = args
         jlog.info({'response_from': func.__name__, 'response': resp2json(resp),
                    'state': state})
-        trace.reply(resp.message)
-        dump_log(session_info, trace)
+        events.store(EV_RESPONSE, resp.message)
+        dump_log(session_info, events)
         return resp(environ, start_response)
     except TypeError:
         resp = args
         jlog.info({'response_from': func.__name__, 'response': resp2json(resp)})
-        trace.reply(resp.message)
-        dump_log(session_info, trace)
+        events.store(EV_RESPONSE, resp.message)
+        dump_log(session_info, events)
         return resp(environ, start_response)
     except Exception as err:
         jlog.error({'response_from': func.__name__, 'err': err})
-        trace.error("%s" % err)
-        dump_log(session_info, trace)
+        events.store(EV_EXCEPTION, err)
+        dump_log(session_info, events)
         raise
 
 

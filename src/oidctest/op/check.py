@@ -985,13 +985,9 @@ class SingleSignOn(Error):
     cid = "single-sign-on"
 
     def _func(self, conv):
-        logins = 0
+        resps = get_protocol_response(conv, message.AuthorizationResponse)
 
-        for line in conv.trace:
-            if ">> login <<" in line:
-                logins += 1
-
-        if logins > 1:
+        if len(resps) > 1:
             self._message = " ".join(["Multiple authentications when only one",
                                       "was expected"])
             self._status = self.status

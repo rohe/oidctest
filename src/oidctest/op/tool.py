@@ -6,7 +6,6 @@ from otest import exception_trace
 from otest import Trace
 from otest.aus import tool
 from otest.conversation import Conversation
-from otest.aus.client import Factory
 
 from oidctest.op import prof_util
 
@@ -63,8 +62,7 @@ class ClTester(tool.Tester):
             **kw_args['client_info'])
         self.conv = Conversation(_flow, _cli,
                                  msg_factory=kw_args["msg_factory"],
-                                 callback_uris=redirs, trace_cls=Trace,
-                                 opid=kw_args['opid'])
+                                 callback_uris=redirs, opid=kw_args['opid'])
         _cli.conv = self.conv
         _cli.event_store = self.conv.events
         self.conv.entity_config = _c_info
@@ -100,7 +98,7 @@ class WebTester(tool.WebTester):
         _cli, _c_info = self.client_factory.make_client(
             **kw_args['client_info'])
         self.conv = Conversation(_flow, _cli, kw_args["msg_factory"],
-                                 trace_cls=Trace, callback_uris=redirs)
+                                 callback_uris=redirs)
         self.conv.entity_config = _c_info
         self.conv.tool_config = kw_args['tool_conf']
         _cli.conv = self.conv

@@ -22,7 +22,7 @@ from oic.oic.message import RegistrationRequest
 from oic.utils import keyio
 from oic.utils.keyio import keyjar_init, key_summary
 
-from otest.events import EV_HTTP_RESPONSE
+from otest.events import EV_HTTP_RESPONSE, EV_EXCEPTION
 
 __author__ = 'roland'
 
@@ -138,7 +138,6 @@ class Provider(provider.Provider):
         self.claim_access_token = {}
         self.init_keys = []
         self.update_key_use = ""
-        self.trace = None
         for param in ['jwks_name', 'jwks_uri']:
             try:
                 setattr(self, param, kwargs[param])
@@ -188,9 +187,9 @@ class Provider(provider.Provider):
                             use="sig").load_key(P256)
 
             new_keys = {"keys": [key.serialize(private=True)]}
-            self.trace.info("New signing keys: {}".format(new_keys))
+            self.events.store("New signing keys", new_keys)
             self.do_key_rollover(new_keys, "%d")
-            self.trace.info("Rotated signing keys")
+            self.events.store("Rotated signing keys")
 
         if "nokid1jwks" in self.behavior_type:
             kwargs['keys'] = self.no_kid_keys()
@@ -303,8 +302,7 @@ class Provider(provider.Provider):
                     _response.message)
                 for kb in self.keyjar[req_resp["client_id"]]:
                     if kb.imp_jwks:
-                        self.trace.info(
-                            "Client JWKS: {}".format(kb.imp_jwks))
+                        self.events.store("Client JWKS", kb.imp_jwks)
 
         return _response
 
@@ -365,9 +363,9 @@ class Provider(provider.Provider):
             keys = [rsa_key.serialize(private=True),
                     ec_key.serialize(private=True)]
             new_keys = {"keys": keys}
-            self.trace.info("New encryption keys: {}".format(new_keys))
+            self.events.store("New encryption keys", new_keys)
             self.do_key_rollover(new_keys, "%d")
-            self.trace.info("Rotated encryption keys")
+            self.events.store("Rotated encryption keys")
             logger.info(
                 'Rotated OP enc keys, new set: {}'.format(
                     key_summary(self.keyjar, '')))
@@ -391,7 +389,8 @@ class Provider(provider.Provider):
             client_id = self.client_authn(self, req, authn)
         except Exception as err:
             logger.error(err)
-            self.trace.error("Failed to verify client due to: %s" % err)
+            self.events.store(EV_EXCEPTION,
+                              "Failed to verify client due to: %s" % err)
             return self._error(error="incorrect_behavior",
                                descr="Failed to verify client")
 
@@ -443,11 +442,11 @@ class Provider(provider.Provider):
                             self.init_keys.append(key)
             else:
                 for kb in self.keyjar[client_id]:
-                    self.trace.info("Updating client keys")
+                    self.events.store("Updating client keys")
                     kb.update()
                     if kb.imp_jwks:
-                        self.trace.info(
-                            "Client JWKS: {}".format(kb.imp_jwks))
+                        self.events.store(
+                            "Client JWKS", kb.imp_jwks)
                 same = 0
                 # Verify that the new keys are not the same
                 for kb in self.keyjar[client_id]:
@@ -460,12 +459,12 @@ class Provider(provider.Provider):
                             else:
                                 self.trace.info("New key: {}".format(key))
                 if same == len(self.init_keys):  # no change
-                    self.trace.info("No change in keys")
+                    self.events.store("No change in keys")
                     raise TestError("Keys unchanged")
                 else:
-                    self.trace.info(
-                        "{} keys changed, {} keys the same".format(
-                            len(self.init_keys) - same, same))
+                    self.events.store('Key change',
+                                      "{} changed, {} the same".format(
+                                          len(self.init_keys) - same, same))
 
     def __setattr__(self, key, value):
         if key == "keys":

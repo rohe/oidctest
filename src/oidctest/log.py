@@ -1,11 +1,11 @@
 import os
 import logging
-from six.moves.urllib.parse import unquote
 # from urllib.parse import unquote
+from future.backports.urllib.parse import unquote
 from otest import exception_trace, Break
 from otest.check import ERROR, State
 from otest.check import WARNING
-from otest.events import EV_CONDITION
+from otest.events import EV_CONDITION, EV_EXCEPTION
 from oic.utils.http_util import Response
 
 __author__ = 'roland'
@@ -68,31 +68,6 @@ class WebLog(Log):
         self.page = page
         self.profile_info = profile_info
         self.lookup = lookup
-
-    # def store_test_info(self, session, profile_info=None):
-    #     _info = {
-    #         "trace": session["conv"].trace,
-    #         "assert": session["conv"].events.get('condition'),
-    #         "index": session["index"],
-    #         "seqlen": len(session["seq_info"]["sequence"]),
-    #         "descr": session["node"].desc
-    #     }
-    #
-    #     try:
-    #         _info["node"] = session["seq_info"]["node"]
-    #     except KeyError:
-    #         pass
-    #
-    #     if profile_info:
-    #         _info["profile_info"] = profile_info
-    #     else:
-    #         try:
-    #             _info["profile_info"] = self.profile_info(session,
-    #                                                       session["testid"])
-    #         except KeyError:
-    #             pass
-    #
-    #     session["test_info"][session["testid"]] = _info
 
     def _display(self, root, issuer, profile):
         item = []
@@ -168,8 +143,7 @@ class WebLog(Log):
                 if isinstance(err, str):
                     pass
                 else:
-                    session["conv"].trace.error("%s:%s" % (
-                        err.__class__.__name__, str(err)))
+                    session["conv"].events.store(EV_EXCEPTION, err)
                 session["conv"].test_output.append(
                     {"id": "-", "status": err_type, "message": "%s" % err})
             else:

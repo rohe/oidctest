@@ -32,7 +32,8 @@ from otest.aus.request import SyncGetRequest
 from otest.aus.request import AsyncGetRequest
 from otest.aus.request import SyncPostRequest
 from otest.aus.request import same_issuer
-from otest.events import EV_PROTOCOL_RESPONSE
+from otest.events import EV_PROTOCOL_RESPONSE, EV_NOOP, INCOMING, EV_REQUEST, \
+    OUTGOING
 from otest.events import EV_RESPONSE
 
 from oidctest.op.prof_util import RESPONSE
@@ -86,9 +87,6 @@ class Webfinger(Operation):
             else:
                 principal = self.req_args['principal']
 
-            _conv.trace.info(
-                "Discovery of resource: {}".format(principal))
-
             self.catch_exception(_conv.entity.discover, principal=principal)
 
             if not _conv.events.last_event_type() == 'exception':
@@ -97,7 +95,7 @@ class Webfinger(Operation):
                 _conv.events.store('issuer', issuer,
                                    sender=self.__class__.__name__)
         else:
-            self.conv.trace.info("Not using WebFinger")
+            self.conv.events.store(EV_NOOP, "WebFinger")
             self.conv.info["issuer"] = self.conv.get_tool_attribute("issuer")
 
     def op_setup(self):
@@ -118,7 +116,7 @@ class Discovery(Operation):
             self.catch_exception(self.conv.entity.provider_config,
                                  **self.op_args)
         else:
-            self.conv.trace.info("Not doing dynamic discovery")
+            self.conv.events.store(EV_NOOP, "Dynamic discovery")
             self.conv.entity.provider_info = ProviderConfigurationResponse(
                 **self.conv.entity_config["provider_info"]
             )
@@ -143,7 +141,7 @@ class Registration(Operation):
         if self.dynamic:
             self.catch_exception(self.conv.entity.register, **self.req_args)
         else:
-            self.conv.trace.info("Relying on static registration")
+            self.conv.events.store(EV_NOOP, "Dynamic registration")
             self.conv.entity.store_registration_info(
                 RegistrationResponse(
                     **self.conf.CLIENT["registration_response"]))
@@ -222,14 +220,17 @@ class AccessToken(SyncPostRequest):
         if self.skip:
             return
 
-        self.conv.trace.info(
-            "Access Token Request with op_args: {}, req_args: {}".format(
-                self.op_args, self.req_args))
+        self.conv.events.store(
+            EV_REQUEST,
+            "op_args: {}, req_args: {}".format(self.op_args, self.req_args),
+            direction=OUTGOING)
+
         atr = self.conv.entity.do_access_token_request(
             request_args=self.req_args, **self.op_args)
 
         if "error" in atr:
-            self.conv.trace.response("Access Token response: {}".format(atr))
+            self.conv.events.store(EV_PROTOCOL_RESPONSE, atr,
+                                   direction=INCOMING)
             return False
 
         try:
@@ -250,7 +251,7 @@ class AccessToken(SyncPostRequest):
             raise IssuerMismatch(" {} != {}".format(self.conv.info["issuer"],
                                                     atr["id_token"]["iss"]))
 
-        #assert isinstance(atr, AccessTokenResponse)
+        # assert isinstance(atr, AccessTokenResponse)
         return atr
 
 
@@ -277,7 +278,7 @@ class UserInfo(SyncGetRequest):
 
             self.conv.entity.userinfo = response
             self.conv.events.store(EV_PROTOCOL_RESPONSE, response)
-        #return response
+            # return response
 
     @staticmethod
     def _verify_subject_identifier(client, user_info):
