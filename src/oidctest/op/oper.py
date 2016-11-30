@@ -33,7 +33,7 @@ from otest.aus.request import AsyncGetRequest
 from otest.aus.request import SyncPostRequest
 from otest.aus.request import same_issuer
 from otest.events import EV_PROTOCOL_RESPONSE, EV_NOOP, INCOMING, EV_REQUEST, \
-    OUTGOING
+    OUTGOING, EV_FUNCTION
 from otest.events import EV_RESPONSE
 
 from oidctest.op.prof_util import RESPONSE

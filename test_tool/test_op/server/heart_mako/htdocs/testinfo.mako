@@ -8,13 +8,18 @@ def do_assertions(out):
 %>
 
 <%!
-def trace_output(trace):
+
+from otest.events import layout
+
+def trace_output(events):
     """
 
     """
     element = ["<h3>Trace output</h3>", "<pre><code>"]
     for item in trace:
-        element.append("%s" % item)
+        if not start:
+            start = event.timestamp
+        element.append(layout(start, event))
     element.append("</code></pre>")
     return "\n".join(element)
 %>
