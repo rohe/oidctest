@@ -14,20 +14,19 @@ def display_log(base, logs, issuer, profile):
 
     if profile:
         for name, path in logs:
-            el += '<li><a href="{}{}" download="{}{}.html">{}</a>'.format(
-                base, path, base, name, name)
-    elif 'issuer':
+            el += '<li><a href="{}{}" download="{}.html">{}</a>'.format(
+                base, path, name, name)
+    elif issuer:
         for name, path in logs:
-            _tarfile = "{}/%s.tar".format(base,path.replace("log", "tar"))
-            el += '<li><a href="{}{}">{}</a> tar file:<a href="{}{}">Download logs</a>'.format(
-                base, path, name, base,_tarfile)
+            _tarfile = "{}{}.tar".format(base, path.replace("log", "tar"))
+            el += '<li><a href="{}{}">{}</a> tar file:<a href="{}">Download logs</a>'.format(
+                base, path, name, _tarfile)
     else:
         for name, path in logs:
-            el += '<li><a href="{}{}">%s</a>' % (base, path, name)
+            el += '<li><a href="{}{}">{}</a>'.format(base, path, name)
     el += "</ul>"
     return el
 %>
-
 <%
     LINK_INFO = [
     {
@@ -79,7 +78,7 @@ def display_log(base, logs, issuer, profile):
      <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
         <h1>HEART OIDC OP Test logs</h1>
-            ${display_log(basr, logs, issuer, profile)}
+            ${display_log(base, logs, issuer, profile)}
       </div>
 
     </div> <!-- /container -->

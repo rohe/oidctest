@@ -11,9 +11,10 @@ from oic.oic.message import factory as oic_message_factory
 
 from otest.aus.app import WebApplication
 from otest.aus.client import Factory
-from otest.aus.io import WebIO
+from otest.aus.handling import WebIh
 from otest.conf_setup import construct_app_args
-from otest.utils import SERVER_LOG_FOLDER, setup_logging
+from otest.utils import SERVER_LOG_FOLDER
+from otest.utils import setup_logging
 from otest.utils import setup_common_log
 
 from oidctest.app_conf import REST
@@ -115,7 +116,7 @@ if __name__ == '__main__':
 
     setup_logging("%s/rp_%s.log" % (SERVER_LOG_FOLDER, args.port), logger)
 
-    WA = WebApplication(sessionhandler=SessionHandler, webio=WebIO,
+    WA = WebApplication(sessionhandler=SessionHandler, webio=WebIh,
                         webtester=WebTester, check=check, webenv=app_args,
                         pick_grp=pick_grp, path=_path)
 
