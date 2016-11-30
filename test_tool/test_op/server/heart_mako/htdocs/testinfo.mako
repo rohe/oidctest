@@ -16,7 +16,8 @@ def trace_output(events):
 
     """
     element = ["<h3>Trace output</h3>", "<pre><code>"]
-    for item in trace:
+    start = 0
+    for event in events:
         if not start:
             start = event.timestamp
         element.append(layout(start, event))
@@ -89,7 +90,7 @@ def profile_output(pinfo):
         <hr>
         ${do_assertions(events)}
         <hr>
-        ${trace_output(trace)}
+        ${trace_output(events)}
         <hr>
         <h3>Result</h3>${result}
     </div> <!-- /container -->
