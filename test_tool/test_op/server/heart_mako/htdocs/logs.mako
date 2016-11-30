@@ -1,7 +1,7 @@
 <%
 import os
 
-def display_log(logs, issuer, profile):
+def display_log(base, logs, issuer, profile):
     if issuer:
         if profile:
             el = "<h3>A list of tests that are saved on disk for this profile:</h3>"
@@ -14,15 +14,16 @@ def display_log(logs, issuer, profile):
 
     if profile:
         for name, path in logs:
-            el += '<li><a href="%s" download="%s.html">%s</a>' % (path, name, name)
+            el += '<li><a href="{}{}" download="{}{}.html">{}</a>'.format(
+                base, path, base, name, name)
     elif 'issuer':
         for name, path in logs:
-            _tarfile = "/%s.tar" % path.replace("log", "tar")
-            el += '<li><a href="/%s">%s</a> tar file:<a href="%s">Download logs</a>' % (
-                path, name, _tarfile)
+            _tarfile = "{}/%s.tar".format(base,path.replace("log", "tar"))
+            el += '<li><a href="{}{}">{}</a> tar file:<a href="{}{}">Download logs</a>'.format(
+                base, path, name, base,_tarfile)
     else:
         for name, path in logs:
-            el += '<li><a href="%s">%s</a>' % (path, name)
+            el += '<li><a href="{}{}">%s</a>' % (base, path, name)
     el += "</ul>"
     return el
 %>
@@ -78,7 +79,7 @@ def display_log(logs, issuer, profile):
      <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
         <h1>HEART OIDC OP Test logs</h1>
-            ${display_log(logs, issuer, profile)}
+            ${display_log(basr, logs, issuer, profile)}
       </div>
 
     </div> <!-- /container -->
