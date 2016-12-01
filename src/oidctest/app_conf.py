@@ -189,6 +189,15 @@ class REST(object):
         """
         fname = self.entity_file_name(qiss, qtag)
         if fname:
+            if not os.path.isfile(fname):
+                if qiss.endswith('%2F'):  # try to remove
+                    qiss = qiss[:-3]
+                else:  # else add
+                    qiss += '%2F'
+                fname = self.entity_file_name(qiss, qtag)
+                if not os.path.isfile(fname):
+                    logger.info('No such file: ()'.format(fname))
+
             try:
                 _data = open(fname, 'r').read()
             except Exception as err:

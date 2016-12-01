@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import importlib
 import os
+import traceback
+
 import argparse
 import logging
 
@@ -98,8 +100,13 @@ if __name__ == '__main__':
     try:
         ent_conf = rest.construct_config(quote_plus(args.issuer), qtag)
     except Exception as err:
-        print(err)
+        print('iss:{}, tag:{}'.format(quote_plus(args.issuer), qtag))
+        for m in traceback.format_exception(*sys.exc_info()):
+            print(m)
         exit()
+
+    setup_logging("%s/rp_%s.log" % (SERVER_LOG_FOLDER, args.port), logger)
+    logger.info('construct_app_args')
 
     _path, app_args = construct_app_args(args, CONF, oper, func, profiles,
                                          ent_conf)
@@ -114,7 +121,6 @@ if __name__ == '__main__':
     if args.insecure:
         app_args['client_info']['verify_ssl'] = False
 
-    setup_logging("%s/rp_%s.log" % (SERVER_LOG_FOLDER, args.port), logger)
 
     WA = WebApplication(sessionhandler=SessionHandler, webio=WebIh,
                         webtester=WebTester, check=check, webenv=app_args,
