@@ -1,18 +1,18 @@
 <%
 import os
 
-def display_log(base, logs, issuer, profile):
+def display_log(base, logs, issuer, tag):
     if issuer:
-        if profile:
-            el = "<h3>A list of tests that are saved on disk for this profile:</h3>"
+        if tag:
+            el = "<h3>List of tests that are saved on disk for this configuration:</h3>"
         else:
-            el = "<h3>A list of profiles that are saved on disk for this issuer:</h3>"
+            el = "<h3>List of configurations that are saved on disk for this issuer:</h3>"
     else:
-        el = "<h3>A list of issuers that are saved on disk for this test server:</h3>"
+        el = "<h3>List of issuers that are saved on disk for this test server:</h3>"
 
     el += "<ul>"
 
-    if profile:
+    if tag:
         for name, path in logs:
             el += '<li><a href="{}{}" download="{}/{}.html">{}</a>'.format(
                 base, path, issuer, name, name)
