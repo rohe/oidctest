@@ -14,8 +14,8 @@ def display_log(base, logs, issuer, profile):
 
     if profile:
         for name, path in logs:
-            el += '<li><a href="{}{}" download="{}.html">{}</a>'.format(
-                base, path, name, name)
+            el += '<li><a href="{}{}" download="{}/{}.html">{}</a>'.format(
+                base, path, issuer, name, name)
     elif issuer:
         for name, path in logs:
             _tarfile = "{}{}.tar".format(base, path.replace("log", "tar"))

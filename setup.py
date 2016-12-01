@@ -14,14 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+import re
 
 from setuptools import setup, find_packages
 
 __author__ = 'rohe0002'
 
+with open('src/oidctest/__init__.py', 'r') as fd:
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]',
+                        fd.read(), re.MULTILINE).group(1)
+
 setup(
     name="oidctest",
-    version="0.5.0",
+    version=version,
     description="Test framework for testing OpenID Connect provider and "
                 "relaying party implementations",
     author="Roland Hedberg",

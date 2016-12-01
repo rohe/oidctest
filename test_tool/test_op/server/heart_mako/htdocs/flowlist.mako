@@ -185,6 +185,7 @@ def legends(base):
         <h1>HEART OIDC OP Tests</h1>
         <em>Explanations of legends at <a href="#legends">end of page</a></em>
         <hr class="separator">
+        <h3><a href="${base}log">Logs</a> from earlier runs</h3>
         <h3>Chose the next test flow you want to run from this list: </h3>
         ${op_choice(base, flows, test_info, headlines)}
         <hr class="separator">
