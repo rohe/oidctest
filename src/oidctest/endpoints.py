@@ -332,14 +332,17 @@ def clear_log(path, environ, start_response, lookup):
         resp = NotFound(environ["PATH_INFO"])
         return resp(environ, start_response)
 
-    create_rp_tar_archive(tail, True)
-
     wd = os.getcwd()
     _dir = os.path.join(wd, 'log', tail)
     if os.path.isdir(_dir):
+        create_rp_tar_archive(tail, True)
         shutil.rmtree(_dir)
+    else:
+        resp = NotFound('No logfile by the name "{}"'.format(tail))
+        return resp(environ, start_response)
 
-    return display_log('log', environ, start_response, lookup)
+    resp = SeeOther('/log')
+    return resp(environ, start_response)
 
 
 def make_tar(path, environ, start_response, lookup):
