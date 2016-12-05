@@ -32,15 +32,20 @@
     %>
 
 <%!
+from otest.events import layout
 
-  def print_result(events):
+def trace_output(events):
     """
-    Displays the test information
+
     """
-    elements = []
+    element = ["<h3>Trace output</h3>", "<pre><code>"]
+    start = 0
     for event in events:
-        elements.append('{}<br>'.format(event))
-    return "\n".join(elements)
+        if not start:
+            start = event.timestamp
+        element.append(layout(start, event))
+    element.append("</code></pre>")
+    return "\n".join(element)
 %>
 
 <%!
@@ -129,9 +134,7 @@
 <div class="jumbotron">
   ${print_dict(profile)}
   <p>
-  ${print_events(events)}
-  <p>
-  <b>${result}</b>
+  ${trace_output(events)}
 </div>
 ${postfix(base)}
 </body>

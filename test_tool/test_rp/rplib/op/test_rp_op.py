@@ -19,16 +19,25 @@ from oic.utils.http_util import ServiceError
 from oic.utils.keyio import key_summary
 
 from oidctest import UnknownTestID
-from oidctest.endpoints import static, clear_log, make_tar
+from oidctest.endpoints import clear_log
 from oidctest.endpoints import display_log
+from oidctest.endpoints import make_tar
+from oidctest.endpoints import static
 from oidctest.endpoints import URLS
 from oidctest.response_encoder import ResponseEncoder
 from oidctest.rp import test_config
-from oidctest.rp.mode import extract_mode, init_keyjar, write_jwks_uri
+from oidctest.rp.mode import extract_mode
+from oidctest.rp.mode import init_keyjar
+from oidctest.rp.mode import write_jwks_uri
 from oidctest.rp.mode import setup_op
 
-from otest import Trace
 from otest.conversation import Conversation
+from otest.events import Events, HTTPRequest, EV_HTTP_REQUEST
+from otest.events import EV_EXCEPTION
+from otest.events import EV_FAULT
+from otest.events import EV_REQUEST
+from otest.events import FailedOperation
+from otest.events import Operation
 from otest.jlog import JLog
 
 try:
@@ -147,7 +156,7 @@ class Application(object):
         self.com_args = com_args
         self.op_args = op_args
 
-    def op_setup(self, environ, mode, trace, test_conf, endpoint):
+    def op_setup(self, environ, mode, events, test_conf, endpoint):
         addr = get_client_address(environ)
         path = '/'.join([mode['oper_id'], mode['test_id']])
 
@@ -155,7 +164,7 @@ class Application(object):
         #  LOGGER.debug("OP key: {}".format(key))
         try:
             _op = self.op[key]
-            _op.trace = trace
+            _op.events = events
             if endpoint == '.well-known/openid-configuration':
                 if mode["test_id"] == 'rp-id_token-kid-absent-multiple-jwks':
                     setattr(_op, 'keys', self.op_args['marg']['keys'])
@@ -175,10 +184,11 @@ class Application(object):
                     _op_args[param] = self.op_args[param]
                 for param in ["jwks", "keys"]:
                     _op_args[param] = self.op_args["marg"][param]
-                _op = setup_op(mode, self.com_args, _op_args, trace, test_conf)
+                _op = setup_op(mode, self.com_args, _op_args, self.test_conf,
+                               events)
             else:
-                _op = setup_op(mode, self.com_args, self.op_args, trace,
-                               test_conf)
+                _op = setup_op(mode, self.com_args, self.op_args,
+                               self.test_conf, events)
             _op.conv = Conversation(mode["test_id"], _op, None)
             _op.orig_keys = key_summary(_op.keyjar, '').split(', ')
             self.op[key] = _op
@@ -226,9 +236,11 @@ class Application(object):
         elif path.startswith("jwks.json"):
             try:
                 mode, endpoint = extract_mode(self.op_args["baseurl"])
-                trace = Trace(absolut_start=True)
-                op, path, jlog.id = self.op_setup(environ, mode, trace,
-                                                  self.test_conf)
+                events = Events()
+                events.store('Init',
+                             '===========================================')
+                op, path, jlog.id = self.op_setup(environ, mode, events,
+                                                  self.test_conf, endpoint)
                 jwks = op.generate_jwks(mode)
                 resp = Response(jwks,
                                 headers=[('Content-Type', 'application/json')])
@@ -237,7 +249,8 @@ class Application(object):
                 # Try to load from static file
                 return static(environ, start_response, "static/jwks.json")
 
-        trace = Trace(absolut_start=True)
+        events = Events()
+        events.store('Init', '===========================================')
 
         if path == "test_list":
             return rp_test_list(environ, start_response)
@@ -262,7 +275,9 @@ class Application(object):
         try:
             endpoint = mode['endpoint']
         except KeyError:
-            jlog.error({'error': 'No endpoint', 'mode': mode})
+            _info = {'error': 'No endpoint', 'mode': mode}
+            events.store(EV_FAULT, _info)
+            jlog.error(_info)
             resp = BadRequest('Illegal path')
             return resp(environ, start_response)
 
@@ -271,40 +286,54 @@ class Application(object):
             try:
                 _p = urlparse(parameters["resource"][0])
             except KeyError:
+                events.store(EV_FAULT,
+                             FailedOperation('webfinger',
+                                             'No resource defined'))
                 jlog.error({'reason': 'No resource defined'})
                 resp = ServiceError("No resource defined")
                 return resp(environ, start_response)
 
             if _p.scheme in ["http", "https"]:
+                events.store(EV_REQUEST,
+                             Operation(name='webfinger', type='url',
+                                       path=_p.path))
                 mode = parse_path(_p.path)
             elif _p.scheme == "acct":
                 _l, _ = _p.path.split('@')
 
                 _a = _l.split('.')
                 if len(_a) == 2:
-                    mode = {'oper_id': _a[0], "test_id": _a[1]}
+                    _oper_id = _a[0]
+                    _test_id = _a[1]
                 elif len(_a) > 2:
-                    mode = {'oper_id': ".".join(_a[:-1]), "test_id": _a[-1]}
+                    _oper_id = ".".join(_a[:-1])
+                    _test_id = _a[-1]
                 else:
-                    mode = {'oper_id': _a[0], "test_id": 'default'}
+                    _oper_id = _a[0]
+                    _test_id = 'default'
 
-                trace.info(
-                    'oper_id: {oper_id}, test_id: {test_id}'.format(**mode))
+                events.store(EV_REQUEST,
+                             Operation(name='webfinger', type='acct',
+                                       oper_id=_oper_id, test_id=_test_id))
             else:
                 _msg = "Unknown scheme: {}".format(_p.scheme)
+                events.events(EV_FAULT, FailedOperation('webfinger', _msg))
                 jlog.error({'reason': _msg})
                 resp = ServiceError(_msg)
                 return resp(environ, start_response)
         elif endpoint == "claim":
             authz = environ["HTTP_AUTHORIZATION"]
+            _ev = Operation('claim')
             try:
                 assert authz.startswith("Bearer")
             except AssertionError:
                 resp = BadRequest()
             else:
+                _ev.authz = authz
+                events.store(EV_REQUEST, _ev)
                 tok = authz[7:]
                 # mode, endpoint = extract_mode(self.op_args["baseurl"])
-                _op, _, sid = self.op_setup(environ, mode, trace,
+                _op, _, sid = self.op_setup(environ, mode, events,
                                             self.test_conf, endpoint)
                 try:
                     _claims = _op.claim_access_token[tok]
@@ -324,7 +353,7 @@ class Application(object):
             jlog.id = mode['oper_id']
 
         try:
-            _op, path, jlog.id = self.op_setup(environ, mode, trace,
+            _op, path, jlog.id = self.op_setup(environ, mode, events,
                                                self.test_conf,
                                                endpoint)
         except UnknownTestID as err:
@@ -338,15 +367,13 @@ class Application(object):
         for regex, callback in URLS:
             match = re.search(regex, endpoint)
             if match is not None:
-                trace.request("PATH: %s" % endpoint)
-                trace.request("METHOD: %s" % environ["REQUEST_METHOD"])
+                _op = HTTPRequest(endpoint=endpoint,
+                                  method=environ["REQUEST_METHOD"])
                 try:
-                    trace.request(
-                        "HTTP_AUTHORIZATION: %s" % environ[
-                            "HTTP_AUTHORIZATION"])
+                    _op.authz = environ["HTTP_AUTHORIZATION"]
                 except KeyError:
                     pass
-
+                events.store(EV_HTTP_REQUEST, _op)
                 try:
                     environ['oic.url_args'] = match.groups()[0]
                 except IndexError:
@@ -355,17 +382,18 @@ class Application(object):
                 jlog.info({'callback': callback.__name__})
                 try:
                     return callback(environ, start_response, session_info,
-                                    trace,
-                                    op_arg=self.op_args, jlog=jlog)
+                                    events, op_arg=self.op_args, jlog=jlog)
                 except Exception as err:
                     print("%s" % err)
                     message = traceback.format_exception(*sys.exc_info())
                     print(message)
+                    events.store(EV_EXCEPTION, err)
                     LOGGER.exception("%s" % err)
                     resp = ServiceError("%s" % err)
                     return resp(environ, start_response)
 
         LOGGER.debug("unknown page: '{}'".format(endpoint))
+        events.store(EV_FAULT, 'No such page: {}'.format(endpoint))
         resp = NotFound("Couldn't find the side you asked for!")
         return resp(environ, start_response)
 

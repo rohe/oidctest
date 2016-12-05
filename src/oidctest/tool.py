@@ -3,27 +3,15 @@ import logging
 from oic.utils.http_util import Response
 
 from otest import exception_trace
-from otest import Trace
 from otest.aus import tool
 from otest.conversation import Conversation
 
-from oidctest.op import prof_util
+from oidctest import prof_util
+from otest.tool import get_redirect_uris
 
 __author__ = 'roland'
 
 logger = logging.getLogger(__name__)
-
-
-def get_redirect_uris(cinfo):
-    """
-    Used before there is a Conversation instance
-    :param cinfo: Client Configuration Information
-    :return: list of redirect_uris
-    """
-    try:
-        return cinfo["registration_info"]["redirect_uris"]
-    except KeyError:
-        return cinfo["registration_response"]["redirect_uris"]
 
 
 class Tester(tool.Tester):

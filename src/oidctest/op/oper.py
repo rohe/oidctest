@@ -19,7 +19,6 @@ from oic.oauth2.message import ErrorResponse
 from oic.oauth2.util import JSON_ENCODED
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
-from oic.oic import AccessTokenResponse
 from oic.utils.keyio import KeyBundle
 from oic.utils.keyio import ec_init
 from oic.utils.keyio import dump_jwks
@@ -32,11 +31,15 @@ from otest.aus.request import SyncGetRequest
 from otest.aus.request import AsyncGetRequest
 from otest.aus.request import SyncPostRequest
 from otest.aus.request import same_issuer
-from otest.events import EV_PROTOCOL_RESPONSE, EV_NOOP, INCOMING, EV_REQUEST, \
-    OUTGOING, EV_FUNCTION
+from otest.events import EV_EXCEPTION
+from otest.events import EV_NOOP
+from otest.events import EV_PROTOCOL_RESPONSE
+from otest.events import EV_REQUEST
 from otest.events import EV_RESPONSE
+from otest.events import INCOMING
+from otest.events import OUTGOING
 
-from oidctest.op.prof_util import RESPONSE
+from oidctest.prof_util import RESPONSE
 
 __author__ = 'roland'
 
@@ -89,8 +92,8 @@ class Webfinger(Operation):
 
             self.catch_exception(_conv.entity.discover, principal=principal)
 
-            if not _conv.events.last_event_type() == 'exception':
-                issuer = _conv.events.last_item('response')
+            if not _conv.events.last_event_type() == EV_EXCEPTION:
+                issuer = _conv.events.last_item(EV_RESPONSE)
                 _conv.info["issuer"] = issuer
                 _conv.events.store('issuer', issuer,
                                    sender=self.__class__.__name__)

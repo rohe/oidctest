@@ -23,10 +23,10 @@ from oidctest.app_conf import REST
 from oidctest.op import check
 from oidctest.op import oper
 from oidctest.op import func
-from oidctest.op.profiles import PROFILEMAP
-from oidctest.op.prof_util import ProfileHandler
-from oidctest.op.tool import WebTester
 from oidctest.op import profiles
+from oidctest.op.profiles import PROFILEMAP
+from oidctest.prof_util import ProfileHandler
+from oidctest.tool import WebTester
 
 from requests.packages import urllib3
 
@@ -69,13 +69,13 @@ if __name__ == '__main__':
     parser.add_argument('-i', dest='issuer')
     parser.add_argument('-f', dest='flows', action='append')
     parser.add_argument('-p', dest='port', type=int)
-    parser.add_argument('-P', dest='profile')
+    #parser.add_argument('-P', dest='profile')
     parser.add_argument('-M', dest='makodir')
     parser.add_argument('-S', dest='staticdir')
     parser.add_argument('-s', dest='tls', action='store_true')
     parser.add_argument('-t', dest='tag')
-    parser.add_argument(
-        '-x', dest='xport', action='store_true', help='ONLY for testing')
+    # parser.add_argument(
+    #     '-x', dest='xport', action='store_true', help='ONLY for testing')
     parser.add_argument('-m', dest='path2port')
     parser.add_argument(dest="config")
     args = parser.parse_args()

@@ -24,7 +24,13 @@ from oic.oic.provider import UserinfoEndpoint
 from oic.oic.provider import RegistrationEndpoint
 
 from otest import resp2json
-from otest.events import EV_REQUEST_ARGS, EV_RESPONSE, EV_EXCEPTION
+from otest.events import EV_EXCEPTION
+from otest.events import EV_FAULT
+from otest.events import EV_REQUEST
+from otest.events import EV_REQUEST_ARGS
+from otest.events import EV_RESPONSE
+from otest.events import layout
+from otest.events import Operation
 
 from oidctest.utils import create_rp_tar_archive
 
@@ -61,7 +67,8 @@ def dump_log(session_info, events):
                 file_name, err)
             raise
 
-    fp.write("{0}".format(events))
+    _elem = [layout(0, ev) for ev in events]
+    fp.write("\n".join(_elem))
     fp.write("\n\n")
     fp.close()
 
@@ -116,93 +123,92 @@ def wsgi_wrapper(environ, start_response, func, session_info, events, jlog):
 
 
 # noinspection PyUnusedLocal
-def token(environ, start_response, session_info, trace, jlog, **kwargs):
-    trace.info(HEADER % "AccessToken")
+def token(environ, start_response, session_info, events, jlog, **kwargs):
+    events.store(EV_REQUEST, Operation("AccessToken"))
     _op = session_info["op"]
     logger.info('OP keys:{}'.format(key_summary(_op.keyjar, '')))
     return wsgi_wrapper(environ, start_response, _op.token_endpoint,
-                        session_info, trace, jlog)
+                        session_info, events, jlog)
 
 
 # noinspection PyUnusedLocal
-def authorization(environ, start_response, session_info, trace, jlog, **kwargs):
-    trace.info(HEADER % "Authorization")
+def authorization(environ, start_response, session_info, events, jlog,
+                  **kwargs):
+    events.store(EV_REQUEST, Operation("Authorization"))
     _op = session_info["op"]
     logger.info('OP keys:{}'.format(key_summary(_op.keyjar, '')))
     return wsgi_wrapper(environ, start_response, _op.authorization_endpoint,
-                        session_info, trace, jlog)
+                        session_info, events, jlog)
 
 
 # noinspection PyUnusedLocal
-def userinfo(environ, start_response, session_info, trace, jlog, **kwargs):
-    trace.info(HEADER % "UserInfo")
+def userinfo(environ, start_response, session_info, events, jlog, **kwargs):
+    events.store(EV_REQUEST, Operation("UserInfo"))
     _op = session_info["op"]
     logger.info('OP keys:{}'.format(key_summary(_op.keyjar, '')))
     return wsgi_wrapper(environ, start_response, _op.userinfo_endpoint,
-                        session_info, trace, jlog)
+                        session_info, events, jlog)
 
 
 # noinspection PyUnusedLocal
-def op_info(environ, start_response, session_info, trace, jlog, **kwargs):
-    trace.info(HEADER % "ProviderConfiguration")
-    trace.request("PATH: %s" % environ["PATH_INFO"])
+def op_info(environ, start_response, session_info, events, jlog, **kwargs):
+    _ev = Operation("ProviderConfiguration", path = environ["PATH_INFO"])
     try:
-        trace.request("QUERY: %s" % environ["QUERY_STRING"])
+        _ev.query = environ["QUERY_STRING"]
     except KeyError:
         pass
+    events.store(EV_REQUEST, _ev)
     _op = session_info["op"]
     logger.info('OP keys:{}'.format(key_summary(_op.keyjar, '')))
     return wsgi_wrapper(environ, start_response, _op.providerinfo_endpoint,
-                        session_info, trace, jlog)
+                        session_info, events, jlog)
 
 
 # noinspection PyUnusedLocal
-def registration(environ, start_response, session_info, trace, jlog, **kwargs):
-    trace.info(HEADER % "ClientRegistration")
+def registration(environ, start_response, session_info, events, jlog, **kwargs):
+    events.store(EV_REQUEST, Operation("ClientRegistration"))
     _op = session_info["op"]
 
     if environ["REQUEST_METHOD"] == "POST":
         return wsgi_wrapper(environ, start_response, _op.registration_endpoint,
-                            session_info, trace, jlog)
+                            session_info, events, jlog)
     elif environ["REQUEST_METHOD"] == "GET":
         return wsgi_wrapper(environ, start_response, _op.read_registration,
-                            session_info, trace, jlog)
+                            session_info, events, jlog)
     else:
         resp = ServiceError("Method not supported")
         return resp(environ, start_response)
 
 
 # noinspection PyUnusedLocal
-def check_id(environ, start_response, session_info, trace, jlog, **kwargs):
+def check_id(environ, start_response, session_info, events, jlog, **kwargs):
     _op = session_info["op"]
 
     return wsgi_wrapper(environ, start_response, _op.check_id_endpoint,
-                        session_info, trace, jlog)
+                        session_info, events, jlog)
 
 
 # noinspection PyUnusedLocal
-def endsession(environ, start_response, session_info, trace, jlog, **kwargs):
+def endsession(environ, start_response, session_info, events, jlog, **kwargs):
     _op = session_info["op"]
     return wsgi_wrapper(environ, start_response, _op.endsession_endpoint,
-                        session_info=session_info, trace=trace, jlog=jlog)
+                        session_info=session_info, events=events, jlog=jlog)
 
 
-def webfinger(environ, start_response, session_info, trace, jlog, **kwargs):
+def webfinger(environ, start_response, session_info, events, jlog, **kwargs):
     _query = session_info['parameters']
-    trace.info(HEADER % "WebFinger")
-    trace.request(environ["QUERY_STRING"])
-    trace.info("QUERY: {}".format(_query))
+    events.store(EV_REQUEST, Operation("WebFinger", _query))
 
     try:
         assert _query["rel"] == [OIC_ISSUER]
         resource = _query["resource"][0]
     except AssertionError:
         errmsg = "Wrong 'rel' value: %s" % _query["rel"][0]
-        trace.error(errmsg)
+        events.store(EV_FAULT, errmsg)
         resp = BadRequest(errmsg)
     except KeyError:
         errmsg = "Missing 'rel' parameter in request"
-        trace.error(errmsg)
+        events.store(EV_FAULT, errmsg)
         resp = BadRequest(errmsg)
     else:
         wf = WebFinger()
@@ -225,19 +231,19 @@ def webfinger(environ, start_response, session_info, trace, jlog, **kwargs):
         resp = Response(_mesg,
                         content="application/jrd+json")
 
-        trace.reply(resp.message)
+        events.store(EV_RESPONSE, resp.message)
 
     jlog.info(resp2json(resp))
 
-    dump_log(session_info, trace)
+    dump_log(session_info, events)
     return resp(environ, start_response)
 
 
 # noinspection PyUnusedLocal
-def verify(environ, start_response, session_info, trace, jlog, **kwargs):
+def verify(environ, start_response, session_info, events, jlog, **kwargs):
     _op = session_info["op"]
     return wsgi_wrapper(environ, start_response, _op.verify_endpoint,
-                        session_info, trace, jlog)
+                        session_info, events, jlog)
 
 
 def static_file(path):

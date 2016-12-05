@@ -34,8 +34,6 @@ class ProfileHandler(object):
         return {}
 
     def log_path(self, sid, test_id=None):
-        _conv = self.session["conv"]
-
         path = os.path.join("log", sid)
 
         prof = ".".join(self.to_profile())

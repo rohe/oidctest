@@ -22,7 +22,7 @@ if __name__ == '__main__':
     parser.add_argument('-m', dest='path2port')
     parser.add_argument('-p', dest='port', default=80)
     parser.add_argument('-t', dest='tls', action='store_true')
-    parser.add_argument('-T', dest='template_dir')
+    parser.add_argument('-M', dest='makodir')
     parser.add_argument(dest="config")
     args = parser.parse_args()
 
@@ -37,10 +37,10 @@ if __name__ == '__main__':
 
     _conf = importlib.import_module(args.config)
 
-    if args.template_dir:
-        _dir = args.template_dir
+    if args.makodir:
+        _dir = args.makodir
     else:
-        _dir = _conf.TEMPLATE_DIR
+        _dir = _conf.MAKO_DIR
     if not _dir.endswith('/'):
         _dir += '/'
 

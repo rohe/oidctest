@@ -19,10 +19,14 @@ from oic.oic.message import AccessTokenRequest
 from oic.oic.message import ProviderConfigurationResponse
 from oic.oic.message import RegistrationResponse
 from oic.oic.message import RegistrationRequest
-from oic.utils import keyio
-from oic.utils.keyio import keyjar_init, key_summary
+from oic.utils.keyio import keyjar_init
+from oic.utils.keyio import key_summary
 
-from otest.events import EV_HTTP_RESPONSE, EV_EXCEPTION
+from otest.events import EV_EXCEPTION
+from otest.events import EV_FAULT
+from otest.events import EV_HTTP_RESPONSE
+from otest.events import EV_PROTOCOL_REQUEST
+from otest.events import EV_REQUEST
 
 __author__ = 'roland'
 
@@ -189,7 +193,7 @@ class Provider(provider.Provider):
             new_keys = {"keys": [key.serialize(private=True)]}
             self.events.store("New signing keys", new_keys)
             self.do_key_rollover(new_keys, "%d")
-            self.events.store("Rotated signing keys")
+            self.events.store("Rotated signing keys", '')
 
         if "nokid1jwks" in self.behavior_type:
             kwargs['keys'] = self.no_kid_keys()
@@ -269,6 +273,7 @@ class Provider(provider.Provider):
         except ValueError:
             reg_req = RegistrationRequest().deserialize(request)
 
+        self.events.store(EV_PROTOCOL_REQUEST, reg_req)
         try:
             f = response_type_cmp(kwargs['test_cnf']['response_type'],
                                   reg_req['response_types'])
@@ -293,7 +298,7 @@ class Provider(provider.Provider):
 
         _response = provider.Provider.registration_endpoint(self, request,
                                                             authn, **kwargs)
-        self.conv.events.store(EV_HTTP_RESPONSE, _response)
+        self.events.store(EV_HTTP_RESPONSE, _response)
         self.init_keys = []
         if "jwks_uri" in reg_req:
             if _response.status == "200 OK":
@@ -308,6 +313,8 @@ class Provider(provider.Provider):
 
     def authorization_endpoint(self, request="", cookie=None, **kwargs):
         _req = parse_qs(request)
+
+        #self.events.store(EV_REQUEST, _req)
 
         try:
             _scope = _req["scope"]
@@ -334,8 +341,9 @@ class Provider(provider.Provider):
             pass
         else:
             if f is False:
-                self.trace.error('Wrong response type: {}'.format(
-                    _req['response_type']))
+                self.events.store(
+                    EV_FAULT,
+                    'Wrong response type: {}'.format(_req['response_type']))
                 return self._error_response(error="incorrect_behavior",
                                             descr="Wrong response_type")
 
@@ -365,7 +373,7 @@ class Provider(provider.Provider):
             new_keys = {"keys": keys}
             self.events.store("New encryption keys", new_keys)
             self.do_key_rollover(new_keys, "%d")
-            self.events.store("Rotated encryption keys")
+            self.events.store("Rotated encryption keys", '')
             logger.info(
                 'Rotated OP enc keys, new set: {}'.format(
                     key_summary(self.keyjar, '')))
@@ -377,7 +385,7 @@ class Provider(provider.Provider):
             pass
         else:
             if _resp.status_code == 200:
-                self.trace.info(
+                self.events.store(EV_REQUEST,
                     "Request from request_uri: {}".format(_resp.text))
 
         return _response
@@ -457,7 +465,8 @@ class Provider(provider.Provider):
                             if key in self.init_keys:
                                 same += 1
                             else:
-                                self.trace.info("New key: {}".format(key))
+                                self.events.store('Key change',
+                                                  "New key: {}".format(key))
                 if same == len(self.init_keys):  # no change
                     self.events.store("No change in keys")
                     raise TestError("Keys unchanged")

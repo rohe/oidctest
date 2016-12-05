@@ -20,9 +20,9 @@ from otest.result import Result
 
 from oidctest.op import func
 from oidctest.op import check
-from oidctest.op.prof_util import SimpleProfileHandler
-from oidctest.op.tool import ClTester
+from oidctest.prof_util import SimpleProfileHandler
 from oidctest.session import SessionHandler
+from oidctest.tool import ClTester
 from oidctest.rp.test_config import PROFILES
 
 try:
@@ -48,6 +48,7 @@ def run_return_types(test_id, oper_id, kwargs, return_types, single=True):
     for rtyp in return_types:
         kwargs['profile'] = rtyp
         kwargs['opid'] = oper_id + '_' + rtyp
+        kwargs['tool_conf']['tag'] = kwargs['opid']
 
         sh = SessionHandler(**kwargs)
         sh.init_session(profile=rtyp)
@@ -131,7 +132,7 @@ if __name__ == '__main__':
         "desc": FLOWS['Desc'], "profiles": profiles, "operation": oper,
         "msg_factory": oic_message_factory, "check_factory": check.factory,
         "cache": {}, 'profile_handler': SimpleProfileHandler,
-        'client_factory': Factory(Client)
+        'client_factory': Factory(Client), 'tool_conf': CONF.TOOL
     }
 
     if cargs.test_id:

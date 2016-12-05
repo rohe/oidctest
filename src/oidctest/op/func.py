@@ -16,7 +16,7 @@ from otest.events import EV_RESPONSE
 from otest.result import get_issuer
 
 from oidctest.op.check import get_id_tokens
-from oidctest.op.prof_util import map_prof
+from oidctest.prof_util import map_prof
 
 from past.types import basestring
 

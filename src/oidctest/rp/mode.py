@@ -128,9 +128,9 @@ def write_jwks_uri(op, op_arg):
     op.jwks_name = filename
 
 
-def setup_op(mode, com_args, op_arg, test_conf):
+def setup_op(mode, com_args, op_arg, test_conf, events):
     op = Provider(sdb=SessionDB(com_args["baseurl"]), **com_args)
-    #op.trace = trace
+    op.events = events
 
     for _authn in com_args["authn_broker"]:
         _authn.srv = op
