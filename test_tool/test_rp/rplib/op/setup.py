@@ -1,4 +1,5 @@
 import logging
+import os
 import shelve
 import importlib
 import sys
@@ -75,6 +76,16 @@ def main_setup(args, lookup=None):
         com_args["verify_ssl"] = False
     else:
         com_args["verify_ssl"] = True
+
+    try:
+        assert os.path.isfile(config.SERVER_CERT)
+        assert os.path.isfile(config.SERVER_KEY)
+        com_args['client_cert'] = (config.SERVER_CERT, config.SERVER_KEY)
+    except AttributeError:
+        pass
+    except AssertionError:
+        print("Can't access client certificate and/or client secret")
+        exit(-1)
 
     op_arg = {}
 
