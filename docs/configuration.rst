@@ -1,4 +1,4 @@
-.. _config:
+.. _op_config:
 
 How to do the configuration of an oidctest instance
 ===================================================

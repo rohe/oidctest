@@ -1,4 +1,4 @@
-.. _run_rp:
+.. _rplib_run:
 
 Running the RP library test tool
 ================================

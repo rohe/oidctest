@@ -126,13 +126,14 @@ class Provider(provider.Provider):
     def __init__(self, name, sdb, cdb, authn_broker, userinfo, authz,
                  client_authn, symkey, urlmap=None, ca_certs="", keyjar=None,
                  hostname="", template_lookup=None, template=None,
-                 verify_ssl=True, capabilities=None, **kwargs):
+                 verify_ssl=True, capabilities=None, client_cert=None,
+                 **kwargs):
 
         provider.Provider.__init__(
             self, name, sdb, cdb, authn_broker, userinfo, authz,
             client_authn,
             symkey, urlmap, ca_certs, keyjar, hostname, template_lookup,
-            template, verify_ssl, capabilities)
+            template, verify_ssl, capabilities, client_cert=client_cert)
 
         self.claims_type = ["normal"]
         self.behavior_type = []

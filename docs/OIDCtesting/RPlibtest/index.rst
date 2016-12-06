@@ -1,4 +1,4 @@
-.. _rptesting:
+.. _rplib:
 
 How to run RP library testing using OIDCtest
 ============================================
@@ -6,7 +6,7 @@ How to run RP library testing using OIDCtest
 :Release: |release|
 :Date: |today|
 
-Before you can do any RP testing, you'll need to install oidctest.
+Before you can do any RP library testing, you'll need to install oidctest.
 If you have not done it yet, read the :ref:`install`
 
 .. toctree::

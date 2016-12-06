@@ -40,31 +40,39 @@ Must be gotten from github::
     $ cd oidctest
     $ python setup.py install
 
+
+Setup
+-----
+
 Once you have oidctest installed you can construct a new directory from which
 to run your test tools.
 To do this you can run the script make_test_dir.py like this::
 
-    $ make_test_dir.py <root of the oidctest source tree> <target directory>
+    $ oidc_setup.py <root of the oidctest source tree> <target directory>
 
-When this is completed you will have all the necessary files in the
-target directory such that you can change directory to that directory
-and then run the test tool. There is a start.sh script and a configuration file
-copied into the target directory. You should only have to modify the
-configuration file to match your need and then run start.sh. When you have done
-this you should be able to connect to the test tool webpage and start your
-testing.
+for me this turned out to be::
 
-Logs from the testtool are kept in two distinct places:
+    $ oidc_setup.py /Users/roland/code/oidctest oidf
 
-* server_log
-    Here you get the test tools internal log in files with the name
-    'rp_<port number>.log . So different entities gets separate log files
-* log
-    This is where the logs that the tester have access to are kept.
-    logfiles are stored in a directory tree constructed from issuer id,
-    profile and test id. Like this:
-    log/https%3A%2F%2Flocalhost%3A8040%2F/C.T.T.T.ns./OP-Response-code
+.. Note:: that the root of the source tree specification must be absolute.
 
-The keys that the tool need for the OIDC communication is created on-the-fly
-for you. The certificates used for SSL/TLS is **not**. So those
-you have to create yourself by hand or get from a provider.
+This will build a file tree in 'oidf' that will loook like this::
+
+    oidf --+-- oidc_op
+           |
+           +-- oidc_rpinst
+           |
+           +-- oidc_rplib
+
+Dependent on whether you want to run OP, RP instance or RP library tests
+one or the other of these library will be of more interest to you.
+
+How you use the different tools are described here:
+
+:oidc_op:
+    :ref:`op`
+:oidc_rpinst:
+    :ref:`rpinst`
+:oidc_rplib:
+    :ref:`rplib`
+

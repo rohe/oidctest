@@ -1,7 +1,10 @@
-.. _optesting:
+.. _op:
 
 How to run OP testing using OIDCtest
 ====================================
+
+This tool is for testing an OpenID Connect Provider instance compliance
+with the standard.
 
 :Release: |release|
 :Date: |today|
@@ -12,5 +15,7 @@ If you have not done it yet, read the :ref:`install`
 .. toctree::
    :maxdepth: 1
 
-   configuration
-   run
+   overview
+   web
+   rest
+   tdl

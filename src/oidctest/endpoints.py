@@ -371,6 +371,9 @@ def display_log(path, environ, start_response, lookup):
     if path == "logs":
         path = "log"
 
+    while path.endswith('/'):
+        path = path[:-1]
+
     if os.path.isfile(path):
         return static(environ, start_response, path)
     elif os.path.isdir(path):
