@@ -34,13 +34,13 @@
           <%
               cl_url = "/clear%s" % (testid)
               tar_url = "/mktar%s" % (testid)
-              tar_file = "{}.tar".format(testid)
+              tar_file = "{}.tar".format(testid[1:])
               %>
           <p>
-              <a href=${cl_url}><b>Clear all test logs</b></a>
+              <a href="${cl_url}"><b>Clear all test logs</b></a>
           </p>
           <p>
-              <a href=${tar_url} download="${tar_file}"><b>Download tar file</b></a>
+              <a href="${tar_url}" download="${tar_file}"><b>Download tar file</b></a>
           </p>
       % endif
   </div>
