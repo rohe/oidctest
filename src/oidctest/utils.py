@@ -111,7 +111,7 @@ def create_rp_tar_archive(userid, backup=False):
         with gzip.open('{}.gz'.format(tname), 'wb') as f_out:
             shutil.copyfileobj(f_in, f_out)
 
-    _zipped = open('{}.gz'.format(tname)).read()
+    _zipped = open('{}.gz'.format(tname), 'rb').read()
     os.chdir(wd)
 
     resp = Response(_zipped, content='application/x-gzip')
