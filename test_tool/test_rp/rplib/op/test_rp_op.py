@@ -312,6 +312,7 @@ class Application(object):
                     _oper_id = _a[0]
                     _test_id = 'default'
 
+                mode.update({'oper_id': _oper_id, 'test_id': _test_id})
                 events.store(EV_REQUEST,
                              Operation(name='webfinger', type='acct',
                                        oper_id=_oper_id, test_id=_test_id))
