@@ -2,8 +2,10 @@ import logging
 import os
 import pkgutil
 import tarfile
-
+import gzip
 import time
+
+from oic.utils.http_util import Response
 from six.moves.urllib.parse import quote_plus
 # from urllib.parse import quote_plus
 
@@ -102,9 +104,15 @@ def create_rp_tar_archive(userid, backup=False):
         if os.path.isfile(fn):
             tar.add(fn)
     tar.close()
+
+    os.chdir(_dir)
+    _tarcontent = open(tname).read()
+    _zipped = gzip.compress(_tarcontent)
+    
     os.chdir(wd)
 
-    return tpath
+    resp = Response(_zipped, content='application/x-gzip')
+    return resp
 
 
 def not_logging(logfile, logger):

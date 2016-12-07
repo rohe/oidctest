@@ -348,14 +348,11 @@ def clear_log(path, environ, start_response, lookup):
 def make_tar(path, environ, start_response, lookup):
     # verify that the path is reasonable
     head, tail = os.path.split(path)
-    if head != 'mktar':  # don't do anything
+    if head != 'mktar' and head != 'mktar/tar':  # don't do anything
         resp = NotFound(environ["PATH_INFO"])
         return resp(environ, start_response)
 
-    tpath = create_rp_tar_archive(tail)
-
-    # Do a redirect to where the tarfile resides ?
-    resp = SeeOther(tpath)
+    resp = create_rp_tar_archive(tail)
     return resp(environ, start_response)
 
 
