@@ -1,12 +1,13 @@
 import logging
 import os
 import pkgutil
+import shutil
 import tarfile
 import gzip
 import time
 
+from future.backports.urllib.parse import quote_plus
 from oic.utils.http_util import Response
-from six.moves.urllib.parse import quote_plus
 # from urllib.parse import quote_plus
 
 from oic.utils.time_util import in_a_while
@@ -72,7 +73,7 @@ def create_tar_archive(issuer, test_profile):
 def create_rp_tar_archive(userid, backup=False):
     # links all the logfiles in log/<tester_id>/<test_id> to
     # tar/<tester_id>/<test_id>
-    #mk_tardir('backup', userid)
+    # mk_tardir('backup', userid)
 
     wd = os.getcwd()
     if backup:
@@ -106,9 +107,11 @@ def create_rp_tar_archive(userid, backup=False):
     tar.close()
 
     os.chdir(_dir)
-    _tarcontent = open(tname).read()
-    _zipped = gzip.compress(_tarcontent)
-    
+    with open(tname, 'rb') as f_in:
+        with gzip.open('{}.gz'.format(tname), 'wb') as f_out:
+            shutil.copyfileobj(f_in, f_out)
+
+    _zipped = open('{}.gz'.format(tname)).read()
     os.chdir(wd)
 
     resp = Response(_zipped, content='application/x-gzip')
