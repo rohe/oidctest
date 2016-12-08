@@ -78,7 +78,7 @@ if __name__ == '__main__':
         module_directory=_dir + 'modules', input_encoding='utf-8',
         output_encoding='utf-8')
 
-    app = Application(_base_url, mako_lookup,
+    app = Application(_base_url, mako_lookup, test_script='optest.py',
                       ent_path=_conf.ENT_PATH, ent_info=_conf.ENT_INFO,
                       flows=_flows, path2port=_p2p, mako_dir=_dir,
                       port_min=port_min, port_max=port_max,

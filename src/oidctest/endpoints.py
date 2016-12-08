@@ -5,6 +5,8 @@ import shutil
 
 from future.backports.urllib.parse import urlparse
 
+from jwkest import as_unicode
+
 from oic.oauth2.provider import error_response
 
 from oic.utils.http_util import extract_from_request, SeeOther
@@ -259,7 +261,7 @@ def static(environ, start_response, path):
     logger.info("[static]sending: %s" % (path,))
 
     try:
-        text = open(path).read()
+        bytes = open(path, 'rb').read()
         if path.endswith(".ico"):
             start_response('200 OK', [('Content-Type', "image/x-icon")])
         elif path.endswith(".html"):
@@ -275,9 +277,10 @@ def static(environ, start_response, path):
         else:
             start_response('200 OK', [('Content-Type', 'text/plain')])
         try:
+            text = as_unicode(bytes)
             return [text.encode('utf8')]
-        except ValueError:
-            return [text]
+        except (ValueError, UnicodeDecodeError):
+            return [bytes]
     except IOError:
         resp = NotFound()
         return resp(environ, start_response)

@@ -79,11 +79,11 @@ def create_rp_tar_archive(userid, backup=False):
     if backup:
         _dir = os.path.join(wd, "backup", userid)
         tname = "{}.{}.tar".format(userid, time.time())
-        tpath = '{}/{}'.format('backup', tname)
+        #tpath = '{}/{}'.format('backup', tname)
     else:
         _dir = os.path.join(wd, "tar")
         tname = "{}.tar".format(userid)
-        tpath = '{}/{}'.format('tar', tname)
+        #tpath = '{}/{}'.format('tar', tname)
 
     if not os.path.isdir(_dir):
         os.makedirs(_dir)

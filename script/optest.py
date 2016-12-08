@@ -121,7 +121,6 @@ if __name__ == '__main__':
     if args.insecure:
         app_args['client_info']['verify_ssl'] = False
 
-
     WA = WebApplication(sessionhandler=SessionHandler, webio=WebIh,
                         webtester=WebTester, check=check, webenv=app_args,
                         pick_grp=pick_grp, path=_path)

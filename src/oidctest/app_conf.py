@@ -14,7 +14,10 @@ from future.backports.urllib.parse import unquote_plus
 from future.types.newstr import unicode
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
-from oic.utils.http_util import get_post, BadRequest, ServiceError, Created
+from oic.utils.http_util import get_post
+from oic.utils.http_util import BadRequest
+from oic.utils.http_util import Created
+from oic.utils.http_util import ServiceError
 from oic.utils.http_util import NotFound
 from oic.utils.http_util import Response
 from oic.utils.http_util import SeeOther
@@ -24,6 +27,10 @@ logger = logging.getLogger(__name__)
 
 
 class OutOfRange(Exception):
+    pass
+
+
+class NoSuchFile(Exception):
     pass
 
 
@@ -172,6 +179,10 @@ class REST(object):
         _conf = json.loads(
             open('{}/common.json'.format(self.entinfo), 'r').read())
         _econf = self.read_conf(qiss, qtag)
+
+        if _econf is None:
+            raise Exception('No configuration for {}:{}'.format(qiss, qtag))
+
         if _econf['tool']['profile'].split('.')[-1] == 'T':
             reg_info = json.loads(
                 open('{}/registration_info.json'.format(
@@ -197,6 +208,7 @@ class REST(object):
                 fname = self.entity_file_name(qiss, qtag)
                 if not os.path.isfile(fname):
                     logger.info('No such file: ()'.format(fname))
+                    raise NoSuchFile(fname)
 
             try:
                 _data = open(fname, 'r').read()
@@ -369,7 +381,7 @@ class IO(object):
 
 
 class Application(object):
-    def __init__(self, baseurl, lookup, ent_path, ent_info, flows,
+    def __init__(self, baseurl, lookup, ent_path, ent_info, flows, test_script,
                  path2port=None, mako_dir='', port_min=60000, port_max=61000,
                  test_tool_conf=''):
         self.baseurl = baseurl
@@ -381,6 +393,7 @@ class Application(object):
         self.port_min = port_min
         self.port_max = port_max
         self.test_tool_conf = test_tool_conf
+        self.test_script = test_script
 
         try:
             _ass = open('assigned_ports.json').read()
@@ -420,7 +433,7 @@ class Application(object):
                     _port = m.group(1)
                     _pid = l.split(' ')[0]
                     try:
-                        for key,val in self.assigned_ports.items():
+                        for key, val in self.assigned_ports.items():
                             if val == _port:
                                 self.running_processes[key] = _pid
                                 break
@@ -466,8 +479,8 @@ class Application(object):
 
     def run_test_instance(self, iss, tag):
         _port = self.get_port(iss, tag)
-        args = ["optest.py", "-i", unquote_plus(iss), "-t", unquote_plus(tag),
-                "-p", str(_port), "-M", self.mako_dir]
+        args = [self.test_script, "-i", unquote_plus(iss), "-t",
+                unquote_plus(tag), "-p", str(_port), "-M", self.mako_dir]
         for _fl in self.flows:
             args.extend(["-f", _fl])
         if self.path2port:
@@ -490,7 +503,7 @@ class Application(object):
 
         args.append(self.test_tool_conf)
 
-        _key = '{}:{}'.format(iss,tag)
+        _key = '{}:{}'.format(iss, tag)
         # If already running - kill
         try:
             pid = self.running_processes[_key]
@@ -512,7 +525,7 @@ class Application(object):
 
         if process.pid:
             logger.info("process id: {}".format(process.pid))
-            self.running_processes['{}:{}'.format(iss,tag)] = process.pid
+            self.running_processes['{}:{}'.format(iss, tag)] = process.pid
 
         time.sleep(5)
         return url
