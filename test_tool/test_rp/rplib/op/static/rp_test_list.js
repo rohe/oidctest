@@ -35,7 +35,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
         "optional_text": ALT_TO_HDR_METHOD
     };
 
-    var SELF_ISSUED = {"text": "Self-issued"};
+    var SELF_ISSUED = {"text": "Self-Issued"};
     var SELF_ISSUED_OPTIONAL = {
         "text": SELF_ISSUED.text,
         "optional_text": OPTIONAL
@@ -148,7 +148,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
     var ROTATE_ENCRYPTION_KEYS = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#RotateEncKeys", "Rotate the encryption keys");
     var ID_TOKEN_IMPLICIT_FLOW = convert_to_link(IMPLICIT_FLOW_ID_TOKEN_URL, "ID Token");
     var SELF_ISSUED_AUTH_RESPONSE = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedResponse", "authentication response");
-    var SELF_ISSUED_ID_TOKEN = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedValidation", "self-issued ID Token");
+    var SELF_ISSUED_ID_TOKEN = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedValidation", "Self-Issued ID Token");
     var TOKEN_REQUEST = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#TokenRequest", "Token Request");
     var ID_TOKEN = convert_to_link("https://openid.net/specs/openid-connect-core-1_0.html#IDToken", "ID Token");
     var UNSECURED_JWS = convert_to_link("https://tools.ietf.org/html/rfc7518#section-3.6", "Unsecured JWS");
@@ -379,6 +379,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             },
             "rp-id_token-sig-rs256": {
                 "short_description": "Accepts ID Token with valid asymmetric 'RS256' signature",
+                "profiles": [BASIC_OPTIONAL, IMPLICIT, HYBRID, SELF_ISSUED],
                 "detailed_description": "Request an encrypted ID Token. " +
                 "Decrypt the returned the ID Token and verify its signature using the keys published by the Issuer.",
                 "expected_result": "Accept the ID Token after doing " + ID_TOKEN_VALIDATION + "."
@@ -421,7 +422,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
             },
             "rp-id_token-iat": {
                 "short_description": "Rejects ID Token without 'iat' claim",
-                "profiles": [BASIC, IMPLICIT, HYBRID],
+                "profiles": [BASIC, IMPLICIT, HYBRID, SELF_ISSUED],
                 "detailed_description": "Request an ID token and verify its '" + IAT + "' value.",
                 "expected_result": "Identify the missing 'iat' value and reject the ID Token after doing " + ID_TOKEN_VALIDATION + "."
             },
