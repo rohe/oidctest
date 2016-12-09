@@ -108,13 +108,13 @@ CONF = {
     "rp-id_token-bad-at_hash": {
         "claims": "normal",
         "behavior": ["ath"],
-        "response_type": [CIT, IT],
+        "response_type": [CI, CT, CIT, IT],
         # 'out_of_scope': [T, U]
     },
     "rp-id_token-bad-c_hash": {
         "claims": "normal",
         "behavior": ["ch"],
-        "response_type": [CIT, CI],
+        "response_type": [CT, CIT, CI],
         # 'out_of_scope': [T, U]
     },
     "rp-id_token-iat": {
@@ -290,7 +290,7 @@ CONF = {
     "rp-token_endpoint-client_secret_basic": {
         "claims": "normal",
         # "path": "/_/_/_/normal",
-        "response_type": [C, CI, CIT]
+        "response_type": [IT, C, CT, CI, CIT]
     },
     "rp-token_endpoint-client_secret_jwt": {
         "claims": "normal",
