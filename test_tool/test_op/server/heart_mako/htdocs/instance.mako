@@ -22,7 +22,10 @@
 <%
   def display_form(headline, grp, dic):
     lines = ['<h3>{}</h3>'.format(headline), '<table>']
-    for key, val in dic.items():
+    keys = list(dic.keys())
+    keys.sort()
+    for key in keys:
+      val = dic[key]
       lines.append('<tr><th>{}</th><td><input type="text" name="{}:{}" value="{}"></td></tr>'.format(key,grp,key,val))
     lines.append('</table>')
     return lines

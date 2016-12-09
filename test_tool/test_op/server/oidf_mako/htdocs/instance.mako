@@ -20,26 +20,28 @@
 %>
 
 <%
-  def display_form(headline, dic):
-    lines = ['<h3>{}</h3>'.format(headline)]
-    lines.append('<table>')
-    for key, val in dic.items():
-      lines.append('<tr><th>{}</th><td><input type="text" name="{}" value="{}"></td></tr>'.format(key,key,val))
+  def display_form(headline, grp, dic):
+    lines = ['<h3>{}</h3>'.format(headline), '<table>']
+    keys = list(dic.keys())
+    keys.sort()
+    for key in keys:
+      val = dic[key]
+      lines.append('<tr><th>{}</th><td><input type="text" name="{}:{}" value="{}"></td></tr>'.format(key,grp,key,val))
     lines.append('</table>')
     return lines
 
   headline = {
-    'tool': "",
+    'tool': "Test tool configuration",
     "registration_response": "",
     "provider_info": ""
     }
 
   def display(base, iss, tag, dicts):
     lines = []
-    lines.append('<form action="{}/{}/{}" method="post">'.format(base,iss,tag))
-    for item, info in dicts.items():
+    lines.append('<form action="{}/run/{}/{}" method="post">'.format(base,iss,tag))
+    for grp, info in dicts.items():
       lines.append('<br>')
-      lines.extend(display_form(headline[item], info))
+      lines.extend(display_form(headline[grp], grp, info))
     lines.append('<input type="submit" value="Submit">')
     lines.append('</form>')
     return "\n".join(lines)
