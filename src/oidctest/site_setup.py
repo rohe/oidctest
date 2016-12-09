@@ -34,7 +34,7 @@ def oidc_op_setup(distroot):
     #     _op_dir = os.path.join(distroot, 'test_tool', 'test_op', _dir)
     #     if os.path.isdir(_dir) is False:
     #         shutil.copytree(_op_dir, 'server')
-    #os.chdir('server')
+    # os.chdir('server')
 
     for _dir in ['certs', 'keys', 'server_log', 'log', 'entities', 'jwks']:
         if os.path.isdir(_dir) is False:
@@ -47,7 +47,8 @@ def oidc_op_setup(distroot):
             shutil.copytree(_src, _dir)
 
     for _fname in ['flows.yaml', 'run.sh', 'heart_config_example.py',
-                   'oidf_config_example.py', 'path2port.csv', 'config_server.py',
+                   'oidf_config_example.py', 'path2port.csv',
+                   'config_server.py',
                    'tt_config_example.py']:
         _file = os.path.join(_op_dir, _fname)
         copy_if_not_same(_file, _fname)
@@ -60,7 +61,7 @@ def oidc_op_setup(distroot):
         ["make_entity_info.py", "-i", "https://example.com", "-p", "C.F.T.F",
          "-t", "CFTF"])
 
-    #os.chdir('..')
+    # os.chdir('..')
 
 
 def oidc_rpinst_setup(distroot):
@@ -74,8 +75,8 @@ def oidc_rpinst_setup(distroot):
         if os.path.isdir(_dir) is False:
             shutil.copytree(_src, _dir)
 
-    for _fname in ['flows.yaml', 'run.sh', 'example_conf.py', 'profiles.json',
-                   'heart_interop_ports.csv']:
+    for _fname in ['flows.yaml', 'run_code.sh', 'run_token.sh',
+                   'example_conf.py', 'profiles.json', 'path2port.csv']:
         _file = os.path.join(_op_dir, _fname)
         copy_if_not_same(_file, _fname)
 
