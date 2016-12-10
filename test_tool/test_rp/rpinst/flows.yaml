@@ -1,7 +1,7 @@
 ---
 Flows:
   RP-Sign-RS256:
-    profiles:
+    profile:
       - C
     desc: Simple code profile with RS256 signatures
     sequence:
@@ -28,7 +28,7 @@ Flows:
       - AccessTokenResponse
       - UserInfoResponse
   RP-Sign-HS256:
-    profiles:
+    profile:
       - C
     desc: Simple code profile with HS256 signatures
     sequence:
@@ -69,7 +69,7 @@ Flows:
       - AccessTokenResponse
       - UserInfoResponse
   RP-Sign-ES256:
-    profiles:
+    profile:
       - C
     desc: Simple code profile with ES256 signatures
     sequence:
