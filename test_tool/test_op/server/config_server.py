@@ -62,11 +62,17 @@ if __name__ == '__main__':
         _p2p = args.path2port
     else:
         _p2p = _conf.PATH2PORT
-    if _p2p:
-        port_min = _conf.PORT_MIN
-        port_max = _conf.PORT_MAX
-    else:
-        port_min = port_max = 0
+
+    kwargs = {}
+    try:
+        kwargs['port_min'] = _conf.PORT_MIN
+    except AttributeError:
+        pass
+
+    try:
+        kwargs['port_max'] = _conf.PORT_MAX
+    except AttributeError:
+        pass
 
     if args.flows:
         _flows = args.flows
@@ -81,8 +87,7 @@ if __name__ == '__main__':
     app = Application(_base_url, mako_lookup, test_script='optest.py',
                       ent_path=_conf.ENT_PATH, ent_info=_conf.ENT_INFO,
                       flows=_flows, path2port=_p2p, mako_dir=_dir,
-                      port_min=port_min, port_max=port_max,
-                      test_tool_conf=args.test_tool_conf)
+                      test_tool_conf=args.test_tool_conf, **kwargs)
 
     SRV = wsgiserver.CherryPyWSGIServer(
         ('0.0.0.0', int(args.port)),
