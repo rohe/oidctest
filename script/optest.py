@@ -130,6 +130,11 @@ if __name__ == '__main__':
         SessionMiddleware(WA.application, session_opts))
 
     if args.tls:
+        _tls = args.tls
+    else:
+        _tls = CONF.TLS
+
+    if _tls:
         from cherrypy.wsgiserver.ssl_builtin import BuiltinSSLAdapter
 
         SRV.ssl_adapter = BuiltinSSLAdapter(_conf.SERVER_CERT, _conf.SERVER_KEY,

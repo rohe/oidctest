@@ -2,9 +2,12 @@ import os
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
-SERVER_CERT = "certs/cert.pem"
-SERVER_KEY = "certs/key.pem"
-CERT_CHAIN = None
+TLS = False
+
+# Only if TLS = True
+# SERVER_CERT = "certs/cert.pem"
+# SERVER_KEY = "certs/key.pem"
+# CERT_CHAIN = None
 
 # VERIFY_SSL = False
 
