@@ -43,13 +43,18 @@ def oidc_op_setup(distroot):
     _op_dir = os.path.join(distroot, 'test_tool', 'test_op', 'server')
     for _dir in ['static', 'heart_mako', 'oidf_mako', 'entity_info']:
         _src = os.path.join(_op_dir, _dir)
-        if os.path.isdir(_dir) is False:
-            shutil.copytree(_src, _dir)
+        if os.path.isdir(_dir):
+            shutil.rmtree(_dir)
+        shutil.copytree(_src, _dir)
 
     for _fname in ['flows.yaml', 'run.sh', 'heart_config_example.py',
                    'oidf_config_example.py', 'path2port.csv',
                    'config_server.py',
                    'tt_config_example.py']:
+        _file = os.path.join(_op_dir, _fname)
+        copy_if_not_same(_file, _fname, True)
+
+    for _fname in ['run.sh']:
         _file = os.path.join(_op_dir, _fname)
         copy_if_not_same(_file, _fname)
 
@@ -72,11 +77,16 @@ def oidc_rpinst_setup(distroot):
     _op_dir = os.path.join(distroot, 'test_tool', 'test_rp', 'rpinst')
     for _dir in ['static', 'htdocs']:
         _src = os.path.join(_op_dir, _dir)
-        if os.path.isdir(_dir) is False:
-            shutil.copytree(_src, _dir)
+        if os.path.isdir(_dir):
+            shutil.rmtree(_dir)
+        shutil.copytree(_src, _dir)
 
     for _fname in ['flows.yaml', 'run_code.sh', 'run_token.sh',
                    'example_conf.py', 'profiles.json', 'path2port.csv']:
+        _file = os.path.join(_op_dir, _fname)
+        copy_if_not_same(_file, _fname, True)
+
+    for _fname in ['run_code.sh', 'run_token.sh']:
         _file = os.path.join(_op_dir, _fname)
         copy_if_not_same(_file, _fname)
 
@@ -91,9 +101,14 @@ def oidc_rplib_setup(distroot):
 
     for _dir in ['static', 'htdocs']:
         _src = os.path.join(_op_dir, _dir)
-        if os.path.isdir(_dir) is False:
-            shutil.copytree(_src, _dir)
+        if os.path.isdir(_dir):
+            shutil.rmtree(_dir)
+        shutil.copytree(_src, _dir)
 
-    for _fname in ['run.sh', 'example_conf.py', 'test_rp_op.py', 'setup.py']:
+    for _fname in ['example_conf.py', 'test_rp_op.py', 'setup.py']:
+        _file = os.path.join(_op_dir, _fname)
+        copy_if_not_same(_file, _fname)
+
+    for _fname in ['run.sh']:
         _file = os.path.join(_op_dir, _fname)
         copy_if_not_same(_file, _fname)
