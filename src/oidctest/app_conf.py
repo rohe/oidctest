@@ -515,17 +515,13 @@ class Application(object):
 
         logger.info(args)
 
-        if False:  # Only on Windows
-            DETACHED_PROCESS = 0x00000008
-            process = subprocess.Popen(args, creationflags=DETACHED_PROCESS).pid
-        else:
-            process = subprocess.Popen(args, stdout=subprocess.PIPE,
-                                       stderr=subprocess.PIPE)
-            #  continues immediately
-
-        if process.pid:
-            logger.info("process id: {}".format(process.pid))
-            self.running_processes['{}:{}'.format(iss, tag)] = process.pid
+        # spawn independent process
+        with open('err.log', 'w') as OUT:
+            pid = subprocess.Popen(args, stdin=OUT, stdout=OUT,
+                                   stderr=subprocess.STDOUT, close_fds=True).pid
+        # continues immediately
+        logger.info("process id: {}".format(pid))
+        self.running_processes['{}:{}'.format(iss, tag)] = pid
 
         time.sleep(5)
         return url
