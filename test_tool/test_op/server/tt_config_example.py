@@ -9,9 +9,9 @@ TLS = False
 # SERVER_KEY = "certs/key.pem"
 # CERT_CHAIN = None
 
-# VERIFY_SSL = False
-
+# Make sure BASE starts with https if TLS = True
 BASE = 'http://localhost'
+
 ENT_PATH = 'entities'
 ENT_INFO = 'entity_info'
 

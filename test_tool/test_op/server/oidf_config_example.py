@@ -11,8 +11,9 @@ CERT_CHAIN = None
 PORT_MIN = 9100
 PORT_MAX = 9149
 
-# The variables immediate below are all passed on to the test tool instance
 BASE_URL = 'http://localhost'
+
+# The variables below are all passed on to the test tool instance
 MAKO_DIR = 'oidf_mako'
 ENT_PATH = 'entities'
 ENT_INFO = 'entity_info'
