@@ -46,11 +46,11 @@ HEADER = "---------- %s ----------"
 def dump_log(session_info, events):
     try:
         file_name = os.path.join("log", session_info["oper_id"],
-                                 session_info["test_id"])
+                                 session_info["test_id"]+'.txt')
         _dir = os.path.join("log", session_info["oper_id"])
     except KeyError:
         file_name = os.path.join("log", session_info["addr"],
-                                 session_info["test_id"])
+                                 session_info["test_id"]+'.txt')
         _dir = os.path.join("log", session_info["addr"])
 
     try:
