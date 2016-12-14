@@ -44,7 +44,12 @@ def get_return_types(spec):
         return [x for x in spec.split(',') if x in PROFILES]
 
 
-def run_return_types(test_id, oper_id, kwargs, return_types, single=True):
+def run_return_types(test_id, oper_id, kwargs, return_types):
+    if len(return_types) == 1:
+        single = True
+    else:
+        single = False
+
     for rtyp in return_types:
         kwargs['profile'] = rtyp
         kwargs['opid'] = oper_id + '_' + rtyp
@@ -62,9 +67,8 @@ def run_return_types(test_id, oper_id, kwargs, return_types, single=True):
 
         if single:
             tester.run(test_id, **kwargs)
-
-            res.store_test_info()
-            res.write_info(test_id)
+            # res.store_test_info()
+            # res.write_info(test_id)
             return True
         else:
             if not tester.match_profile(test_id):
@@ -151,11 +155,9 @@ if __name__ == '__main__':
                 rtypes = [cargs.profile]
 
         if len(rtypes) == 1:
-            run_return_types(cargs.test_id, cargs.id, kwargs,
-                             return_types=rtypes)
+            run_return_types(cargs.test_id, cargs.id, kwargs, rtypes)
         else:
-            _res = run_return_types(cargs.test_id, cargs.id, kwargs, rtypes,
-                                    False)
+            _res = run_return_types(cargs.test_id, cargs.id, kwargs, rtypes)
             if cargs.exit and _res is False:
                 exit()
     else:
@@ -174,6 +176,6 @@ if __name__ == '__main__':
             test_ids = _sh["flow_names"]
 
         for tid in test_ids:
-            _res = run_return_types(tid, cargs.id, kwargs, rtypes, False)
+            _res = run_return_types(tid, cargs.id, kwargs, rtypes)
             if cargs.exit and _res is False:
                 exit(-1)
