@@ -60,7 +60,7 @@ docs/_build/
 target/
 
 # JWKS
-jwk.json
+jwk*.json
 
 accounting
 parse_log

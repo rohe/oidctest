@@ -99,7 +99,7 @@ def oidc_rplib_setup(distroot):
     _op_dir = os.path.join(distroot, 'test_tool', 'test_rp', 'rplib',
                            'op')
 
-    for _dir in ['static', 'htdocs']:
+    for _dir in ['static', 'htdocs', '_static']:
         _src = os.path.join(_op_dir, _dir)
         if os.path.isdir(_dir):
             shutil.rmtree(_dir)
