@@ -11,7 +11,8 @@ import time
 from future.backports.urllib.parse import parse_qs
 from future.backports.urllib.parse import quote_plus
 from future.backports.urllib.parse import unquote_plus
-from future.types.newstr import unicode
+from jwkest import as_unicode
+
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
 from oic.utils.http_util import get_post
@@ -426,7 +427,7 @@ class Application(object):
         except subprocess.CalledProcessError:
             pass
         else:
-            lin = unicode(byt)
+            lin = as_unicode(byt)
             for l in lin.split('\n'):
                 m = port_pattern.search(l)
                 if m:
