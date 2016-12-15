@@ -5,6 +5,7 @@ import os
 import sys
 import time
 
+import copy
 from Cryptodome.PublicKey import RSA
 
 from future.backports.urllib.parse import urlparse
@@ -90,6 +91,7 @@ class Webfinger(Operation):
             else:
                 principal = self.req_args['principal']
 
+            _conv.entity.wf.events = _conv.entity.events
             self.catch_exception(_conv.entity.discover, principal=principal)
 
             if not _conv.events.last_event_type() == EV_EXCEPTION:
@@ -274,13 +276,16 @@ class UserInfo(SyncGetRequest):
             if isinstance(response, ErrorResponse):
                 raise Break("Unexpected error response")
 
+            self.conv.events.store(EV_RESPONSE, response.to_dict())
+
             if "_claim_sources" in response:
                 user_info = self.conv.entity.unpack_aggregated_claims(response)
                 user_info = self.conv.entity.fetch_distributed_claims(user_info)
-                self.conv.events.store(EV_RESPONSE, user_info)
-
-            self.conv.entity.userinfo = response
-            self.conv.events.store(EV_PROTOCOL_RESPONSE, response)
+                self.conv.entity.userinfo = user_info
+                self.conv.events.store(EV_PROTOCOL_RESPONSE, user_info)
+            else:
+                self.conv.entity.userinfo = response
+                self.conv.events.store(EV_PROTOCOL_RESPONSE, response)
             # return response
 
     @staticmethod

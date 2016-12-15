@@ -2284,6 +2284,24 @@ class ValidCode(Error):
         return {}
 
 
+class GotIdTokenClaims(Warnings):
+    """ Verify that I got the claims I asked for """
+    cid = 'got_id_token_claims'
+
+    def _func(self, conv):
+        res = get_id_tokens(conv)
+        idt = res[0]
+        missing = []
+        for key in self._kwargs['claims']:
+            if key not in idt:
+                missing.append(key)
+        if missing:
+            self._status = WARNING
+            self._message = "The following claims didn't make it to the Id " \
+                            "Token: {}".format(missing)
+        return {}
+
+
 def factory(cid):
     for name, obj in inspect.getmembers(sys.modules[__name__]):
         if inspect.isclass(obj) and issubclass(obj, Check):

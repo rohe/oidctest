@@ -43,6 +43,11 @@ Flows:
       - AccessToken:
           conditional_execution:
             profile: 'C'
+    assert:
+      got_id_token_claims:
+        claims:
+          - nickname
+          - email
   rp-claims_request-userinfo:
     desc: The Relying Party can ask for a specific claim using the 'claims' request
       parameter. The claim should be returned in a UserInfo response
