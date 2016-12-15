@@ -281,6 +281,8 @@ def static(environ, start_response, path):
             return [text.encode('utf8')]
         except (ValueError, UnicodeDecodeError):
             return [bytes]
+        except AttributeError:
+            return [text]
     except IOError:
         resp = NotFound()
         return resp(environ, start_response)
