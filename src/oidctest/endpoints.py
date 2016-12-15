@@ -65,8 +65,8 @@ def dump_log(session_info, events):
             fp = open(file_name, "w")
         except Exception as err:
             logging.error(
-                "Couldn't dump to log file {} reason: {}").format(
-                file_name, err)
+                "Couldn't dump to log file {} reason: {}".format(
+                file_name, err))
             raise
 
     _elem = [layout(0, ev) for ev in events]
