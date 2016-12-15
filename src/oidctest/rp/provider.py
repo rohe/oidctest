@@ -13,7 +13,7 @@ from jwkest.jwk import SYMKey
 
 from oic import oic
 from oic import rndstr
-from oic.oauth2 import Message
+from oic.oauth2 import Message, error, error_response
 from oic.oic import provider
 from oic.oic.message import AccessTokenRequest
 from oic.oic.message import ProviderConfigurationResponse
@@ -276,8 +276,8 @@ class Provider(provider.Provider):
 
         self.events.store(EV_PROTOCOL_REQUEST, reg_req)
         try:
-            f = response_type_cmp(kwargs['test_cnf']['response_type'],
-                                  reg_req['response_types'])
+            response_type_cmp(kwargs['test_cnf']['response_type'],
+                              reg_req['response_types'])
         except KeyError:
             pass
 
@@ -293,7 +293,7 @@ class Provider(provider.Provider):
                 uris = [uris]
             for uri in uris:
                 if not uri.startswith("https://"):
-                    return self._error(
+                    return error(
                         error="invalid_configuration_parameter",
                         descr="Non-HTTPS endpoint in '{}'".format(endp))
 
@@ -315,12 +315,12 @@ class Provider(provider.Provider):
     def authorization_endpoint(self, request="", cookie=None, **kwargs):
         _req = parse_qs(request)
 
-        #self.events.store(EV_REQUEST, _req)
+        # self.events.store(EV_REQUEST, _req)
 
         try:
             _scope = _req["scope"]
         except KeyError:
-            return self._error(
+            return error(
                 error="incorrect_behavior",
                 descr="No scope parameter"
             )
@@ -328,7 +328,7 @@ class Provider(provider.Provider):
             # verify that openid is among the scopes
             _scopes = _scope[0].split(" ")
             if "openid" not in _scopes:
-                return self._error(
+                return error(
                     error="incorrect_behavior",
                     descr="Scope does not contain 'openid'"
                 )
@@ -345,8 +345,8 @@ class Provider(provider.Provider):
                 self.events.store(
                     EV_FAULT,
                     'Wrong response type: {}'.format(_req['response_type']))
-                return self._error_response(error="incorrect_behavior",
-                                            descr="Wrong response_type")
+                return error_response(error="incorrect_behavior",
+                                      descr="Wrong response_type")
 
         _rtypes = []
         for rt in _req['response_type']:
@@ -356,8 +356,8 @@ class Provider(provider.Provider):
             try:
                 self._update_client_keys(client_id)
             except TestError:
-                return self._error(error="incorrect_behavior",
-                                   descr="No change in client keys")
+                return error(error="incorrect_behavior",
+                             descr="No change in client keys")
 
         _response = provider.Provider.authorization_endpoint(self, request,
                                                              cookie,
@@ -387,7 +387,8 @@ class Provider(provider.Provider):
         else:
             if _resp.status_code == 200:
                 self.events.store(EV_REQUEST,
-                    "Request from request_uri: {}".format(_resp.text))
+                                  "Request from request_uri: {}".format(
+                                      _resp.text))
 
         return _response
 
@@ -400,15 +401,15 @@ class Provider(provider.Provider):
             logger.error(err)
             self.events.store(EV_EXCEPTION,
                               "Failed to verify client due to: %s" % err)
-            return self._error(error="incorrect_behavior",
-                               descr="Failed to verify client")
+            return error(error="incorrect_behavior",
+                         descr="Failed to verify client")
 
         try:
             self._update_client_keys(client_id)
         except TestError:
             logger.error('No change in client keys')
-            return self._error(error="incorrect_behavior",
-                               descr="No change in client keys")
+            return error(error="incorrect_behavior",
+                         descr="No change in client keys")
 
         _response = provider.Provider.token_endpoint(self, request,
                                                      authn, dtype, **kwargs)
