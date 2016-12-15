@@ -339,6 +339,11 @@ def remove_grant(oper, arg):
     oper.conv.entity.grant = {}
 
 
+def set_request_base(oper, args):
+    oper.op_args['base_path'] = '{}{}/'.format(oper.conv.entity.base_url, args)
+    oper.op_args['local_dir'] = args
+
+
 def factory(name):
     for fname, obj in inspect.getmembers(sys.modules[__name__]):
         if inspect.isfunction(obj):

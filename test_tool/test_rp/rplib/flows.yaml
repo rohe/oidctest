@@ -645,59 +645,6 @@ Flows:
       - Discovery:
           set_discovery_issuer: null
       - Registration
-#  rp-registration-redirect_uris:
-#    desc: Sends redirect_uris value which only contains a empty string while doing a
-#      registration request. Then send a valid redirect_uris list
-#    profile: ''
-#    sequence:
-#      - Webfinger:
-#          set_webfinger_resource: null
-#      - Discovery:
-#          set_discovery_issuer: null
-#      - Registration:
-#          expect_exception: RegistrationError
-#          set_request_args:
-#            redirect_uris:
-#              - ''
-#  rp-registration-uses-https-endpoints:
-#    desc: Sends endpoints which does not use https. Should be rejected by the OP.
-#    profile: ''
-#    sequence:
-#      - Webfinger:
-#          set_webfinger_resource: null
-#      - Discovery:
-#          set_discovery_issuer: null
-#      - Registration:
-#          expect_exception: RegistrationError
-#          set_request_args:
-#            initiate_login_uri: http://test.com
-#            jwks_uri: http://test.com
-#            redirect_uris:
-#              - 'http://test.com'
-#  rp-registration-well-formed-jwk:
-#    desc: ''
-#    profile: ''
-#    sequence:
-#      - Webfinger:
-#          set_webfinger_resource: null
-#      - Discovery:
-#          set_discovery_issuer: null
-#      - Registration:
-#          set_request_args:
-#            id_token_signed_response_alg: RS256
-#            jwks:
-#              keys:
-#                -
-#                    e: AQAB
-#                    kid: a1
-#                    kty: RSA
-#                    n: tAAzYdbiWDAKI8Q3s1crQRuVp0QXpyGgnzx_sGItC2rhdug68gE9v5mfK-7SJCBpuZXzX1YevJ25B0LhNQSWqvb6gYwlNHs33G8VmSzjpqFazItnhKMPnEehCXmPl7iFi8VV0NCC5_uH9xP61TClWsE8B7i4CV6y9B0hZI22p2M
-#                    use: sig
-#
-#      - SyncAuthn:
-#          set_op_args:
-#            response_type:
-#              - id_token
   rp-request_uri-enc:
     desc: The Relying Party can pass a Request Object by reference using the request_uri
       parameter. Encrypt the Request Object using RSA1_5 and A128CBC-HS256 algorithms
@@ -709,9 +656,8 @@ Flows:
           set_discovery_issuer: null
       - Registration
       - SyncAuthn:
+          set_request_base: request_objects
           set_op_args:
-            base_path: 'https://localhost:8088/request_objects/'
-            local_dir: ./request_objects
             request_method: file
             request_object_encryption_alg: RSA1_5
             request_object_encryption_enc: A128CBC-HS256
@@ -727,9 +673,8 @@ Flows:
       - Registration:
           set_jwks_uri: null
       - SyncAuthn:
+          set_request_base: request_objects
           set_op_args:
-            base_path: 'https://localhost:8088/request_objects/'
-            local_dir: ./request_objects
             request_method: file
             request_object_signing_alg: RS256
   rp-request_uri-sig+enc:
@@ -745,9 +690,8 @@ Flows:
       - Registration:
           set_jwks_uri: null
       - SyncAuthn:
+          set_request_base: request_objects
           set_op_args:
-            base_path: 'https://localhost:8088/request_objects/'
-            local_dir: ./request_objects
             request_method: file
             request_object_encryption_alg: RSA1_5
             request_object_encryption_enc: A128CBC-HS256
@@ -763,9 +707,8 @@ Flows:
           set_discovery_issuer: null
       - Registration
       - SyncAuthn:
+          set_request_base: request_objects
           set_op_args:
-            base_path: 'https://localhost:8088/request_objects/'
-            local_dir: ./request_objects
             request_method: file
             request_object_encryption_alg: RSA1_5
             request_object_encryption_enc: A128CBC-HS256
