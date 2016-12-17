@@ -58,7 +58,7 @@ def run_return_types(test_id, oper_id, kwargs, return_types):
         sh = SessionHandler(**kwargs)
         sh.init_session(profile=rtyp)
 
-        res = Result(sh, SimpleProfileHandler)
+        #res = Result(sh, SimpleProfileHandler)
 
         io = ClIO(**kwargs)
         io.session = sh
@@ -66,7 +66,10 @@ def run_return_types(test_id, oper_id, kwargs, return_types):
         tester = ClTester(io, sh, **kwargs)
 
         if single:
-            tester.run(test_id, **kwargs)
+            if tester.run(test_id, **kwargs):
+                print('+ {}{}'.format(return_types, test_id))
+            else:
+                print('- {}{}'.format(return_types, test_id))
             # res.store_test_info()
             # res.write_info(test_id)
             return True

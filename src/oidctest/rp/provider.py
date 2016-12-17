@@ -3,6 +3,7 @@ import logging
 import time
 import copy
 
+import requests
 from Cryptodome.PublicKey import RSA
 from future.backports.urllib.parse import parse_qs
 
@@ -13,7 +14,9 @@ from jwkest.jwk import SYMKey
 
 from oic import oic
 from oic import rndstr
-from oic.oauth2 import Message, error, error_response
+from oic.oauth2 import error
+from oic.oauth2 import error_response
+from oic.oauth2 import Message
 from oic.oic import provider
 from oic.oic.message import AccessTokenRequest
 from oic.oic.message import ProviderConfigurationResponse
@@ -35,6 +38,21 @@ logger = logging.getLogger(__name__)
 
 class TestError(Exception):
     pass
+
+
+def unwrap_exception(err):
+    while True:  # Exception wrapped in ..
+        if not isinstance(err.args, tuple):
+            err = err.args
+            break
+        elif isinstance(err.args[0], Exception):
+            err = err.args[0]
+        elif isinstance(err.args[1], Exception):
+            err = err.args[1]
+        else:
+            err = '{}:{}'.format(*err.args)  # Is this a fair assumption ??
+            break
+    return err
 
 
 def sort_string(string):
@@ -384,6 +402,10 @@ class Provider(provider.Provider):
             _resp = self.server.http_request(_req["request_uri"][0])
         except KeyError:
             pass
+        except requests.ConnectionError as err:
+            self.events.store(EV_EXCEPTION, err)
+            err = unwrap_exception(err)
+            return error_response(error="server_error", descr=err)
         else:
             if _resp.status_code == 200:
                 self.events.store(EV_REQUEST,

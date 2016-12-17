@@ -2302,6 +2302,24 @@ class GotIdTokenClaims(Warnings):
         return {}
 
 
+class GotUserinfoClaims(Warnings):
+    """ Verify that I got the claims I asked for """
+    cid = 'got_userinfo_claims'
+
+    def _func(self, conv):
+        res = get_protocol_response(conv, OpenIDSchema)
+        userinfo = res[0]
+        missing = []
+        for key in self._kwargs['claims']:
+            if key not in userinfo:
+                missing.append(key)
+        if missing:
+            self._status = WARNING
+            self._message = "The following claims didn't make it to the " \
+                            "UserInfo: {}".format(missing)
+        return {}
+
+
 def factory(cid):
     for name, obj in inspect.getmembers(sys.modules[__name__]):
         if inspect.isclass(obj) and issubclass(obj, Check):

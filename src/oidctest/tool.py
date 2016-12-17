@@ -40,7 +40,7 @@ class ClTester(tool.Tester):
     def run(self, test_id, **kw_args):
         if not self.match_profile(test_id):
             logger.info("Test doesn't match the profile")
-            return True
+            return False
 
         redirs = get_redirect_uris(kw_args['client_info'])
 

@@ -38,7 +38,7 @@ Flows:
           set_request_args:
             claims:
               id_token:
-                auth_time: {essential: true}
+                nickname: {essential: true}
                 email: {essential: true}
       - AccessToken:
           conditional_execution:
@@ -67,6 +67,10 @@ Flows:
           conditional_execution:
             profile: 'C'
       - UserInfo
+    assert:
+      got_userinfo_claims:
+        claims:
+          - email
   rp-discovery-issuer-not-matching-config:
     desc: Retrieve openid-configuration information for OpenID Provider from
       the .well-known/openid-configuration path. Verify that the issuer in
@@ -127,7 +131,7 @@ Flows:
   rp-id_token-aud:
     desc: The Relying Party should request an ID token and compare its aud value
       to the Client ID.
-    profile: 'C,CI,CT,CIT,IT'
+    profile: 'C,I,CI,CT,CIT,IT'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -162,7 +166,7 @@ Flows:
     desc: Tests if the Relying Party can identify and reject an ID Token with an invalid
       signature. The ID Token has been signed using the asymmetric algorithm RS256.
       For more information see list item 6 in ID Token validation
-    profile: 'C,CI,CT,CIT,IT'
+    profile: 'C,I,CI,CT,CIT,IT'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -198,7 +202,7 @@ Flows:
   rp-id_token-bad-sig-es256:
     desc: The Relying Party should reject invalid asymmetric ID Token signature which
       has been signed using the algorithm ES256
-    profile: 'C,CI,CIT,CT,IT'
+    profile: 'C,I,CI,CIT,CT,IT'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -235,7 +239,7 @@ Flows:
     desc: Tests if the Relying Party can identify and reject an ID Token with an invalid
       signature. The ID Token has been signed using the symmetric algorithm HS256. For
       more information see list item 6 in ID Token validation
-    profile: 'C,CI,CT,CIT,IT'
+    profile: 'C,I,CI,CT,CIT,IT'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -268,7 +272,7 @@ Flows:
   rp-id_token-iat:
     desc: The Relying Party should request an ID token if it does not contain a
       iat claim it should be rejected
-    profile: 'C,CI,CT,CIT,IT'
+    profile: 'C,I,CI,CT,CIT,IT'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -299,7 +303,7 @@ Flows:
   rp-id_token-kid-absent-multiple-jwks:
     desc: If there are multiple keys in the referenced JWK Set document, a kid value
       MUST be provided in the JOSE Header
-    profile: 'C,CI,CT,CIT,IT'
+    profile: 'C,I,CI,CT,CIT,IT'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -330,7 +334,7 @@ Flows:
   rp-id_token-kid-absent-single-jwks:
     desc: If the JWK supplied in jwks_uri only contains a single key the ID
       Token does not need to contain a kid claim
-    profile: 'C,CT,CI,CIT,IT'
+    profile: 'C,I,CT,CI,CIT,IT'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -344,7 +348,7 @@ Flows:
   rp-id_token-issuer-mismatch:
     desc: The Relying Party should request an ID token and reject it if the issuer identifier
       for the OpenID Provider is not matching the issuer in the returned ID Token
-    profile: 'C,CI,CT,CIT,IT'
+    profile: 'C,I,CI,CT,CIT,IT'
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -600,7 +604,7 @@ Flows:
   rp-nonce-invalid:
     desc: If a nonce value was sent in the Authentication Request the Relying Party
       must validate the nonce returned in the ID Token.
-    profile: C,CT,IT,CI,CIT
+    profile: C,I,CT,IT,CI,CIT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
@@ -621,10 +625,11 @@ Flows:
                 -
                   - id_token
                   - code
-            exception: PyoidcError
+            exception: ParameterError
       - AccessToken:
           conditional_execution:
             profile: 'C,CT'
+          expect_exception: ParameterError
   rp-nonce-unless-code-flow:
     desc: The Relying Party should always send a nonce as a request parameter while
       using implicit or hybrid flow. Since the server is suppose to return the nonce
@@ -638,9 +643,7 @@ Flows:
       - Discovery:
           set_discovery_issuer: null
       - Registration
-      - SyncAuthn:
-          set_request_args:
-            nonce: null
+      - SyncAuthn
   rp-registration-dynamic:
     desc: Uses Dynamic Registration
     profile: '*'
@@ -805,7 +808,7 @@ Flows:
       - SyncAuthn
   rp-scope-userinfo-claims:
     desc: The Relying Party should be able to request claims using Scope Values
-    profile: '*'
+    profile: C,IT,CI,CT,CIT
     sequence:
       - Webfinger:
           set_webfinger_resource: null
