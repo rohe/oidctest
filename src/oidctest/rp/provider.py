@@ -47,8 +47,11 @@ def unwrap_exception(err):
             break
         elif isinstance(err.args[0], Exception):
             err = err.args[0]
-        elif isinstance(err.args[1], Exception):
+        elif len(err.args) > 1 and isinstance(err.args[1], Exception):
             err = err.args[1]
+        elif len(err.args) == 1:
+            err = err.args[0]
+            break
         else:
             err = '{}:{}'.format(*err.args)  # Is this a fair assumption ??
             break

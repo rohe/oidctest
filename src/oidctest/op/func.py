@@ -28,19 +28,25 @@ def set_webfinger_resource(oper, args):
         oper.resource = oper.op_args["resource"]
     except KeyError:
         if oper.dynamic:
-            _base = oper.conv.get_tool_attribute("webfinger_url",
-                                                 "webfinger_email")
-            if _base is None:
-                raise AttributeError(
-                    'If you want to do dynamic webfinger discovery you must '
-                    'define "webfinger_url" or "webfinger_email" in the '
-                    '"tool" configuration')
-
-            if oper.conv.operator_id is None:
-                oper.resource = _base
+            if args:
+                _p = urlparse(get_issuer(oper.conv))
+                oper.op_args["resource"] = args["pattern"].format(
+                    test_id=oper.conv.test_id, host=_p.netloc,
+                    oper_id=oper.conv.operator_id)
             else:
-                oper.resource = os.path.join(_base, oper.conv.operator_id,
-                                             oper.conv.test_id)
+                _base = oper.conv.get_tool_attribute("webfinger_url",
+                                                     "webfinger_email")
+                if _base is None:
+                    raise AttributeError(
+                        'If you want to do dynamic webfinger discovery you '
+                        'must define "webfinger_url" or "webfinger_email" in '
+                        'the "tool" configuration')
+
+                if oper.conv.operator_id is None:
+                    oper.resource = _base
+                else:
+                    oper.resource = os.path.join(_base, oper.conv.operator_id,
+                                                 oper.conv.test_id)
 
 
 def set_discovery_issuer(oper, args):

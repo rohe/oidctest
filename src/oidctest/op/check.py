@@ -16,6 +16,7 @@ from oic.oic import claims_match
 from oic.oic.message import AuthorizationResponse
 from oic.oic.message import AuthorizationRequest
 from oic.oic.message import OpenIDSchema
+from oic.oic.message import factory as msg_factory
 from oic.utils.time_util import utc_time_sans_frac
 
 from otest.aus.check import CONT_JSON
@@ -2139,6 +2140,7 @@ class BareKeys(Information):
 
         if resp.status_code == 200:
             jwks = json.loads(resp.text)
+            conv.events.store('JWKS', jwks)
             key = {}
             try:
                 for key in jwks["keys"]:
@@ -2287,6 +2289,7 @@ class ValidCode(Error):
 class GotIdTokenClaims(Warnings):
     """ Verify that I got the claims I asked for """
     cid = 'got_id_token_claims'
+    _msg_pat = "The following claims didn't make it to the Id Token: {}"
 
     def _func(self, conv):
         res = get_id_tokens(conv)
@@ -2297,14 +2300,14 @@ class GotIdTokenClaims(Warnings):
                 missing.append(key)
         if missing:
             self._status = WARNING
-            self._message = "The following claims didn't make it to the Id " \
-                            "Token: {}".format(missing)
+            self._message = self._msg_pat.format(missing)
         return {}
 
 
 class GotUserinfoClaims(Warnings):
     """ Verify that I got the claims I asked for """
     cid = 'got_userinfo_claims'
+    _msg_pat = "The following claims didn't make it to the UserInfo: {}"
 
     def _func(self, conv):
         res = get_protocol_response(conv, OpenIDSchema)
@@ -2315,8 +2318,25 @@ class GotUserinfoClaims(Warnings):
                 missing.append(key)
         if missing:
             self._status = WARNING
-            self._message = "The following claims didn't make it to the " \
-                            "UserInfo: {}".format(missing)
+            self._message = self._msg_pat.format(missing)
+        return {}
+
+
+class Got(Error):
+    """ Verify that I got the item I expected """
+    cid = 'got'
+    _msg_pat = "The following attributes didn't make it to the {}"
+
+    def _func(self, conv):
+        res = get_protocol_response(conv, msg_factory(self._kwargs['where']))
+        response = res[0]
+        missing = []
+        for key in self._kwargs['what']:
+            if key not in response:
+                missing.append(key)
+        if missing:
+            self._status = ERROR
+            self._message = self._msg_pat.format(self._kwargs['where'])
         return {}
 
 
