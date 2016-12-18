@@ -16,7 +16,7 @@ from otest.aus.client import Factory
 from otest.parse_cnf import parse_yaml_conf
 from otest.common import setup_logger
 from otest.io import ClIO
-from otest.result import Result
+from otest.result import Result, SIGN
 
 from oidctest.op import func
 from oidctest.op import check
@@ -58,7 +58,7 @@ def run_return_types(test_id, oper_id, kwargs, return_types):
         sh = SessionHandler(**kwargs)
         sh.init_session(profile=rtyp)
 
-        #res = Result(sh, SimpleProfileHandler)
+        # res = Result(sh, SimpleProfileHandler)
 
         io = ClIO(**kwargs)
         io.session = sh
@@ -66,10 +66,12 @@ def run_return_types(test_id, oper_id, kwargs, return_types):
         tester = ClTester(io, sh, **kwargs)
 
         if single:
-            if tester.run(test_id, **kwargs):
-                print('+ {}{}'.format(return_types, test_id))
-            else:
-                print('- {}{}'.format(return_types, test_id))
+            _res = tester.run(test_id, **kwargs)
+            try:
+                print('{} {}{}'.format(SIGN[_res], return_types, test_id))
+            except Exception as err:
+                print('****'+test_id+'*****')
+                raise
             # res.store_test_info()
             # res.write_info(test_id)
             return True
@@ -96,7 +98,7 @@ if __name__ == '__main__':
     parser.add_argument('-k', dest="insecure", action='store_true')
     parser.add_argument('-l', dest="log_name")
     parser.add_argument('-t', dest="test_id")
-    parser.add_argument('-p', dest="profile")
+    parser.add_argument('-p', dest="profile", action='append')
     parser.add_argument('-i', dest="id")
     parser.add_argument('-g', dest="group")
     parser.add_argument('-x', dest='exit', action='store_true')
@@ -151,11 +153,12 @@ if __name__ == '__main__':
             exit()
 
         if cargs.profile:
-            if cargs.profile not in rtypes:
+            _rt = set(rtypes).intersection(set(cargs.profile))
+            if not _rt:
                 print('Profile not among return_types')
                 exit()
             else:
-                rtypes = [cargs.profile]
+                rtypes = list(_rt)
 
         if len(rtypes) == 1:
             run_return_types(cargs.test_id, cargs.id, kwargs, rtypes)
@@ -165,9 +168,9 @@ if __name__ == '__main__':
                 exit()
     else:
         if cargs.profile:
-            rtypes = [cargs.profile]
+            rtypes = cargs.profile
         else:
-            rtypes = ['C']
+            rtypes = PROFILES
 
         _sh = SessionHandler(**kwargs)
         _sh.init_session(profile=rtypes[0])
