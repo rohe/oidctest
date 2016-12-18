@@ -42,7 +42,7 @@ Flows:
                 email: {essential: true}
       - AccessToken:
           conditional_execution:
-            profile: 'C'
+            profile: C,CT,CI,CIT
     assert:
       got_id_token_claims:
         claims:
@@ -144,7 +144,7 @@ Flows:
               response_type:
                 -
                   - code
-                  - mode-form_post
+                  - id_token
                   - token
                 -
                   - id_token
@@ -154,13 +154,10 @@ Flows:
                 -
                   - code
                   - id_token
-                -
-                  - code
-                  - token
             exception: NotForMe
       - AccessToken:
           conditional_execution:
-            profile: 'C'
+            profile: 'C,CT'
           expect_exception: NotForMe
   rp-id_token-bad-sig-rs256:
     desc: Tests if the Relying Party can identify and reject an ID Token with an invalid
@@ -191,13 +188,10 @@ Flows:
                 -
                   - code
                   - id_token
-                -
-                  - code
-                  - token
             exception: BadSignature
       - AccessToken:
           conditional_execution:
-            profile: 'C'
+            profile: 'C, CT'
           expect_exception: BadSignature
   rp-id_token-bad-sig-es256:
     desc: The Relying Party should reject invalid asymmetric ID Token signature which
@@ -323,11 +317,11 @@ Flows:
                 -
                   - code
                   - id_token
-            exception: PyoidcError
+            exception: ParameterError
       - AccessToken:
           conditional_execution:
             profile: 'C, CT'
-          expect_exception: PyoidcError
+          expect_exception: ParameterError
   rp-id_token-kid-absent-single-jwks:
     desc: If the JWK supplied in jwks_uri only contains a single key the ID
       Token does not need to contain a kid claim
@@ -600,15 +594,17 @@ Flows:
             condition:
               response_type:
                 -
-                  - code
                   - id_token
-                  - token
                 -
                   - id_token
                   - token
                 -
-                  - id_token
                   - code
+                  - id_token
+                  - token
+                -
+                  - code
+                  - id_token
             exception: ParameterError
       - AccessToken:
           conditional_execution:
@@ -727,7 +723,7 @@ Flows:
       got:
         what:
           - id_token
-          - token
+          - access_token
         where: AuthorizationResponse
   rp-response_type-code:
     desc: Can Make Request with 'code' Response Type
@@ -777,7 +773,7 @@ Flows:
       got:
         what:
           - id_token
-          - token
+          - access_token
         where: AuthorizationResponse
   rp-response_type-code+id_token+token:
     desc: Can Make Request with 'id_token token' Response Type
@@ -795,7 +791,7 @@ Flows:
       got:
         what:
           - id_token
-          - token
+          - access_token
           - code
         where: AuthorizationResponse
   rp-response_type-code+id_token:
@@ -831,7 +827,7 @@ Flows:
     assert:
       got:
         what:
-          - token
+          - access_token
           - code
         where: AuthorizationResponse
   rp-scope-userinfo-claims:
