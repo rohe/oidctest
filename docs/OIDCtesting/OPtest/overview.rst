@@ -4,7 +4,7 @@ An overview of the OP test tool
 ===============================
 
 A basic assumption for the tool is that when you want to test an OpenID
-Connect Provider (OP) you may want test one specific aspect a time.
+Connect Provider (OP) you may want test one specific aspect at a time.
 You can therefor make several configurations per OP.
 It is for instance common to have one configuration per response_type.
 Following on that you will run one test instance per configuration.
@@ -55,24 +55,24 @@ This is the overall pattern::
 
 
 -h/--help
-~~~~~~~~~
+:::::::::
 
-Will print the usage description as show above
+Will print the usage description as shown above
 
 -k
-~~
+::
 
 If nothing else is said the tool will try to verify the certificates used
 in the HTTPS connection. This will not work if the OP uses self-signed
 certificates. Hence, the *-f* flag will turn of certification verification.
 
 -i
-~~
+::
 
 The Issuer identifier of the OP.
 
 -f
-~~
+::
 
 .. _tt_opt_flow:
 
@@ -81,13 +81,13 @@ manner. If you want to understand more about the test descriptions you can
 read more about them in :ref:`Test description language`.
 
 -p
-~~
+::
 
 Which port the test instance should listen on. Each test instance **MUST**
 have their own port.
 
 -M
-~~
+::
 
 .. _tt_opt_mako:
 
@@ -97,7 +97,7 @@ to be in the directory from which optest.py is run. If that is not the
 case you have to give the path here.
 
 -S
-~~
+::
 
 There are a bunch of static files that the tool must be able to access.
 These are all the javascirpt files, the png, gif, css files. If nothing
@@ -105,20 +105,20 @@ is specified they are expected to be in a directory named 'static' in the
 directory from which optest.py is run.
 
 -s
-~~
+::
 
 If the test instance should use HTTPS then set this flag. If so the
 configuration file must contain specifications of there the certificate and
 key files are.
 
 -t
-~~
+::
 
 If you have several configurations for one and the same OP then you can
 set a name each one of them, this is the *tag*.
 
 -m
-~~
+::
 
 .. _path2port:
 
@@ -143,7 +143,7 @@ internal port::
 and so on.
 
 config
-~~~~~~
+::::::
 
 .. _tt_config:
 
@@ -192,7 +192,7 @@ more.
 ENT_PATH
 ________
 
-A path to where the test configurations are stored. The confirations are
+A path to where the test configurations are stored. The configurations are
 stored in a tree of the form <issuer identifier>/<tag> like this::
 
     https%3A%2F%2Fexample.com --+-- code
@@ -225,7 +225,7 @@ probably non-standard port. Or it can be run behind a `reverse proxy`_ which
 then converts a external path to an internal port.
 
 Stand alone
-~~~~~~~~~~~
+:::::::::::
 
 Here the test tool is configured to listen to a specific port.
 It can be any port but common is that it's not one of the system ports.
@@ -238,41 +238,41 @@ software to do HTTPS. If for some reason there are problems with verifying
 the certificates used by the OP, the -k flag kan be use to turn off
 certificate verification.
 
-Very simple example where there is a flows.yaml file and a configuration
+Very simple command example where there is a flows.yaml file and a configuration
 file named 'config' ::
 
-    optest.py -s -f flows.yaml config
+    optest.py -p 9000 -s -f flows.yaml config
 
 
 Reverse proxy setup
-~~~~~~~~~~~~~~~~~~~
+:::::::::::::::::::
 
-If a reverse proxy is in place then the there will be an external URL
+If a reverse proxy is used then the there will be an external URL
 that the RP is known as to the outside but also and internal URL which is
 only used between the proxy and the test tool.
 
-An example could be that the external URL would be:
+An example could be that the external URL is:
     https://example.com/optest/op1
 
-while the internal URL would be:
+while the internal URL is:
     http://localhost:8666/
 
 To accomplish this a couple of things has to happen. If you are running
-an Apache server as your reverse proxy you can find a desciption of the
+an Apache server as your reverse proxy you can find a description of the
 necessary steps on the `apache reverse proxy`_ page.
-You probably want to preconfigure a list of path-to-port mappings.
+You probably want to pre-configure a list of path-to-port mappings.
 Besides doing this in the reverese proxy you should also construct a csv
 file that contains the `path2port`_ mapping.
 
-If you do that the test tool will construct the correct external URL based
-on the *port* specification in the config file and the mapping defined in the
+If you do that, the test tool will construct the correct external URL based
+on the *port* specification and the mapping defined in the
 csv file.
 
 Since the reverse proxy will probably be used to terminate the HTTPS
 tunnel the tool will not have to deal with certificates which leaves us
 with the following simple command::
 
-    optest.py -f flows.yaml -m reverse.csv config
+    optest.py -p 9000 -f flows.yaml -m reverse.csv config
 
 
 .. _reverse proxy: https://en.wikipedia.org/wiki/Reverse_proxy

@@ -31,45 +31,45 @@ The configuration server is again a Python script::
 
 
 -b
-**
+::
 
 You should really set this in the configuration file rather then using
 this option. Anyway this is the base from which the tool will construct the
 necessary URLs.
 
 -c
-**
+::
 
 More about the test tool configuration :ref:`here <tt_config>`
 
 -f
-**
+::
 
 The :ref:`flows <tt_opt_flow>` information is passed on to the test tool instance
 
 -m
-**
+::
 
 The :ref:`path2port <path2port>` information is passed on to the test tool instance
 
 -p
-**
+::
 
 Which port the configuration server should listen on
 
 -t
-**
+::
 
 Turns on HTTPS support. If set the configuration server will not listen to HTTP
 calls
 
 -M
-**
+::
 
 The :ref:`Mako dir <tt_opt_mako>` information is passed on to the test tool instance
 
 config
-******
+::::::
 
 The configuration file looks like this::
 
@@ -84,9 +84,9 @@ The configuration file looks like this::
     #VERIFY_SSL = False
 
     BASE_URL = 'http://localhost'
-    MAKO_DIR = './heart_mako'
     ENT_PATH = './entities'
     ENT_INFO = './entity_info'
+    MAKO_DIR = './heart_mako'
 
     FLOWS = ['./flows.yaml']
 
@@ -100,8 +100,8 @@ SERVER_CERT, SERVER_KEY and CERT_CHAIN
 
 Are only necessary if the test instance is supposed to do HTTPS.
 
-BASE
-++++
+BASE_URL
+++++++++
 
 *passed on to a test tool instace*
 The base from which the urls, that the test instance (as an RP) publishes, are
@@ -131,6 +131,14 @@ This is information about the test instance which is static and
 should not differ between different test instances. Some of the information
 here represents default values and may be changed.
 
+MAKO_DIR
+++++++++
+
+*passed on to a test tool instance*
+Where the MAKO template files cna be found. This is the root directory
+so within this directory there must be a ht_docs directory with the
+actual templates.
+
 FLOWS
 +++++
 
@@ -149,7 +157,7 @@ PORT_MAX, PORT_MIN
 ++++++++++++++++++
 
 Defines the number of test instances that the configuration server can
-spin off and which ports that must be used. When all ports are taken
+spin off and which ports it can use for these. When all ports are taken
 no more test instance can be started unless a running test instance is
 removed.
 
@@ -158,7 +166,7 @@ The web interface
 -----------------
 
 When you have started a configuration server you can connect to the
-port it listens on and wsee this:
+port it listens on and see this:
 
 .. image:: confserver0.png
 

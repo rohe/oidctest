@@ -3,7 +3,7 @@
 How to run OP testing using OIDCtest
 ====================================
 
-This tool is for testing an OpenID Connect Provider instance compliance
+This tool is for testing an OpenID Connect Provider instances compliance
 with the standard.
 
 :Release: |release|
