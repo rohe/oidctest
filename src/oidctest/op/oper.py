@@ -5,7 +5,6 @@ import os
 import sys
 import time
 
-import copy
 from Cryptodome.PublicKey import RSA
 
 from future.backports.urllib.parse import urlparse
@@ -15,7 +14,7 @@ from jwkest.jwk import RSAKey
 from oic import rndstr
 
 from oic.exception import IssuerMismatch
-from oic.exception import PyoidcError
+from oic.exception import ParameterError
 from oic.oauth2.message import ErrorResponse
 from oic.oauth2.util import JSON_ENCODED
 from oic.oic import ProviderConfigurationResponse
@@ -246,11 +245,11 @@ class AccessToken(SyncPostRequest):
             if _jws_alg == "none":
                 pass
             elif "kid" not in atr[
-                "id_token"].jws_header and not _jws_alg == "HS256":
+                    "id_token"].jws_header and not _jws_alg == "HS256":
                 keys = self.conv.entity.keyjar.keys_by_alg_and_usage(
                     self.conv.info["issuer"], _jws_alg, "ver")
                 if len(keys) > 1:
-                    raise PyoidcError("No 'kid' in id_token header!")
+                    raise ParameterError("No 'kid' in id_token header!")
 
         if not same_issuer(self.conv.info["issuer"], atr["id_token"]["iss"]):
             raise IssuerMismatch(" {} != {}".format(self.conv.info["issuer"],

@@ -113,7 +113,11 @@ def wsgi_wrapper(environ, start_response, func, session_info, events, jlog):
         return resp(environ, start_response)
     except TypeError:
         resp = args
-        jlog.info({'response_from': func.__name__, 'response': resp2json(resp)})
+        try:
+            jlog.info({'response_from': func.__name__,
+                       'response': resp2json(resp)})
+        except Exception:
+            pass
         events.store(EV_RESPONSE, resp.message)
         dump_log(session_info, events)
         return resp(environ, start_response)

@@ -4,6 +4,7 @@ from oic.utils.http_util import Response
 
 from otest import exception_trace
 from otest.aus import tool
+from otest.check import NOT_APPLICABLE
 from otest.conversation import Conversation
 
 from oidctest import prof_util
@@ -40,7 +41,7 @@ class ClTester(tool.Tester):
     def run(self, test_id, **kw_args):
         if not self.match_profile(test_id):
             logger.info("Test doesn't match the profile")
-            return False
+            return NOT_APPLICABLE
 
         redirs = get_redirect_uris(kw_args['client_info'])
 
