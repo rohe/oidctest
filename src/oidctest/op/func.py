@@ -121,7 +121,7 @@ def set_uri(oper, args):
 def static_jwk(oper, args):
     _client = oper.conv.entity
     oper.req_args["jwks_uri"] = None
-    oper.req_args["jwks"] = {"keys": _client.keyjar.dump_issuer_keys("")}
+    oper.req_args["jwks"] = {"keys": _client.keyjar.export_jwks("")}
 
 
 def get_base(base):
