@@ -5,8 +5,8 @@ PORT = 8088
 BASE = "https://localhost:" + str(PORT) + "/"
 
 # If BASE is https these has to be specified
-SERVER_CERT = "../certs/server.crt"
-SERVER_KEY = "../certs/server.key"
+SERVER_CERT = "../certs/cert.pem"
+SERVER_KEY = "../certs/key.pem"
 CA_BUNDLE = None
 VERIFY_SSL = False
 
