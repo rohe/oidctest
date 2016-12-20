@@ -66,6 +66,10 @@ def oidc_op_setup(distroot):
         ["make_entity_info.py", "-i", "https://example.com", "-p", "C.F.T.F",
          "-t", "CFTF"])
 
+    subprocess.call(
+        ["make_entity_info.py", "-i", "https://example.com", "-p", "C.F.F.F",
+         "-t", "CFFF"])
+
     # os.chdir('..')
 
 
