@@ -45,6 +45,9 @@ tool_conf = ['acr_values', 'claims_locales', 'issuer',
 def get_iss_and_tag(path):
     p = path.split('/')
 
+    if len(p) == 1:
+        return unquote_plus(p[0]), ''
+
     try:
         iss = p[-2]
     except IndexError:
@@ -179,7 +182,10 @@ class REST(object):
     def construct_config(self, qiss, qtag):
         _conf = json.loads(
             open('{}/common.json'.format(self.entinfo), 'r').read())
-        _econf = self.read_conf(qiss, qtag)
+        try:
+            _econf = self.read_conf(qiss, qtag)
+        except NoSuchFile:
+            raise
 
         if _econf is None:
             raise Exception('No configuration for {}:{}'.format(qiss, qtag))
@@ -191,6 +197,31 @@ class REST(object):
             _conf['client']['registration_info'] = reg_info['registration_info']
         _conf['tool'] = _econf['tool']
         return _conf
+
+    def list_dir(self, dirname, qiss):
+        if not os.path.isdir(dirname):
+            if qiss.endswith('%2F'):  # try to remove
+                qiss = qiss[:-3]
+            else:  # else add
+                qiss += '%2F'
+            dirname = self.entity_file_name(qiss, '')
+            if not os.path.isdir(dirname):
+                raise NoSuchFile(dirname)
+
+        iss = unquote_plus(qiss)
+        res = ['<p>']
+        for file in os.listdir(dirname):
+            _url = '{}{}/{}'.format(self.base_url,qiss,quote_plus(file))
+            res.append('<a href="{}">{}</a><br>'.format(_url, file))
+        res.append('</p')
+        _html = [
+            '<html><head>List of tags for "{}"</head>'.format(iss),
+            '<body>'
+        ]
+        _html.extend(res)
+        _html.append('</body></html>')
+
+        return 'html', '\n'.join(_html)
 
     def read_conf(self, qiss, qtag):
         """
@@ -208,8 +239,7 @@ class REST(object):
                     qiss += '%2F'
                 fname = self.entity_file_name(qiss, qtag)
                 if not os.path.isfile(fname):
-                    logger.info('No such file: ()'.format(fname))
-                    raise NoSuchFile(fname)
+                    return self.list_dir(fname, qiss)
 
             try:
                 _data = open(fname, 'r').read()
@@ -224,7 +254,7 @@ class REST(object):
                 else:
                     raise
             try:
-                return json.loads(_data)
+                return 'json', json.loads(_data)
             except Exception as err:
                 return None
         else:
@@ -238,11 +268,18 @@ class REST(object):
         :param path: The HTTP request path
         :return: A HTTP response
         """
-        _jsinfo = self.read_conf(qiss, qtag)
-        if _jsinfo:
-            resp = Response(json.dumps(_jsinfo), content='application/json')
-        else:
+        try:
+            typ, info = self.read_conf(qiss, qtag)
+        except NoSuchFile:
             resp = NotFound('Could not find {}'.format(path))
+        else:
+            if info:
+                if typ == 'json':
+                    resp = Response(json.dumps(info), content='application/json')
+                else:
+                    resp = Response(info, content='text/html')
+            else:
+                resp = NotFound('Could not find {}'.format(path))
         return resp
 
     def replace(self, qiss, qtag, info, path):
