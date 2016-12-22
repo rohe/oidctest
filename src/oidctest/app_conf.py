@@ -180,10 +180,14 @@ class REST(object):
         return os.path.join(self.entpath, iss)
 
     def construct_config(self, qiss, qtag):
+        if not qtag:
+            raise Exception('Missing "tag" value')
+
         _conf = json.loads(
             open('{}/common.json'.format(self.entinfo), 'r').read())
+
         try:
-            _econf = self.read_conf(qiss, qtag)
+            typ, _econf = self.read_conf(qiss, qtag)
         except NoSuchFile:
             raise
 
@@ -270,7 +274,7 @@ class REST(object):
         """
         try:
             typ, info = self.read_conf(qiss, qtag)
-        except NoSuchFile:
+        except (TypeError, NoSuchFile):
             resp = NotFound('Could not find {}'.format(path))
         else:
             if info:
@@ -478,8 +482,14 @@ class Application(object):
                     except KeyError:
                         logger.warning('unregistered optest process')
 
-    def get_port(self, iss, tag):
-        _key = '{}:{}'.format(iss, tag)
+    def get_port(self, qiss, qtag):
+        """
+        Get an assigned port. If no one is assigned, find the next available.
+        :param qiss: quoted identifier
+        :param qtag: quoted tag
+        :return: Integer
+        """
+        _key = '{}:{}'.format(qiss, qtag)
         try:
             _port = self.assigned_ports[_key]
         except KeyError:
@@ -508,8 +518,13 @@ class Application(object):
             fp.close()
         return _port
 
-    def return_port(self, iss, tag):
-        _key = '{}:{}'.format(iss, tag)
+    def return_port(self, qiss, qtag):
+        """
+        Unmake an assignment. That is return an assigned port to the free list.
+        :param qiss: quoted identifier
+        :param qtag: quoted tag
+        """
+        _key = '{}:{}'.format(qiss, qtag)
         try:
             del self.assigned_ports[_key]
         except KeyError:
@@ -535,7 +550,7 @@ class Application(object):
         else:
             url = '{}:{}'.format(self.test_tool_base[:-1], _port)
 
-        _econf = self.rest.read_conf(iss, tag)
+        typ, _econf = self.rest.read_conf(iss, tag)
         if _econf['tool']['insecure']:
             args.append('-k')
 
@@ -654,6 +669,15 @@ class Application(object):
             else:
                 res = BadRequest('Syntax error in profile specification')
             return res(environ, start_response)
+        elif path.startswith('register/'):
+            _iss, _tag = get_iss_and_tag(path)
+            _qiss = quote_plus(_iss)
+            _qtag = quote_plus(_tag)
+            _met = environ.get('REQUEST_METHOD')
+            if _met == 'GET':
+                return self.get_port(_qiss, _qtag)
+            elif _met == 'DELETE':
+                return self.return_port(_qiss, _qtag)
         else:
             # check if this a REST request
             _iss, _tag = get_iss_and_tag(path)
