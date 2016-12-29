@@ -1,0 +1,1 @@
+{"MTI": ["IT", "CIT"], "behavior": "ath", "claims": "normal", "capabilities": {"response_types_supported": ["id_token token", "code id_token token"]}}

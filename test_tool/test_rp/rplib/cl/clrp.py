@@ -23,7 +23,6 @@ from oidctest.op import check
 from oidctest.prof_util import SimpleProfileHandler
 from oidctest.session import SessionHandler
 from oidctest.tool import ClTester
-from oidctest.rp.test_config import PROFILES
 
 try:
     from requests.packages import urllib3
@@ -36,6 +35,8 @@ __author__ = 'roland'
 
 logger = logging.getLogger("")
 
+
+PROFILES = ["C", "CI", "CT", "CIT", "I", "IT"]
 
 def get_return_types(spec):
     if spec == '*':

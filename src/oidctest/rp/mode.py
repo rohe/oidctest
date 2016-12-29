@@ -151,20 +151,24 @@ def setup_op(mode, com_args, op_arg, test_conf, events):
     op.name = op.baseurl = "{}{}{}/{}".format(op.baseurl, div, mode['oper_id'],
                                               mode['test_id'])
 
-    try:
-        _tc = test_conf[mode['test_id']]
-    except KeyError:
+    _tc = test_conf[mode['test_id']]
+    if not _tc:
         raise UnknownTestID(mode['test_id'])
 
-    for _typ in ["signing_alg", "encryption_alg", "encryption_enc"]:
-        try:
-            _alg = _tc[_typ]
-        except (TypeError, KeyError):
-            for obj in ["id_token", "request_object", "userinfo"]:
-                op.jwx_def[_typ][obj] = ''
-        else:
-            for obj in ["id_token", "request_object", "userinfo"]:
-                op.jwx_def[_typ][obj] = _alg
+    try:
+        _capa = _tc['capabilities']
+    except KeyError:
+        pass
+    else:
+        op.capabilities.update(_capa)
+        # update jwx
+        for _typ in ["signing_alg", "encryption_alg", "encryption_enc"]:
+            for item in ["id_token", "userinfo"]:
+                cap_param = '{}_{}_values_supported'.format(item, _typ)
+                try:
+                    op.jwx_def[_typ][item] = _capa[cap_param][0]
+                except KeyError:
+                    pass
 
     try:
         op.claims_type = _tc["claims"]

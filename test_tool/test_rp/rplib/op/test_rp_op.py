@@ -8,7 +8,9 @@ import re
 import sys
 import traceback
 import logging
-from future.backports.urllib.parse import parse_qs, urlparse
+
+from future.backports.urllib.parse import parse_qs
+from future.backports.urllib.parse import urlparse
 from oic.oauth2.message import Message
 
 from oic.utils.client_management import CDB
@@ -25,18 +27,19 @@ from oidctest.endpoints import make_tar
 from oidctest.endpoints import static
 from oidctest.endpoints import URLS
 from oidctest.response_encoder import ResponseEncoder
-from oidctest.rp import test_config
 from oidctest.rp.mode import extract_mode
 from oidctest.rp.mode import init_keyjar
 from oidctest.rp.mode import write_jwks_uri
 from oidctest.rp.mode import setup_op
 
 from otest.conversation import Conversation
-from otest.events import Events, HTTPRequest, EV_HTTP_REQUEST
+from otest.events import Events
 from otest.events import EV_EXCEPTION
 from otest.events import EV_FAULT
+from otest.events import EV_HTTP_REQUEST
 from otest.events import EV_REQUEST
 from otest.events import FailedOperation
+from otest.events import HTTPRequest
 from otest.events import Operation
 from otest.jlog import JLog
 
@@ -149,14 +152,31 @@ def parse_path(path):
         raise ValueError('illegal path')
 
 
+class TestConf(object):
+    def __init__(self, conf_dir):
+        self.conf_dir = conf_dir
+
+    def __getitem__(self, item):
+        fname = '{}/{}.json'.format(self.conf_dir, item)
+        try:
+            fp = open(fname, 'r')
+        except Exception:
+            return None
+        else:
+            try:
+                return json.load(fp)
+            except Exception:
+                return None
+
+
 class Application(object):
-    def __init__(self, test_conf, com_args, op_args):
-        self.test_conf = test_conf
+    def __init__(self, test_conf_dir, com_args, op_args):
+        self.test_conf = TestConf(test_conf_dir)
         self.op = {}
         self.com_args = com_args
         self.op_args = op_args
 
-    def op_setup(self, environ, mode, events, test_conf, endpoint):
+    def op_setup(self, environ, mode, events, endpoint):
         addr = get_client_address(environ)
         path = '/'.join([mode['oper_id'], mode['test_id']])
 
@@ -184,8 +204,8 @@ class Application(object):
                     _op_args[param] = self.op_args[param]
                 for param in ["jwks", "keys"]:
                     _op_args[param] = self.op_args["marg"][param]
-                _op = setup_op(mode, self.com_args, _op_args, self.test_conf,
-                               events)
+                _op = setup_op(mode, self.com_args, _op_args,
+                               self.test_conf, events)
             else:
                 _op = setup_op(mode, self.com_args, self.op_args,
                                self.test_conf, events)
@@ -240,7 +260,7 @@ class Application(object):
                 events.store('Init',
                              '===========================================')
                 op, path, jlog.id = self.op_setup(environ, mode, events,
-                                                  self.test_conf, endpoint)
+                                                  endpoint)
                 jwks = op.generate_jwks(mode)
                 resp = Response(jwks,
                                 headers=[('Content-Type', 'application/json')])
@@ -334,8 +354,7 @@ class Application(object):
                 events.store(EV_REQUEST, _ev)
                 tok = authz[7:]
                 # mode, endpoint = extract_mode(self.op_args["baseurl"])
-                _op, _, sid = self.op_setup(environ, mode, events,
-                                            self.test_conf, endpoint)
+                _op, _, sid = self.op_setup(environ, mode, events, endpoint)
                 try:
                     _claims = _op.claim_access_token[tok]
                 except KeyError:
@@ -354,9 +373,7 @@ class Application(object):
             jlog.id = mode['oper_id']
 
         try:
-            _op, path, jlog.id = self.op_setup(environ, mode, events,
-                                               self.test_conf,
-                                               endpoint)
+            _op, path, jlog.id = self.op_setup(environ, mode, events, endpoint)
         except UnknownTestID as err:
             resp = BadRequest('Unknown test ID: {}'.format(err.args[0]))
             return resp(environ, start_response)
@@ -412,6 +429,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', dest='verbose', action='store_true')
     parser.add_argument('-d', dest='debug', action='store_true')
+    parser.add_argument('-f', dest='flowsdir')
     parser.add_argument('-p', dest='port', default=80, type=int)
     parser.add_argument('-k', dest='insecure', action='store_true')
     parser.add_argument(dest="config")
@@ -419,7 +437,7 @@ if __name__ == '__main__':
 
     _com_args, _op_arg, config = main_setup(args, LOOKUP)
 
-    _app = Application(test_conf=test_config.CONF, com_args=_com_args,
+    _app = Application(test_conf_dir=args.flowsdir, com_args=_com_args,
                        op_args=_op_arg)
     # Setup the web server
     SRV = wsgiserver.CherryPyWSGIServer(('0.0.0.0', args.port),
