@@ -103,16 +103,12 @@ def oidc_rplib_setup(distroot):
     _op_dir = os.path.join(distroot, 'test_tool', 'test_rp', 'rplib',
                            'op')
 
-    for _dir in ['static', 'htdocs', '_static']:
+    for _dir in ['static', 'htdocs', '_static', 'flows']:
         _src = os.path.join(_op_dir, _dir)
         if os.path.isdir(_dir):
             shutil.rmtree(_dir)
         shutil.copytree(_src, _dir)
 
-    for _fname in ['example_conf.py', 'test_rp_op.py', 'setup.py']:
-        _file = os.path.join(_op_dir, _fname)
-        copy_if_not_same(_file, _fname)
-
-    for _fname in ['run.sh']:
+    for _fname in ['example_conf.py', 'test_rp_op.py', 'setup.py', 'run.sh']:
         _file = os.path.join(_op_dir, _fname)
         copy_if_not_same(_file, _fname)
