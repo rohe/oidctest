@@ -1,1 +1,23 @@
-{"MTI": ["CNF", "DYN"], "behavior": "isso", "claims": "normal", "capabilities": {"response_types_supported": ["code", "id_token", "id_token token", "code id_token", "code token", "code id_token token"]}}
+{
+  "MTI": [
+    "CNF",
+    "DYN"
+  ],
+  "behavior": "isso",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Rejects discovered issuer not matching provider configuration issuer",
+  "profiles": ["CNF", "DYN"],
+  "detailed_description": "Retrieve ${OPENID_CONFIGURATION_INFORMATION} for OpenID Provider from the .well-known/openid-configuration path. Verify that the issuer in the ${PROVIDER_CONFIGURATION}  matches the one returned by WebFinger.",
+  "expected_result": "Identify that the issuers are not matching and reject the provider configuration."
+
+}

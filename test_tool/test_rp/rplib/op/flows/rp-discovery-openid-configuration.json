@@ -1,1 +1,21 @@
-{"MTI": ["CNF", "DYN"], "claims": "normal", "capabilities": {"response_types_supported": ["code", "id_token", "id_token token", "code id_token", "code token", "code id_token token"]}}
+{
+  "MTI": [
+    "CNF",
+    "DYN"
+  ],
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Uses Provider Configuration Information",
+        "profiles": ["CNF", "DYN"],
+        "detailed_description": "Retrieve and use the ${OPENID_CONFIGURATION_INFORMATION}.",
+        "expected_result": "Read and use the JSON object returned from the OpenID Connect Provider."
+}

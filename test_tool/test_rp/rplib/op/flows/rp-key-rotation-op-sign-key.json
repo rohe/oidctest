@@ -1,1 +1,20 @@
-{"MTI": ["CNF", "DYN"], "behavior": "rotsig", "claims": "normal", "capabilities": {"response_types_supported": ["code"]}}
+{
+  "MTI": [
+    "CNF",
+    "DYN"
+  ],
+  "behavior": "rotsig",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code"
+    ]
+  },
+  "short_description": "Supports rotation of provider's asymmetric signing keys",
+  "profiles": [
+    "CNF",
+    "DYN"
+  ],
+  "detailed_description": "Request an ID Token and verify its signature. Make a new authentication and retrieve another ID Token and verify its signature.",
+  "expected_result": "Successfully verify both ID Token signatures, fetching the ${SIGNING_KEY_ROTATION} if the 'kid' claim in the JOSE header is unknown."
+}

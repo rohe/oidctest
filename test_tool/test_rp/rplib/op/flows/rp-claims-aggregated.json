@@ -1,1 +1,15 @@
-{"claims": "aggregated", "capabilities": {"response_types_supported": ["code", "id_token token", "code id_token", "code token", "code id_token token"]}}
+{
+  "claims": "aggregated",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Can use Aggregated Claims",
+  "detailed_description": "Make a ${USERINFO_REQUEST} and read the ${AGGREGATED_CLAIMS}.",
+  "expected_result": "Understand the aggregated claims in the ${USERINFO_RESPONSE}."
+}

@@ -1,1 +1,20 @@
-{"MTI": ["DYN"], "claims": "normal", "capabilities": {"response_types_supported": ["code", "id_token", "id_token token", "code id_token", "code token", "code id_token token"]}}
+{
+  "MTI": [
+    "DYN"
+  ],
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Can discover OpenID providers using URL syntax",
+  "profiles": "DYN",
+  "detailed_description": "Use WebFinger (${RFC7033}) and ${ISSUER_DISCOVERY_DOC} to determine the location of the OpenID Provider. The discovery should be done using ${URL_SYNTAX} as user input identifier.",
+  "expected_result": "An issuer location should be returned."
+}

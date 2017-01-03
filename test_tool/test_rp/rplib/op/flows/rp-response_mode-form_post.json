@@ -1,1 +1,15 @@
-{"claims": "normal", "capabilities": {"response_types_supported": ["id_token", "id_token token", "code id_token", "code token", "code id_token token"]}}
+{
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Can make request using response_type='id_token token' and response_mode='form_post'",
+  "detailed_description": "Make an authentication request with the ${RESPONSE_TYPE} set to 'id_token token' and the ${RESPONSE_MODE} set to ${FORM_POST}.",
+  "expected_result": "HTML form post response processed, resulting in query encoded parameters."
+}

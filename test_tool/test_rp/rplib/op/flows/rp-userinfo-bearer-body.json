@@ -1,1 +1,29 @@
-{"MTI": ["C", "IT", "CI", "CT", "CIT"], "claims": "normal", "capabilities": {"response_types_supported": ["code", "id_token token", "code id_token", "code token", "code id_token token"]}}
+{
+  "MTI": [
+    "C",
+    "IT",
+    "CI",
+    "CT",
+    "CIT"
+  ],
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Can send Access Token as form-encoded body parameter",
+  "profiles": [
+    "C",
+    "IT",
+    "CI",
+    "CT",
+    "CIT"
+  ],
+  "detailed_description": "Pass the access token as a ${FORM_ENCODED_BODY_PARAMETER} while doing the ${USERINFO_REQUEST}.",
+  "expected_result": "A ${USERINFO_RESPONSE}."
+}

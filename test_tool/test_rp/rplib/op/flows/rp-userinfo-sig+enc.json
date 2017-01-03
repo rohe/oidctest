@@ -1,1 +1,15 @@
-{"claims": "normal", "capabilities": {"response_types_supported": ["code", "id_token token", "code id_token", "code token", "code id_token token"]}}
+{
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Can request and use signed and encrypted UserInfo Response",
+  "detailed_description": "Request signed and encrypted UserInfo. Decrypt the ${USERINFO_RESPONSE} and verify its signature.",
+  "expected_result": "Successful decryption and signature verification of the ${USERINFO_RESPONSE}."
+}

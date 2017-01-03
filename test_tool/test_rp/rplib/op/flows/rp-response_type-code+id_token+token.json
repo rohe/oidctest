@@ -1,1 +1,17 @@
-{"MTI": ["CIT"], "claims": "normal", "capabilities": {"response_types_supported": ["code id_token token"]}}
+{
+  "MTI": [
+    "CIT"
+  ],
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code id_token token"
+    ]
+  },
+  "short_description": "Can make request using response_type 'code id_token token'",
+  "profiles": [
+    "CIT"
+  ],
+  "detailed_description": "Make an authentication request using the ${HYBRID_FLOW}, specifying the ${RESPONSE_TYPE} as 'code id_token token'",
+  "expected_result": "An ${IMPLICIT_AUTHENTICATION_RESPONSE} containing an authorization code, an ${ID_TOKEN} and an Access Token."
+}
