@@ -378,8 +378,7 @@ class Application(object):
             try:
                 _prof = qs['profile'][0]
             except KeyError:
-                resp = BadRequest('Missing query parameter')
-                return resp(environ, start_response)
+                return main_display(environ, start_response)
             else:
                 return rp_test_list(environ, start_response, self.fdir, _prof,
                                     self.links)
