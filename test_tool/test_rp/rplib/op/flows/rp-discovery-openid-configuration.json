@@ -15,7 +15,6 @@
     ]
   },
   "short_description": "Uses Provider Configuration Information",
-        "profiles": ["CNF", "DYN"],
-        "detailed_description": "Retrieve and use the ${OPENID_CONFIGURATION_INFORMATION}.",
-        "expected_result": "Read and use the JSON object returned from the OpenID Connect Provider."
+  "detailed_description": "Retrieve and use the ${OPENID_CONFIGURATION_INFORMATION}.",
+  "expected_result": "Read and use the JSON object returned from the OpenID Connect Provider."
 }

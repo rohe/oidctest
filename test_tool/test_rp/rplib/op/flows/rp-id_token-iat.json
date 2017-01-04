@@ -20,14 +20,6 @@
     ]
   },
   "short_description": "Rejects ID Token without 'iat' claim",
-  "profiles": [
-    "C",
-    "I",
-    "IT",
-    "CI",
-    "CT",
-    "CIT"
-  ],
   "detailed_description": "Request an ID token and verify its '${IAT}' value.",
   "expected_result": "Identify the missing 'iat' value and reject the ID Token after doing ${ID_TOKEN_VALIDATION}."
 }

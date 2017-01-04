@@ -17,13 +17,6 @@
     ]
   },
   "short_description": "Can send Access Token in the HTTP Authorization request header",
-  "profiles": [
-    "C",
-    "IT",
-    "CI",
-    "CT",
-    "CIT"
-  ],
   "detailed_description": "Pass the access token using the ${BEARER_AUTH_SCHEME} while doing the ${USERINFO_REQUEST}.",
   "expected_result": "A ${USERINFO_RESPONSE}."
 }

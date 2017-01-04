@@ -14,9 +14,6 @@
     ]
   },
   "short_description": "Uses dynamic registration",
-  "profiles": [
-    "DYN"
-  ],
   "detailed_description": "Use the ${CLIENT_REGISTRATION_ENDPOINT} in order to dynamically register the Relying Party.",
   "expected_result": "Get a ${CLIENT_REGISTRATION_RESPONSE}."
 }

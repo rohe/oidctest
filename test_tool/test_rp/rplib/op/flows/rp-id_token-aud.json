@@ -20,14 +20,6 @@
     ]
   },
   "short_description": "Rejects ID Token with invalid 'aud' claim",
-  "profiles": [
-    "C",
-    "I",
-    "IT",
-    "CI",
-    "CT",
-    "CIT"
-  ],
   "detailed_description": "Request an ID token and compare its ${AUD} value to the Relying Party's '${CLIENT_ID}'.",
   "expected_result": "Identify that the 'aud' value is missing or doesn't match the 'client_id' and reject the ID Token after doing ${ID_TOKEN_VALIDATION}."
 }

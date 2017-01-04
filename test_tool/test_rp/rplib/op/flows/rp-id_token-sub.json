@@ -20,14 +20,6 @@
     ]
   },
   "short_description": "Rejects ID Token without 'sub' claim",
-  "profiles": [
-    "C",
-    "I",
-    "IT",
-    "CI",
-    "CT",
-    "CIT"
-  ],
   "detailed_description": "Request an ID token and verify it contains a ${SUB} value.",
   "expected_result": "Identify the missing 'sub' value and reject the ID Token."
 }

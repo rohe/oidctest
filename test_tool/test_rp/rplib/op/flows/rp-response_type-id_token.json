@@ -9,7 +9,6 @@
     ]
   },
   "short_description": "Can make request using response_type 'id_token'",
-  "profiles": ["I"],
   "detailed_description": "Make an authentication request using the ${IMPLICIT_FLOW}, specifying the ${RESPONSE_TYPE} as 'id_token'.",
   "expected_result": "An ${IMPLICIT_AUTHENTICATION_RESPONSE} containing an ${ID_TOKEN}."
 }

@@ -14,7 +14,6 @@
     ]
   },
   "short_description": "Can discover OpenID providers using URL syntax",
-  "profiles": "DYN",
   "detailed_description": "Use WebFinger (${RFC7033}) and ${ISSUER_DISCOVERY_DOC} to determine the location of the OpenID Provider. The discovery should be done using ${URL_SYNTAX} as user input identifier.",
   "expected_result": "An issuer location should be returned."
 }

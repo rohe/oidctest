@@ -20,14 +20,6 @@
     ]
   },
   "short_description": "Rejects ID Token with invalid 'nonce' when valid 'nonce' sent",
-  "profiles": [
-    "C",
-    "I",
-    "IT",
-    "CI",
-    "CT",
-    "CIT"
-  ],
   "detailed_description": "Pass a ${NONCE_IMPLEMENTATION} in the Authentication Request. Verify the 'nonce' value returned in the ${ID_TOKEN}.",
   "expected_result": "Identify that the 'nonce' value in the ID Token is invalid and reject the ID Token."
 }

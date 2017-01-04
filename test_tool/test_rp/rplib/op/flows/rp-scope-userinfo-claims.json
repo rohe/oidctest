@@ -19,14 +19,6 @@
     ]
   },
   "short_description": "Can request and use claims using scope values",
-  "profiles": [
-    "C",
-    "I",
-    "IT",
-    "CI",
-    "CT",
-    "CIT"
-  ],
   "detailed_description": "${REQUEST_CLAIMS_USING_SCOPE_VALUES}.",
   "expected_result": "A ${USERINFO_RESPONSE} containing the requested claims. If no access token is issued (when using ${IMPLICIT_FLOW} with response_type='id_token') the ${ID_TOKEN} contains the requested claims."
 }

@@ -17,13 +17,6 @@
     ]
   },
   "short_description": "Sends 'nonce' unless using code flow",
-  "profiles": [
-    "I",
-    "IT",
-    "CI",
-    "CT",
-    "CIT"
-  ],
   "detailed_description": "Always send a ${NONCE_IMPLEMENTATION} as a request parameter while using implicit or hybrid flow. Verify the 'nonce' value returned in the ${ID_TOKEN}.",
   "expected_result": "An ${ID_TOKEN}, either from the Authorization Endpoint or from the Token Endpoint, containing the same 'nonce' value as passed in the authentication request when using ${HYBRID_FLOW_ID_TOKEN} or ${IMPLICIT_FLOW_ID_TOKEN}."
 }

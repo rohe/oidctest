@@ -15,10 +15,6 @@
     ]
   },
   "short_description": "Uses keys discovered with jwks_uri value",
-  "profiles": [
-    "CNF",
-    "DYN"
-  ],
   "detailed_description": "The Relying Party uses keys from the jwks_uri which has been obtained from the ${OPENID_PROVIDER_METADATA}.",
   "expected_result": "Should be able to verify signed responses and/or encrypt requests using obtained keys."
 }

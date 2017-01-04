@@ -14,10 +14,6 @@
     ]
   },
   "short_description": "Can request and use signed UserInfo Response",
-  "profiles": [
-    "CNF",
-    "DYN"
-  ],
   "detailed_description": "Request signed UserInfo.",
   "expected_result": "Successful signature verification of the ${USERINFO_RESPONSE}."
 }

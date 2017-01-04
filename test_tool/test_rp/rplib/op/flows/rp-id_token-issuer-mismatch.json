@@ -20,14 +20,6 @@
     ]
   },
   "short_description": "Rejects ID Token with incorrect 'iss' claim",
-  "profiles": [
-    "C",
-    "I",
-    "IT",
-    "CI",
-    "CT",
-    "CIT"
-  ],
   "detailed_description": "Request an ID token and verify its '${ISS}' value.",
   "expected_result": "Identify the incorrect 'iss' value and reject the ID Token after doing ${ID_TOKEN_VALIDATION}."
 }

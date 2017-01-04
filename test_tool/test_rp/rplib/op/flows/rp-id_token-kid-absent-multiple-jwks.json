@@ -20,14 +20,6 @@
     ]
   },
   "short_description": "Rejects ID Token without 'kid' claim in JOSE header if multiple JWKs supplied in 'jwks_uri'",
-  "profiles": [
-    "C",
-    "I",
-    "IT",
-    "CI",
-    "CT",
-    "CIT"
-  ],
   "detailed_description": "Request an ID token and verify its signature using the keys provided by the Issuer.",
   "expected_result": "Identify that the 'kid' value is missing from the JOSE header and that the Issuer publishes ${MULITPLE_KEYS_JWKS} (referenced by 'jwks_uri'). The RP can do one of two things; reject the ID Token since it can not by using the kid determined which key to use to verify the signature. Or it can just test all possible keys and hit upon one that works, which it will in this case."
 }

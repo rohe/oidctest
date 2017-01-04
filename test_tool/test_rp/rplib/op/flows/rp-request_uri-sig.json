@@ -14,9 +14,6 @@
     ]
   },
   "short_description": "Can use request_uri request parameter with signed request",
-  "profiles": [
-    "DYN"
-  ],
   "detailed_description": "Pass a ${REQUEST_OBJECT_BY_REFERENCE}, using the request_uri parameter. ${SIGN_THE_REQUEST_OBJECT} using the 'RS256' algorithm.",
   "expected_result": "An authentication response to the signed request passed using the request_uri request parameter."
 }

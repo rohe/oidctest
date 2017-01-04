@@ -9,9 +9,6 @@
     ]
   },
   "short_description": "Can make request using response_type 'code'",
-  "profiles": [
-    "C"
-  ],
   "detailed_description": "Make an authentication request using the ${AUTHORIZATION_CODE_FLOW}.",
   "expected_result": "An ${CODE_AUTHENTICATION_RESPONSE} containing an authorization code."
 }

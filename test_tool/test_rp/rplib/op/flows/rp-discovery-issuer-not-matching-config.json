@@ -16,7 +16,6 @@
     ]
   },
   "short_description": "Rejects discovered issuer not matching provider configuration issuer",
-  "profiles": ["CNF", "DYN"],
   "detailed_description": "Retrieve ${OPENID_CONFIGURATION_INFORMATION} for OpenID Provider from the .well-known/openid-configuration path. Verify that the issuer in the ${PROVIDER_CONFIGURATION}  matches the one returned by WebFinger.",
   "expected_result": "Identify that the issuers are not matching and reject the provider configuration."
 

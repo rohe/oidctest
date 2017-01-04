@@ -14,7 +14,6 @@
     ]
   },
   "short_description": "Can discover OpenID providers using acct URI syntax",
-  "profiles": ["DYN"],
   "detailed_description": "Use WebFinger (${RFC7033}) and ${ISSUER_DISCOVERY_DOC} to determine the location of the OpenID Provider. The discovery should be done using ${ACCT_SYNTAX} as user input identifier. Note that the local part of the acct value should adhere to the pattern <oper_id>.<test_id>",
   "expected_result": "An issuer location should be returned."
 }
