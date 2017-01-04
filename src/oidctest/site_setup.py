@@ -1,6 +1,5 @@
 import os
 import shutil
-import fileinput
 import filecmp
 import datetime
 import subprocess
@@ -112,4 +111,4 @@ def oidc_rplib_setup(distroot):
     for _fname in ['example_conf.py', 'test_rp_op.py', 'setup.py', 'run.sh',
                    'display.py', 'link.json']:
         _file = os.path.join(_op_dir, _fname)
-        copy_if_not_same(_file, _fname)
+        copy_if_not_same(_file, _fname, overwrite=True)
