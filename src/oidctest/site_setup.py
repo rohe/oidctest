@@ -109,6 +109,7 @@ def oidc_rplib_setup(distroot):
             shutil.rmtree(_dir)
         shutil.copytree(_src, _dir)
 
-    for _fname in ['example_conf.py', 'test_rp_op.py', 'setup.py', 'run.sh']:
+    for _fname in ['example_conf.py', 'test_rp_op.py', 'setup.py', 'run.sh',
+                   'display.py', 'link.json']:
         _file = os.path.join(_op_dir, _fname)
         copy_if_not_same(_file, _fname)
