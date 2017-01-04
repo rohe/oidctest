@@ -134,7 +134,14 @@ class Application(object):
                                 self.links)
         elif path == 'list':
             qs = parse_qs(environ.get('QUERY_STRING'))
-
+            try:
+                _prof = qs['profile'][0]
+            except KeyError:
+                resp = BadRequest('Missing query parameter')
+                return resp(environ, start_response)
+            else:
+                return rp_test_list(environ, start_response, self.fdir, _prof,
+                                    self.links)
         else:
             resp = BadRequest('Unknown page')
             return resp(environ, start_response)
