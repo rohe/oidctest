@@ -357,7 +357,7 @@ class Provider(provider.Provider):
         client_id = _req["client_id"][0]
 
         try:
-            f = response_type_cmp(kwargs['test_cnf']['response_type'],
+            f = response_type_cmp(self.capabilities['response_types_supported'],
                                   _req['response_type'])
         except KeyError:
             pass
@@ -367,7 +367,7 @@ class Provider(provider.Provider):
                     EV_FAULT,
                     'Wrong response type: {}'.format(_req['response_type']))
                 return error_response(error="incorrect_behavior",
-                                      descr="Wrong response_type")
+                                      descr="Not supported response_type")
 
         _rtypes = []
         for rt in _req['response_type']:

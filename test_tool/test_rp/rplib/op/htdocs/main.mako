@@ -38,7 +38,11 @@ input[type=submit]{
   </head>
   <body>
   <h1>Welcome to the OpenID Foundation RP library test site</h1>
-  <h2>For a list of OIDC RP Test per response_type chose your preference:</h2>
+  <h3>Before you start testing please read the
+    <a href="http://openid.net/certification/rp_testing/"
+       target="_blank">"how to use the RPtest"</a>
+    introduction guide</h3>
+  <h3>For a list of OIDC RP library tests per response_type chose your preference:</h3>
   <form action="list">
     ${choice(profiles)}
     <p></p>

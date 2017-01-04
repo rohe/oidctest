@@ -36,7 +36,7 @@ table, th, td {
     <title>List of OIDC RP tests</title>
   </head>
   <body>
-  <h1>List of OIDC RP Test for response_type: "<i>${response_type}</i>"</h1>
+  <h1>List of OIDC RP library tests for profile: "<i>${response_type}</i>"</h1>
     <h2>Mandatory to implement</h2>
     ${test_list(mandatory)}
     <h2>Optional</h2>
