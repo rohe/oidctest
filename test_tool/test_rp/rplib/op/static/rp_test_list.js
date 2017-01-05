@@ -469,7 +469,7 @@ app.controller('IndexCtrl', function ($scope, $sce) {
                 "detailed_description": "Fetch the issuer's keys from the 'jwks_uri' and make an " + ENCRYPTED_REQUEST + " using the issuer's encryption keys. " +
                 "Fetch the issuer's keys from the jwks_uri again, and make a new encrypted request using the rotated encryption keys.",
                 "expected_result": "A successful authentication response to both authentication requests encrypted using rotated encryption keys."
-            },
+            }
         }],
         ["Claim Types", {
             "rp-claims-aggregated": {

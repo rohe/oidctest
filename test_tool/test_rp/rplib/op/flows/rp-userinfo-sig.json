@@ -3,6 +3,7 @@
     "CNF",
     "DYN"
   ],
+  "group": "UserInfo Endpoint",
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [

@@ -6,6 +6,7 @@
     "CT",
     "CIT"
   ],
+  "group": "nonce Request Parameter",
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [

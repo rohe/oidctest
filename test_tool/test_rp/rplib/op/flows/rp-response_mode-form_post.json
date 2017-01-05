@@ -1,4 +1,5 @@
 {
+  "group": "Response Type and Response Mode",
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [

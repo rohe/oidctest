@@ -1,5 +1,6 @@
 {
   "MTI": ["CNF", "DYN"],
+  "group": "Key Rotation",
   "behavior": "rotsig",
   "claims": "normal",
   "capabilities": {

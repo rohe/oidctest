@@ -1,4 +1,5 @@
 {
+  "group": "Claims Request Parameter",
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [

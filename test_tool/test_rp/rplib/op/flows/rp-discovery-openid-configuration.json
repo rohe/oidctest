@@ -3,6 +3,7 @@
     "CNF",
     "DYN"
   ],
+  "group": "Discovery",
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [

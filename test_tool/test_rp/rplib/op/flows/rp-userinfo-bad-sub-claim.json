@@ -6,6 +6,7 @@
     "CT",
     "CIT"
   ],
+  "group": "UserInfo Endpoint",
   "behavior": "uisub",
   "claims": "normal",
   "capabilities": {

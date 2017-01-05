@@ -8,6 +8,7 @@
     "CIT"
   ],
   "behavior": "nokid1jwks",
+  "group": "ID Token",
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [

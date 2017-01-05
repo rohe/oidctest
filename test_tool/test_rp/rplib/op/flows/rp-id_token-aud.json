@@ -7,6 +7,7 @@
     "CT",
     "CIT"
   ],
+  "group": "ID Token",
   "behavior": "aud",
   "claims": "normal",
   "capabilities": {

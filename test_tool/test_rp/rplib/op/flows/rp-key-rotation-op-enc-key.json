@@ -1,5 +1,6 @@
 {
   "behavior": "rotenc",
+  "group": "Key Rotation",
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [

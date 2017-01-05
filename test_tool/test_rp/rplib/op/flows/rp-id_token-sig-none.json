@@ -4,6 +4,7 @@
     "CNF",
     "DYN"
   ],
+  "group": "ID Token",
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [

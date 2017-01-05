@@ -2,6 +2,7 @@
   "MTI": [
     "DYN"
   ],
+  "group": "Dynamic Client Registration",
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [

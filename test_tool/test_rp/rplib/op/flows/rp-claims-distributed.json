@@ -1,4 +1,5 @@
 {
+  "group": "Claims Types",
   "claims": "distributed",
   "capabilities": {
     "response_types_supported": [

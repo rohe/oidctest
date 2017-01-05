@@ -1,4 +1,5 @@
 {
+  "group": "request_uri Request Parameter",
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [

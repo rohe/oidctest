@@ -3,6 +3,7 @@
     "CNF",
     "DYN"
   ],
+  "group": "Discovery",
   "behavior": "isso",
   "claims": "normal",
   "capabilities": {
