@@ -102,6 +102,14 @@ ABBR = {
 
 EXP = dict([(v, k) for k, v in ABBR.items()])
 
+GRPS = [
+    "Discovery", "Dynamic Client Registration",
+    "Response Type and Response Mode", "claims Request Parameter",
+    "request_uri Request Parameter", "scope Request Parameter",
+    "nonce Request Parameter", "Client Authentication",
+    "ID Token", "Key Rotation", "Claims Types", "UserInfo Endpoint"
+]
+
 
 def replace_with_url(txt, links):
     for m in PAT.findall(txt):
@@ -160,7 +168,7 @@ def rp_test_list(environ, start_response, fdir, response_type, links):
                                               links)
                 _exp_res = replace_with_link(_info['expected_result'],
                                              links)
-                mandatory.append((fn[:-5], _det_desc, _exp_res))
+                mandatory.append((fn[:-5], _det_desc, _exp_res, _info['group']))
             else:
                 try:
                     rts = _info["capabilities"]["response_types_supported"]
@@ -173,12 +181,14 @@ def rp_test_list(environ, start_response, fdir, response_type, links):
                             _info['detailed_description'], links)
                         _exp_res = replace_with_link(_info['expected_result'],
                                                      links)
-                        optional.append((fn[:-5], _det_desc, _exp_res))
+                        optional.append(
+                            (fn[:-5], _det_desc, _exp_res, _info['group']))
 
     args = {
         'mandatory': mandatory,
         'optional': optional,
-        'response_type': EXP[response_type]
+        'response_type': EXP[response_type],
+        "grps": GRPS
     }
     return resp(environ, start_response, **args)
 
