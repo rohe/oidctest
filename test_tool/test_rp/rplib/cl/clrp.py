@@ -12,6 +12,7 @@ from oic.oic import Client
 
 from oic.utils.keyio import build_keyjar
 from otest.aus.client import Factory
+from otest.flow import Flow, RPFlow
 
 from otest.parse_cnf import parse_yaml_conf
 from otest.common import setup_logger
@@ -95,7 +96,7 @@ if __name__ == '__main__':
     from oidctest.op import oper
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-y', dest='yaml_flows')
+    parser.add_argument('-f', dest='flowsdir')
     parser.add_argument('-k', dest="insecure", action='store_true')
     parser.add_argument('-l', dest="log_name")
     parser.add_argument('-t', dest="test_id")
@@ -108,8 +109,8 @@ if __name__ == '__main__':
 
     cls_factories = {'': oper.factory}
     func_factory = func.factory
-    FLOWS = parse_yaml_conf(cargs.yaml_flows, cls_factories, func_factory)
 
+    FLOWS = RPFlow(cargs.flowsdir, cls_factories, func_factory)
     CONF = importlib.import_module(cargs.config)
 
     if cargs.log_name:
@@ -137,9 +138,8 @@ if __name__ == '__main__':
         _client_info['verify_ssl'] = False
 
     kwargs = {
-        "flows": FLOWS['Flows'], "conf": CONF,
-        "client_info": _client_info, "order": FLOWS['Order'],
-        "desc": FLOWS['Desc'], "profiles": profiles, "operation": oper,
+        "flows": FLOWS, "conf": CONF, "client_info": _client_info,
+        "profiles": profiles, "operation": oper,
         "msg_factory": oic_message_factory, "check_factory": check.factory,
         "cache": {}, 'profile_handler': SimpleProfileHandler,
         'client_factory': Factory(Client), 'tool_conf': CONF.TOOL
@@ -148,7 +148,7 @@ if __name__ == '__main__':
     if cargs.test_id:
         rtypes = []
         try:
-            rtypes = get_return_types(FLOWS['Flows'][cargs.test_id]['profile'])
+            rtypes = FLOWS[cargs.test_id]['profile']
         except KeyError:
             print('No such test ID')
             exit()
