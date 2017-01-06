@@ -12,12 +12,13 @@ from oic.oic import Client
 
 from oic.utils.keyio import build_keyjar
 from otest.aus.client import Factory
-from otest.flow import Flow, RPFlow
+from otest.flow import RPFlow
 
-from otest.parse_cnf import parse_yaml_conf
 from otest.common import setup_logger
 from otest.io import ClIO
+from otest.prof_util import prof2usage
 from otest.result import Result, SIGN
+from otest.flow import match_usage
 
 from oidctest.op import func
 from oidctest.op import check
@@ -36,8 +37,8 @@ __author__ = 'roland'
 
 logger = logging.getLogger("")
 
-
 PROFILES = ["C", "CI", "CT", "CIT", "I", "IT"]
+
 
 def get_return_types(spec):
     if spec == '*':
@@ -53,12 +54,12 @@ def run_return_types(test_id, oper_id, kwargs, return_types):
         single = False
 
     for rtyp in return_types:
-        kwargs['profile'] = rtyp
+        kwargs['profile'] = [rtyp]
         kwargs['opid'] = oper_id + '_' + rtyp
         kwargs['tool_conf']['tag'] = kwargs['opid']
 
         sh = SessionHandler(**kwargs)
-        sh.init_session(profile=rtyp)
+        sh.init_session()
 
         # res = Result(sh, SimpleProfileHandler)
 
@@ -72,7 +73,7 @@ def run_return_types(test_id, oper_id, kwargs, return_types):
             try:
                 print('{} {}{}'.format(SIGN[_res], return_types, test_id))
             except Exception as err:
-                print('****'+test_id+'*****')
+                print('****' + test_id + '*****')
                 raise
             # res.store_test_info()
             # res.write_info(test_id)
@@ -88,6 +89,12 @@ def run_return_types(test_id, oper_id, kwargs, return_types):
                 res.result()
                 return False
 
+
+ORDER = [
+    "rp-discovery", "rp-registration", "rp-response_type",
+    "rp-response_mode", "rp-token_endpoint", "rp-id_token",
+    "rp-claims_request", "rp-request_uri", "rp-scope", "rp-nonce",
+    "rp-key-rotation", "rp-userinfo", "rp-self-issued", "rp-claims"]
 
 if __name__ == '__main__':
     from oic.oic.message import factory as oic_message_factory
@@ -139,7 +146,7 @@ if __name__ == '__main__':
 
     kwargs = {
         "flows": FLOWS, "conf": CONF, "client_info": _client_info,
-        "profiles": profiles, "operation": oper,
+        "profiles": profiles, "operation": oper, 'order': ORDER,
         "msg_factory": oic_message_factory, "check_factory": check.factory,
         "cache": {}, 'profile_handler': SimpleProfileHandler,
         'client_factory': Factory(Client), 'tool_conf': CONF.TOOL
@@ -148,18 +155,21 @@ if __name__ == '__main__':
     if cargs.test_id:
         rtypes = []
         try:
-            rtypes = FLOWS[cargs.test_id]['profile']
+            rtypes = FLOWS[cargs.test_id]['usage']['return_types']
         except KeyError:
             print('No such test ID')
             exit()
 
         if cargs.profile:
-            _rt = set(rtypes).intersection(set(cargs.profile))
-            if not _rt:
-                print('Profile not among return_types')
-                exit()
-            else:
-                rtypes = list(_rt)
+            # profile is of the form A.B.C.D.E
+            # The first item represents the return_type
+            rtypes = []
+            for prof in cargs.profile:
+                _use = prof2usage(prof)
+                if not match_usage(FLOWS[cargs.test_id], **_use):
+                    continue
+                else:
+                    rtypes.append(_use['return_type'])
 
         if len(rtypes) == 1:
             run_return_types(cargs.test_id, cargs.id, kwargs, rtypes)

@@ -36,7 +36,7 @@ class ClTester(tool.Tester):
 
     def match_profile(self, test_id):
         _spec = self.flows[test_id]
-        return self.map_prof(self.profile, _spec["profile"])
+        return self.map_prof(self.profile[0], _spec["profile"])
 
     def run(self, test_id, **kw_args):
         if not self.match_profile(test_id):

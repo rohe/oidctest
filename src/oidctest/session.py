@@ -3,6 +3,8 @@ import logging
 
 from otest import Done
 from otest import session
+from otest.flow import match_usage
+from otest.prof_util import prof2usage
 
 from oidctest.prof_util import map_prof
 
@@ -67,7 +69,7 @@ class SessionHandler(session.SessionHandler):
         _tests = []
         for k in self["flow_names"]:
             _test = self.test_flows[k]
-            if map_prof(profile, _test["profile"]):
+            if match_usage(_test["usage"], **prof2usage(profile[0])):
                 try:
                     kwargs = {"mti": _test["mti"]}
                 except KeyError:
