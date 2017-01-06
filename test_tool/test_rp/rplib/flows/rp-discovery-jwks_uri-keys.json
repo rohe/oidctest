@@ -1,0 +1,1 @@
+{"sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}], "usage": {"return_types": ["C"]}, "assert": {"providerinfo-has-jwks_uri": null, "bare-keys": null}, "desc": "Can read and understand jwks_uri"}

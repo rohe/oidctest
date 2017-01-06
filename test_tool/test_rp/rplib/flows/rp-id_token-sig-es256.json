@@ -1,0 +1,1 @@
+{"sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, {"Registration": {"set_request_args": {"id_token_signed_response_alg": "ES256"}}}, "SyncAuthn", {"AccessToken": {"conditional_execution": {"profile": "CIT,CI,C,CT"}}}], "usage": {"return_types": ["*"]}, "desc": "Accept Valid Symmetric ID Token Signature"}

@@ -1,0 +1,1 @@
+{"sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, {"Registration": {"set_request_args": {"id_token_signed_response_alg": "RS256"}}}, "SyncAuthn"], "usage": {"return_types": ["I"]}, "assert": {"got": {"where": "AuthorizationResponse", "what": ["id_token"]}}, "desc": "Can Make Request with 'id_token' Response Type"}

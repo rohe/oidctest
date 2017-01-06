@@ -1,0 +1,1 @@
+{"sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration"], "usage": {"return_types": ["*"]}, "desc": "Uses Dynamic Registration"}
