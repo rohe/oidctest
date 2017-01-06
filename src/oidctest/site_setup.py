@@ -19,8 +19,7 @@ def copy_if_not_same(src, dst, overwrite=False):
 
     if filecmp.cmp(src, dst):
         return False
-
-    if modification_date(dst) > modification_date(src):
+    else:
         if overwrite:
             shutil.copy(src, dst)
             return True
@@ -109,6 +108,6 @@ def oidc_rplib_setup(distroot):
         shutil.copytree(_src, _dir)
 
     for _fname in ['example_conf.py', 'test_rp_op.py', 'setup.py', 'run.sh',
-                   'display.py', 'link.json']:
+                   'link.json']:
         _file = os.path.join(_op_dir, _fname)
         copy_if_not_same(_file, _fname, overwrite=True)
