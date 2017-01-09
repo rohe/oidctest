@@ -1,0 +1,38 @@
+{
+  "usage": {
+    "return_type": [
+      "C"
+    ]
+  },
+  "desc": "Login no nonce, code flow [Basic]",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_request_args": {
+          "nonce": ""
+        }
+      }
+    }
+  ],
+  "MTI": [
+    "C"
+  ],
+  "assert": {
+    "verify-response": {
+      "response_cls": [
+        "AuthorizationResponse"
+      ]
+    }
+  }
+}

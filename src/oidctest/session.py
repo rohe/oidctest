@@ -67,13 +67,22 @@ class SessionHandler(session.SessionHandler):
             self["flow_names"].extend(l)
 
         _tests = []
+        _use = prof2usage(profile)
+        _use['return_type'] = _use['return_type'][0]
         for k in self["flow_names"]:
             _test = self.test_flows[k]
-            if match_usage(_test["usage"], **prof2usage(profile[0])):
+            if match_usage(_test, **_use):
+                kwargs = {}
                 try:
-                    kwargs = {"mti": _test["mti"]}
+                    _mti =_test["MTI"]
                 except KeyError:
-                    kwargs = {}
+                    pass
+                else:
+                    if _use['return_type'][0] in _mti:
+                        if _use['register'] and 'DYN' in _mti:
+                            if _use['discover'] and 'CNF' in _mti:
+                                kwargs = {'mti': True}
+
                 _tests.append(Node(k, _test["desc"], **kwargs))
 
         self["tests"] = _tests

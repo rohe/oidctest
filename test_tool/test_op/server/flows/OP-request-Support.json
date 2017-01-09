@@ -1,0 +1,23 @@
+{
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    }
+  ],
+  "usage": {
+    "discover": "T",
+    "extra": "T"
+  },
+  "desc": "Support request request parameter",
+  "assert": {
+    "check-request-parameter-supported-support": null,
+    "check-http-response": null
+  }
+}

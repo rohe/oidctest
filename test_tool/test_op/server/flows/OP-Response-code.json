@@ -1,0 +1,32 @@
+{
+  "usage": {
+    "return_type": [
+      "C"
+    ]
+  },
+  "desc": "Request with response_type=code",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null
+      }
+    }
+  ],
+  "MTI": [
+    "C"
+  ],
+  "assert": {
+    "verify-authn-response": null
+  }
+}

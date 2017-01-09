@@ -1,0 +1,17 @@
+{
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_principal": {
+          "param": "webfinger_url"
+        }
+      }
+    }
+  ],
+  "usage": {
+    "extra": "T",
+    "webfinger": "T"
+  },
+  "desc": "Can discover identifiers using URL syntax [Dynamic]",
+  "assert": null
+}

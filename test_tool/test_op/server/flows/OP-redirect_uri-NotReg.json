@@ -1,0 +1,42 @@
+{
+  "usage": {},
+  "desc": "Sent redirect_uri does not match a registered redirect_uri",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    "Note",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null,
+        "set_request_args": {
+          "redirect_uri": "https://foo.example.se/authz_cb"
+        }
+      }
+    }
+  ],
+  "note": "This test should result in the OpenID Provider displaying an error message in your user agent. You should ignore the status of this test in the test tool, since it will be incomplete. You must submit a screen shot of the error shown as part of your certification application.",
+  "assert": {
+    "verify-response": {
+      "response_cls": [
+        "ErrorResponse"
+      ]
+    }
+  },
+  "MTI": [
+    "C",
+    "I",
+    "IT",
+    "CI",
+    "CT",
+    "CIT"
+  ]
+}

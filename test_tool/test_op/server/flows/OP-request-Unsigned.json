@@ -1,0 +1,47 @@
+{
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    {
+      "Registration": {
+        "set_request_args": {
+          "request_object_signing_alg": null
+        },
+        "check_support": {
+          "WARNING": {
+            "request_parameter_supported": true,
+            "request_object_signing_alg_values_supported": null
+          }
+        }
+      }
+    },
+    {
+      "AsyncAuthn": {
+        "set_response_where": null,
+        "set_op_args": {
+          "request_object_signing_alg": null,
+          "request_method": "request"
+        }
+      }
+    }
+  ],
+  "usage": {
+    "register": "T"
+  },
+  "desc": "Support request request parameter with unsigned request]",
+  "assert": {
+    "authn-response-or-error": {
+      "error": [
+        "request_not_supported"
+      ]
+    }
+  }
+}

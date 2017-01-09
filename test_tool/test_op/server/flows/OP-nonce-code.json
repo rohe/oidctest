@@ -1,0 +1,41 @@
+{
+  "usage": {
+    "return_type": [
+      "C"
+    ]
+  },
+  "desc": "ID Token has nonce when requested for code flow",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_request_args": {
+          "nonce": "godmorgon"
+        }
+      }
+    },
+    "AccessToken"
+  ],
+  "MTI": [
+    "C"
+  ],
+  "assert": {
+    "verify-nonce": null,
+    "verify-response": {
+      "response_cls": [
+        "AccessTokenResponse",
+        "AuthorizationResponse"
+      ]
+    }
+  }
+}

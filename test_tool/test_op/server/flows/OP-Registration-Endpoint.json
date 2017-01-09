@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "discover": "T"
+  },
+  "desc": "Verify that registration_endpoint is published",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    }
+  ],
+  "MTI": [
+    "DYN"
+  ],
+  "assert": {
+    "verify-op-has-registration-endpoint": null
+  }
+}

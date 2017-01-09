@@ -1,0 +1,48 @@
+{
+  "usage": {
+    "return_type": [
+      "I",
+      "IT",
+      "CI",
+      "CIT"
+    ]
+  },
+  "desc": "Reject requests without nonce unless using the code flow",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_request_args": {
+          "nonce": ""
+        }
+      }
+    }
+  ],
+  "MTI": [
+    "I",
+    "IT",
+    "CI",
+    "CT",
+    "CIT",
+  ],
+  "assert": {
+    "verify-response": {
+      "response_cls": [
+        "ErrorResponse"
+      ],
+      "error": [
+        "invalid_request"
+      ]
+    }
+  }
+}

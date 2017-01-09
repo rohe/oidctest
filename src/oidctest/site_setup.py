@@ -39,13 +39,13 @@ def oidc_op_setup(distroot):
             os.mkdir(_dir)
 
     _op_dir = os.path.join(distroot, 'test_tool', 'test_op', 'server')
-    for _dir in ['static', 'heart_mako', 'oidf_mako', 'entity_info']:
+    for _dir in ['flows', 'static', 'heart_mako', 'oidf_mako', 'entity_info']:
         _src = os.path.join(_op_dir, _dir)
         if os.path.isdir(_dir):
             shutil.rmtree(_dir)
         shutil.copytree(_src, _dir)
 
-    for _fname in ['flows.yaml', 'run.sh', 'heart_config_example.py',
+    for _fname in ['run.sh', 'heart_config_example.py',
                    'oidf_config_example.py', 'path2port.csv',
                    'config_server.py',
                    'tt_config_example.py']:

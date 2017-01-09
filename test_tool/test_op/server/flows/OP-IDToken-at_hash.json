@@ -1,0 +1,34 @@
+{
+  "usage": {
+    "return_type": [
+      "IT",
+      "CIT"
+    ]
+  },
+  "desc": "ID Token has at_hash when ID Token and Access Token are returned from the Authorization Endpoint",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null
+      }
+    }
+  ],
+  "MTI": [
+    "IT",
+    "CIT"
+  ],
+  "assert": {
+    "verify-authn-response": null
+  }
+}

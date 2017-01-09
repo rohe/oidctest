@@ -1,0 +1,36 @@
+{
+  "sequence": [
+    "Note",
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    {
+      "Registration": {
+        "set_uri": [
+          "logo_uri",
+          "static/logo.png"
+        ]
+      }
+    },
+    {
+      "AsyncAuthn": {
+        "set_response_where": null
+      }
+    }
+  ],
+  "usage": {
+    "register": "T"
+  },
+  "desc": "Registration with logo_uri",
+  "note": "This test verifies that an OP displays the RP's logo. To make sure you get a fresh login page, you need to remove any cookies you may have received from the OP before proceeding.",
+  "assert": {
+    "verify-authn-response": null
+  }
+}

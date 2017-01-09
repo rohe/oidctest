@@ -1,0 +1,38 @@
+{
+  "usage": {},
+  "desc": "Request with display=popup",
+  "sequence": [
+    "Note",
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_request_args": {
+          "display": "popup"
+        },
+        "check_support": {
+          "WARNING": {
+            "display_values_supported": "popup"
+          }
+        }
+      }
+    }
+  ],
+  "note": "To make sure you get a login page, please remove any cookies you may have received from the OpenID Provider before proceeding. You should get a popup user agent login window.",
+  "assert": {
+    "verify-response": {
+      "response_cls": [
+        "AuthorizationResponse"
+      ]
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "discover": "T"
+  },
+  "desc": "Publishes openid-configuration discovery information",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    }
+  ],
+  "MTI": [
+    "DYN", "CNF"
+  ],
+  "assert": {
+    "check-http-response": null
+  }
+}

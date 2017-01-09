@@ -1,0 +1,47 @@
+{
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null,
+        "set_request_args": {
+          "claims": {
+            "id_token": {
+              "acr": {
+                "essential": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "AccessToken"
+  ],
+  "usage": {
+    "extra": "T"
+  },
+  "desc": "Requesting ID Token with essential acr claim [Extra]",
+  "assert": {
+    "verify-claims": {
+      "id_token": {
+        "acr": null
+      }
+    },
+    "verify-response": {
+      "response_cls": [
+        "AccessTokenResponse",
+        "AuthorizationResponse"
+      ]
+    }
+  }
+}

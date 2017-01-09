@@ -1,0 +1,38 @@
+{
+  "usage": {},
+  "desc": "Request with extra query component",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null,
+        "set_request_args": {
+          "ERROR": {
+            "extra": "foobar"
+          }
+        }
+      }
+    }
+  ],
+  "MTI": [
+    "C",
+    "I",
+    "IT",
+    "CI",
+    "CT",
+    "CIT"
+  ],
+  "assert": {
+    "verify-authn-response": null
+  }
+}

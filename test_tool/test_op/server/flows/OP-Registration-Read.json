@@ -1,0 +1,24 @@
+{
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    "ReadRegistration"
+  ],
+  "usage": {
+    "register": "T",
+    "extra": "T"
+  },
+  "desc": "Registration and then reading the registered client metadata",
+  "assert": {
+    "check-http-response": null
+  }
+}

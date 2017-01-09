@@ -1,1 +1,67 @@
-{"desc": "Tests if the Relying Party can identify and reject an ID Token with an invalid signature. The ID Token has been signed using the asymmetric algorithm RS256. For more information see list item 6 in ID Token validation", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, {"Registration": {"set_request_args": {"id_token_signed_response_alg": "RS256"}}}, {"SyncAuthn": {"conditional_expect_exception": {"condition": {"response_type": [["code", "id_token", "token"], ["id_token", "token"], ["id_token"], ["code", "id_token"]]}, "exception": "BadSignature"}}}, {"AccessToken": {"conditional_execution": {"profile": "C, CT"}, "expect_exception": "BadSignature"}}], "usage": {"return_types": ["C", "I", "CI", "CT", "CIT", "IT"]}}
+{
+  "desc": "Tests if the Relying Party can identify and reject an ID Token with an invalid signature. The ID Token has been signed using the asymmetric algorithm RS256. For more information see list item 6 in ID Token validation",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    {
+      "Registration": {
+        "set_request_args": {
+          "id_token_signed_response_alg": "RS256"
+        }
+      }
+    },
+    {
+      "SyncAuthn": {
+        "conditional_expect_exception": {
+          "condition": {
+            "response_type": [
+              [
+                "code",
+                "id_token",
+                "token"
+              ],
+              [
+                "id_token",
+                "token"
+              ],
+              [
+                "id_token"
+              ],
+              [
+                "code",
+                "id_token"
+              ]
+            ]
+          },
+          "exception": "BadSignature"
+        }
+      }
+    },
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "profile": "C, CT"
+        },
+        "expect_exception": "BadSignature"
+      }
+    }
+  ],
+  "usage": {
+    "return_types": [
+      "C",
+      "I",
+      "CI",
+      "CT",
+      "CIT",
+      "IT"
+    ]
+  }
+}

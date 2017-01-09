@@ -13,6 +13,7 @@ from otest.check import State
 from otest.check import STATUSCODE_TRANSL
 from otest.events import EV_CONDITION
 from otest.events import EV_RESPONSE
+from otest.flow import get_return_type
 from otest.result import get_issuer
 
 from oidctest.op.check import get_id_tokens
@@ -290,8 +291,8 @@ def conditional_expect(oper, args):
 
 def conditional_execution(oper, arg):
     for key, val in arg.items():
-        if key == 'profile':
-            if not map_prof(oper.profile, val):
+        if key == 'return_type':
+            if get_return_type(oper.profile) not in val:
                 oper.skip = True
                 return
 
