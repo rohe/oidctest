@@ -9,12 +9,14 @@ from jwkest import as_unicode
 
 from oic.oauth2.provider import error_response
 
-from oic.utils.http_util import extract_from_request, SeeOther
-from oic.utils.http_util import Response
-from oic.utils.http_util import Unauthorized
-from oic.utils.http_util import NotFound
-from oic.utils.http_util import ServiceError
 from oic.utils.http_util import BadRequest
+from oic.utils.http_util import CORS_HEADERS
+from oic.utils.http_util import extract_from_request
+from oic.utils.http_util import NotFound
+from oic.utils.http_util import Response
+from oic.utils.http_util import SeeOther
+from oic.utils.http_util import ServiceError
+from oic.utils.http_util import Unauthorized
 from oic.utils.keyio import key_summary
 from oic.utils.webfinger import OIC_ISSUER
 from oic.utils.webfinger import WebFinger
@@ -46,11 +48,11 @@ HEADER = "---------- %s ----------"
 def dump_log(session_info, events):
     try:
         file_name = os.path.join("log", session_info["oper_id"],
-                                 session_info["test_id"]+'.txt')
+                                 session_info["test_id"] + '.txt')
         _dir = os.path.join("log", session_info["oper_id"])
     except KeyError:
         file_name = os.path.join("log", session_info["addr"],
-                                 session_info["test_id"]+'.txt')
+                                 session_info["test_id"] + '.txt')
         _dir = os.path.join("log", session_info["addr"])
 
     try:
@@ -66,7 +68,7 @@ def dump_log(session_info, events):
         except Exception as err:
             logging.error(
                 "Couldn't dump to log file {} reason: {}".format(
-                file_name, err))
+                    file_name, err))
             raise
 
     _elem = [layout(0, ev) for ev in events]
@@ -98,6 +100,7 @@ def wsgi_wrapper(environ, start_response, func, session_info, events, jlog):
             resp = error_response(
                 error='incorrect_behavior',
                 descr='You should not talk to this endpoint in this test')
+            resp.add_header(CORS_HEADERS.items())
             return resp(environ, start_response)
 
     events.store(EV_REQUEST_ARGS, kwargs["request"])
@@ -110,6 +113,7 @@ def wsgi_wrapper(environ, start_response, func, session_info, events, jlog):
                    'state': state})
         events.store(EV_RESPONSE, resp.message)
         dump_log(session_info, events)
+        resp.headers.extend(CORS_HEADERS.items())
         return resp(environ, start_response)
     except TypeError:
         resp = args
@@ -120,6 +124,7 @@ def wsgi_wrapper(environ, start_response, func, session_info, events, jlog):
             pass
         events.store(EV_RESPONSE, resp.message)
         dump_log(session_info, events)
+        resp.headers.extend(CORS_HEADERS.items())
         return resp(environ, start_response)
     except Exception as err:
         jlog.error({'response_from': func.__name__, 'err': err})
@@ -158,7 +163,7 @@ def userinfo(environ, start_response, session_info, events, jlog, **kwargs):
 
 # noinspection PyUnusedLocal
 def op_info(environ, start_response, session_info, events, jlog, **kwargs):
-    _ev = Operation("ProviderConfiguration", path = environ["PATH_INFO"])
+    _ev = Operation("ProviderConfiguration", path=environ["PATH_INFO"])
     try:
         _ev.query = environ["QUERY_STRING"]
     except KeyError:
@@ -182,7 +187,8 @@ def registration(environ, start_response, session_info, events, jlog, **kwargs):
         return wsgi_wrapper(environ, start_response, _op.read_registration,
                             session_info, events, jlog)
     else:
-        resp = ServiceError("Method not supported")
+        resp = ServiceError("Method not supported",
+                            headers=CORS_HEADERS.items())
         return resp(environ, start_response)
 
 
@@ -211,11 +217,11 @@ def webfinger(environ, start_response, session_info, events, jlog, **kwargs):
     except AssertionError:
         errmsg = "Wrong 'rel' value: %s" % _query["rel"][0]
         events.store(EV_FAULT, errmsg)
-        resp = BadRequest(errmsg)
+        resp = BadRequest(errmsg, headers=CORS_HEADERS.items())
     except KeyError:
         errmsg = "Missing 'rel' parameter in request"
         events.store(EV_FAULT, errmsg)
-        resp = BadRequest(errmsg)
+        resp = BadRequest(errmsg, headers=CORS_HEADERS.items())
     else:
         wf = WebFinger()
 
@@ -234,8 +240,8 @@ def webfinger(environ, start_response, session_info, events, jlog, **kwargs):
             _msg['dummy'] = 'foobar'
             _mesg = json.dumps(_msg)
 
-        resp = Response(_mesg,
-                        content="application/jrd+json")
+        resp = Response(_mesg, content="application/jrd+json",
+                        headers=CORS_HEADERS.items())
 
         events.store(EV_RESPONSE, resp.message)
 
@@ -264,31 +270,34 @@ def static_file(path):
 def static(environ, start_response, path):
     logger.info("[static]sending: %s" % (path,))
 
+    headers = CORS_HEADERS.items()
+
     try:
         bytes = open(path, 'rb').read()
         if path.endswith(".ico"):
-            start_response('200 OK', [('Content-Type', "image/x-icon")])
+            headers.extend(('Content-Type', "image/x-icon"))
         elif path.endswith(".html"):
-            start_response('200 OK', [('Content-Type', 'text/html')])
+            headers.extend(('Content-Type', 'text/html'))
         elif path.endswith(".json"):
-            start_response('200 OK', [('Content-Type', 'application/json')])
+            headers.extend(('Content-Type', 'application/json'))
         elif path.endswith(".txt"):
-            start_response('200 OK', [('Content-Type', 'text/plain')])
+            headers.extend(('Content-Type', 'text/plain'))
         elif path.endswith(".css"):
-            start_response('200 OK', [('Content-Type', 'text/css')])
+            headers.extend(('Content-Type', 'text/css'))
         elif path.endswith(".tar"):
-            start_response('200 OK', [('Content-Type', 'application/x-tar')])
+            headers.extend(('Content-Type', 'application/x-tar'))
         else:
-            start_response('200 OK', [('Content-Type', 'text/plain')])
+            headers.extend(('Content-Type', 'text/plain'))
+            start_response('200 OK', headers)
         try:
             text = as_unicode(bytes)
             return [text.encode('utf8')]
         except (ValueError, UnicodeDecodeError):
             return [bytes]
         except AttributeError:
-            return [text]
+            return [bytes]
     except IOError:
-        resp = NotFound()
+        resp = NotFound(headers=CORS_HEADERS.items())
         return resp(environ, start_response)
 
 
@@ -308,16 +317,18 @@ def safe(environ, start_response):
         assert _typ == "Bearer"
     except KeyError:
         resp = BadRequest("Missing authorization information")
+        resp.headers.extend(CORS_HEADERS.items())
         return resp(environ, start_response)
 
     try:
         _sinfo = _srv.sdb[code]
     except KeyError:
         resp = Unauthorized("Not authorized")
+        resp.headers.extend(CORS_HEADERS.items())
         return resp(environ, start_response)
 
     _info = "'%s' secrets" % _sinfo["sub"]
-    resp = Response(_info)
+    resp = Response(_info, headers=CORS_HEADERS.items())
     return resp(environ, start_response)
 
 
@@ -325,9 +336,9 @@ def safe(environ, start_response):
 def css(environ, start_response):
     try:
         _info = open(environ["PATH_INFO"]).read()
-        resp = Response(_info)
+        resp = Response(_info, headers=CORS_HEADERS.items())
     except (OSError, IOError):
-        resp = NotFound(environ["PATH_INFO"])
+        resp = NotFound(environ["PATH_INFO"], headers=CORS_HEADERS.items())
 
     return resp(environ, start_response)
 
@@ -338,7 +349,7 @@ def clear_log(path, environ, start_response, lookup):
     # verify that the path is reasonable
     head, tail = os.path.split(path)
     if head != 'clear':  # don't do anything
-        resp = NotFound(environ["PATH_INFO"])
+        resp = NotFound(environ["PATH_INFO"], headers=CORS_HEADERS.items())
         return resp(environ, start_response)
 
     wd = os.getcwd()
@@ -347,10 +358,11 @@ def clear_log(path, environ, start_response, lookup):
         create_rp_tar_archive(tail, True)
         shutil.rmtree(_dir)
     else:
-        resp = NotFound('No logfile by the name "{}"'.format(tail))
+        resp = NotFound('No logfile by the name "{}"'.format(tail),
+                        headers=CORS_HEADERS.items())
         return resp(environ, start_response)
 
-    resp = SeeOther('/log')
+    resp = SeeOther('/log', headers=CORS_HEADERS.items())
     return resp(environ, start_response)
 
 
@@ -358,10 +370,11 @@ def make_tar(path, environ, start_response, lookup):
     # verify that the path is reasonable
     head, tail = os.path.split(path)
     if head != 'mktar' and head != 'mktar/tar':  # don't do anything
-        resp = NotFound(environ["PATH_INFO"])
+        resp = NotFound(environ["PATH_INFO"], headers=CORS_HEADERS.items())
         return resp(environ, start_response)
 
     resp = create_rp_tar_archive(tail)
+    resp.headers.extend(CORS_HEADERS.items())
     return resp(environ, start_response)
 
 
@@ -403,12 +416,12 @@ def display_log(path, environ, start_response, lookup):
         item.sort()
         resp = Response(mako_template="logs.mako",
                         template_lookup=lookup,
-                        headers=[])
+                        headers=CORS_HEADERS.items())
         argv = {"logs": item, 'testid': tester_id}
 
         return resp(environ, start_response, **argv)
     else:
-        resp = Response("No saved logs")
+        resp = Response("No saved logs", headers=CORS_HEADERS.items())
         return resp(environ, start_response)
 
 
