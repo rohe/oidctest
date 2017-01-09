@@ -1,1 +1,1 @@
-{"sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", "SyncAuthn"], "usage": {"return_types": ["*"]}, "desc": "Can use Self-Issued OpenID Provider"}
+{"desc": "Can use Self-Issued OpenID Provider", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", "SyncAuthn"], "usage": {"return_types": ["CI", "I", "C", "T", "CIT", "IT", "CT"]}}

@@ -53,8 +53,8 @@ def run_return_types(test_id, oper_id, kwargs, return_types):
     else:
         single = False
 
-    for rtyp in return_types:
-        kwargs['profile'] = [rtyp]
+    for rtyp in return_types:  # One return_type at the time
+        kwargs['profile'] = rtyp
         kwargs['opid'] = oper_id + '_' + rtyp
         kwargs['tool_conf']['tag'] = kwargs['opid']
 
@@ -91,10 +91,10 @@ def run_return_types(test_id, oper_id, kwargs, return_types):
 
 
 ORDER = [
-    "rp-discovery", "rp-registration", "rp-response_type",
-    "rp-response_mode", "rp-token_endpoint", "rp-id_token",
-    "rp-claims_request", "rp-request_uri", "rp-scope", "rp-nonce",
-    "rp-key-rotation", "rp-userinfo", "rp-self-issued", "rp-claims"]
+    "OP-Response", "OP-IDToken", "OP-UserInfo", "OP-nonce", "OP-scope",
+    "OP-display", "OP-prompt", "OP-Req", "OP-OAuth", "OP-redirect_uri",
+    "OP-ClientAuth", "OP-Discovery", "OP-Registration", "OP-Rotation",
+    "OP-request_uri", "OP-request", "OP-claims"]
 
 if __name__ == '__main__':
     from oic.oic.message import factory as oic_message_factory

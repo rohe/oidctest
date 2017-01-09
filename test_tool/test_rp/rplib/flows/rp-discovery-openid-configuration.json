@@ -1,1 +1,1 @@
-{"sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}], "usage": {"return_types": ["C"]}, "desc": "Uses openid-configuration Discovery Information"}
+{"desc": "Uses openid-configuration Discovery Information", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}], "usage": {"return_types": ["C"]}}

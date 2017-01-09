@@ -30,6 +30,7 @@ CLIENT = {
         "application_type": "web",
         "contact": ["foo@example.com"]
     },
+    'requests_dir': 'requests'
     # registered
     # 'srv_discovery_url': ISSUER
     # provider_info

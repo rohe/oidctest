@@ -8,6 +8,8 @@ from otest.check import NOT_APPLICABLE
 from otest.conversation import Conversation
 
 from oidctest import prof_util
+from otest.flow import match_usage
+from otest.prof_util import prof2usage
 from otest.tool import get_redirect_uris
 
 __author__ = 'roland'
@@ -35,8 +37,7 @@ class ClTester(tool.Tester):
         self.map_prof = prof_util.map_prof
 
     def match_profile(self, test_id):
-        _spec = self.flows[test_id]
-        return self.map_prof(self.profile[0], _spec["profile"])
+        return match_usage(self.flows[test_id], **prof2usage(self.profile))
 
     def run(self, test_id, **kw_args):
         if not self.match_profile(test_id):
