@@ -89,11 +89,15 @@ LOOKUP = TemplateLookup(directories=[ROOT + 'templates', ROOT + 'htdocs'],
 
 # ----------------------------------------------------------------------------
 
+def do_response(cls, *args, **kwargs):
+    resp = cls(*args, **kwargs)
+    resp.headers.extend(CORS_HEADERS.items())
+    return resp
+
 
 def main_display(environ, start_response):
-    resp = Response(mako_template="main.mako",
-                    template_lookup=LOOKUP,
-                    headers=CORS_HEADERS.items())
+    resp = do_response(Response, mako_template="main.mako",
+                       template_lookup=LOOKUP)
 
     args = {
         'profiles': ABBR
@@ -102,9 +106,8 @@ def main_display(environ, start_response):
 
 
 def rp_test_list(environ, start_response, flows, response_type, links):
-    resp = Response(mako_template="list.mako",
-                    template_lookup=LOOKUP,
-                    headers=CORS_HEADERS.items())
+    resp = do_response(Response, mako_template="list.mako",
+                       template_lookup=LOOKUP)
     mandatory = []
     optional = []
 
@@ -156,16 +159,15 @@ def get_client_address(environ):
 
 
 def rp_support_3rd_party_init_login(environ, start_response):
-    resp = Response(mako_template="rp_support_3rd_party_init_login.mako",
-                    template_lookup=LOOKUP,
-                    headers=CORS_HEADERS.items())
+    resp = do_response(Response,
+                       mako_template="rp_support_3rd_party_init_login.mako",
+                       template_lookup=LOOKUP)
     return resp(environ, start_response)
 
 
 def registration(environ, start_response):
-    resp = Response(mako_template="registration.mako",
-                    template_lookup=LOOKUP,
-                    headers=CORS_HEADERS.items())
+    resp = do_response(Response, mako_template="registration.mako",
+                       template_lookup=LOOKUP)
     return resp(environ, start_response)
 
 
@@ -314,9 +316,9 @@ class Application(object):
                 op, path, jlog.id = self.op_setup(environ, mode, events,
                                                   endpoint)
                 jwks = op.generate_jwks(mode)
-                resp = Response(jwks,
-                                headers=[('Content-Type', 'application/json')])
-                resp.headers.extend(CORS_HEADERS.items())
+                resp = do_response(Response, jwks,
+                                   headers=[('Content-Type', 
+                                             'application/json')])
                 return resp(environ, start_response)
             except KeyError:
                 # Try to load from static file
@@ -352,7 +354,7 @@ class Application(object):
         try:
             mode = parse_path(path)
         except ValueError:
-            resp = BadRequest('Illegal path', headers=CORS_HEADERS.items())
+            resp = do_response(BadRequest, 'Illegal path')
             return resp(environ, start_response)
 
         try:
@@ -361,7 +363,7 @@ class Application(object):
             _info = {'error': 'No endpoint', 'mode': mode}
             events.store(EV_FAULT, _info)
             jlog.error(_info)
-            resp = BadRequest('Illegal path', headers=CORS_HEADERS.items())
+            resp = do_response(BadRequest, 'Illegal path')
             return resp(environ, start_response)
 
         if endpoint == ".well-known/webfinger":
@@ -373,8 +375,7 @@ class Application(object):
                              FailedOperation('webfinger',
                                              'No resource defined'))
                 jlog.error({'reason': 'No resource defined'})
-                resp = ServiceError("No resource defined",
-                                    headers=CORS_HEADERS.items())
+                resp = do_response(ServiceError, "No resource defined")
                 return resp(environ, start_response)
 
             if _p.scheme in ["http", "https"]:
@@ -404,7 +405,7 @@ class Application(object):
                 _msg = "Unknown scheme: {}".format(_p.scheme)
                 events.events(EV_FAULT, FailedOperation('webfinger', _msg))
                 jlog.error({'reason': _msg})
-                resp = ServiceError(_msg, headers=CORS_HEADERS.items())
+                resp = do_response(ServiceError, _msg)
                 return resp(environ, start_response)
         elif endpoint == "claim":
             authz = environ["HTTP_AUTHORIZATION"]
@@ -412,7 +413,7 @@ class Application(object):
             try:
                 assert authz.startswith("Bearer")
             except AssertionError:
-                resp = BadRequest(headers=CORS_HEADERS.items())
+                resp = do_response(BadRequest, headers=CORS_HEADERS.items())
             else:
                 _ev.authz = authz
                 events.store(EV_REQUEST, _ev)
@@ -422,15 +423,15 @@ class Application(object):
                 try:
                     _claims = _op.claim_access_token[tok]
                 except KeyError:
-                    resp = BadRequest(headers=CORS_HEADERS.items())
+                    resp = do_response(BadRequest, headers=CORS_HEADERS.items())
                 else:
                     del _op.claim_access_token[tok]
                     _info = Message(**_claims)
                     jwt_key = _op.keyjar.get_signing_key()
-                    resp = Response(_info.to_jwt(key=jwt_key,
-                                                 algorithm="RS256"),
-                                    content='application/jwt',
-                                    headers=CORS_HEADERS.items())
+                    resp = do_response(Response, 
+                                       _info.to_jwt(key=jwt_key,
+                                                    algorithm="RS256"),
+                                       content='application/jwt')
             return resp(environ, start_response)
 
         if mode:
@@ -440,7 +441,7 @@ class Application(object):
         try:
             _op, path, jlog.id = self.op_setup(environ, mode, events, endpoint)
         except UnknownTestID as err:
-            resp = BadRequest('Unknown test ID: {}'.format(err.args[0]),
+            resp = do_response(BadRequest, 'Unknown test ID: {}'.format(err.args[0]),
                               headers=CORS_HEADERS.items())
             return resp(environ, start_response)
 
@@ -473,14 +474,12 @@ class Application(object):
                     print(message)
                     events.store(EV_EXCEPTION, err)
                     LOGGER.exception("%s" % err)
-                    resp = ServiceError("%s" % err,
-                                        headers=CORS_HEADERS.items())
+                    resp = do_response(ServiceError, "%s" % err)
                     return resp(environ, start_response)
 
         LOGGER.debug("unknown page: '{}'".format(endpoint))
         events.store(EV_FAULT, 'No such page: {}'.format(endpoint))
-        resp = NotFound("Couldn't find the side you asked for!",
-                        headers=CORS_HEADERS.items())
+        resp = do_response(NotFound, "Couldn't find the side you asked for!")
         return resp(environ, start_response)
 
 

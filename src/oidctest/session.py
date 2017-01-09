@@ -48,8 +48,8 @@ class SessionHandler(session.SessionHandler):
         if "node" not in self:
             raise Exception("Unknown node name: {}".format(path))
 
-        self["flow"] = self.test_flows[path]
-        self["sequence"] = copy.deepcopy(self["flow"]["sequence"])
+        self["flow"] = self.test_flows.expanded_conf(path)
+        self["sequence"] = self["flow"]["sequence"]
         self["sequence"].append(Done)
         self["index"] = index
         self.session = session
