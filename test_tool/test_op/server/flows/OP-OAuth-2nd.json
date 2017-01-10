@@ -1,4 +1,5 @@
 {
+  "group": "OAuth behaviors",
   "usage": {
     "return_type": [
       "C",

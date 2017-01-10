@@ -1,4 +1,5 @@
 {
+  "group": "claims Request Parameter",
   "sequence": [
     {
       "Webfinger": {

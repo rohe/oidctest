@@ -1,4 +1,5 @@
 {
+  "group": "display Request Parameter",
   "usage": {},
   "desc": "Request with display=popup",
   "sequence": [

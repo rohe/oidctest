@@ -393,7 +393,7 @@ class IO(object):
 
         qiss = quote_plus(iss)
         qtag = quote_plus(tag)
-        _conf = self.rest.read_conf(qiss, qtag)
+        format, _conf = self.rest.read_conf(qiss, qtag)
         # provider_info and registration_response
         dicts = {'tool': _conf['tool']}
         for item in tool_conf:
@@ -423,13 +423,13 @@ class IO(object):
 
 
 class Application(object):
-    def __init__(self, baseurl, lookup, ent_path, ent_info, flows, test_script,
+    def __init__(self, baseurl, lookup, ent_path, ent_info, flowdir, test_script,
                  path2port=None, mako_dir='', port_min=60000, port_max=61000,
                  test_tool_conf=''):
         self.baseurl = baseurl
         self.lookup = lookup
         self.ent_info = ent_info
-        self.flows = flows
+        self.flowdir = flowdir
         self.path2port = path2port
         self.mako_dir = mako_dir
         self.port_min = port_min
@@ -533,9 +533,8 @@ class Application(object):
     def run_test_instance(self, iss, tag):
         _port = self.get_port(iss, tag)
         args = [self.test_script, "-i", unquote_plus(iss), "-t",
-                unquote_plus(tag), "-p", str(_port), "-M", self.mako_dir]
-        for _fl in self.flows:
-            args.extend(["-f", _fl])
+                unquote_plus(tag), "-p", str(_port), "-M", self.mako_dir,
+                "-f", self.flowdir]
         if self.path2port:
             args.extend(["-m", self.path2port])
             ppmap = read_path2port_map(self.path2port)

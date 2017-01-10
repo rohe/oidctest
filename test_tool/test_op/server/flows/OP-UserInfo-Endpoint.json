@@ -1,4 +1,5 @@
 {
+  "group": "Userinfo Endpoint",
   "usage": {
     "return_type": [
       "C",

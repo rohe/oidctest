@@ -1,4 +1,5 @@
 {
+  "group": "Misc Request Parameters",
   "usage": {},
   "desc": "Request with extra query component",
   "sequence": [

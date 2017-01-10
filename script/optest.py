@@ -73,6 +73,7 @@ if __name__ == '__main__':
     parser.add_argument('-S', dest='staticdir')
     parser.add_argument('-s', dest='tls', action='store_true')
     parser.add_argument('-t', dest='tag')
+
     parser.add_argument('-m', dest='path2port')
     parser.add_argument(dest="config")
     args = parser.parse_args()

@@ -1,4 +1,5 @@
 {
+  "group": "redirect_uri Request Parameter",
   "usage": {
     "register": "T"
   },

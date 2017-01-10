@@ -1,4 +1,5 @@
 {
+  "group": "request_uri Request Parameter",
   "sequence": [
     {
       "Webfinger": {

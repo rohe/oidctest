@@ -1,4 +1,5 @@
 {
+  "group": "Misc Request Parameters",
   "usage": {},
   "desc": "Requesting ID Token with max_age=10000 seconds restriction",
   "sequence": [

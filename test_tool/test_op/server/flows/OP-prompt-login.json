@@ -1,4 +1,5 @@
 {
+  "group": "prompt Request Parameter",
   "usage": {},
   "desc": "Request with prompt=login",
   "sequence": [

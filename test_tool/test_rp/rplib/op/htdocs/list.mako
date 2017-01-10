@@ -5,7 +5,7 @@
     """
     line = [
         '<table>',
-        '<tr><th>TestID</th><th>Description</th><th>Expected result</th></tr>']
+        '<tr><th>Status</th><th>Description</th><th>Info</th></tr>']
 
     for pgrp in grps:
         h = False

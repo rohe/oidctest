@@ -1,4 +1,5 @@
 {
+  "group": "Response Type & Response Mode",
   "usage": {},
   "desc": "Authorization request missing the response_type parameter",
   "sequence": [

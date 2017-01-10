@@ -1,4 +1,5 @@
 {
+  "group": "Misc Request Parameters",
   "usage": {},
   "desc": "Using prompt=none with user hint through id_token_hint",
   "sequence": [

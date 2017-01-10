@@ -1,4 +1,5 @@
 {
+  "group": "Misc Request Parameters",
   "sequence": [
     {
       "Webfinger": {

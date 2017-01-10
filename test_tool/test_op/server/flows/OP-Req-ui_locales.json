@@ -1,4 +1,5 @@
 {
+  "group": "Misc Request Parameters",
   "usage": {},
   "desc": "Providing ui_locales",
   "sequence": [

@@ -1,4 +1,5 @@
 {
+  "group": "prompt Request Parameter",
   "usage": {},
   "desc": "Request with prompt=none when logged in [Basic, Implicit, Hybrid]",
   "result": "The test passed if you were not prompted to log in.",

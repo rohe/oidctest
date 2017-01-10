@@ -1,4 +1,5 @@
 {
+  "group": "scope Request Parameter",
   "usage": {},
   "desc": "Scope requesting phone claims",
   "sequence": [

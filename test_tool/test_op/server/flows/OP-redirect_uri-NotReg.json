@@ -1,4 +1,5 @@
 {
+  "group": "redirect_uri Request Parameter",
   "usage": {},
   "desc": "Sent redirect_uri does not match a registered redirect_uri",
   "sequence": [
