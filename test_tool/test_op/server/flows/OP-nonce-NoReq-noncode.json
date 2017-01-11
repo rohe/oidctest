@@ -34,7 +34,7 @@
     "IT",
     "CI",
     "CT",
-    "CIT",
+    "CIT"
   ],
   "assert": {
     "verify-response": {

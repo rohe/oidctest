@@ -26,7 +26,7 @@ class Node(object):
 
 
 class SessionHandler(session.SessionHandler):
-    def session_setup(self, path="", index=0):
+    def session_setup(self, path="", flow=None, index=0):
         logger.info("session_setup")
 
         _keys = list(self.keys())
@@ -40,53 +40,17 @@ class SessionHandler(session.SessionHandler):
                 del self[key]
 
         self["testid"] = path
-        for node in self["tests"]:
-            if node.name == path:
-                self["node"] = node
-                break
+        if not flow:
+            flow = self.test_flows.expanded_conf(path)
 
-        if "node" not in self:
-            raise Exception("Unknown node name: {}".format(path))
-
-        self["flow"] = self.test_flows.expanded_conf(path)
-        self["sequence"] = self["flow"]["sequence"]
-        self["sequence"].append(Done)
+        self['flow'] = flow
+        self["sequence"] = flow["sequence"]
         self["index"] = index
-        self.session = session
 
     def init_session(self, profile=None):
         if not profile:
             profile = self.profile
 
-        f_names = list(self.test_flows.keys())
-        f_names.sort()
-        self["flow_names"] = []
-        for k in self.order:
-            k += '-'
-            l = [z for z in f_names if z.startswith(k)]
-            self["flow_names"].extend(l)
-
-        _tests = []
-        _use = prof2usage(profile)
-        _use['return_type'] = _use['return_type'][0]
-        for k in self["flow_names"]:
-            _test = self.test_flows[k]
-            if match_usage(_test, **_use):
-                kwargs = {}
-                try:
-                    _mti =_test["MTI"]
-                except KeyError:
-                    pass
-                else:
-                    if _use['return_type'][0] in _mti:
-                        if _use['register'] and 'DYN' in _mti:
-                            if _use['discover'] and 'CNF' in _mti:
-                                kwargs = {'mti': True}
-
-                _tests.append(Node(k, _test["desc"], **kwargs))
-
-        self["tests"] = _tests
-        self["test_info"] = {}
+        self["tests"] = self.test_flows.matches_profile(profile)
         self["profile"] = profile
-        self.session = session
         return session

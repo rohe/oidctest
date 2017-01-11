@@ -1,72 +1,128 @@
 <%!
 
-  from otest.check import STATUSCODE
-
-  def test_output(out):
+  def op_choice(base, flows):
     """
-
+    Creates a list of test flows
     """
-    element = ["<h3>Test output</h3>", "<pre><code>"]
-    for item in out:
-        if isinstance(item, tuple):
-            element.append("__%s:%s__" % item)
+    _grp = "_"
+    color = ['<img src="/static/black.png" alt="Black">',
+             '<img src="/static/green.png" alt="Green">',
+             '<img src="/static/yellow.png" alt="Yellow">',
+             '<img src="/static/red.png" alt="Red">',
+             '<img src="/static/qmark.jpg" alt="QuestionMark">',
+             '<img src="/static/greybutton" alt="Grey">',
+             ]
+    line = [
+        '<table>',
+        '<tr><th>Status</th><th>Description</th><th>Info</th></tr>']
+
+    for grp, state, desc, tid in flows:
+        if not grp == _grp:
+            _grp = grp
+            line.append(
+                '<tr style><td colspan="3" class="center"><b>{}</b></td></tr>'.format(_grp))
+
+        if state:
+            _info = "<a href='%stest_info/%s'><img src='/static/info32.png'></a>".format(
+                    base, tid)
         else:
-            element.append("[%s]" % item["id"])
-            element.append("\tstatus: %s" % STATUSCODE[item["status"]])
-            try:
-                element.append("\tdescription: %s" % (item["name"]))
-            except KeyError:
-                pass
-            try:
-                element.append("\tinfo: %s" % (item["message"]))
-            except KeyError:
-                pass
-    element.append("</code></pre>")
-    return "\n".join(element)
+            _info = ''
+
+        _stat = "<a href='{}{}'>{}</a>".format(base, tid, color[state])
+        line.append(
+            '<tr><td>{}</td><td>{} ({})</td><td>{}</td></tr>'.format(
+                _stat, desc, tid, _info))
+    line.append('</table>')
+
+    return "\n".join(line)
 %>
 
 <%!
-  def trace_output(trace):
-    """
 
-    """
-    element = ["<h3>Trace output</h3>", "<pre><code>"]
-    for item in trace:
-        element.append("%s" % item)
-    element.append("</code></pre>")
+  ICONS = [
+    ('<img src="/static/black.png" alt="Black">',"The test has not be run"),
+    ('<img src="/static/green.png" alt="Green">',"Success"),
+    ('<img src="/static/yellow.png" alt="Yellow">',
+    "Warning, something was not as expected"),
+    ('<img src="/static/red.png" alt="Red">',"Failed"),
+    ('<img src="/static/qmark.jpg" alt="QuestionMark">',
+    "The test flow wasn't completed. This may have been expected or not"),
+    ('<img src="/static/info32.png">',
+    "Signals the fact that there are trace information available for the test"),
+    ]
+
+  def legends():
+    element = ["<table border='1' id='legends'>"]
+    for icon, txt in ICONS:
+        element.append("<tr><td>%s</td><td>%s</td></tr>" % (icon, txt))
+    element.append('</table>')
     return "\n".join(element)
 %>
 
+<%
+  PMAP = {
+        "C": "Basic (code)", "I": "Implicit (id_token)",
+        "IT": "Implicit (id_token+token)",
+        "CI": "Hybrid (code+id_token)", "CT": "Hybrid (code+token)",
+        "CIT": "Hybrid (code+id_token+token)"
+    }
+
+  L2I = {"webfinger": 1, "discovery": 2, "registration": 3}
+  CM = {"n": "none", "s": "sign", "e": "encrypt"}
+
+  def display_profile(spec):
+        el = ["<p><ul>"]
+        p = spec.split('.')
+        el.append("<li> %s" % PMAP[p[0]])
+        for mode in ["webfinger", "discovery", "registration"]:
+            if p[L2I[mode]] == "T":
+                el.append("<li> Dynamic %s" % mode)
+            else:
+                el.append("<li> Static %s" % mode)
+        if len(p) > 4:
+            if p[4]:
+                el.append("<li> crypto support %s" % [CM[x] for x in p[4]])
+        if len(p) == 6:
+            if p[5] == '+':
+                el.append("<li> extra tests")
+        el.append("</ul></p>")
+
+        return "\n".join(el)
+%>
+
 <!DOCTYPE html>
-
-
 <html>
 <head>
-  <title>OpenID Certification OP Test</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Bootstrap -->
-  <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet"
-        media="screen">
-  <link href="/static/style.css" rel="stylesheet" media="all">
-
-  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!--[if lt IE 9]>
-  <script src="../../assets/js/html5shiv.js"></script>
-  <script src="../../assets/js/respond.min.js"></script>
-  <![endif]-->
+  <title>OpenID Certification OP Tests</title>
+      <style>
+td {
+    text-align: left;
+}
+th {
+    background-color: #4CAF50;
+    color: white;
+    white-space: nowrap;
+    text-align: left;
+}
+table, th, td {
+    border: 1px solid black;
+}
+td.center {
+    text-align: center;
+    background-color: #a4aeaf;
+}
+      </style>
 </head>
 <body>
+  <h1>OpenID Certification OP Tests</h1>
+  <em>Explanations of legends at <a href="#legends">end of page</a></em>
 
-<div class="container">
-  <!-- Main component for a primary marketing message or call to action -->
-  <h2>Result</h2>
-  ${test_output(output)}
-  ${trace_output(trace)}
+  <h3>You are testing using: ${display_profile(profile)}</h3>
+  If you want to change this you can do it <a href="pedit">here</a>
 
-</div> <!-- /container -->
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="/static/jquery.min.1.9.1.js"></script>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+  <h3>Chose the next test flow you want to run from this list: </h3>
+  ${op_choice(base, flows)}
+  <h3>Legends</h3>
+  ${legends()}
 </body>
 </html>

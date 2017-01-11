@@ -84,7 +84,7 @@ class WebTester(tool.WebTester):
     def setup(self, test_id, **kw_args):
         redirs = get_redirect_uris(kw_args["client_info"])
 
-        _flow = self.flows[test_id]
+        _flow = self.flows.expanded_conf(test_id)
         _cli, _c_info = self.client_factory.make_client(
             **kw_args['client_info'])
         self.conv = Conversation(_flow, _cli, kw_args["msg_factory"],
@@ -93,7 +93,7 @@ class WebTester(tool.WebTester):
         self.conv.tool_config = kw_args['tool_conf']
         _cli.conv = self.conv
         _cli.events = self.conv.events
-        self.sh.session_setup(path=test_id)
+        self.sh.session_setup(path=test_id,flow=_flow)
         self.sh["conv"] = self.conv
         self.conv.sequence = self.sh["sequence"]
 

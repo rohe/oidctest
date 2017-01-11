@@ -218,7 +218,7 @@ class ProfileHandler(prof_util.ProfileHandler):
 
             return {"Issuer": iss, "Profile": profile,
                     "Test ID": test_id,
-                    "Test description": self.session["node"].desc,
+                    "Test description": self.session.test_flows[test_id]['desc'],
                     "Timestamp": in_a_while()}
 
         return {}
