@@ -6,6 +6,7 @@ from oic.oic.provider import RegistrationEndpoint
 from oic.oic.provider import UserinfoEndpoint
 
 from otest.parse_cnf import parse_yaml_conf
+from otest.prof_util import SimpleProfileHandler
 from otest.rp import operation
 from otest.rp import check
 
@@ -20,10 +21,8 @@ from otest.rp.setup import main_setup
 
 from oidctest.rp import func
 from oidctest.rp.provider import Provider
-from oidctest.rp.prof_util import ProfileHandler
 
 # baseurl = "https://130.239.200.165"
-
 baseurl = "http://localhost"
 issuer = "%s:%%d" % baseurl
 
@@ -120,7 +119,7 @@ TOOL_ARGS = {
     'setup': main_setup,
     'check': check,
     'provider': Provider,
-    'profile_handler': ProfileHandler,
+    'profile_handler': SimpleProfileHandler,
     'parse_conf': parse_yaml_conf,
     'cls_factories': {'': operation.factory},
     'chk_factory': check.factory,
