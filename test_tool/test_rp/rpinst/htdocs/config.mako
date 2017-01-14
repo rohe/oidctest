@@ -14,6 +14,25 @@
         return '<form action="{}/list" method="post">'.format(base)
 %>
 
+<%
+  def response_types():
+      line = ['select name="response_type"']
+      for a,b,v in [('Basic - code', 'C', 1),
+                    ('Implicit - id_token', 'I', 0)
+                    ('Implicit - id_token,token', 'IT', 0)
+                    ('Hybrid - code,id_token', 'CI', 0)
+                    ('Hybrid - code,token', 'CT', 0)
+                    ('Hybrid - code,id_token,token', 'CIT', 0)
+                    ]:
+          if v:
+            line.append('<option value="${b}" selected>${a}</option>')
+          else:
+            line.append('<option value="${b}">${a}</option>')
+
+      line.append('</select>')
+      return '\n'.join(line)
+  %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -113,6 +132,9 @@
         % endif
       % endfor
     </select>
+  </p>
+    <p>
+    Choose response_type: ${response_types()}
   </p>
   <button type="submit" value="Submit" class="button">Submit</button>
 </form>

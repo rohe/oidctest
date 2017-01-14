@@ -1,0 +1,49 @@
+{
+  "group": "Code",
+  "desc": "Simple code profile with RS256 signatures",
+  "sequence": [
+    {
+      "Init": {
+        "set_start_page": "",
+        "add_post_condition": {
+          "http_response": {
+            "status_code": [
+              302,
+              303
+            ]
+          }
+        }
+      }
+    },
+    "ConfigurationResponse",
+    {
+      "RegistrationResponse": {
+        "add_pre_condition": {
+          "verify-registration-response_types": {
+            "allowed": [
+              "code"
+            ]
+          },
+          "verify-registration-redirect_uri-scheme": null,
+          "verify-registration-public_key-registration": null
+        }
+      }
+    },
+    {
+      "AuthorizationResponse": {
+        "add_pre_condition": {
+          "verify-authorization-offline-access": null,
+          "verify-authorization-redirect_uri": null,
+          "verify-authorization-state-entropy": null
+        }
+      }
+    },
+    "AccessTokenResponse",
+    "UserInfoResponse"
+  ],
+  "usage": {
+    "return_type": [
+      "C"
+    ]
+  }
+}

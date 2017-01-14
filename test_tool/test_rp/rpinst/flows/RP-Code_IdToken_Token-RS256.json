@@ -1,0 +1,56 @@
+{
+  "group": "Hybrid - Code+IdToken+Token",
+  "desc": "Simple implicit (id_token) profile with RS256 signatures",
+  "sequence": [
+    {
+      "Init": {
+        "set_start_page": "",
+        "add_post_condition": {
+          "http_response": {
+            "status_code": [
+              302,
+              303
+            ]
+          }
+        },
+        "set_configuration": {
+          "response_types_supported": [
+            "code",
+            "id_token",
+            "id_token token",
+            "code id_token token"
+          ]
+        }
+      }
+    },
+    "ConfigurationResponse",
+    {
+      "RegistrationResponse": {
+        "add_pre_condition": {
+          "verify-registration-response_types": {
+            "allowed": [
+              "code id-token token"
+            ]
+          },
+          "verify-registration-redirect_uri-scheme": null,
+          "verify-registration-public_key-registration": null
+        }
+      }
+    },
+    {
+      "AuthorizationResponse": {
+        "add_pre_condition": {
+          "verify-authorization-offline-access": null,
+          "verify-authorization-redirect_uri": null,
+          "verify-authorization-state-entropy": null
+        }
+      }
+    },
+    "UserInfoResponse"
+  ],
+  "usage": {
+    "return_type": [
+      "CIT"
+    ]
+  }
+}
