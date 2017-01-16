@@ -55,7 +55,7 @@ The :ref:`path2port <path2port>` information is passed on to the test tool insta
 -p
 ::
 
-Which port the configuration server should listen on
+The port the configuration server should listen to
 
 -t
 ::
@@ -103,7 +103,7 @@ Are only necessary if the test instance is supposed to do HTTPS.
 BASE_URL
 ++++++++
 
-*passed on to a test tool instace*
+*passed on to the configuration of a test tool instance*
 The base from which the urls, that the test instance (as an RP) publishes, are
 constructed. This includes claims like *redirect_uris*, *jwks_uri*, *tos_url*,
 *logo_uri*, *client_uri*, *policy_uri*, *sector_identifier_uri* and possibly
@@ -112,7 +112,7 @@ more.
 ENT_PATH
 ++++++++
 
-*passed on to a test tool instance*
+*passed on to the configuration of a test tool instance*
 A path to where the test configurations are stored. The confirations are
 stored in a tree of the form <issuer identifier>/<tag> like this::
 
@@ -126,7 +126,7 @@ The same goes for the tag though that isn't obvious from the example above.
 ENT_INFO
 ++++++++
 
-*passed on to a test tool instance*
+*passed on to the configuration of a test tool instance*
 This is information about the test instance which is static and
 should not differ between different test instances. Some of the information
 here represents default values and may be changed.
@@ -134,7 +134,7 @@ here represents default values and may be changed.
 MAKO_DIR
 ++++++++
 
-*passed on to a test tool instance*
+*passed on to the configuration of a test tool instance*
 Where the MAKO template files cna be found. This is the root directory
 so within this directory there must be a ht_docs directory with the
 actual templates.
@@ -142,7 +142,7 @@ actual templates.
 FLOWS
 +++++
 
-*passed on to a test tool instance*
+*passed on to the configuration of a test tool instance*
 YAML files that contains descriptions of all the test in a domain specific
 manner. If you want to understand more about the test descriptions you can
 read more about them in :ref:`Test description language`.
@@ -150,7 +150,7 @@ read more about them in :ref:`Test description language`.
 PATH2PORT
 +++++++++
 
-*passed on to a test tool instance*
+*passed on to the configuration of a test tool instance*
 More about this :ref:`here <path2port>`.
 
 PORT_MAX, PORT_MIN

@@ -5,7 +5,7 @@ An overview of the OP test tool
 
 A basic assumption for the tool is that when you want to test an OpenID
 Connect Provider (OP) you may want test one specific aspect at a time.
-You can therefor make several configurations per OP.
+You may therefor want to have several configurations per OP.
 It is for instance common to have one configuration per response_type.
 Following on that you will run one test instance per configuration.
 
@@ -13,7 +13,7 @@ How to configure a test instance
 --------------------------------
 
 There are 2 basic ways of configuring a test instance, either you use the
-web interface provided or you can instead be content with using the REST
+web interface provided or you can instead be content with using the RESTish
 interface.
 
 * How to configure a test instance using the :ref:`web interface`
@@ -43,16 +43,18 @@ This is the overall pattern::
 
     optional arguments:
       -h, --help    show this help message and exit
-      -k
-      -i ISSUER
-      -f FLOWS
-      -p PORT
-      -M MAKODIR
-      -S STATICDIR
-      -s
-      -t TAG
-      -m PATH2PORT
-
+      -k            insecure mode for when you're expecting to talk HTTPS to
+                    servers that use self-signed certificates
+      -i ISSUER     The issuer ID of the OP
+      -f FLOWS      A file that contains the flow definitions for all the tests
+      -p PORT       Which port the server should listen on
+      -M MAKODIR    Root directory for the MAKO template files
+      -S STATICDIR  Directory where static files are kept
+      -s            Whether the server should support incoming HTTPS
+      -t TAG        An identifier used to distinguish between different
+                    configuration for the same OP instance
+      -m PATH2PORT  CSV file containing the path-to-port mapping that the reverse
+                    proxy (if used) is using
 
 -h/--help
 :::::::::
@@ -69,14 +71,14 @@ certificates. Hence, the *-f* flag will turn of certification verification.
 -i
 ::
 
-The Issuer identifier of the OP.
+The Issuer identifier of the OP that is to be tested.
 
 -f
 ::
 
 .. _tt_opt_flow:
 
-A YAML file that contains descriptions of all the test in a domain specific
+A YAML file that contains descriptions of all the tests in a domain specific
 manner. If you want to understand more about the test descriptions you can
 read more about them in :ref:`Test description language`.
 
@@ -84,7 +86,7 @@ read more about them in :ref:`Test description language`.
 ::
 
 Which port the test instance should listen on. Each test instance **MUST**
-have their own port.
+have its own port.
 
 -M
 ::
@@ -92,15 +94,15 @@ have their own port.
 .. _tt_opt_mako:
 
 Mako is used as the bases for the WEB UI. If nothing is specified the
-directories that MAKO needs ('htdocs', 'modules', ...) are expected
+directories that contains the MAKO templates ('htdocs', 'modules', ...) are expected
 to be in the directory from which optest.py is run. If that is not the
-case you have to give the path here.
+case you have to give the path to the root here.
 
 -S
 ::
 
 There are a bunch of static files that the tool must be able to access.
-These are all the javascirpt files, the png, gif, css files. If nothing
+These are all the javascirpt files, the png, gif and css files. If nothing
 is specified they are expected to be in a directory named 'static' in the
 directory from which optest.py is run.
 
@@ -121,6 +123,7 @@ set a name each one of them, this is the *tag*.
 ::
 
 .. _path2port:
+
 
 If you are running the test instance behind a reverse proxy you will
 want to translate between a path specification on the external side
@@ -241,7 +244,7 @@ certificate verification.
 Very simple command example where there is a flows.yaml file and a configuration
 file named 'config' ::
 
-    optest.py -p 9000 -s -f flows.yaml config
+    optest.py -p 8091 -i https://example.com/op -t default -s -f flows.yaml config
 
 
 Reverse proxy setup
@@ -272,7 +275,7 @@ Since the reverse proxy will probably be used to terminate the HTTPS
 tunnel the tool will not have to deal with certificates which leaves us
 with the following simple command::
 
-    optest.py -p 9000 -f flows.yaml -m reverse.csv config
+    optest.py -p 8092 -i https://example.com/op -t default -f flows.yaml -m reverse.csv config
 
 
 .. _reverse proxy: https://en.wikipedia.org/wiki/Reverse_proxy
