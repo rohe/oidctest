@@ -65,16 +65,65 @@ if __name__ == '__main__':
     from cherrypy import wsgiserver
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-k', dest='insecure', action='store_true')
-    parser.add_argument('-i', dest='issuer')
-    parser.add_argument('-f', dest='flowdir')
-    parser.add_argument('-p', dest='port', type=int)
-    parser.add_argument('-M', dest='makodir')
-    parser.add_argument('-S', dest='staticdir')
-    parser.add_argument('-s', dest='tls', action='store_true')
-    parser.add_argument('-t', dest='tag')
-
-    parser.add_argument('-m', dest='path2port')
+    parser.add_argument(
+        '-k', dest='insecure', action='store_true',
+        help="insecure mode for when you're expecting to talk HTTPS to "
+             "servers that use self-signed certificates")
+    parser.add_argument(
+        '-i', dest='issuer',
+        help="The issuer ID of the OP")
+    parser.add_argument(
+        '-f', dest='flows', action='append',
+        help="A file that contains the flow definitions for all the tests")
+    parser.add_argument('-p', dest='port', type=int,
+                        help="Which port the server should listen on")
+    # parser.add_argument('-P', dest='profile')
+    parser.add_argument('-M', dest='makodir',
+                        help="Root directory for the MAKO template files")
+    parser.add_argument('-S', dest='staticdir',
+                        help="Directory where static files are kept")
+    parser.add_argument('-s', dest='tls', action='store_true',
+                        help="Whether the server should support incoming HTTPS")
+    parser.add_argument(
+        '-t', dest='tag',
+        help="An identifier used to distinguish between different "
+             "configuration for the same OP instance")
+    # parser.add_argument(
+    #     '-x', dest='xport', action='store_true', help='ONLY for testing')
+    parser.add_argument(
+        '-m', dest='path2port',
+        help="CSV file containing the path-to-port mapping that the reverse "
+             "proxy (if used) is using")
+    parser.add_argument(
+        '-k', dest='insecure', action='store_true',
+        help="insecure mode for when you're expecting to talk HTTPS to "
+             "servers that use self-signed certificates")
+    parser.add_argument(
+        '-i', dest='issuer',
+        help="The issuer ID of the OP")
+    parser.add_argument(
+        '-f', dest='flows', action='append',
+        help="A file that contains the flow definitions for all the tests")
+    parser.add_argument('-p', dest='port', type=int,
+                        help="Which port the server should listen on")
+    # parser.add_argument('-P', dest='profile')
+    parser.add_argument('-M', dest='makodir',
+                        help="Root directory for the MAKO template files")
+    parser.add_argument('-S', dest='staticdir',
+                        help="Directory where static files are kept")
+    parser.add_argument('-s', dest='tls', action='store_true',
+                        help="Whether the server should support incoming HTTPS")
+    parser.add_argument(
+        '-t', dest='tag',
+        help="An identifier used to distinguish between different "
+             "configuration for the same OP instance")
+    # parser.add_argument(
+    #     '-x', dest='xport', action='store_true', help='ONLY for testing')
+    parser.add_argument(
+        '-m', dest='path2port',
+        help="CSV file containing the path-to-port mapping that the reverse "
+             "proxy (if used) is using")
+>>>>>>> Stashed changes
     parser.add_argument(dest="config")
     args = parser.parse_args()
 
