@@ -571,7 +571,7 @@ class Application(object):
             pass
         else:
             logger.info('kill {}'.format(pid))
-            subprocess.call(['kill', pid])
+            subprocess.call(['kill', str(pid)])
 
         logger.info(args)
 
