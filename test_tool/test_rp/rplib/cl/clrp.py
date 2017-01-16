@@ -12,7 +12,7 @@ from oic.oic import Client
 
 from oic.utils.keyio import build_keyjar
 from otest.aus.client import Factory
-from otest.flow import RPFlow
+from otest.flow import RPFlow, FlowState
 
 from otest.common import setup_logger
 from otest.io import ClIO
@@ -71,12 +71,13 @@ def run_return_types(test_id, oper_id, kwargs, return_types):
         if single:
             _res = tester.run(test_id, **kwargs)
             try:
-                print('{} {}{}'.format(SIGN[_res], return_types, test_id))
+                print('{} {} {}'.format(SIGN[_res], return_types, test_id))
             except Exception as err:
                 print('****' + test_id + '*****')
                 raise
             # res.store_test_info()
             # res.write_info(test_id)
+            # sh.test_flows.store_test_info(tester)
             return True
         else:
             if not tester.match_profile(test_id):
@@ -85,8 +86,7 @@ def run_return_types(test_id, oper_id, kwargs, return_types):
                 print('+ {}'.format(test_id))
                 return True
             else:
-                res = Result(sh, SimpleProfileHandler)
-                res.result()
+                sh.test_flows.store_test_info(tester)
                 return False
 
 
@@ -107,7 +107,7 @@ if __name__ == '__main__':
     parser.add_argument('-k', dest="insecure", action='store_true')
     parser.add_argument('-l', dest="log_name")
     parser.add_argument('-t', dest="test_id")
-    parser.add_argument('-p', dest="profile", action='append')
+    parser.add_argument('-p', dest="profile")
     parser.add_argument('-i', dest="id")
     parser.add_argument('-g', dest="group")
     parser.add_argument('-x', dest='exit', action='store_true')
@@ -117,7 +117,8 @@ if __name__ == '__main__':
     cls_factories = {'': oper.factory}
     func_factory = func.factory
 
-    FLOWS = RPFlow(cargs.flowsdir, cls_factories, func_factory)
+    FLOWS = FlowState(cargs.flowsdir, SimpleProfileHandler,
+                      cls_factories, func_factory, [])
     CONF = importlib.import_module(cargs.config)
 
     if cargs.log_name:
@@ -155,7 +156,7 @@ if __name__ == '__main__':
     if cargs.test_id:
         rtypes = []
         try:
-            rtypes = FLOWS[cargs.test_id]['usage']['return_types']
+            rtypes = FLOWS[cargs.test_id]['usage']['return_type']
         except KeyError:
             print('No such test ID')
             exit()
@@ -164,12 +165,10 @@ if __name__ == '__main__':
             # profile is of the form A.B.C.D.E
             # The first item represents the return_type
             rtypes = []
-            for prof in cargs.profile:
-                _use = prof2usage(prof)
-                if not match_usage(FLOWS[cargs.test_id], **_use):
-                    continue
-                else:
-                    rtypes.append(_use['return_type'])
+            _use = prof2usage(cargs.profile)
+            _use['return_type'] = _use['return_type'][0]
+            if match_usage(FLOWS[cargs.test_id], **_use):
+                rtypes.append(_use['return_type'])
 
         if len(rtypes) == 1:
             run_return_types(cargs.test_id, cargs.id, kwargs, rtypes)
@@ -187,10 +186,10 @@ if __name__ == '__main__':
         _sh.init_session(profile=rtypes[0])
 
         if cargs.group:
-            test_ids = [t for t in _sh["flow_names"] if
+            test_ids = [t for t in _sh["tests"] if
                         t.startswith(cargs.group)]
         else:
-            test_ids = _sh["flow_names"]
+            test_ids = _sh["tests"]
 
         for tid in test_ids:
             _res = run_return_types(tid, cargs.id, kwargs, rtypes)

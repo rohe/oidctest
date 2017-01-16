@@ -6,6 +6,7 @@ import shutil
 from future.backports.urllib.parse import urlparse
 
 from jwkest import as_unicode
+from jwkest import as_bytes
 
 from oic.oauth2.provider import error_response
 
@@ -46,7 +47,7 @@ HEADER = "---------- %s ----------"
 
 def do_response(cls, *args, **kwargs):
     resp = cls(*args, **kwargs)
-    resp.headers.extend(CORS_HEADERS.items())
+    resp.headers.extend(CORS_HEADERS)
     return resp
 
 
@@ -105,12 +106,16 @@ def wsgi_wrapper(environ, start_response, func, session_info, events, jlog):
             resp = error_response(
                 error='incorrect_behavior',
                 descr='You should not talk to this endpoint in this test')
-            resp.add_header(CORS_HEADERS.items())
+            resp.add_header(CORS_HEADERS)
             return resp(environ, start_response)
 
     events.store(EV_REQUEST_ARGS, kwargs["request"])
     jlog.info({'operation': func.__name__, 'kwargs': kwargs})
-    args = func(**kwargs)
+    try:
+        args = func(**kwargs)
+    except Exception as err:
+        events.store(EV_EXCEPTION, err)
+        raise
 
     try:
         resp, state = args
@@ -118,7 +123,7 @@ def wsgi_wrapper(environ, start_response, func, session_info, events, jlog):
                    'state': state})
         events.store(EV_RESPONSE, resp.message)
         dump_log(session_info, events)
-        resp.headers.extend(CORS_HEADERS.items())
+        resp.headers.extend(CORS_HEADERS)
         return resp(environ, start_response)
     except TypeError:
         resp = args
@@ -129,13 +134,14 @@ def wsgi_wrapper(environ, start_response, func, session_info, events, jlog):
             pass
         events.store(EV_RESPONSE, resp.message)
         dump_log(session_info, events)
-        resp.headers.extend(CORS_HEADERS.items())
+        resp.headers.extend(CORS_HEADERS)
         return resp(environ, start_response)
     except Exception as err:
         jlog.error({'response_from': func.__name__, 'err': err})
         events.store(EV_EXCEPTION, err)
         dump_log(session_info, events)
-        raise
+        resp = ServiceError(err)
+        return resp(environ, start_response)
 
 
 # noinspection PyUnusedLocal
@@ -273,35 +279,37 @@ def static_file(path):
 def static(environ, start_response, path):
     logger.info("[static]sending: %s" % (path,))
 
-    headers = CORS_HEADERS.items()
+    headers = []
 
     try:
         bytes = open(path, 'rb').read()
         if path.endswith(".ico"):
-            headers.extend(('Content-Type', "image/x-icon"))
+            headers.append(('Content-Type', "image/x-icon"))
         elif path.endswith(".html"):
-            headers.extend(('Content-Type', 'text/html'))
+            headers.append(('Content-Type', 'text/html'))
         elif path.endswith(".json"):
-            headers.extend(('Content-Type', 'application/json'))
+            headers.append(('Content-Type', 'application/json'))
         elif path.endswith(".txt"):
-            headers.extend(('Content-Type', 'text/plain'))
+            headers.append(('Content-Type', 'text/plain'))
         elif path.endswith(".css"):
-            headers.extend(('Content-Type', 'text/css'))
+            headers.append(('Content-Type', 'text/css'))
         elif path.endswith(".tar"):
-            headers.extend(('Content-Type', 'application/x-tar'))
+            headers.append(('Content-Type', 'application/x-tar'))
         else:
-            headers.extend(('Content-Type', 'text/plain'))
+            headers.append(('Content-Type', 'text/plain'))
             start_response('200 OK', headers)
         try:
             text = as_unicode(bytes)
-            return [text.encode('utf8')]
+            text = as_bytes(text.encode('utf8'))
         except (ValueError, UnicodeDecodeError):
-            return [bytes]
+            text = bytes
         except AttributeError:
-            return [bytes]
+            text = bytes
+        resp = do_response(Response, text)
     except IOError:
         resp = do_response(NotFound, path)
-        return resp(environ, start_response)
+
+    return resp(environ, start_response)
 
 
 # noinspection PyUnusedLocal
@@ -374,7 +382,7 @@ def make_tar(path, environ, start_response, lookup):
         return resp(environ, start_response)
 
     resp = create_rp_tar_archive(tail)
-    resp.headers.extend(CORS_HEADERS.items())
+    resp.headers.extend(CORS_HEADERS)
     return resp(environ, start_response)
 
 
@@ -416,7 +424,7 @@ def display_log(path, environ, start_response, lookup):
         item.sort()
         resp = Response(mako_template="logs.mako",
                         template_lookup=lookup,
-                        headers=CORS_HEADERS.items())
+                        headers=CORS_HEADERS)
         argv = {"logs": item, 'testid': tester_id}
 
         return resp(environ, start_response, **argv)

@@ -225,14 +225,20 @@ class ProfileHandler(prof_util.ProfileHandler):
 
     def to_profile(self, representation="list"):
         p = self.session["profile"].split(".")
-        prof = [
-            "+".join([RT[x] for x in p[0]]),
-            "%s" % OC[p[1]],
-            "%s" % REG[p[2]]]
+        prof = ["+".join([RT[x] for x in p[0]])]
+        try:
+            prof.append("%s" % OC[p[1]])
+        except IndexError:
+            pass
+        else:
+            try:
+                prof.append("%s" % REG[p[2]])
+            except IndexError:
+                pass
 
         try:
             prof.append("%s" % "+".join([CR[x] for x in p[3]]))
-        except KeyError:
+        except (KeyError, IndexError):
             pass
         else:
             try:
@@ -252,7 +258,7 @@ class ProfileHandler(prof_util.ProfileHandler):
             return ret
 
 
-class SimpleProfileHandler(prof_util.ProfileHandler):
+class SimpleProfileHandler(ProfileHandler):
     @staticmethod
     def webfinger(profile):
         return True
@@ -264,32 +270,6 @@ class SimpleProfileHandler(prof_util.ProfileHandler):
     @staticmethod
     def register(profile):
         return True
-
-    def get_profile_info(self, test_id=None):
-        try:
-            _conv = self.session["conv"]
-        except KeyError:
-            pass
-        else:
-            try:
-                iss = _conv.entity.provider_info["issuer"]
-            except (TypeError, KeyError):
-                iss = ""
-
-            profile = RT[self.session["profile"]]
-
-            if test_id is None:
-                try:
-                    test_id = self.session["testid"]
-                except KeyError:
-                    return {}
-
-            return {"Issuer": iss, "Profile": profile,
-                    "Test ID": test_id,
-                    "Test description": self.session["node"].desc,
-                    "Timestamp": in_a_while()}
-
-        return {}
 
 
 def make_list(flows, profile, **kw_args):

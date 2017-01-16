@@ -1,1 +1,1 @@
-{"desc": "Can deal with unknown member of JRD", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}], "usage": {"return_types": ["C"]}}
+{"desc": "Can deal with unknown member of JRD", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}], "usage": {"return_type": ["C"]}}

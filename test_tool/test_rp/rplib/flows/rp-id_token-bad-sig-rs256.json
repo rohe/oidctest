@@ -55,7 +55,7 @@
     }
   ],
   "usage": {
-    "return_types": [
+    "return_type": [
       "C",
       "I",
       "CI",

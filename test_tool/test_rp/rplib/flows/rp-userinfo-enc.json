@@ -31,7 +31,7 @@
     "UserInfo"
   ],
   "usage": {
-    "return_types": [
+    "return_type": [
       "C",
       "CI",
       "CT",

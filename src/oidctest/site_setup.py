@@ -88,10 +88,6 @@ def oidc_rpinst_setup(distroot):
         _file = os.path.join(_op_dir, _fname)
         copy_if_not_same(_file, _fname, True)
 
-    for _fname in ['run_code.sh', 'run_token.sh']:
-        _file = os.path.join(_op_dir, _fname)
-        copy_if_not_same(_file, _fname)
-
 
 def oidc_rplib_setup(distroot):
     for _dir in ['certs', 'keys', 'log']:

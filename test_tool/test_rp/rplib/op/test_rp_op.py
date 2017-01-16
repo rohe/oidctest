@@ -19,6 +19,7 @@ from oic.utils.http_util import Response
 from oic.utils.http_util import NotFound
 from oic.utils.http_util import ServiceError
 from oic.utils.keyio import key_summary
+from otest.prof_util import SimpleProfileHandler
 
 from oidctest import UnknownTestID
 from oidctest.endpoints import clear_log
@@ -91,7 +92,7 @@ LOOKUP = TemplateLookup(directories=[ROOT + 'templates', ROOT + 'htdocs'],
 
 def do_response(cls, *args, **kwargs):
     resp = cls(*args, **kwargs)
-    resp.headers.extend(CORS_HEADERS.items())
+    resp.headers.extend(CORS_HEADERS)
     return resp
 
 
@@ -317,7 +318,7 @@ class Application(object):
                                                   endpoint)
                 jwks = op.generate_jwks(mode)
                 resp = do_response(Response, jwks,
-                                   headers=[('Content-Type', 
+                                   headers=[('Content-Type',
                                              'application/json')])
                 return resp(environ, start_response)
             except KeyError:
@@ -327,6 +328,7 @@ class Application(object):
         events = Events()
         events.store('Init', '===========================================')
 
+        mode = None
         if path == '':
             return main_display(environ, start_response)
         elif path in EXP.keys():
@@ -350,24 +352,7 @@ class Application(object):
         elif path == "3rd_party_init_login":
             return rp_support_3rd_party_init_login(environ, start_response)
 
-        # path should be <oper_id>/<test_id>/<endpoint>
-        try:
-            mode = parse_path(path)
-        except ValueError:
-            resp = do_response(BadRequest, 'Illegal path')
-            return resp(environ, start_response)
-
-        try:
-            endpoint = mode['endpoint']
-        except KeyError:
-            _info = {'error': 'No endpoint', 'mode': mode}
-            events.store(EV_FAULT, _info)
-            jlog.error(_info)
-            resp = do_response(BadRequest, 'Illegal path')
-            return resp(environ, start_response)
-
-        if endpoint == ".well-known/webfinger":
-            session_info['endpoint'] = endpoint
+        elif ".well-known/webfinger" in path:
             try:
                 _p = urlparse(parameters["resource"][0])
             except KeyError:
@@ -407,13 +392,34 @@ class Application(object):
                 jlog.error({'reason': _msg})
                 resp = do_response(ServiceError, _msg)
                 return resp(environ, start_response)
-        elif endpoint == "claim":
+
+            mode['endpoint'] = session_info[
+                'endpoint'] = '.well-known/webfinger'
+
+        if mode is None:
+            # path should be <oper_id>/<test_id>/<endpoint>
+            try:
+                mode = parse_path(path)
+            except ValueError:
+                resp = do_response(BadRequest, 'Illegal path')
+                return resp(environ, start_response)
+
+        try:
+            endpoint = mode['endpoint']
+        except KeyError:
+            _info = {'error': 'No endpoint', 'mode': mode}
+            events.store(EV_FAULT, _info)
+            jlog.error(_info)
+            resp = do_response(BadRequest, 'Illegal path')
+            return resp(environ, start_response)
+
+        if endpoint == "claim":
             authz = environ["HTTP_AUTHORIZATION"]
             _ev = Operation('claim')
             try:
                 assert authz.startswith("Bearer")
             except AssertionError:
-                resp = do_response(BadRequest, headers=CORS_HEADERS.items())
+                resp = do_response(BadRequest, headers=CORS_HEADERS)
             else:
                 _ev.authz = authz
                 events.store(EV_REQUEST, _ev)
@@ -423,12 +429,12 @@ class Application(object):
                 try:
                     _claims = _op.claim_access_token[tok]
                 except KeyError:
-                    resp = do_response(BadRequest, headers=CORS_HEADERS.items())
+                    resp = do_response(BadRequest, headers=CORS_HEADERS)
                 else:
                     del _op.claim_access_token[tok]
                     _info = Message(**_claims)
                     jwt_key = _op.keyjar.get_signing_key()
-                    resp = do_response(Response, 
+                    resp = do_response(Response,
                                        _info.to_jwt(key=jwt_key,
                                                     algorithm="RS256"),
                                        content='application/jwt')
@@ -441,8 +447,9 @@ class Application(object):
         try:
             _op, path, jlog.id = self.op_setup(environ, mode, events, endpoint)
         except UnknownTestID as err:
-            resp = do_response(BadRequest, 'Unknown test ID: {}'.format(err.args[0]),
-                              headers=CORS_HEADERS.items())
+            resp = do_response(BadRequest,
+                               'Unknown test ID: {}'.format(err.args[0]),
+                               headers=CORS_HEADERS)
             return resp(environ, start_response)
 
         session_info["op"] = _op
@@ -504,7 +511,7 @@ if __name__ == '__main__':
 
     _com_args, _op_arg, config = main_setup(args, LOOKUP)
 
-    _flows = Flow(args.flowsdir)
+    _flows = Flow(args.flowsdir, profile_handler=SimpleProfileHandler)
     _app = Application(test_conf_dir=args.flowsdir, com_args=_com_args,
                        op_args=_op_arg, flows=_flows, links='link.json')
     # Setup the web server

@@ -370,7 +370,7 @@ class IO(object):
             resp = NotFound()
             return resp(self.environ, self.start_response)
 
-    def get_iss(self):
+    def new_iss(self):
         resp = Response(mako_template="new_iss.mako",
                         template_lookup=self.lookup,
                         headers=[])
@@ -419,6 +419,14 @@ class IO(object):
                         headers=[])
 
         arg = {'base': ''}
+        return resp(self.environ, self.start_response, **arg)
+
+    def main(self, base):
+        resp = Response(mako_template="new_instance.mako",
+                        template_lookup=self.lookup,
+                        headers=[])
+
+        arg = {'base': '', "list_url":'', "new_iss_url": 'form/init'}
         return resp(self.environ, self.start_response, **arg)
 
 
@@ -582,7 +590,8 @@ class Application(object):
         iss, tag = get_iss_and_tag(path)
 
         if path == 'form/init':
-            return io.get_iss()
+            resp = Response()
+            return io.new_iss()
         elif path.startswith('form/create'):
             return io.new_instance(iss, tag)
         elif path.startswith('form/update'):
@@ -635,7 +644,7 @@ class Application(object):
             return _io.static(path)
 
         if path == '':
-            return _io.get_iss()
+            return _io.new_iss()
         elif path.startswith('form/'):
             return self.form_handling(path, _io)
         elif path == 'create':
