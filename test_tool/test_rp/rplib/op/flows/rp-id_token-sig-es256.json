@@ -15,6 +15,6 @@
     ]
   },
   "short_description": "Accepts ID Token with valid asymmetric 'ES256' signature",
-  "detailed_description": "Request an encrypted ID Token. Decrypt the returned the ID Token and verify its signature using the keys published by the Issuer.",
+  "detailed_description": "Request an signed ID Token. Verify the signature on the ID Token using the keys published by the Issuer.",
   "expected_result": "Accept the ID Token after doing ${ID_TOKEN_VALIDATION}."
 }

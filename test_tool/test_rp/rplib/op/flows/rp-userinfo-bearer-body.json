@@ -1,11 +1,4 @@
 {
-  "MTI": [
-    "C",
-    "IT",
-    "CI",
-    "CT",
-    "CIT"
-  ],
   "group": "UserInfo Endpoint",
   "claims": "normal",
   "capabilities": {
