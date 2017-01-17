@@ -8,6 +8,8 @@ import subprocess
 import sys
 
 import time
+
+import psutil
 from future.backports.urllib.parse import parse_qs
 from future.backports.urllib.parse import quote_plus
 from future.backports.urllib.parse import unquote_plus
@@ -335,12 +337,13 @@ class REST(object):
 
 
 class IO(object):
-    def __init__(self, rest, environ, start_response, lookup,
+    def __init__(self, rest, environ, start_response, lookup, baseurl,
                  entpath='entities'):
         self.rest = rest
         self.environ = environ
         self.start_response = start_response
         self.lookup = lookup
+        self.baseurl = baseurl
         self.entpath = entpath
 
     def static(self, path):
@@ -413,29 +416,106 @@ class IO(object):
 
         return resp(self.environ, self.start_response, **arg)
 
-    def delete_instance(self, iss, tag):
-        resp = Response(mako_template="new_instance.mako",
+    def delete_instance(self, parts):
+        lp = [unquote_plus(p) for p in parts]
+        qp = [quote_plus(p) for p in lp]
+        os.unlink(os.path.join(self.entpath, *qp))
+        resp = Response(mako_template='message.mako',
                         template_lookup=self.lookup,
                         headers=[])
 
-        arg = {'base': ''}
-        return resp(self.environ, self.start_response, **arg)
+        # free assigned port !
 
-    def main(self, base):
+        args = {'title': "Action performed",
+                'message': 'Your test instance has been removed'}
+        return resp(self.environ, self.start_response, **args)
+
+    # def delete_instance(self, iss, tag):
+    #     resp = Response(mako_template="new_instance.mako",
+    #                     template_lookup=self.lookup,
+    #                     headers=[])
+    #
+    #     arg = {'base': ''}
+    #     return resp(self.environ, self.start_response, **arg)
+
+    def main(self):
         resp = Response(mako_template="new_instance.mako",
                         template_lookup=self.lookup,
                         headers=[])
-
-        arg = {'base': '', "list_url":'', "new_iss_url": 'form/init'}
+        arg = {'base': self.baseurl}
         return resp(self.environ, self.start_response, **arg)
+
+    def list_iss(self):
+        resp = Response(mako_template="list_iss.mako",
+                        template_lookup=self.lookup,
+                        headers=[])
+
+        fils = os.listdir(self.entpath)
+        args = {'base': self.baseurl, 'issuers': fils}
+        return resp(self.environ, self.start_response, **args)
+
+    def list_tag(self, iss):
+        resp = Response(mako_template="list_tag.mako",
+                        template_lookup=self.lookup,
+                        headers=[])
+
+        _iss = unquote_plus(iss)
+        qiss = quote_plus(_iss)
+        fils = os.listdir(os.path.join(self.entpath, qiss))
+        args = {'base': self.baseurl, 'items': fils,
+                "qiss": qiss, "iss": _iss}
+        return resp(self.environ, self.start_response, **args)
+
+    def show_tag(self, part):
+        resp = Response(mako_template="action.mako",
+                        template_lookup=self.lookup,
+                        headers=[])
+
+        lp = [unquote_plus(p) for p in part[1:]]
+        qp = [quote_plus(p) for p in lp]
+        info = open(os.path.join(self.entpath, *qp),'r').read()
+        args = {'base': self.baseurl, 'info': json.loads(info),
+                "qargs": qp, "largs": lp}
+        return resp(self.environ, self.start_response, **args)
+
+    def restart_instance(self, part):
+        #
+        match = {"-i": unquote_plus(part[0]), "-t": unquote_plus(part[1])}
+
+        for proc in psutil.process_iter():
+            cmd = proc.cmdline()
+            flag = 0
+            for first,second in match.items():
+                i = cmd.index(first)
+                if cmd[i+1] != second:
+                    break
+                else:
+                    flag += 1
+            if flag == len(match):
+                # pid = proc.pid()
+                proc.terminal()
+                break
+
+        resp = Response(mako_template='message.mako',
+                        template_lookup=self.lookup,
+                        headers=[])
+        args = {'title': "Action performed",
+                'message': 'Your test instance has been restarted'}
+        return resp(self.environ, self.start_response, **args)
+
+    def configure_instance(self, parts):
+        lp = [unquote_plus(p) for p in parts]
+        qp = [quote_plus(p) for p in lp]
+        _info = json.loads(os.listdir(os.path.join(self.entpath, qp)))
 
 
 class Application(object):
-    def __init__(self, baseurl, lookup, ent_path, ent_info, flowdir, test_script,
+    def __init__(self, base_url, lookup, ent_path, ent_info, flowdir, test_script,
                  path2port=None, mako_dir='', port_min=60000, port_max=61000,
                  test_tool_conf=''):
-        self.baseurl = baseurl
+        self.baseurl = base_url
         self.lookup = lookup
+        self.ent_path = ent_path
         self.ent_info = ent_info
         self.flowdir = flowdir
         self.path2port = path2port
@@ -462,7 +542,7 @@ class Application(object):
 
         self.running_processes = {}
         # self.ent_path = ent_path
-        self.rest = REST(baseurl, ent_path, ent_info)
+        self.rest = REST(base_url, ent_path, ent_info)
 
         sys.path.insert(0, ".")
         ttc = importlib.import_module(test_tool_conf)
@@ -632,7 +712,7 @@ class Application(object):
         logger.info("path: %s" % path)
 
         _io = IO(rest=self.rest, environ=environ, start_response=start_response,
-                 lookup=self.lookup)
+                 lookup=self.lookup, baseurl=self.baseurl)
 
         if path == "robots.txt":
             return _io.static("static/robots.txt")
@@ -644,7 +724,25 @@ class Application(object):
             return _io.static(path)
 
         if path == '':
+            return _io.main()
+        if path == 'new':
             return _io.new_iss()
+        if path == 'entity':
+            return _io.list_iss()
+        elif path.startswith('entity/'):
+            p = path.split('/')
+            if len(p) == 2:
+                return _io.list_tag(p[1])
+            elif len(p) == 3:
+                return _io.show_tag(p)
+            elif len(p) == 4:
+                _com = p[-1]
+                if _com == 'delete':
+                    _io.delete_instance(p[1:2])
+                if _com == 'restart':
+                    _io.restart_instance(p[1:2])
+                if _com == 'configure':
+                    _io.configure_instance(p[1:2])
         elif path.startswith('form/'):
             return self.form_handling(path, _io)
         elif path == 'create':
