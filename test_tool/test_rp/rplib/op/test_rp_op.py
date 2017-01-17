@@ -134,12 +134,19 @@ def rp_test_list(environ, start_response, flows, response_type, links):
                     optional.append(
                         (tid, _det_desc, _exp_res, _info['group']))
 
-    args = {
-        'mandatory': mandatory,
-        'optional': optional,
-        'response_type': EXP[response_type],
-        "grps": GRPS
-    }
+    try:
+        _resp_type_desc = EXP[response_type]
+    except KeyError:
+        resp = BadRequest('Unknown response type: {}'.format(response_type))
+        args = {}
+    else:
+        args = {
+            'mandatory': mandatory,
+            'optional': optional,
+            'response_type': _resp_type_desc,
+            "grps": GRPS
+        }
+
     return resp(environ, start_response, **args)
 
 
@@ -382,7 +389,7 @@ class Application(object):
                     _oper_id = _a[0]
                     _test_id = 'default'
 
-                mode.update({'oper_id': _oper_id, 'test_id': _test_id})
+                mode = {'oper_id': _oper_id, 'test_id': _test_id}
                 events.store(EV_REQUEST,
                              Operation(name='webfinger', type='acct',
                                        oper_id=_oper_id, test_id=_test_id))
