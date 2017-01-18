@@ -46,7 +46,8 @@ setup(
         'future',
         'CherryPy',
         'oic >= 0.9.4',
-        'otest >= 0.6.3'
+        'otest >= 0.6.3',
+        'psutil'
     ],
     zip_safe=False,
     scripts=['script/optest.py', 'script/make_test_dir.py',
