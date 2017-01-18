@@ -73,8 +73,8 @@ if __name__ == '__main__':
         '-i', dest='issuer',
         help="The issuer ID of the OP")
     parser.add_argument(
-        '-f', dest='flows', action='append',
-        help="A file that contains the flow definitions for all the tests")
+        '-f', dest='flowdir',
+        help="A directory that contains the flow definitions for all the tests")
     parser.add_argument('-p', dest='port', type=int,
                         help="Which port the server should listen on")
     # parser.add_argument('-P', dest='profile')
