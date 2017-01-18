@@ -18,6 +18,6 @@ MAKO_DIR = 'oidf_mako'
 ENT_PATH = 'entities'
 ENT_INFO = 'entity_info'
 
-FLOWS = ['flows.yaml']
+FLOWDIR = 'flows'
 
 PATH2PORT = 'path2port.csv'

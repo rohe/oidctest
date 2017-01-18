@@ -13,7 +13,7 @@ MAKO_DIR = 'heart_mako'
 ENT_PATH = 'entities'
 ENT_INFO = 'entity_info'
 
-FLOWS = ['flows.yaml']
+FLOWDIR = 'flows'
 
 PATH2PORT = 'path2port.csv'
 PORT_MIN = 9100

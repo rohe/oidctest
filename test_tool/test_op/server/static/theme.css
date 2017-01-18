@@ -1,0 +1,51 @@
+h2 {
+    background-color: lightcyan;
+    width: 900px
+}
+
+h3.highlight {
+    background-color: lightblue;
+}
+
+h4 {
+    background-color: lightcyan;
+}
+
+p.info {
+    width: 600px;
+}
+
+.button {
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+
+.inp {
+    border-radius: 10px;
+    width: 900px;
+    background-color: #e6e6e6;
+}
+
+td {
+    text-align: left;
+}
+th {
+    background-color: #4CAF50;
+    color: white;
+    white-space: nowrap;
+    text-align: left;
+}
+table, th, td {
+    border: 1px solid black;
+}
+td.center {
+    text-align: center;
+    background-color: #a4aeaf;
+}
