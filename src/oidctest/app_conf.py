@@ -9,11 +9,9 @@ import sys
 
 import time
 
-import psutil
 from future.backports.urllib.parse import parse_qs
 from future.backports.urllib.parse import quote_plus
 from future.backports.urllib.parse import unquote_plus
-from jwkest import as_unicode
 
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
@@ -24,6 +22,9 @@ from oic.utils.http_util import ServiceError
 from oic.utils.http_util import NotFound
 from oic.utils.http_util import Response
 from oic.utils.http_util import SeeOther
+
+from otest.proc import find_test_instances, find_test_instance, kill_process, \
+    isrunning, pid_isrunning
 from otest.rp.setup import read_path2port_map
 
 logger = logging.getLogger(__name__)
@@ -42,6 +43,77 @@ port_pattern = re.compile('-p (\d*) ')
 tool_conf = ['acr_values', 'claims_locales', 'issuer',
              'login_hint', 'profile', 'ui_locales', 'webfinger_email',
              'webfinger_url', 'insecure', 'tag']
+
+import signal
+
+def ignore_sighup():
+    signal.signal(signal.SIGHUP, signal.SIG_IGN)
+
+
+class AssignedPorts(object):
+    def __init__(self, filename):
+        self.filename = filename
+        self._db = {}
+
+    def __setitem__(self, key, value):
+        if '%' in key:
+            key = unquote_plus(key)
+
+        self._db[key] = value
+        self.dump()
+
+    def __getitem__(self, item):
+        if "%" in item:
+            item = unquote_plus(item)
+
+        return self._db[item]
+
+    def __delitem__(self, key):
+        if '%' in key:
+            key = unquote_plus(key)
+
+        del self._db[key]
+        self.dump()
+
+    def keys(self):
+        return self._db.keys()
+
+    def values(self):
+        return self._db.values()
+
+    def __contains__(self, item):
+        if "%" in item:
+            item = unquote_plus(item)
+        return item in self._db
+
+    def dump(self):
+        fp = open(self.filename, 'w')
+        fp.write(json.dumps(self._db))
+        fp.close()
+
+    def sync(self, test_script):
+        running_processes = {}
+
+        update = False
+        inst = find_test_instances(test_script)
+        if inst:
+            for pid, info in inst.items():
+                key = '{}:{}'.format(info["iss"], info["tag"])
+                if key not in self._db:
+                    self[key] = info["port"]
+                    update = True
+                running_processes[key] = pid
+
+        if update:
+            self.dump()
+
+        return running_processes
+
+    def load(self):
+        _ass = open(self.filename, 'r').read()
+        if _ass:
+            for key, val in json.loads(_ass).items():
+                self._db[key] = val
 
 
 def get_iss_and_tag(path):
@@ -217,7 +289,7 @@ class REST(object):
         iss = unquote_plus(qiss)
         res = ['<p>']
         for file in os.listdir(dirname):
-            _url = '{}{}/{}'.format(self.base_url,qiss,quote_plus(file))
+            _url = '{}{}/{}'.format(self.base_url, qiss, quote_plus(file))
             res.append('<a href="{}">{}</a><br>'.format(_url, file))
         res.append('</p')
         _html = [
@@ -281,7 +353,8 @@ class REST(object):
         else:
             if info:
                 if typ == 'json':
-                    resp = Response(json.dumps(info), content='application/json')
+                    resp = Response(json.dumps(info),
+                                    content='application/json')
                 else:
                     resp = Response(info, content='text/html')
             else:
@@ -381,22 +454,14 @@ class IO(object):
         args = {'base': ''}
         return resp(self.environ, self.start_response, **args)
 
-    def new_instance(self, iss, tag):
-        resp = Response(mako_template="new_instance.mako",
-                        template_lookup=self.lookup,
-                        headers=[])
-
-        args = {'base': ''}
-        return resp(self.environ, self.start_response, **args)
-
-    def update_instance(self, iss, tag):
+    def update_instance(self, parts):
         resp = Response(mako_template="instance.mako",
                         template_lookup=self.lookup,
                         headers=[])
 
-        qiss = quote_plus(iss)
-        qtag = quote_plus(tag)
-        format, _conf = self.rest.read_conf(qiss, qtag)
+        lp = [unquote_plus(p) for p in parts]
+        qp = [quote_plus(p) for p in lp]
+        format, _conf = self.rest.read_conf(qp[0], qp[1])
         # provider_info and registration_response
         dicts = {'tool': _conf['tool']}
         for item in tool_conf:
@@ -410,36 +475,34 @@ class IO(object):
                 pass
 
         arg = {'base': '',
-               'iss': qiss,
-               'tag': qtag,
+               'iss': qp[0],
+               'tag': qp[1],
                'dicts': dicts}
 
         return resp(self.environ, self.start_response, **arg)
 
-    def delete_instance(self, parts):
+    def delete_instance(self, parts, pid=0, app=None):
         lp = [unquote_plus(p) for p in parts]
         qp = [quote_plus(p) for p in lp]
+        _key = '{}:{}'.format(*lp)
+
+        if pid:
+            kill_process(pid)
+            del app.running_processes[_key]
+
         os.unlink(os.path.join(self.entpath, *qp))
+        del app.assigned_ports[_key]
+
         resp = Response(mako_template='message.mako',
                         template_lookup=self.lookup,
                         headers=[])
 
-        # free assigned port !
-
-        args = {'title': "Action performed",
-                'message': 'Your test instance has been removed'}
+        args = {'title': "Action performed", 'base': self.baseurl,
+                'note': 'Your test tool instance has been removed'}
         return resp(self.environ, self.start_response, **args)
 
-    # def delete_instance(self, iss, tag):
-    #     resp = Response(mako_template="new_instance.mako",
-    #                     template_lookup=self.lookup,
-    #                     headers=[])
-    #
-    #     arg = {'base': ''}
-    #     return resp(self.environ, self.start_response, **arg)
-
     def main(self):
-        resp = Response(mako_template="new_instance.mako",
+        resp = Response(mako_template="main.mako",
                         template_lookup=self.lookup,
                         headers=[])
         arg = {'base': self.baseurl}
@@ -451,6 +514,8 @@ class IO(object):
                         headers=[])
 
         fils = os.listdir(self.entpath)
+        # Remove examples
+        fils.remove('https%3A%2F%2Fexample.com')
         args = {'base': self.baseurl, 'issuers': fils}
         return resp(self.environ, self.start_response, **args)
 
@@ -462,8 +527,11 @@ class IO(object):
         _iss = unquote_plus(iss)
         qiss = quote_plus(_iss)
         fils = os.listdir(os.path.join(self.entpath, qiss))
+
+        active = dict([(fil, isrunning(_iss, fil)) for fil in fils])
+
         args = {'base': self.baseurl, 'items': fils,
-                "qiss": qiss, "iss": _iss}
+                "qiss": qiss, "iss": _iss, 'active': active}
         return resp(self.environ, self.start_response, **args)
 
     def show_tag(self, part):
@@ -472,45 +540,46 @@ class IO(object):
                         headers=[])
 
         lp = [unquote_plus(p) for p in part[1:]]
+
+        if find_test_instance(*lp):
+            active = True
+        else:
+            active = False
+
         qp = [quote_plus(p) for p in lp]
-        info = open(os.path.join(self.entpath, *qp),'r').read()
+        info = open(os.path.join(self.entpath, *qp), 'r').read()
         args = {'base': self.baseurl, 'info': json.loads(info),
-                "qargs": qp, "largs": lp}
+                "qargs": qp, "largs": lp, 'active': active}
         return resp(self.environ, self.start_response, **args)
 
-    def restart_instance(self, part):
-        #
-        match = {"-i": unquote_plus(part[0]), "-t": unquote_plus(part[1])}
-
-        for proc in psutil.process_iter():
-            cmd = proc.cmdline()
-            flag = 0
-            for first,second in match.items():
-                i = cmd.index(first)
-                if cmd[i+1] != second:
-                    break
-                else:
-                    flag += 1
-            if flag == len(match):
-                # pid = proc.pid()
-                proc.terminal()
-                break
+    def restart_instance(self, app, part):
+        _iss = unquote_plus(part[0])
+        _tag = unquote_plus(part[1])
+        url = app.run_test_instance(quote_plus(_iss), quote_plus(_tag))
+        if isinstance(url, Response):
+            return url(self.environ, self.start_response)
 
         resp = Response(mako_template='message.mako',
                         template_lookup=self.lookup,
                         headers=[])
-        args = {'title': "Action performed",
-                'message': 'Your test instance has been restarted'}
+
+        args = {
+            'title': "Action performed", 'base': self.baseurl,
+            'note': 'Your test instance "{iss}:{tag}" has been '
+                    'restarted as <a href="{url}">{url}</a>'.format(
+                iss=_iss, tag=_tag, url=url)}
+
         return resp(self.environ, self.start_response, **args)
 
-    def configure_instance(self, parts):
-        lp = [unquote_plus(p) for p in parts]
-        qp = [quote_plus(p) for p in lp]
-        _info = json.loads(os.listdir(os.path.join(self.entpath, qp)))
+        # def configure_instance(self, parts):
+        #     lp = [unquote_plus(p) for p in parts]
+        #     qp = [quote_plus(p) for p in lp]
+        #     _info = json.loads(os.listdir(os.path.join(self.entpath, qp)))
 
 
 class Application(object):
-    def __init__(self, base_url, lookup, ent_path, ent_info, flowdir, test_script,
+    def __init__(self, base_url, lookup, ent_path, ent_info, flowdir,
+                 test_script,
                  path2port=None, mako_dir='', port_min=60000, port_max=61000,
                  test_tool_conf=''):
         self.baseurl = base_url
@@ -525,22 +594,10 @@ class Application(object):
         self.test_tool_conf = test_tool_conf
         self.test_script = test_script
 
-        try:
-            _ass = open('assigned_ports.json').read()
-        except Exception as err:
-            if sys.version[0] == '2':
-                if isinstance(err, IOError):
-                    self.assigned_ports = {}
-                else:
-                    raise
-            elif isinstance(err, FileNotFoundError):
-                self.assigned_ports = {}
-            else:
-                raise
-        else:
-            self.assigned_ports = json.loads(_ass)
+        self.assigned_ports = AssignedPorts('assigned_ports.json')
+        self.assigned_ports.load()
+        self.running_processes = self.assigned_ports.sync(test_script)
 
-        self.running_processes = {}
         # self.ent_path = ent_path
         self.rest = REST(base_url, ent_path, ent_info)
 
@@ -549,26 +606,6 @@ class Application(object):
         self.test_tool_base = ttc.BASE
         if not self.test_tool_base.endswith('/'):
             self.test_tool_base += '/'
-
-        try:
-            byt = subprocess.check_output(['pgrep', '-f', '-l', 'optest.py'],
-                                          universal_newlines=True)
-        except subprocess.CalledProcessError:
-            pass
-        else:
-            lin = as_unicode(byt)
-            for l in lin.split('\n'):
-                m = port_pattern.search(l)
-                if m:
-                    _port = m.group(1)
-                    _pid = l.split(' ')[0]
-                    try:
-                        for key, val in self.assigned_ports.items():
-                            if val == _port:
-                                self.running_processes[key] = _pid
-                                break
-                    except KeyError:
-                        logger.warning('unregistered optest process')
 
     def get_port(self, qiss, qtag):
         """
@@ -587,7 +624,10 @@ class Application(object):
             else:
                 pl = list(self.assigned_ports.values())
                 pl.sort()
-                if pl[0] != self.port_min:
+                if not pl:
+                    _port = self.port_min
+                    self.assigned_ports[_key] = _port
+                elif pl[0] != self.port_min:
                     _port = self.port_min
                     self.assigned_ports[_key] = _port
                 else:
@@ -601,10 +641,16 @@ class Application(object):
                     if _port > self.port_max:
                         raise OutOfRange('Out of ports')
                     self.assigned_ports[_key] = _port
-            fp = open('assigned_ports.json', 'w')
-            fp.write(json.dumps(self.assigned_ports))
-            fp.close()
+            self.assigned_ports.dump()
         return _port
+
+    def get_pid(self, parts):
+        lp = [unquote_plus(p) for p in parts]
+        qp = [quote_plus(p) for p in lp]
+        try:
+            return self.running_processes['{}:{}'.format(*qp)]
+        except KeyError:
+            return 0
 
     def return_port(self, qiss, qtag):
         """
@@ -653,17 +699,20 @@ class Application(object):
             logger.info('kill {}'.format(pid))
             subprocess.call(['kill', str(pid)])
 
-        logger.info(args)
-
+        args.append('&')
+        logger.info("Test tool command: {}".format(" ".join(args)))
         # spawn independent process
-        with open('err.log', 'w') as OUT:
-            pid = subprocess.Popen(args, stdin=OUT, stdout=OUT,
-                                   stderr=subprocess.STDOUT, close_fds=True).pid
-        # continues immediately
+        os.system(" ".join(args))
+
+        while True:
+            time.sleep(1)
+            pid = isrunning(unquote_plus(iss), unquote_plus(tag))
+            if pid:
+                break
+
         logger.info("process id: {}".format(pid))
         self.running_processes['{}:{}'.format(iss, tag)] = pid
 
-        time.sleep(5)
         return url
 
     def form_handling(self, path, io):
@@ -677,7 +726,8 @@ class Application(object):
         elif path.startswith('form/update'):
             return io.update_instance(iss, tag)
         elif path.startswith('form/delete'):
-            return io.delete_instance(iss, tag)
+            return io.delete_instance(iss, tag, pid=self.get_pid([iss, tag]),
+                                      app=self)
         else:
             resp = NotFound()
             return resp(io.environ, io.start_response)
@@ -731,18 +781,35 @@ class Application(object):
             return _io.list_iss()
         elif path.startswith('entity/'):
             p = path.split('/')
+            while p[-1] == '':
+                p = p[:-1]
+
             if len(p) == 2:
                 return _io.list_tag(p[1])
             elif len(p) == 3:
                 return _io.show_tag(p)
             elif len(p) == 4:
                 _com = p[-1]
-                if _com == 'delete':
-                    _io.delete_instance(p[1:2])
-                if _com == 'restart':
-                    _io.restart_instance(p[1:2])
-                if _com == 'configure':
-                    _io.configure_instance(p[1:2])
+                if _com == 'action':
+                    _qs = parse_qs(environ.get('QUERY_STRING'))
+                    try:
+                        _act = _qs['action'][0]
+                    except KeyError:
+                        resp = BadRequest('missing query parameter')
+                        return resp(environ, start_response)
+
+                    if _act == 'delete':
+                        return _io.delete_instance(p[1:3],
+                                                   pid=self.get_pid(p[1:3]),
+                                                   app=self)
+                    elif _act == 'restart':
+                        return _io.restart_instance(self, p[1:3])
+                    elif _act == 'configure':
+                        return _io.update_instance(p[1:3])
+                    else:
+                        resp = BadRequest('Unknown action')
+                        return resp(environ, start_response)
+
         elif path.startswith('form/'):
             return self.form_handling(path, _io)
         elif path == 'create':
