@@ -4,7 +4,7 @@ An overview of the OP test tool
 ===============================
 
 A basic assumption for the tool is that when you want to test an OpenID
-Connect Provider (OP) you may want test one specific aspect at a time.
+Connect Provider (OP) you want to test one specific aspect at a time.
 You may therefor want to have several configurations per OP.
 It is for instance common to have one configuration per response_type.
 Following on that you will run one test instance per configuration.
@@ -34,7 +34,7 @@ them below one by one.
 This is the overall pattern::
 
     $ optest.py -h
-    usage: optest.py [-h] [-k] [-i ISSUER] [-f FLOWS] [-p PORT] [-M MAKODIR]
+    usage: optest.py [-h] [-k] [-i ISSUER] [-f FLOWDIR] [-p PORT] [-M MAKODIR]
                      [-S STATICDIR] [-s] [-t TAG] [-m PATH2PORT]
                      config
 
