@@ -46,7 +46,7 @@ This is the overall pattern::
       -k            insecure mode for when you're expecting to talk HTTPS to
                     servers that use self-signed certificates
       -i ISSUER     The issuer ID of the OP
-      -f FLOWS      A file that contains the flow definitions for all the tests
+      -f FLOWDIR    A directory that contains the flow definitions for all the tests
       -p PORT       Which port the server should listen on
       -M MAKODIR    Root directory for the MAKO template files
       -S STATICDIR  Directory where static files are kept
@@ -78,8 +78,10 @@ The Issuer identifier of the OP that is to be tested.
 
 .. _tt_opt_flow:
 
-A YAML file that contains descriptions of all the tests in a domain specific
-manner. If you want to understand more about the test descriptions you can
+A directory that contains descriptions of all the tests in a domain specific
+manner. It contains one file per test and the content of the file is a
+JSON document adhering to a specific syntax.
+If you want to understand more about the test descriptions you can
 read more about them in :ref:`Test description language`.
 
 -p

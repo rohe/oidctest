@@ -176,7 +176,7 @@ test instance configurations until you find the one you want or you
 can go to the page where you can create a new configuration.
 
 Browsing test configurations
-++++++++++++++++++++++++++++
+::::::::::::::::::::::::::::
 
 What you will see if you chose browsing test instances is something like this:
 
@@ -191,7 +191,7 @@ if it's running or just start it if it's not or change the configuration.
 If you change the configuration then the test instance is restarted.
 
 Creating a new configuration
-++++++++++++++++++++++++++++
+::::::::::::::::::::::::::::
 
 Now, if you go down the configuration way you will get a page like this:
 
@@ -205,31 +205,31 @@ If you click **submit** you will get the next page where there are some
 things you may want to change.
 
 Tool Configuration
-++++++++++++++++++
+::::::::::::::::::
 
 Once you have configured everything to you liking and have clicked
 *Save&Start* a test instance will be started with the configuration you
 just constructed.
 
 acr_values
-----------
+++++++++++
 
 Here you can enter a list of the Authentication Context Class References that
 your OP supports.
 
 claims_locales
---------------
+++++++++++++++
 
 Languages and scripts supported for values in Claims being returned,
 represented as a list of BCP47 [`RFC5646`_] language tag values.
 
 enc
----
++++
 
 Whether the OP support encryption/decryption.
 
 extra
------
++++++
 
 The test tool contains three sets of tests. Those that are testing something
 that is mandatory to support, those that test things that are optional
@@ -238,7 +238,7 @@ By setting this to **True** you will get the extra set of nice-to-have support
 tests.
 
 insecure
---------
+++++++++
 
 Even though your server supports HTTPS which it **must** according to the
 standard you may use self-signed certificates which can not be verifies.
@@ -246,7 +246,7 @@ If that is the case you **MUST** set *insecure* to **True** which will tell the
 test instance to not attempt any verification of the certificate.
 
 login_hint
-----------
+++++++++++
 
 login_hint is something a RP may use as a hint to the Authorization Server
 about the login identifier the End-User might use to log in.
@@ -254,37 +254,37 @@ Here you can set such a hint using a format that you know your OP will
 understand.
 
 profile
--------
++++++++
 
 This is a short-form of the test profile you have set. You can not change
 this value since it is constructed from the base values.
 
 sig
----
++++
 
 Whether the OP supports signing/verifying signatures.
 
 tag
----
++++
 
 A value you set at the beginning of the configuration to distinguish this
 configuration from others you may have. *Can not be changed*
 
 ui_locales
-----------
+++++++++++
 
 Languages and scripts supported for the user interface, represented as a list
 of BCP47 [`RFC5646`_] language tag values.
 
 webfinger_email
----------------
++++++++++++++++
 
 If you want to test your OsP support for Webfinger queries you have to supply a
 resource specification to use. It can either be a email/acct like string.
 Which you would then enter here.
 
 webfinger_url
--------------
++++++++++++++
 
 The webfinger resource you want to use is might also be an URL. Which you
 would then enter here. If you specify both *webfinger_email* and
