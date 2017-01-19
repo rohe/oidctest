@@ -239,10 +239,10 @@ class Application(object):
         fp.close()
 
     def op_setup(self, environ, mode, events, endpoint):
-        addr = get_client_address(environ)
-        path = '/'.join([mode['oper_id'], mode['test_id']])
+        #addr = get_client_address(environ)
+        key = path = '/'.join([mode['oper_id'], mode['test_id']])
 
-        key = "{}:{}".format(addr, path)
+        #key = "{}:{}".format(addr, path)
         #  LOGGER.debug("OP key: {}".format(key))
         try:
             _op = self.op[key]
