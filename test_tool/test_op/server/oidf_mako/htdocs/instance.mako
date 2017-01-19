@@ -42,11 +42,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Heart OAuth2 AS Test Tool Configuration</title>
+  <title>OpenID Connect OP Testing</title>
   <link rel="stylesheet" type="text/css" href="${base}/static/theme.css">
 </head>
 <body>
-  <h2>OAuth2 Authorization Server Testing</h2>
+  <h2>OpenID Connect OP Testing</h2>
     <br>
         <p>
             On this page you are expected to configure your instance of the test tool
