@@ -169,7 +169,7 @@ The web interface
 When you have started a configuration server you can connect to the
 port it listens on and see this:
 
-.. image:: ConfServ0.png
+.. image:: confserv0.png
 
 This page gives you two options, you can either browse the existing
 test instance configurations until you find the one you want or you
@@ -180,11 +180,11 @@ Browsing test configurations
 
 What you will see if you chose browsing test instances is something like this:
 
-.. image:: IssuerList.png
+.. image:: issuerlist.png
 
 Picking one of the issuers, the next page shown will look like this:
 
-.. image:: TestInstance.png
+.. image:: testinstance.png
 
 Here you can remove a test instance configuration, restart the instance
 if it's running or just start it if it's not or change the configuration.
@@ -195,11 +195,11 @@ Creating a new configuration
 
 Now, if you go down the configuration way you will get a page like this:
 
-.. image:: TestConf0.png
+.. image:: testconf0.png
 
 which filled in will look like this:
 
-.. image:: TestConf1.png
+.. image:: testconf1.png
 
 If you click **submit** you will get the next page where there are some
 things you may want to change.
@@ -210,6 +210,8 @@ Tool Configuration
 Once you have configured everything to you liking and have clicked
 *Save&Start* a test instance will be started with the configuration you
 just constructed.
+
+.. image:: verifyconf.png
 
 acr_values
 ++++++++++
