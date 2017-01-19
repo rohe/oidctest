@@ -454,7 +454,7 @@ class IO(object):
         args = {'base': ''}
         return resp(self.environ, self.start_response, **args)
 
-    def update_instance(self, parts):
+    def update_instance(self, *parts):
         resp = Response(mako_template="instance.mako",
                         template_lookup=self.lookup,
                         headers=[])
