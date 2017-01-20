@@ -4,6 +4,7 @@
 The OP used when testing RP libraries
 """
 import json
+import os
 import re
 import sys
 import traceback
@@ -228,21 +229,22 @@ class TestConf(object):
 
 
 class Application(object):
-    def __init__(self, test_conf_dir, com_args, op_args, flows, links):
+    def __init__(self, test_conf_dir, com_args, op_args, flows, links, root):
         self.test_conf = TestConf(test_conf_dir)
         self.op = {}
         self.com_args = com_args
         self.op_args = op_args
         self.flows = flows
+        self.root = root
         fp = open(links, 'r')
         self.links = json.load(fp)
         fp.close()
 
     def op_setup(self, environ, mode, events, endpoint):
-        #addr = get_client_address(environ)
+        # addr = get_client_address(environ)
         key = path = '/'.join([mode['oper_id'], mode['test_id']])
 
-        #key = "{}:{}".format(addr, path)
+        # key = "{}:{}".format(addr, path)
         #  LOGGER.debug("OP key: {}".format(key))
         try:
             _op = self.op[key]
@@ -299,6 +301,11 @@ class Application(object):
 
         jlog = JLog(LOGGER, session_info['addr'])
         jlog.info(session_info)
+
+        if os.getcwd() != self.root:
+            logging.error(
+                'Moved from root dir to "{}"! Moving back!'.format(os.getcwd()))
+            os.chdir(self.root)
 
         if path == "robots.txt":
             return static(environ, start_response, "static/robots.txt")
@@ -520,7 +527,8 @@ if __name__ == '__main__':
 
     _flows = Flow(args.flowsdir, profile_handler=SimpleProfileHandler)
     _app = Application(test_conf_dir=args.flowsdir, com_args=_com_args,
-                       op_args=_op_arg, flows=_flows, links='link.json')
+                       op_args=_op_arg, flows=_flows, links='link.json',
+                       root=os.getcwd())
     # Setup the web server
     SRV = wsgiserver.CherryPyWSGIServer(('0.0.0.0', args.port),
                                         _app.application)
