@@ -23,15 +23,16 @@ from oic.utils.http_util import NotFound
 from oic.utils.http_util import Response
 from oic.utils.http_util import SeeOther
 
-from otest.proc import find_test_instances, find_test_instance, kill_process, \
-    isrunning, pid_isrunning
+from otest.proc import find_test_instance
+from otest.proc import isrunning
+from otest.proc import kill_process
+from otest.prof_util import DISCOVER
+from otest.prof_util import REGISTER
 from otest.rp.setup import read_path2port_map
 
+from oidctest.ass_port import AssignedPorts
+
 logger = logging.getLogger(__name__)
-
-
-class OutOfRange(Exception):
-    pass
 
 
 class NoSuchFile(Exception):
@@ -43,77 +44,6 @@ port_pattern = re.compile('-p (\d*) ')
 tool_conf = ['acr_values', 'claims_locales', 'issuer',
              'login_hint', 'profile', 'ui_locales', 'webfinger_email',
              'webfinger_url', 'insecure', 'tag']
-
-import signal
-
-def ignore_sighup():
-    signal.signal(signal.SIGHUP, signal.SIG_IGN)
-
-
-class AssignedPorts(object):
-    def __init__(self, filename):
-        self.filename = filename
-        self._db = {}
-
-    def __setitem__(self, key, value):
-        if '%' in key:
-            key = unquote_plus(key)
-
-        self._db[key] = value
-        self.dump()
-
-    def __getitem__(self, item):
-        if "%" in item:
-            item = unquote_plus(item)
-
-        return self._db[item]
-
-    def __delitem__(self, key):
-        if '%' in key:
-            key = unquote_plus(key)
-
-        del self._db[key]
-        self.dump()
-
-    def keys(self):
-        return self._db.keys()
-
-    def values(self):
-        return self._db.values()
-
-    def __contains__(self, item):
-        if "%" in item:
-            item = unquote_plus(item)
-        return item in self._db
-
-    def dump(self):
-        fp = open(self.filename, 'w')
-        fp.write(json.dumps(self._db))
-        fp.close()
-
-    def sync(self, test_script):
-        running_processes = {}
-
-        update = False
-        inst = find_test_instances(test_script)
-        if inst:
-            for pid, info in inst.items():
-                key = '{}:{}'.format(info["iss"], info["tag"])
-                if key not in self._db:
-                    self[key] = info["port"]
-                    update = True
-                running_processes[key] = pid
-
-        if update:
-            self.dump()
-
-        return running_processes
-
-    def load(self):
-        _ass = open(self.filename, 'r').read()
-        if _ass:
-            for key, val in json.loads(_ass).items():
-                self._db[key] = val
 
 
 def get_iss_and_tag(path):
@@ -474,10 +404,29 @@ class IO(object):
             except KeyError:
                 pass
 
+        state = {'immutable': {}, 'required': {}}
+        if 'registration_response' in dicts:
+            state['registration_response'] = {
+                'immutable': ['redirect_uris'],
+                'required': ['client_id', 'client_secret']}
+
+        if 'provider_info':
+            state['provider_info'] = {
+                'immutable': ['issuer'],
+                'required': ['authorization_endpoint', 'jwks_uri',
+                             'response_types_supported',
+                             'subject_types_supported',
+                             'id_token_signing_alg_values_supported']
+            }
+
+            if _conf['tool']['profile'].split('.')[0] not in ['I', 'IT']:
+                state['provider_info']['required'].append('token_endpoint')
+
         arg = {'base': '',
                'iss': qp[0],
                'tag': qp[1],
-               'dicts': dicts}
+               'dicts': dicts,
+               'state': state}
 
         return resp(self.environ, self.start_response, **arg)
 
@@ -589,12 +538,11 @@ class Application(object):
         self.flowdir = flowdir
         self.path2port = path2port
         self.mako_dir = mako_dir
-        self.port_min = port_min
-        self.port_max = port_max
         self.test_tool_conf = test_tool_conf
         self.test_script = test_script
 
-        self.assigned_ports = AssignedPorts('assigned_ports.json')
+        self.assigned_ports = AssignedPorts('assigned_ports.json', port_min,
+                                            port_max)
         self.assigned_ports.load()
         self.running_processes = self.assigned_ports.sync(test_script)
 
@@ -607,42 +555,8 @@ class Application(object):
         if not self.test_tool_base.endswith('/'):
             self.test_tool_base += '/'
 
-    def get_port(self, qiss, qtag):
-        """
-        Get an assigned port. If no one is assigned, find the next available.
-        :param qiss: quoted identifier
-        :param qtag: quoted tag
-        :return: Integer
-        """
-        _key = '{}:{}'.format(qiss, qtag)
-        try:
-            _port = self.assigned_ports[_key]
-        except KeyError:
-            if self.assigned_ports == {}:
-                _port = self.port_min
-                self.assigned_ports[_key] = _port
-            else:
-                pl = list(self.assigned_ports.values())
-                pl.sort()
-                if not pl:
-                    _port = self.port_min
-                    self.assigned_ports[_key] = _port
-                elif pl[0] != self.port_min:
-                    _port = self.port_min
-                    self.assigned_ports[_key] = _port
-                else:
-                    _port = self.port_min
-                    for p in pl:
-                        if p == _port:
-                            _port += 1
-                            continue
-                        else:
-                            break
-                    if _port > self.port_max:
-                        raise OutOfRange('Out of ports')
-                    self.assigned_ports[_key] = _port
-            self.assigned_ports.dump()
-        return _port
+    def key(self, iss, tag):
+        return '{}:{}'.format(unquote_plus(iss), unquote_plus(tag))
 
     def get_pid(self, parts):
         lp = [unquote_plus(p) for p in parts]
@@ -665,7 +579,8 @@ class Application(object):
             pass
 
     def run_test_instance(self, iss, tag):
-        _port = self.get_port(iss, tag)
+        _key = self.key(iss, tag)
+        _port = self.assigned_ports.register_port(_key)
         args = [self.test_script, "-i", unquote_plus(iss), "-t",
                 unquote_plus(tag), "-p", str(_port), "-M", self.mako_dir,
                 "-f", self.flowdir]
@@ -689,7 +604,6 @@ class Application(object):
 
         args.append(self.test_tool_conf)
 
-        _key = '{}:{}'.format(iss, tag)
         # If already running - kill
         try:
             pid = self.running_processes[_key]
@@ -745,6 +659,18 @@ class Application(object):
 
         profile = '.'.join(ppiece)
         _ent_conf = create_model(profile, ent_info_path=self.ent_info)
+        state = {}
+
+        if ppiece[DISCOVER] == 'F':
+            _ent_conf['client']['provider_info']['issuer'] = q['iss'][0]
+
+        if ppiece[REGISTER] == 'F':
+            # need to create a redirect_uri, means I need to register a port
+            _eid = self.key(q['iss'][0], q['tag'][0])
+            _port = self.assigned_ports.register_port(_eid)
+            _ent_conf['client']['registration_response'][
+                'redirect_uris'] = '{}:{}/authz_cb'.format(
+                self.test_tool_base[:-1], _port)
 
         _ent_conf['tool']['tag'] = q['tag'][0]
         _ent_conf['tool']['issuer'] = q['iss'][0]
