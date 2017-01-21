@@ -508,15 +508,13 @@ class Application(object):
 
 if __name__ == '__main__':
     import argparse
-
     from cherrypy import wsgiserver
-    from cherrypy.wsgiserver.ssl_builtin import BuiltinSSLAdapter
-
     from setup import main_setup
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', dest='verbose', action='store_true')
     parser.add_argument('-d', dest='debug', action='store_true')
+    parser.add_argument('-t', dest='tls', action='store_true')
     parser.add_argument('-f', dest='flowsdir')
     parser.add_argument('-p', dest='port', default=80, type=int)
     parser.add_argument('-k', dest='insecure', action='store_true')
@@ -533,11 +531,13 @@ if __name__ == '__main__':
     SRV = wsgiserver.CherryPyWSGIServer(('0.0.0.0', args.port),
                                         _app.application)
 
-    if _op_arg["baseurl"].startswith("https"):
+    if args.tls:
+        from cherrypy.wsgiserver.ssl_builtin import BuiltinSSLAdapter
+
         SRV.ssl_adapter = BuiltinSSLAdapter(config.SERVER_CERT,
-                                            config.SERVER_KEY,
-                                            config.CA_BUNDLE)
-        extra = " using SSL/TLS"
+                                            config.SERVER_KEY)
+        SRV.ssl_adapter.certificate_chain=config.CA_BUNDLE
+        extra = "using SSL/TLS"
     else:
         extra = ""
 
