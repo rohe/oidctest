@@ -21,7 +21,7 @@
            '<input type="hidden" name="{}:{}" value="{}"'.format(grp,key,val)]
       return '\n'.join(l)
     else:
-      return '<tr><th align="left">{}</th><td><input type="text" name="{}:{}" value="{}"></td><td>{}</td></tr>'.format(key,grp,key,val,_b)
+      return '<tr><th align="left">{}</th><td><input type="text" name="{}:{}" value="{}" class="str"></td><td>{}</td></tr>'.format(key,grp,key,val,_b)
 
   def display_form(headline, grp, dic, state):
     lines = ['<h3>{}</h3>'.format(headline), '<table>']
@@ -31,6 +31,7 @@
       for param in state[grp]['immutable']:
         val = dic[param]
         lines.append('<tr><th align="left">{}</th><td>{}</td><td>{}</td></tr>'.format(param, val, ball))
+        lines.append('<input type="hidden" name="{}:{}" value="{}"'.format(grp, param, val))
         keys.remove(param)
       for param in state[grp]['required']:
         val = dic[param]
@@ -54,6 +55,7 @@
       lines.append('<br>')
       lines.extend(display_form(headline[grp], grp, info, state))
     lines.append('<button type="submit" value="configure" class="button">Save & Start</button>')
+    lines.append('<button type="submit" value="abort" class="abort">Abort</button>')
     lines.append('</form>')
     return "\n".join(lines)
   %>

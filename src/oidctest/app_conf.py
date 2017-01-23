@@ -35,6 +35,10 @@ from oidctest.ass_port import AssignedPorts
 logger = logging.getLogger(__name__)
 
 
+TYPE2CLS = {'provider_info': ProviderConfigurationResponse,
+            'registration_response': RegistrationResponse}
+
+
 class NoSuchFile(Exception):
     pass
 
@@ -67,7 +71,8 @@ def get_iss_and_tag(path):
 def expand_dict(info):
     """
     converts a dictionary with keys of the for a:b to a dictionary of 
-    dictionaries
+    dictionaries. Also expands strings with ',' separated substring to a
+    list of strings.
     
     :param info: dictionary 
     :return: dictionary of dictionaries
@@ -78,6 +83,8 @@ def expand_dict(info):
         a, b = key.split(':')
         if len(val) == 1:
             val = val[0]
+            if ',' in val:
+                val = [v.strip() for v in val.split(',')]
         else:
             if b == 'tag':
                 val = val[0]
@@ -156,6 +163,29 @@ def verify_profile(profile):
         if p[i] not in ['F', 'T']:
             return False
     return True
+
+
+def verify_config(conf):
+    """
+
+    :param conf: Dictionary of dictionaries
+    :return: True/False
+    """
+
+    for name, cls in TYPE2CLS.items():
+        _inst = cls(**conf[name])
+        if _inst.verify() is False:
+            return False
+
+    return True
+
+
+def update(typ, conf):
+    cls = TYPE2CLS[typ]
+    for param in cls.c_param:
+        if param not in conf:
+            conf[param] = ''
+    return conf
 
 
 class REST(object):
@@ -402,7 +432,10 @@ class IO(object):
             try:
                 dicts[typ] = _conf['client'][typ]
             except KeyError:
-                pass
+                try:
+                    dicts[typ] = update(typ, _conf[typ])
+                except KeyError:
+                    pass
 
         state = {'immutable': {}, 'required': {}}
         if 'registration_response' in dicts:
@@ -440,6 +473,10 @@ class IO(object):
             del app.running_processes[_key]
 
         os.unlink(os.path.join(self.entpath, *qp))
+        # Remove issuer if out of tags
+        if not os.listdir(os.path.join(self.entpath, qp[0])):
+            os.rmdir(os.path.join(self.entpath, qp[0]))
+
         del app.assigned_ports[_key]
 
         resp = Response(mako_template='message.mako',
@@ -447,7 +484,9 @@ class IO(object):
                         headers=[])
 
         args = {'title': "Action performed", 'base': self.baseurl,
-                'note': 'Your test tool instance has been removed'}
+                'note':
+                    'Your test tool instance <em>{}:{}</em> has been '
+                    'removed'.format(*lp)}
         return resp(self.environ, self.start_response, **args)
 
     def main(self):
@@ -731,7 +770,7 @@ class Application(object):
                     elif _act == 'restart':
                         return _io.restart_instance(self, p[1:3])
                     elif _act == 'configure':
-                        return _io.update_instance(p[1:3])
+                        return _io.update_instance(*p[1:3])
                     else:
                         resp = BadRequest('Unknown action')
                         return resp(environ, start_response)
@@ -751,10 +790,13 @@ class Application(object):
             _qtag = quote_plus(_tag)
             _info = parse_qs(get_post(environ))
             ent_conf = expand_dict(_info)
-            self.rest.write(_qiss, _qtag, ent_conf)
-            resp = self.run_test_instance(_qiss, _qtag)
-            if not isinstance(resp, Response):
-                resp = SeeOther(resp)
+            if not verify_config(ent_conf):
+                resp = BadRequest('Incorrect configuration')
+            else:
+                self.rest.write(_qiss, _qtag, ent_conf)
+                resp = self.run_test_instance(_qiss, _qtag)
+                if not isinstance(resp, Response):
+                    resp = SeeOther(resp)
             return resp(_io.environ, _io.start_response)
         elif path.startswith('model/'):
             p = path.split('/')
@@ -774,7 +816,7 @@ class Application(object):
             _qtag = quote_plus(_tag)
             _met = environ.get('REQUEST_METHOD')
             if _met == 'GET':
-                return self.get_port(_qiss, _qtag)
+                return self.assigned_ports.register_port(self.key(_qiss, _qtag))
             elif _met == 'DELETE':
                 return self.return_port(_qiss, _qtag)
         else:
