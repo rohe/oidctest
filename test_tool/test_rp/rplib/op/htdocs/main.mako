@@ -43,7 +43,7 @@ input[type=submit]{
        target="_blank">"how to use the RPtest"</a>
     introduction guide</h3>
   <h3>For a list of OIDC RP library tests per response_type chose your preference:</h3>
-  <form action="list">
+  <form action="${path}list">
     ${choice(profiles)}
     <p></p>
     <input type="submit" value="Submit">

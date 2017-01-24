@@ -23,8 +23,24 @@ __author__ = 'roland'
 def main_setup(args, lookup=None):
     sys.path.insert(0, ".")
     config = importlib.import_module(args.config)
-    config.issuer = config.issuer % args.port
-    config.SERVICE_URL = config.SERVICE_URL % args.port
+    if args.path:
+        if config.baseurl.endswith('/'):
+            config.issuer = '{}{}/'.format(config.baseurl, args.path)
+        else:
+            config.issuer = '{}/{}/'.format(config.baseurl, args.path)
+    elif args.port:
+        if config.baseurl.endswith('/'):
+            config.issuer = '{}:{}/'.format(config.baseurl[:-1], args.port)
+        else:
+            config.issuer = '{}:{}/'.format(config.baseurl, args.port)
+
+    _baseurl = config.issuer
+
+    if not _baseurl.endswith("/"):
+        _baseurl += "/"
+
+    #config.issuer = config.issuer % args.port
+    #config.SERVICE_URL = config.SERVICE_URL % args.port
 
     # Client data base
     cdb = shelve.open(config.CLIENT_DB, writeback=True)
@@ -59,7 +75,7 @@ def main_setup(args, lookup=None):
 
     com_args = {
         "name": config.issuer,
-        "baseurl": config.baseurl,
+        "baseurl": _baseurl,
         "cdb": cdb,
         "authn_broker": ac,
         "userinfo": userinfo,
@@ -106,16 +122,6 @@ def main_setup(args, lookup=None):
     # All endpoints the OpenID Connect Provider should answer on
     add_endpoints(ENDPOINTS)
     op_arg["endpoints"] = ENDPOINTS
-
-    if args.port == 80:
-        _baseurl = config.baseurl
-    else:
-        if config.baseurl.endswith("/"):
-            config.baseurl = config.baseurl[:-1]
-        _baseurl = "%s:%d" % (config.baseurl, args.port)
-
-    if not _baseurl.endswith("/"):
-        _baseurl += "/"
 
     op_arg["baseurl"] = _baseurl
 

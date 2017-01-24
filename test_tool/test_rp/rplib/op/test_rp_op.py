@@ -97,12 +97,13 @@ def do_response(cls, *args, **kwargs):
     return resp
 
 
-def main_display(environ, start_response):
+def main_display(environ, start_response, base):
     resp = do_response(Response, mako_template="main.mako",
                        template_lookup=LOOKUP)
 
     args = {
-        'profiles': ABBR
+        'profiles': ABBR,
+        'path': base
     }
     return resp(environ, start_response, **args)
 
@@ -229,13 +230,15 @@ class TestConf(object):
 
 
 class Application(object):
-    def __init__(self, test_conf_dir, com_args, op_args, flows, links, root):
+    def __init__(self, test_conf_dir, com_args, op_args, flows, links, root,
+            base):
         self.test_conf = TestConf(test_conf_dir)
         self.op = {}
         self.com_args = com_args
         self.op_args = op_args
         self.flows = flows
         self.root = root
+        self.base = base
         fp = open(links, 'r')
         self.links = json.load(fp)
         fp.close()
@@ -344,7 +347,7 @@ class Application(object):
 
         mode = None
         if path == '':
-            return main_display(environ, start_response)
+            return main_display(environ, start_response, self.base)
         elif path in EXP.keys():
             return rp_test_list(environ, start_response, self.flows, path,
                                 self.links)
@@ -353,7 +356,7 @@ class Application(object):
             try:
                 _prof = qs['profile'][0]
             except KeyError:
-                return main_display(environ, start_response)
+                return main_display(environ, start_response, self.base)
             else:
                 return rp_test_list(environ, start_response, self.flows, _prof,
                                     self.links)
@@ -524,10 +527,17 @@ if __name__ == '__main__':
 
     _com_args, _op_arg, config = main_setup(args, LOOKUP)
 
+    if args.path:
+        _base = args.path
+        if not _base.endswith('/'):
+            _base += '/'
+    else:
+        _base = ""
+
     _flows = Flow(args.flowsdir, profile_handler=SimpleProfileHandler)
     _app = Application(test_conf_dir=args.flowsdir, com_args=_com_args,
                        op_args=_op_arg, flows=_flows, links='link.json',
-                       root=os.getcwd())
+                       root=os.getcwd(), base=_base)
     # Setup the web server
     SRV = wsgiserver.CherryPyWSGIServer(('0.0.0.0', args.port),
                                         _app.application)
@@ -537,7 +547,7 @@ if __name__ == '__main__':
 
         SRV.ssl_adapter = BuiltinSSLAdapter(config.SERVER_CERT,
                                             config.SERVER_KEY)
-        SRV.ssl_adapter.certificate_chain=config.CA_BUNDLE
+        SRV.ssl_adapter.certificate_chain = config.CA_BUNDLE
         extra = "using SSL/TLS"
     else:
         extra = ""
