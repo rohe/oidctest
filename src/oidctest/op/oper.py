@@ -148,7 +148,7 @@ class Registration(Operation):
             self.conv.events.store(EV_NOOP, "Dynamic registration")
             self.conv.entity.store_registration_info(
                 RegistrationResponse(
-                    **self.conf.CLIENT["registration_response"]))
+                    **self.conv.entity_config["registration_response"]))
 
     def op_setup(self):
         if self.dynamic:

@@ -233,6 +233,13 @@ class REST(object):
                 open('{}/registration_info.json'.format(
                     self.entinfo), 'r').read())
             _conf['client']['registration_info'] = reg_info['registration_info']
+        else:
+            for typ in ['provider_info', 'registration_response']:
+                try:
+                    _conf['client'][typ] = _econf[typ]
+                except KeyError:
+                    pass
+
         _conf['tool'] = _econf['tool']
         return _conf
 
