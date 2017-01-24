@@ -512,12 +512,13 @@ if __name__ == '__main__':
     from setup import main_setup
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-v', dest='verbose', action='store_true')
     parser.add_argument('-d', dest='debug', action='store_true')
-    parser.add_argument('-t', dest='tls', action='store_true')
     parser.add_argument('-f', dest='flowsdir')
-    parser.add_argument('-p', dest='port', default=80, type=int)
     parser.add_argument('-k', dest='insecure', action='store_true')
+    parser.add_argument('-p', dest='port', default=80, type=int)
+    parser.add_argument('-P', dest='path')
+    parser.add_argument('-t', dest='tls', action='store_true')
+    parser.add_argument('-v', dest='verbose', action='store_true')
     parser.add_argument(dest="config")
     args = parser.parse_args()
 

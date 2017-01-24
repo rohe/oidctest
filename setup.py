@@ -44,7 +44,7 @@ setup(
         "argparse",
         "requests >= 2.0.0",
         'future',
-        'CherryPy',
+        'CherryPy == 8.9.1',
         'oic >= 0.9.4',
         'otest >= 0.6.3',
         'psutil'
