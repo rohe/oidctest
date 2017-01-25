@@ -558,18 +558,18 @@ class IO(object):
                         template_lookup=self.lookup,
                         headers=[])
 
-        args = {
-            'title': "Action performed", 'base': self.baseurl,
-            'note': 'Your test instance "{iss}:{tag}" has been '
-                    'restarted as <a href="{url}">{url}</a>'.format(
-                iss=_iss, tag=_tag, url=url)}
+        if url:
+            args = {
+                'title': "Action performed", 'base': self.baseurl,
+                'note': 'Your test instance "{iss}:{tag}" has been '
+                        'restarted as <a href="{url}">{url}</a>'.format(
+                    iss=_iss, tag=_tag, url=url)}
+        else:
+            args = {
+                'title': "Action Failed", 'base': self.baseurl,
+                'note': 'Could not restart your test instance'}
 
         return resp(self.environ, self.start_response, **args)
-
-        # def configure_instance(self, parts):
-        #     lp = [unquote_plus(p) for p in parts]
-        #     qp = [quote_plus(p) for p in lp]
-        #     _info = json.loads(os.listdir(os.path.join(self.entpath, qp)))
 
 
 class Application(object):
@@ -652,28 +652,32 @@ class Application(object):
 
         # If already running - kill
         try:
-            pid = self.running_processes[_key]
+            pid = isrunning(unquote_plus(iss), unquote_plus(tag))
         except KeyError:
             pass
         else:
             logger.info('kill {}'.format(pid))
             subprocess.call(['kill', str(pid)])
 
+        # Now get it running
         args.append('&')
         logger.info("Test tool command: {}".format(" ".join(args)))
         # spawn independent process
         os.system(" ".join(args))
 
-        while True:
+        pid = 0
+        for i in range(0,10):
             time.sleep(1)
             pid = isrunning(unquote_plus(iss), unquote_plus(tag))
             if pid:
                 break
 
-        logger.info("process id: {}".format(pid))
-        self.running_processes['{}:{}'.format(iss, tag)] = pid
-
-        return url
+        if pid:
+            logger.info("process id: {}".format(pid))
+            self.running_processes['{}:{}'.format(iss, tag)] = pid
+            return url
+        else:
+            return None
 
     def form_handling(self, path, io):
         iss, tag = get_iss_and_tag(path)
