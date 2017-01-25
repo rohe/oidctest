@@ -656,8 +656,9 @@ class Application(object):
         except KeyError:
             pass
         else:
-            logger.info('kill {}'.format(pid))
-            subprocess.call(['kill', str(pid)])
+            if pid:
+                logger.info('kill {}'.format(pid))
+                subprocess.call(['kill', str(pid)])
 
         # Now get it running
         args.append('&')
