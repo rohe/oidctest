@@ -5,12 +5,14 @@
     Creates a list of test flows
     """
     _grp = "_"
-    color = ['<img src="/static/black.png" alt="Black">',
-             '<img src="/static/green.png" alt="Green">',
-             '<img src="/static/yellow.png" alt="Yellow">',
-             '<img src="/static/red.png" alt="Red">',
-             '<img src="/static/qmark.jpg" alt="QuestionMark">',
-             '<img src="/static/greybutton" alt="Grey">',
+    color = ['<img src="/static/black.png" alt="Black">',        # INFORMATION
+             '<img src="/static/green.png" alt="Green">',        # OK
+             '<img src="/static/yellow.png" alt="Yellow">',      # WARNING
+             '<img src="/static/red.png" alt="Red">',            # ERROR
+             '<img src="/static/red.png" alt="Red">',            # CRITICAL
+             '<img src="/static/qmark.jpg" alt="QuestionMark">', # INTERACTION
+             '<img src="/static/qmark.jpg" alt="QuestionMark">', # INCOMPLETE
+             '<img src="/static/greybutton" alt="Grey">',        # NOT_APPLICABLE
              ]
     line = [
         '<table>',
