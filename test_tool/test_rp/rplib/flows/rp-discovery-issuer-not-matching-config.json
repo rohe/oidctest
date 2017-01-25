@@ -1,1 +1,21 @@
-{"desc": "Retrieve openid-configuration information for OpenID Provider from the .well-known/openid-configuration path. Verify that the issuer in the openid-configuration does not match the one returned by WebFinger", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"expect_exception": "IssuerMismatch", "set_discovery_issuer": null}}], "usage": {"return_type": ["C"]}}
+{
+  "desc": "Retrieve OpenID Provider Configuration Information for OpenID Provider from the .well-known/openid-configuration path.  Verify that the 'issuer' value in the provider configuration matches the scheme, host, port, and path from which the .well-known/openid-configuration document was retrieved.",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "expect_exception": "IssuerMismatch",
+        "set_discovery_issuer": null
+      }
+    }
+  ],
+  "usage": {
+    "return_type": [
+      "C"
+    ]
+  }
+}
