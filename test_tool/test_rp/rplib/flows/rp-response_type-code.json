@@ -1,1 +1,30 @@
-{"desc": "Can Make Request with 'code' Response Type", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", "SyncAuthn"], "usage": {"return_type": ["C"]}, "assert": {"got": {"what": ["code"], "where": "AuthorizationResponse"}}}
+{
+  "desc": "Can Make Request with 'code' Response Type",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    "SyncAuthn"
+  ],
+  "usage": {
+    "return_type": [
+      "C"
+    ]
+  },
+  "assert": {
+    "got": {
+      "what": [
+        "code"
+      ],
+      "where": "AuthorizationResponse"
+    }
+  }
+}
