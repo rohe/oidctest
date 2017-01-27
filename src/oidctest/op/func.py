@@ -17,7 +17,6 @@ from otest.flow import get_return_type
 from otest.result import get_issuer
 
 from oidctest.op.check import get_id_tokens
-from oidctest.prof_util import map_prof
 
 from past.types import basestring
 
@@ -238,6 +237,11 @@ def redirect_uris_with_query_component(oper, kwargs):
     ru = oper.conv.get_redirect_uris()[0]
     ru += "?%s" % urlencode(kwargs)
     oper.req_args["redirect_uris"] = ru
+
+
+def redirect_uris_with_scheme(oper, args):
+    oper.req_args['redirect_uris'] = [r.replace('https', args) for r in
+                                     oper.conv.get_redirect_uris()]
 
 
 def redirect_uris_with_fragment(oper, kwargs):

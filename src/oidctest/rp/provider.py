@@ -5,7 +5,7 @@ import copy
 
 import requests
 from Cryptodome.PublicKey import RSA
-from future.backports.urllib.parse import parse_qs
+from future.backports.urllib.parse import parse_qs, splitquery
 
 from jwkest.ecc import P256
 from jwkest.jwk import RSAKey
@@ -22,6 +22,7 @@ from oic.oic.message import AccessTokenRequest
 from oic.oic.message import ProviderConfigurationResponse
 from oic.oic.message import RegistrationResponse
 from oic.oic.message import RegistrationRequest
+from oic.oic.provider import InvalidRedirectURIError
 from oic.utils.keyio import keyjar_init
 from oic.utils.keyio import key_summary
 
@@ -289,6 +290,13 @@ class Provider(provider.Provider):
 
         return _response
 
+    def _split_query(self, uri):
+        base, query = splitquery(uri)
+        if query:
+            return base, parse_qs(query)
+        else:
+            return base, None
+
     def registration_endpoint(self, request, authn=None, **kwargs):
         try:
             reg_req = RegistrationRequest().deserialize(request, "json")
@@ -302,9 +310,16 @@ class Provider(provider.Provider):
         except KeyError:
             pass
 
+        try:
+            provider.Provider.verify_redirect_uris(reg_req)
+        except InvalidRedirectURIError as err:
+            return error(
+                error="invalid_configuration_parameter",
+                descr="Invalid redirect_uri: {}".format(err))
+
         # Do initial verification that all endpoints from the client uses
         #  https
-        for endp in ["redirect_uris", "jwks_uri", "initiate_login_uri"]:
+        for endp in ["jwks_uri", "initiate_login_uri"]:
             try:
                 uris = reg_req[endp]
             except KeyError:
