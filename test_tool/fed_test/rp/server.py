@@ -5,8 +5,14 @@ import os
 import cherrypy
 from oic.exception import MessageException
 from oic.federation import JWKSBundle, MetadataStatement
+from oic.utils import webfinger
 from oic.utils.jwt import JWT
 from oic.utils.keyio import KeyJar, build_keyjar
+
+from oidctest.cp.op import Provider
+from oidctest.cp.op import WebFinger
+from oidctest.cp.op_handler import OPHandler
+from oidctest.cp.setup import main_setup
 
 KEYDEFS = [
     {"type": "RSA", "key": '', "use": ["sig"]},
@@ -14,11 +20,11 @@ KEYDEFS = [
 ]
 
 
-class Main(object):
-
-    @cherrypy.expose
-    def index(self):
-        pass
+def handle_error():
+    cherrypy.response.status = 500
+    cherrypy.response.body = [
+        "<html><body>Sorry, an error occured</body></html>"
+    ]
 
 
 class Sign(object):
@@ -51,11 +57,18 @@ class FoKeys(object):
 
 if __name__ == '__main__':
     import argparse
+    from oidctest.rp import provider
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-s', dest='sign_key')
-    parser.add_argument('-i', dest='iss')
-    parser.add_argument('-b', dest='bundle')
+    parser.add_argument('-b', dest='bundle', required=True)
+    parser.add_argument('-f', dest='flowsdir', required=True)
+    parser.add_argument('-i', dest='iss', required=True)
+    parser.add_argument('-k', dest='insecure', action='store_true')
+    parser.add_argument('-p', dest='port', default=80, type=int)
+    parser.add_argument('-P', dest='path')
+    parser.add_argument('-s', dest='sign_key', required=True)
+    parser.add_argument('-t', dest='tls', action='store_true')
+    parser.add_argument(dest="config")
     args = parser.parse_args()
 
     if os.path.isfile(args.sign_key):
@@ -68,10 +81,17 @@ if __name__ == '__main__':
         fp.close()
 
     jb = JWKSBundle(iss=args.iss, sign_keys=kj)
+    jb.loads(json.loads(open(args.bundle,'r').read()))
 
-    cherrypy.tree.mount(Main(), '/')
     cherrypy.tree.mount(Sign(kj, args.iss), '/sign')
     cherrypy.tree.mount(FoKeys(jb), '/fokeys')
+    cherrypy.tree.mount(WebFinger(webfinger.WebFinger()),
+                        '/.well-known/webfinger')
+
+    _com_args, _op_arg, config = main_setup(args)
+
+    op_handler = OPHandler(provider.Provider, _op_arg, _com_args, config)
+    cherrypy.tree.mount(Provider(op_handler), '/')
 
     cherrypy.engine.start()
     cherrypy.engine.block()

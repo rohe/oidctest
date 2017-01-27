@@ -1,0 +1,1 @@
+{"desc": "Can Discover Identifiers using URL Syntax", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}], "usage": {"return_type": ["C"]}}

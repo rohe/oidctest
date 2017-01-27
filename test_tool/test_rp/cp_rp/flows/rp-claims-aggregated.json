@@ -1,0 +1,27 @@
+{
+  "desc": "Can handle aggregated user information",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    "SyncAuthn",
+    "AccessToken",
+    "UserInfo"
+  ],
+  "usage": {
+    "return_type": [
+      "C",
+      "CI",
+      "CT",
+      "CIT"
+    ]
+  }
+}
