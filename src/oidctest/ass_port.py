@@ -71,10 +71,14 @@ class AssignedPorts(object):
         return running_processes
 
     def load(self):
-        _ass = open(self.filename, 'r').read()
-        if _ass:
-            for key, val in json.loads(_ass).items():
-                self._db[key] = val
+        try:
+            _ass = open(self.filename, 'r').read()
+        except FileNotFoundError:
+            pass
+        else:
+            if _ass:
+                for key, val in json.loads(_ass).items():
+                    self._db[key] = val
 
     def register_port(self, eid):
         """
