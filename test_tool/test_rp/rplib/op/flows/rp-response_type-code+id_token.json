@@ -10,6 +10,6 @@
     ]
   },
   "short_description": "Can make request using response_type 'code id_token'",
-  "detailed_description": "Make an authentication request using the ${HYBRID_FLOW}, specifying the ${RESPONSE_TYPE} as 'id_token token'",
-  "expected_result": "An ${IMPLICIT_AUTHENTICATION_RESPONSE} containing an ${ID_TOKEN} and an Access Token."
+  "detailed_description": "Make an authentication request using the ${HYBRID_FLOW}, specifying the ${RESPONSE_TYPE} as 'code id_token'",
+  "expected_result": "An ${IMPLICIT_AUTHENTICATION_RESPONSE} containing an ${ID_TOKEN} and an Authorization Code."
 }
