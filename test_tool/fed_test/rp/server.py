@@ -4,27 +4,23 @@ import os
 
 import cherrypy
 from oic.exception import MessageException
-from oic.federation import JWKSBundle, MetadataStatement
+from oic.federation import MetadataStatement
+from oic.federation.bundle import get_bundle
+from oic.federation.bundle import get_signing_keys
 from oic.utils import webfinger
 from oic.utils.jwt import JWT
-from oic.utils.keyio import KeyJar, build_keyjar
 
 from oidctest.cp.op import Provider
 from oidctest.cp.op import WebFinger
 from oidctest.cp.op_handler import OPHandler
-from oidctest.cp.setup import main_setup
+from otest.flow import Flow
+from otest.prof_util import SimpleProfileHandler
+from src.oidctest.cp.setup import cb_setup
 
 KEYDEFS = [
     {"type": "RSA", "key": '', "use": ["sig"]},
     {"type": "EC", "crv": "P-256", "use": ["sig"]}
 ]
-
-
-def handle_error():
-    cherrypy.response.status = 500
-    cherrypy.response.body = [
-        "<html><body>Sorry, an error occured</body></html>"
-    ]
 
 
 class Sign(object):
@@ -61,6 +57,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-b', dest='bundle', required=True)
+    parser.add_argument('-d', dest='debug', action='store_true')
     parser.add_argument('-f', dest='flowsdir', required=True)
     parser.add_argument('-i', dest='iss', required=True)
     parser.add_argument('-k', dest='insecure', action='store_true')
@@ -71,27 +68,20 @@ if __name__ == '__main__':
     parser.add_argument(dest="config")
     args = parser.parse_args()
 
-    if os.path.isfile(args.sign_key):
-        kj = KeyJar()
-        kj.import_jwks(json.loads(open(args.sign_key, 'r').read()), args.iss)
-    else:
-        kj = build_keyjar(KEYDEFS)[1]
-        fp = open(args.sign_key, 'w')
-        fp.write(json.dumps(kj.export_jwks()))
-        fp.close()
+    _com_args, _op_arg, config = cb_setup(args)
 
-    jb = JWKSBundle(iss=args.iss, sign_keys=kj)
-    jb.loads(json.loads(open(args.bundle,'r').read()))
+    sign_key = get_signing_keys(args.iss, KEYDEFS, args.sign_key)
+    jb = get_bundle(args.iss, config.FOS, sign_key, args.bundle,
+                    config.KEYDEFS, config.BASE_PATH)
 
-    cherrypy.tree.mount(Sign(kj, args.iss), '/sign')
+    op_handler = OPHandler(provider.Provider, _op_arg, _com_args, config)
+    _flows = Flow(args.flowsdir, profile_handler=SimpleProfileHandler)
+
+    cherrypy.tree.mount(Sign(sign_key, args.iss), '/sign')
     cherrypy.tree.mount(FoKeys(jb), '/fokeys')
     cherrypy.tree.mount(WebFinger(webfinger.WebFinger()),
                         '/.well-known/webfinger')
-
-    _com_args, _op_arg, config = main_setup(args)
-
-    op_handler = OPHandler(provider.Provider, _op_arg, _com_args, config)
-    cherrypy.tree.mount(Provider(op_handler), '/')
+    cherrypy.tree.mount(Provider(op_handler, _flows), '/')
 
     cherrypy.engine.start()
     cherrypy.engine.block()
