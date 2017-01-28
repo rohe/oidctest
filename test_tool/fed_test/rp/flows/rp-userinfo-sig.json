@@ -1,0 +1,19 @@
+{
+  "MTI": [
+    "DYN"
+  ],
+  "group": "UserInfo Endpoint",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Can request and use signed UserInfo Response",
+  "detailed_description": "Request signed UserInfo.",
+  "expected_result": "Successful signature verification of the ${USERINFO_RESPONSE}."
+}
