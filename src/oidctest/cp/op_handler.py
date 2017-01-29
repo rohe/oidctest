@@ -3,6 +3,7 @@ import json
 import copy
 from oic import rndstr
 from oic.utils.keyio import key_summary
+from oic.utils.keyio import KeyJar
 from oic.utils.sdb import SessionDB
 from oidctest import UnknownTestID
 from otest.conversation import Conversation

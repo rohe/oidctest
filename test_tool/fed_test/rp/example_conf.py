@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-baseurl = "https://localhost"
-issuer = "%s:%%d/" % baseurl
+baseurl = "http://localhost"
 
 keys = [
     {"type": "RSA", "key": "keys/pyoidc_enc", "use": ["enc"]},
@@ -10,18 +9,10 @@ keys = [
     {"type": "EC", "crv": "P-256", "use": ["enc"]}
 ]
 
-multi_keys = [
-    {"type": "RSA", "use": ["enc"], "name": "rsa_enc_1", "key": "keys/pyoidc_enc"},
-    {"type": "RSA", "use": ["sig"], "name": "rsa_sig_1", "key": "keys/pyoidc_sig"},
-    {"type": "RSA", "use": ["enc"], "name": "rsa_enc_2", "key": "keys/sec_enc"},
-    {"type": "RSA", "use": ["sig"], "name": "rsa_sig_2", "key": "keys/sec_sig"},
-    {"type": "EC", "crv": "P-256", "use": ["sig"]},
-    {"type": "EC", "crv": "P-256", "use": ["enc"]},
-    {"type": "EC", "crv": "P-256", "use": ["sig"]},
-    {"type": "EC", "crv": "P-256", "use": ["enc"]}
-]
+FOS = ['https://swamid.sunet.se/oidc',
+       'https://surfnet.nl/oidc']
 
-SERVICE_URL = "%s/verify" % issuer
+KEYDEFS = []
 
 #Only Username and password.
 AUTHENTICATION = {

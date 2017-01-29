@@ -1,17 +1,14 @@
 import cherrypy
 import logging
 from cherrypy import url
+
 from future.backports.urllib.parse import urlparse
 
-from oic.utils import webfinger
-from oic.utils.keyio import key_summary
+from jwkest import as_bytes
+from jwkest import as_unicode
 
-from oidctest.cp.op_handler import OPHandler
-
-from otest.events import Event
-from otest.events import EV_EXCEPTION
+from otest.events import Events
 from otest.events import EV_REQUEST
-from otest.events import EV_REQUEST_ARGS
 from otest.events import Operation
 
 logger = logging.getLogger(__name__)
@@ -22,6 +19,31 @@ def handle_error():
     cherrypy.response.body = [
         "<html><body>Sorry, an error occured</body></html>"
     ]
+
+
+def conv_response(resp):
+    _stat = int(resp._status.split(' ')[0])
+    #  if self.mako_lookup and self.mako_template:
+    #    argv["message"] = message
+    #    mte = self.mako_lookup.get_template(self.mako_template)
+    #    return [mte.render(**argv)]
+    if _stat < 300:
+        for key, val in resp.headers:
+            cherrypy.response.headers[key] = val
+        return as_bytes(resp.message)
+    elif 300 <= _stat < 400:
+        raise cherrypy.HTTPRedirect(resp.message)
+    else:
+        raise cherrypy.HTTPError(_stat, resp.message)
+
+
+def store_request(op, where):
+    _ev = Operation(where, path=url)
+
+    try:
+        op.events.store(EV_REQUEST, _ev)
+    except Exception as err:
+        raise
 
 
 class WebFinger(object):
@@ -43,15 +65,74 @@ class WebFinger(object):
 
             _path = '/'.join(ids)
         elif p[0] in ['http', 'https']:
-            _path = p[2]
+            _path = p[2][1:]  # skip leading '/'
         else:
             raise cherrypy.HTTPError(400,
                                      'unknown scheme in webfinger resource')
 
+        cnf = cherrypy.request.config
         subj = resource
-        href = '{}/{}/{}'.format(cherrypy.request.base, _path,
-                                 '.well-known/openid-configuration')
+        _base = cnf['base_url']
+        if _base.endswith('/'):
+            href = '{}{}'.format(_base, _path)
+        else:
+            href = '{}/{}'.format(_base, _path)
+
         return self.srv.response(subj, href)
+
+
+class Configuration(object):
+    @cherrypy.expose
+    def index(self, op):
+        store_request(op, 'ProviderInfo')
+        resp = op.providerinfo_endpoint()
+        # cherrypy.response.headers['Content-Type'] = 'application/json'
+        # return as_bytes(resp.message)
+        return conv_response(resp)
+
+
+class Registration(object):
+    @cherrypy.expose
+    def index(self, op):
+        store_request(op, 'ClientRegistration')
+        if cherrypy.request.process_request_body is True:
+            _request = cherrypy.request.body.read()
+        else:
+            raise cherrypy.HTTPError(400, 'Missing Client registration body')
+        resp = op.registration_endpoint(as_unicode(_request))
+        # cherrypy.response.status = 201
+        # cherrypy.response.headers['Content-Type'] = 'application/json'
+        return conv_response(resp)
+
+
+class Authorization(object):
+    @cherrypy.expose
+    def index(self, op, **kwargs):
+        store_request(op, 'AuthorizationRequest')
+        resp = op.authorization_endpoint(kwargs)
+        return conv_response(resp)
+
+
+class Token(object):
+    _cp_config = {"request.methods_with_bodies": ("POST", "PUT")}
+
+    @cherrypy.expose
+    def index(self, op, **kwargs):
+        store_request(op, 'AccessTokenRequest')
+        try:
+            authn = cherrypy.request.headers['Authorization']
+        except KeyError:
+            authn = None
+        resp = op.token_endpoint(as_unicode(kwargs), authn, 'dict')
+        return conv_response(resp)
+
+
+class UserInfo(object):
+    @cherrypy.expose
+    def index(self, op, **kwargs):
+        store_request(op, 'UserinfoRequest')
+        resp = op.userinfo_endpoint(kwargs)
+        return conv_response(resp)
 
 
 class Provider(object):
@@ -60,49 +141,23 @@ class Provider(object):
     def __init__(self, op_handler, flows):
         self.op_handler = op_handler
         self.flows = flows
+        self.configuration = Configuration()
+        self.registration = Registration()
+        self.authorization = Authorization()
+        self.token = Token()
+        self.userinfo = UserInfo()
 
-    def wrap(self, func, events):
-        # kwargs = extract_from_request(environ)
-        #
-        # kwargs['test_cnf'] = session_info['test_conf']
-        # try:
-        #     oos = kwargs['test_cnf']['out_of_scope']
-        # except KeyError:
-        #     pass
-        # else:
-        #     if func.__name__ in oos:
-        #         resp = error_response(
-        #             error='incorrect_behavior',
-        #             descr='You should not talk to this endpoint in this test')
-        #         resp.add_header(CORS_HEADERS)
-        #         return resp(environ, start_response)
-        kwargs = {}
-        events.store(EV_REQUEST_ARGS, kwargs["request"])
-        #jlog.info({'operation': func.__name__, 'kwargs': kwargs})
-        try:
-            args = func(**kwargs)
-        except Exception as err:
-            events.store(EV_EXCEPTION, err)
-            raise
-
-    def configuration(self, op):
-        _ev = Operation("ProviderConfiguration", path=url)
-        #_ev.query = cherrypy.request.
-        op.events.store(EV_REQUEST, _ev)
-        logger.info('OP keys:{}'.format(key_summary(op.keyjar, '')))
-        return op.providerinfo_endpoint
-
-    def authorization(self, op):
-        pass
-
-    def token(self, op):
-        pass
-
-    def userinfo(self, op):
-        pass
+    @cherrypy.expose
+    def index(self, **kwargs):
+        return "<html><body>Welcome to the JRA3T3 fed RP lib " \
+               "tester</body></html>"
 
     def _cp_dispatch(self, vpath):
-        #ent = cherrypy.request.remote.ip
+        # Only get here if vpath != None
+        ent = cherrypy.request.remote.ip
+
+        if vpath[0] == 'static':
+            return self
 
         if len(vpath) >= 2:
             oper_id = vpath.pop(0)
@@ -115,33 +170,29 @@ class Provider(object):
                 raise cherrypy.HTTPError(400, 'Unknown TestID')
 
             if len(vpath):
-                endpoint = '/'.join(vpath[:])
-                op = self.op_handler.get(oper_id, test_id, Event(), endpoint)
 
                 if len(vpath) == 1:
-                    if endpoint == 'authorization':
-                        return self.authorization(op)
+                    endpoint = vpath.pop(0)
+                    op = self.op_handler.get(oper_id, test_id, Events(),
+                                             endpoint)[0]
+                    cherrypy.request.params['op'] = op
+                    if endpoint == 'registration':
+                        return self.registration
+                    elif endpoint == 'authorization':
+                        return self.authorization
                     elif endpoint == 'token':
-                        return self.token(op)
+                        return self.token
                     elif endpoint == 'userinfo':
-                        return self.token(op)
+                        return self.userinfo
                     else:  # Shouldn't be any other
                         raise cherrypy.NotFound()
                 if len(vpath) == 2:
-                    if endpoint == '.well-known/openid-configuration':
-                        return self.configuration(op)
+                    a = vpath.pop(0)
+                    b = vpath.pop(0)
+                    endpoint = '{}/{}'.format(a,b)
+                    op = self.op_handler.get(oper_id, test_id, Events(),
+                                             endpoint)[0]
+                    cherrypy.request.params['op'] = op
+                    return self.configuration
 
-
-if __name__ == '__main__':
-    from oidctest.rp import provider
-
-    cherrypy.tree.mount(WebFinger(webfinger.WebFinger()),
-                        '/.well-known/webfinger')
-
-    op_args = com_args = test_conf = {}
-    op_handler = OPHandler(provider.Provider, op_args, com_args, test_conf)
-    cherrypy.tree.mount(Provider(op_handler), '/')
-
-    cherrypy.engine.start()
-    cherrypy.engine.block()
-
+        return self

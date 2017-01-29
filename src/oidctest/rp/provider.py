@@ -5,7 +5,9 @@ import copy
 
 import requests
 from Cryptodome.PublicKey import RSA
-from future.backports.urllib.parse import parse_qs, splitquery
+from future.backports.urllib.parse import parse_qs
+from future.backports.urllib.parse import splitquery
+from future.backports.urllib.parse import urlencode
 
 from jwkest.ecc import P256
 from jwkest.jwk import RSAKey
@@ -349,7 +351,15 @@ class Provider(provider.Provider):
         return _response
 
     def authorization_endpoint(self, request="", cookie=None, **kwargs):
-        _req = parse_qs(request)
+        if isinstance(request, dict):
+            _req = request
+        else:
+            _req = {}
+            for key, val in parse_qs(request).items():
+                if len(val) == 1:
+                    _req[key] = val[0]
+                else:
+                    _req[key] = val
 
         # self.events.store(EV_REQUEST, _req)
 
@@ -362,14 +372,14 @@ class Provider(provider.Provider):
             )
         else:
             # verify that openid is among the scopes
-            _scopes = _scope[0].split(" ")
+            _scopes = _scope.split(" ")
             if "openid" not in _scopes:
                 return error(
                     error="incorrect_behavior",
                     descr="Scope does not contain 'openid'"
                 )
 
-        client_id = _req["client_id"][0]
+        client_id = _req["client_id"]
 
         try:
             f = response_type_cmp(self.capabilities['response_types_supported'],
@@ -384,9 +394,7 @@ class Provider(provider.Provider):
                 return error_response(error="incorrect_behavior",
                                       descr="Not supported response_type")
 
-        _rtypes = []
-        for rt in _req['response_type']:
-            _rtypes.extend(rt.split(' '))
+        _rtypes = _req['response_type'].split(' ')
 
         if 'id_token' in _rtypes:
             try:
@@ -394,6 +402,9 @@ class Provider(provider.Provider):
             except TestError:
                 return error(error="incorrect_behavior",
                              descr="No change in client keys")
+
+        if isinstance(request, dict):
+            request = urlencode(request)
 
         _response = provider.Provider.authorization_endpoint(self, request,
                                                              cookie,

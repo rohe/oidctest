@@ -1,6 +1,6 @@
 __author__ = 'roland'
 
-PORT = 8080
+PORT = 8088
 # BASE = "https://130.239.144.143:" + str(PORT) + "/"
 BASE = "https://localhost:" + str(PORT) + "/"
 
@@ -20,8 +20,8 @@ KEYS = [
 ]
 
 TOOL = {
-    'issuer': "https://localhost:8080/",
-    'webfinger_url': 'https://localhost:8080/'
+    'issuer': "https://localhost:8080",
+    'webfinger_url': "https://localhost:8080"
 }
 
 CLIENT = {

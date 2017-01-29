@@ -3,6 +3,7 @@ import json
 import os
 
 import cherrypy
+import logging
 from oic.exception import MessageException
 from oic.federation import MetadataStatement
 from oic.federation.bundle import get_bundle
@@ -16,6 +17,16 @@ from oidctest.cp.op_handler import OPHandler
 from otest.flow import Flow
 from otest.prof_util import SimpleProfileHandler
 from src.oidctest.cp.setup import cb_setup
+
+logger = logging.getLogger("")
+LOGFILE_NAME = 'rp_test.log'
+hdlr = logging.FileHandler(LOGFILE_NAME)
+base_formatter = logging.Formatter(
+    "%(asctime)s %(name)s:%(levelname)s %(message)s")
+
+hdlr.setFormatter(base_formatter)
+logger.addHandler(hdlr)
+logger.setLevel(logging.DEBUG)
 
 KEYDEFS = [
     {"type": "RSA", "key": '', "use": ["sig"]},
@@ -74,14 +85,44 @@ if __name__ == '__main__':
     jb = get_bundle(args.iss, config.FOS, sign_key, args.bundle,
                     config.KEYDEFS, config.BASE_PATH)
 
-    op_handler = OPHandler(provider.Provider, _op_arg, _com_args, config)
+    folder = os.path.abspath(os.curdir)
     _flows = Flow(args.flowsdir, profile_handler=SimpleProfileHandler)
+    op_handler = OPHandler(provider.Provider, _op_arg, _com_args, _flows)
+
+    cherrypy.config.update(
+        {'environment': 'production',
+         'log.error_file': 'site.log',
+         'tools.trailing_slash.on': False,
+         'server.socket_host': '0.0.0.0',
+         'log.screen': True,
+         'tools.sessions.on': True,
+         'tools.encode.on': True,
+         'tools.encode.encoding': 'utf-8'
+         })
+
+    provider_config = {
+        '/': {
+            'root_path': 'localhost',
+            'log.screen': True,
+        },
+        '/static': {
+            'tools.staticdir.dir': os.path.join(folder, 'static'),
+            'tools.staticdir.debug': True,
+            'tools.staticdir.on': True,
+            'log.screen': True
+        }}
+
+    webfinger_config = {'/': {'base_url': _op_arg['baseurl']}}
 
     cherrypy.tree.mount(Sign(sign_key, args.iss), '/sign')
     cherrypy.tree.mount(FoKeys(jb), '/fokeys')
     cherrypy.tree.mount(WebFinger(webfinger.WebFinger()),
-                        '/.well-known/webfinger')
-    cherrypy.tree.mount(Provider(op_handler, _flows), '/')
+                        '/.well-known/webfinger', webfinger_config)
+    cherrypy.tree.mount(Provider(op_handler, _flows), '/', provider_config)
+
+    if args.tls:
+        cherrypy.server.ssl_certificate = config.SERVER_CERT
+    cherrypy.server.ssl_private_key = config.SERVER_KEY
 
     cherrypy.engine.start()
     cherrypy.engine.block()

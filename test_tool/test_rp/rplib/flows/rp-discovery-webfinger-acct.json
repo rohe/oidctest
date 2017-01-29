@@ -1,1 +1,18 @@
-{"desc": "Can Discover Identifiers using acct Syntax", "sequence": [{"Webfinger": {"resource": {"pattern": "acct:{oper_id}.{test_id}@{host}"}, "set_webfinger_resource": null}}], "usage": {"return_type": ["C"]}}
+{
+  "desc": "Can Discover Identifiers using acct Syntax",
+  "sequence": [
+    {
+      "Webfinger": {
+        "resource": {
+          "pattern": "acct:{oper_id}.{test_id}@{host}"
+        },
+        "set_webfinger_resource": null
+      }
+    }
+  ],
+  "usage": {
+    "return_type": [
+      "C"
+    ]
+  }
+}
