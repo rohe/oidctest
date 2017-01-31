@@ -1,0 +1,1 @@
+{"desc": "Support OP Encryption Key Rotation", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", "SyncAuthn", "AccessToken", {"UpdateProviderKeys": {"remove_grant": null}}, "SyncAuthn", "AccessToken", {"RestoreKeyJar": {"set_op_args": {"jwks_path": "static/jwk.json"}}}], "usage": {"return_type": ["C"]}}

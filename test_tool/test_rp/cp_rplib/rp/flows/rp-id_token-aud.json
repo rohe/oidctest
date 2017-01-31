@@ -1,0 +1,61 @@
+{
+  "desc": "The Relying Party should request an ID token and compare its aud value to the Client ID.",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "SyncAuthn": {
+        "conditional_expect_exception": {
+          "condition": {
+            "response_type": [
+              [
+                "code",
+                "id_token",
+                "token"
+              ],
+              [
+                "id_token",
+                "token"
+              ],
+              [
+                "id_token"
+              ],
+              [
+                "code",
+                "id_token"
+              ]
+            ]
+          },
+          "exception": "NotForMe"
+        }
+      }
+    },
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "profile": "C,CT"
+        },
+        "expect_exception": "NotForMe"
+      }
+    }
+  ],
+  "usage": {
+    "return_type": [
+      "C",
+      "I",
+      "CI",
+      "CT",
+      "CIT",
+      "IT"
+    ]
+  }
+}

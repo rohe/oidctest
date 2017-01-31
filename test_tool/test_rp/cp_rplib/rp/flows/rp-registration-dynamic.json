@@ -1,0 +1,1 @@
+{"desc": "Uses Dynamic Registration", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration"], "usage": {"return_type": ["CI", "I", "C", "T", "CIT", "IT", "CT"]}}
