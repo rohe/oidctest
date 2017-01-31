@@ -1,1 +1,15 @@
-{"desc": "Can Make Request with 'id_token token' Response Type", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, {"Registration": {"set_request_args": {"id_token_signed_response_alg": "RS256"}}}, "SyncAuthn"], "usage": {"return_type": ["CIT"]}, "assert": {"got": {"what": ["id_token", "access_token", "code"], "where": "AuthorizationResponse"}}}
+{
+  "MTI": [
+    "CIT"
+  ],
+  "group": "Response Type and Response Mode",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code id_token token"
+    ]
+  },
+  "short_description": "Can make request using response_type 'code id_token token'",
+  "detailed_description": "Make an authentication request using the ${HYBRID_FLOW}, specifying the ${RESPONSE_TYPE} as 'code id_token token'",
+  "expected_result": "An ${IMPLICIT_AUTHENTICATION_RESPONSE} containing an authorization code, an ${ID_TOKEN} and an Access Token."
+}

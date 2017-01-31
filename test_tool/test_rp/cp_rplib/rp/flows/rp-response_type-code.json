@@ -1,30 +1,15 @@
 {
-  "desc": "Can Make Request with 'code' Response Type",
-  "sequence": [
-    {
-      "Webfinger": {
-        "set_webfinger_resource": null
-      }
-    },
-    {
-      "Discovery": {
-        "set_discovery_issuer": null
-      }
-    },
-    "Registration",
-    "SyncAuthn"
+  "MTI": [
+    "C"
   ],
-  "usage": {
-    "return_type": [
-      "C"
+  "group": "Response Type and Response Mode",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code"
     ]
   },
-  "assert": {
-    "got": {
-      "what": [
-        "code"
-      ],
-      "where": "AuthorizationResponse"
-    }
-  }
+  "short_description": "Can make request using response_type 'code'",
+  "detailed_description": "Make an authentication request using the ${AUTHORIZATION_CODE_FLOW}.",
+  "expected_result": "An ${CODE_AUTHENTICATION_RESPONSE} containing an authorization code."
 }

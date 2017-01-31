@@ -1,1 +1,21 @@
-{"desc": "Uses openid-configuration Discovery Information", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}], "usage": {"return_type": ["C"]}}
+{
+  "MTI": [
+    "CNF",
+    "DYN"
+  ],
+  "group": "Discovery",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Uses Provider Configuration Information",
+  "detailed_description": "Retrieve and use the ${OPENID_CONFIGURATION_INFORMATION}.",
+  "expected_result": "Read and use the JSON object returned from the OpenID Connect Provider."
+}

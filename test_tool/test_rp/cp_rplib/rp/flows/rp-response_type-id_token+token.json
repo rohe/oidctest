@@ -1,1 +1,15 @@
-{"desc": "Can Make Request with 'id_token token' Response Type", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, {"Registration": {"set_request_args": {"id_token_signed_response_alg": "RS256"}}}, "SyncAuthn"], "usage": {"return_type": ["IT"]}, "assert": {"got": {"what": ["id_token", "access_token"], "where": "AuthorizationResponse"}}}
+{
+  "MTI": [
+    "IT"
+  ],
+  "group": "Response Type and Response Mode",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "id_token token"
+    ]
+  },
+  "short_description": "Can make request using response_type 'id_token token'",
+  "detailed_description": "Make an authentication request using the ${IMPLICIT_FLOW}, specifying the ${RESPONSE_TYPE} as 'id_token token'",
+  "expected_result": "An ${IMPLICIT_AUTHENTICATION_RESPONSE} containing an ${ID_TOKEN} and an Access Token."
+}

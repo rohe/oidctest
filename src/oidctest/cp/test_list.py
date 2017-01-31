@@ -10,6 +10,7 @@ PAT = re.compile('\${([A-Z_0-9]*)}')
 
 EXP = dict([(v, k) for k, v in ABBR.items()])
 
+
 def replace_with_url(txt, links):
     for m in PAT.findall(txt):
         try:
@@ -56,7 +57,7 @@ def test_list(args, grps):
                     '<tr><td style="white-space:nowrap">{}</td><td>{}</td><td>{}</td></tr>'.format(
                         tid, desc, result))
     line.append('</table>')
-    return '\n'.join(line)
+    return line
 
 
 class TestList(object):
@@ -87,7 +88,8 @@ class TestList(object):
                                                   self.links)
                     _exp_res = replace_with_link(_info['expected_result'],
                                                  self.links)
-                    mandatory.append((fn[:-5], _det_desc, _exp_res))
+                    mandatory.append((fn[:-5], _det_desc, _exp_res,
+                                      _info['group']))
                 else:
                     try:
                         rts = _info["capabilities"]["response_types_supported"]
@@ -100,7 +102,8 @@ class TestList(object):
                                 _info['detailed_description'], self.links)
                             _exp_res = replace_with_link(
                                 _info['expected_result'], self.links)
-                            optional.append((fn[:-5], _det_desc, _exp_res))
+                            optional.append((fn[:-5], _det_desc, _exp_res,
+                                             _info['group']))
 
         hl = self.headline.format(EXP[profile])
 

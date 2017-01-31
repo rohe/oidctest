@@ -1,1 +1,20 @@
-{"desc": "Uses Dynamic Registration", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration"], "usage": {"return_type": ["CI", "I", "C", "T", "CIT", "IT", "CT"]}}
+{
+  "MTI": [
+    "DYN"
+  ],
+  "group": "Dynamic Client Registration",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Uses dynamic registration",
+  "detailed_description": "Use the ${CLIENT_REGISTRATION_ENDPOINT} in order to dynamically register the Relying Party.",
+  "expected_result": "Get a ${CLIENT_REGISTRATION_RESPONSE}."
+}

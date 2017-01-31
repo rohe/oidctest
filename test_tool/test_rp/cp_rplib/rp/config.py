@@ -19,6 +19,14 @@ KEYDEFS = [
 
 FOS = ['swamid.se', 'surfnet.nl', 'aai.grnet.gr', 'heanet.ie']
 
+GRPS = [
+    "Discovery", "Dynamic Client Registration",
+    "Response Type and Response Mode", "claims Request Parameter",
+    "request_uri Request Parameter", "scope Request Parameter",
+    "nonce Request Parameter", "Client Authentication",
+    "ID Token", "Key Rotation", "Claims Types", "UserInfo Endpoint"
+]
+
 # Only Username and password.
 AUTHENTICATION = {
     # "UserPassword": {"ACR": "PASSWORD", "WEIGHT": 1, "URL": SERVICE_URL}

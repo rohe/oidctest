@@ -1,1 +1,17 @@
-{"desc": "Can deal with unknown member of JRD", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}], "usage": {"return_type": ["C"]}}
+{
+  "group": "Discovery",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_decription" : "Webfinger may return a response with to the client unknown members",
+  "detailed_description": "The webfinger response will contain a member that the client doesn't recognize",
+  "expected_result": "An issuer location should be returned."
+}

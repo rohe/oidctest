@@ -1,1 +1,16 @@
-{"desc": "Can Make Request with response_mode=form_post", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, {"Registration": {"set_request_args": {"id_token_signed_response_alg": "RS256"}}}, {"SyncAuthn": {"set_request_args": {"response_mode": ["form_post"]}}}], "usage": {"return_type": ["IT"]}, "assert": {"got": {"what": ["id_token", "access_token"], "where": "AuthorizationResponse"}}}
+{
+  "group": "Response Type and Response Mode",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Can make request using response_type='id_token token' and response_mode='form_post'",
+  "detailed_description": "Make an authentication request with the ${RESPONSE_TYPE} set to 'id_token token' and the ${RESPONSE_MODE} set to ${FORM_POST}.",
+  "expected_result": "HTML form post response processed, resulting in query encoded parameters."
+}

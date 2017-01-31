@@ -1,1 +1,16 @@
-{"desc": "The Relying Party can ask for a specific claim using the 'claims' request parameter. The claim should be returned in a UserInfo response", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", {"SyncAuthn": {"set_request_args": {"claims": {"userinfo": {"email": {"essential": true}}}}}}, {"AccessToken": {"conditional_execution": {"profile": "C"}}}, "UserInfo"], "usage": {"return_type": ["C", "IT", "CI", "CT", "CIT"]}, "assert": {"got_userinfo_claims": {"claims": ["email"]}}}
+{
+  "group": "Claims Request Parameter",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Can request and use claims in UserInfo Response using the 'claims' request parameter",
+  "detailed_description": "Ask for the claim 'name' using the ${CLAIMS_REQUEST_PARAMETER}. Retrieve the claims by making a ${USERINFO_REQUEST}.",
+  "expected_result": "A ${USERINFO_RESPONSE} containing the requested claim."
+}

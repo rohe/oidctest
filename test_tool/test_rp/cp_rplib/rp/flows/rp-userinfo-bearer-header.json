@@ -1,1 +1,23 @@
-{"desc": "Accesses UserInfo Endpoint with Header Method ", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", "SyncAuthn", {"AccessToken": {"conditional_execution": {"profile": "C"}}}, {"UserInfo": {"set_request_args": {"behavior": "use_authorization_header"}}}], "usage": {"return_type": ["C", "CI", "CT", "CIT", "IT"]}}
+{
+  "MTI": [
+    "C",
+    "IT",
+    "CI",
+    "CT",
+    "CIT"
+  ],
+  "group": "UserInfo Endpoint",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Can send Access Token in the HTTP Authorization request header",
+  "detailed_description": "Pass the access token using the ${BEARER_AUTH_SCHEME} while doing the ${USERINFO_REQUEST}.",
+  "expected_result": "A ${USERINFO_RESPONSE}."
+}

@@ -1,42 +1,16 @@
 {
-  "desc": "Can Request and Use Encrypted UserInfo Response ",
-  "sequence": [
-    {
-      "Webfinger": {
-        "set_webfinger_resource": null
-      }
-    },
-    {
-      "Discovery": {
-        "set_discovery_issuer": null
-      }
-    },
-    {
-      "Registration": {
-        "set_jwks_uri": null,
-        "set_request_args": {
-          "userinfo_encrypted_response_enc": "A128CBC-HS256",
-          "userinfo_encrypted_response_alg": "RSA1_5"
-        }
-      }
-    },
-    "SyncAuthn",
-    {
-      "AccessToken": {
-        "conditional_execution": {
-          "profile": "C"
-        }
-      }
-    },
-    "UserInfo"
-  ],
-  "usage": {
-    "return_type": [
-      "C",
-      "CI",
-      "CT",
-      "CIT",
-      "IT"
+  "group": "UserInfo Endpoint",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
     ]
-  }
+  },
+  "short_description": "Can request and use encrypted UserInfo Response",
+  "detailed_description": "Request encrypted UserInfo. Decrypt the ${USERINFO_RESPONSE}.",
+  "expected_result": "A ${USERINFO_RESPONSE}."
 }

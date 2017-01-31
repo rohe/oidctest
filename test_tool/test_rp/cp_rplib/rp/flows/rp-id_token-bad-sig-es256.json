@@ -1,1 +1,21 @@
-{"desc": "The Relying Party should reject invalid asymmetric ID Token signature which has been signed using the algorithm ES256", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, {"Registration": {"set_request_args": {"id_token_signed_response_alg": "ES256"}}}, {"SyncAuthn": {"conditional_expect_exception": {"condition": {"response_type": [["code", "id_token", "token"], ["id_token", "token"], ["id_token"], ["code", "id_token"]]}, "exception": "BadSignature"}}}, {"AccessToken": {"conditional_execution": {"profile": "C, CT"}, "expect_exception": "BadSignature"}}], "usage": {"return_type": ["C", "I", "CI", "CIT", "CT", "IT"]}}
+{
+  "behavior": "idts",
+  "group": "ID Token",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ],
+    "id_token_signing_alg_values_supported": [
+      "ES256"
+    ]
+  },
+  "short_description": "Rejects ID Token with invalid asymmetric 'ES256' signature",
+  "detailed_description": "Request an ID token and verify its signature using the keys provided by the Issuer.",
+  "expected_result": "Identify the invalid signature and reject the ID Token after doing ${ID_TOKEN_VALIDATION}."
+}

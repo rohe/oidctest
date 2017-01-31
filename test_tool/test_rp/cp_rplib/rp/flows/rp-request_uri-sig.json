@@ -1,1 +1,20 @@
-{"desc": "The Relying Party can pass a Request Object by reference using the request_uri parameter. Sign the Request Object using the RS256 algorithm", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, {"Registration": {"set_jwks_uri": null}}, {"SyncAuthn": {"set_op_args": {"request_method": "file", "request_object_signing_alg": "RS256"}, "set_request_base": "request_objects"}}], "usage": {"return_type": ["CI", "I", "C", "T", "CIT", "IT", "CT"]}}
+{
+  "MTI": [
+    "DYN"
+  ],
+  "group": "request_uri Request Parameter",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Can use request_uri request parameter with signed request",
+  "detailed_description": "Pass a ${REQUEST_OBJECT_BY_REFERENCE}, using the request_uri parameter. ${SIGN_THE_REQUEST_OBJECT} using the 'RS256' algorithm.",
+  "expected_result": "An authentication response to the signed request passed using the request_uri request parameter."
+}

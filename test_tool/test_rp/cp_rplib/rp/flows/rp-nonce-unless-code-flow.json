@@ -1,1 +1,23 @@
-{"desc": "The Relying Party should always send a nonce as a request parameter while using implicit or hybrid flow. Since the server is suppose to return the nonce in the ID Token return from Authorization Endpoint, see ID Token required claims in hybrid flow or implicit flow. When using Code flow the the nonce is not required, see ID Token validation for code flow", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", "SyncAuthn", {"AccessToken": {"conditional_execution": {"profile": "C,CT"}}}], "usage": {"return_type": ["I", "IT", "CI", "CT", "CIT"]}}
+{
+  "MTI": [
+    "I",
+    "IT",
+    "CI",
+    "CT",
+    "CIT"
+  ],
+  "group": "nonce Request Parameter",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Sends 'nonce' unless using code flow",
+  "detailed_description": "Always send a ${NONCE_IMPLEMENTATION} as a request parameter while using implicit or hybrid flow. Verify the 'nonce' value returned in the ${ID_TOKEN}.",
+  "expected_result": "An ${ID_TOKEN}, either from the Authorization Endpoint or from the Token Endpoint, containing the same 'nonce' value as passed in the authentication request when using ${HYBRID_FLOW_ID_TOKEN} or ${IMPLICIT_FLOW_ID_TOKEN}."
+}

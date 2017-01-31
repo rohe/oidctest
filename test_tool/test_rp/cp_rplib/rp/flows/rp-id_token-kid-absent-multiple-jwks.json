@@ -1,1 +1,26 @@
-{"desc": "If there are multiple keys in the referenced JWK Set document, a kid value MUST be provided in the JOSE Header", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", {"SyncAuthn": {"conditional_expect": {"condition": {"response_type": [["code", "id_token", "token"], ["id_token", "token"], ["id_token"], ["code", "id_token"]]}, "exception": "ParameterError"}}}, {"AccessToken": {"conditional_execution": {"profile": "C, CT"}, "expect_exception": "ParameterError"}}], "usage": {"return_type": ["C", "I", "CI", "CT", "CIT", "IT"]}}
+{
+  "MTI": [
+    "C",
+    "I",
+    "IT",
+    "CI",
+    "CT",
+    "CIT"
+  ],
+  "behavior": "nokidmuljwks",
+  "group": "ID Token",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Rejects ID Token without 'kid' claim in JOSE header if multiple JWKs supplied in 'jwks_uri'",
+  "detailed_description": "Request an ID token and verify its signature using the keys provided by the Issuer.",
+  "expected_result": "Identify that the 'kid' value is missing from the JOSE header and that the Issuer publishes ${MULITPLE_KEYS_JWKS} (referenced by 'jwks_uri'). The RP can do one of two things; reject the ID Token since it can not by using the kid determined which key to use to verify the signature. Or it can just test all possible keys and hit upon one that works, which it will in this case."
+}

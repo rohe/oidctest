@@ -1,1 +1,26 @@
-{"desc": "The Relying Party should request an ID token and reject it if the issuer identifier for the OpenID Provider is not matching the issuer in the returned ID Token", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, {"Registration": {"set_request_args": {"id_token_signed_response_alg": "HS256"}}}, {"SyncAuthn": {"conditional_expect_exception": {"condition": {"response_type": [["code", "id_token", "token"], ["id_token", "token"], ["id_token"], ["code", "id_token"]]}, "exception": "IssuerMismatch"}}}, {"AccessToken": {"conditional_execution": {"profile": "C, CT"}, "expect_exception": "IssuerMismatch"}}], "usage": {"return_type": ["C", "I", "CI", "CT", "CIT", "IT"]}}
+{
+  "MTI": [
+    "C",
+    "I",
+    "IT",
+    "CI",
+    "CT",
+    "CIT"
+  ],
+  "behavior": "issi",
+  "group": "ID Token",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Rejects ID Token with incorrect 'iss' claim",
+  "detailed_description": "Request an ID token and verify its '${ISS}' value.",
+  "expected_result": "Identify the incorrect 'iss' value and reject the ID Token after doing ${ID_TOKEN_VALIDATION}."
+}

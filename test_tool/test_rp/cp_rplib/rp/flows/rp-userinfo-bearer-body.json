@@ -1,1 +1,16 @@
-{"desc": "Accesses UserInfo Endpoint with form-encoded body method", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", "SyncAuthn", {"AccessToken": {"conditional_execution": {"profile": "C"}}}, {"UserInfo": {"set_request_args": {"behavior": "token_in_message_body"}}}], "usage": {"return_type": ["C", "CI", "CT", "CIT", "IT"]}}
+{
+  "group": "UserInfo Endpoint",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Can send Access Token as form-encoded body parameter",
+  "detailed_description": "Pass the access token as a ${FORM_ENCODED_BODY_PARAMETER} while doing the ${USERINFO_REQUEST}.",
+  "expected_result": "A ${USERINFO_RESPONSE}."
+}

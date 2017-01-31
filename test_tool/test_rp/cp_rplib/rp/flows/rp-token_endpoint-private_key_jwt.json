@@ -1,1 +1,14 @@
-{"desc": "Can Make Access Token Request with 'private_key_jwt' Authentication", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, {"Registration": {"set_jwks_uri": null, "set_request_args": {"token_endpoint_auth_method": "private_key_jwt"}}}, "SyncAuthn", {"AccessToken": {"set_op_args": {"authn_method": "private_key_jwt"}}}], "usage": {"return_type": ["C", "CI", "CT", "CIT"]}, "assert": {"got": {"what": ["id_token"], "where": "AccessTokenResponse"}}}
+{
+  "group": "Client Authentication",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "code id_token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Can make Access Token Request with 'private_key_jwt' authentication",
+  "detailed_description": "Use the '${PRIVATE_KEY_JWT}' method to authenticate at the Authorization Server when using the token endpoint.",
+  "expected_result": "A ${TOKEN_RESPONSE}, containing an ID token."
+}

@@ -1,1 +1,26 @@
-{"desc": "The Relying Party should request an ID token and reject it if the sub claim is missing", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", {"SyncAuthn": {"conditional_expect_exception": {"condition": {"response_type": [["code", "id_token", "token"], ["id_token", "token"], ["id_token"], ["code", "id_token"]]}, "exception": "MissingRequiredAttribute"}}}, {"AccessToken": {"conditional_execution": {"profile": "C,CT"}, "expect_exception": "MissingRequiredAttribute"}}], "usage": {"return_type": ["C", "I", "IT", "CI", "CT", "CIT"]}}
+{
+  "MTI": [
+    "C",
+    "I",
+    "IT",
+    "CI",
+    "CT",
+    "CIT"
+  ],
+  "behavior": "itsub",
+  "group": "ID Token",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Rejects ID Token without 'sub' claim",
+  "detailed_description": "Request an ID token and verify it contains a ${SUB} value.",
+  "expected_result": "Identify the missing 'sub' value and reject the ID Token."
+}

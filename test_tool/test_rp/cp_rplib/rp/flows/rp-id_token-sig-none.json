@@ -1,1 +1,20 @@
-{"desc": "Tests if the Relying Party can request and use unsigned ID Tokens. Use Code flow and set alg=null", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, {"Registration": {"set_request_args": {"id_token_signed_response_alg": null}}}, "SyncAuthn", "AccessToken"], "usage": {"return_type": ["C"]}}
+{
+  "MTI": [
+    "C",
+    "CNF",
+    "DYN"
+  ],
+  "group": "ID Token",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code"
+    ],
+    "id_token_signing_alg_values_supported": [
+      "none"
+    ]
+  },
+  "short_description": "Can request and use unsigned ID Token",
+  "detailed_description": "Use ${CODE_FLOW} and retrieve an unsigned ID Token.",
+  "expected_result": "Accept the ID Token after doing ${ID_TOKEN_VALIDATION}."
+}

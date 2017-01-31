@@ -1,1 +1,21 @@
-{"desc": "Can read and understand jwks_uri", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}], "usage": {"return_type": ["C"]}, "assert": {"providerinfo-has-jwks_uri": null, "bare-keys": null}}
+{
+  "MTI": [
+    "CNF",
+    "DYN"
+  ],
+  "group": "Discovery",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Uses keys discovered with jwks_uri value",
+  "detailed_description": "The Relying Party uses keys from the jwks_uri which has been obtained from the ${OPENID_PROVIDER_METADATA}.",
+  "expected_result": "Should be able to verify signed responses and/or encrypt requests using obtained keys."
+}

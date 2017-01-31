@@ -1,1 +1,18 @@
-{"desc": "The Relying Party should request an ID token and reject it if the at_hash claim is incorrect", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", {"SyncAuthn": {"conditional_expect_exception": {"condition": {"response_type": [["code", "id_token", "token"], ["id_token", "token"]]}, "exception": "AtHashError"}}}], "usage": {"return_type": ["CIT", "IT"]}}
+{
+  "MTI": [
+    "IT",
+    "CIT"
+  ],
+  "behavior": "ath",
+  "group": "ID Token",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "id_token token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Rejects ID Token with incorrect 'at_hash' claim when response_type='id_token token'",
+  "detailed_description": "Make an authentication request using response_type='id_token token' for ${IMPLICIT_FLOW} or response_type='code id_token token' for ${HYBRID_FLOW}. Verify the 'at_hash' value in the returned ${ID_TOKEN}.",
+  "expected_result": "Identify the incorrect 'at_hash' value and reject the ID Token after doing ${ACCESS_TOKEN_VALIDATION}."
+}
