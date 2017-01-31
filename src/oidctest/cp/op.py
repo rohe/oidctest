@@ -10,6 +10,7 @@ from jwkest import as_unicode
 from otest.events import Events
 from otest.events import EV_REQUEST
 from otest.events import Operation
+from otest.flow import ABBR
 
 logger = logging.getLogger(__name__)
 
@@ -135,7 +136,52 @@ class UserInfo(object):
         return conv_response(resp)
 
 
-class Provider(object):
+PRE_HTML = """<html>
+  <head>
+    <title>The OIDC RP library test documentation</title>
+    <link rel="stylesheet" type="text/css" href="/static/theme.css">
+  </head>
+  <body>"""
+
+POST = """</body></html>"""
+
+
+def choice(profiles):
+    keys = list(profiles.keys())
+    keys.sort()
+
+    line = [
+        '<table>',
+        '<tr><th>Response type</th><th></th></tr>']
+    for k in keys:
+        line.append(
+            '<tr><td>{}</td><td><input type="radio" name="profile" value="{}"></td></tr>'.format(
+                k, profiles[k]))
+    line.append('</table>')
+    return '\n'.join(line)
+
+
+class Root(object):
+    @cherrypy.expose
+    def index(self):
+        response = [
+            PRE_HTML,
+            "<h1>Welcome to the OpenID Foundation RP library test site</h1>",
+            '<h3>Before you start testing please read the ',
+            '<a href="http://openid.net/certification/rp_testing/" '
+            'target="_blank">',
+            'how to use the RPtest</a>introduction guide</h3>',
+            '<h3>For a list of OIDC RP library tests per response_type chose '
+            'your preference:</h3>',
+            '<form action="list">',
+            choice(ABBR),
+            '<p></p><input type="submit" value="Submit"></form>',
+            POST
+        ]
+        return '\n'.join(response)
+
+
+class Provider(Root):
     _cp_config = {'request.error_response': handle_error}
 
     def __init__(self, op_handler, flows):
@@ -146,11 +192,6 @@ class Provider(object):
         self.authorization = Authorization()
         self.token = Token()
         self.userinfo = UserInfo()
-
-    @cherrypy.expose
-    def index(self, **kwargs):
-        return "<html><body>Welcome to the JRA3T3 fed RP lib " \
-               "tester</body></html>"
 
     def _cp_dispatch(self, vpath):
         # Only get here if vpath != None

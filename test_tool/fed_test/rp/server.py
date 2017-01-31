@@ -4,12 +4,12 @@ import os
 
 import cherrypy
 import logging
+from jwkest import as_unicode, as_bytes
 from oic.exception import MessageException
 from oic.federation import MetadataStatement
-from oic.federation.bundle import get_bundle
-from oic.federation.bundle import get_signing_keys
+from oic.federation.operator import FederationOperator
+from oic.oauth2 import VerificationError
 from oic.utils import webfinger
-from oic.utils.jwt import JWT
 
 from oidctest.cp.op import Provider
 from oidctest.cp.op import WebFinger
@@ -28,38 +28,73 @@ hdlr.setFormatter(base_formatter)
 logger.addHandler(hdlr)
 logger.setLevel(logging.DEBUG)
 
-KEYDEFS = [
-    {"type": "RSA", "key": '', "use": ["sig"]},
-    {"type": "EC", "crv": "P-256", "use": ["sig"]}
-]
+
+class Who(object):
+    def __init__(self, fos):
+        self.fos = fos
+
+    @cherrypy.expose
+    def index(self):
+        cherrypy.response.headers['Content-Type'] = 'application/json'
+        return as_bytes(json.dumps(list(self.fos.keys())))
 
 
 class Sign(object):
-    def __init__(self, sign_keys, iss):
-        self.sign_keys = sign_keys
-        self.iss = iss
+    def __init__(self, fos, me):
+        self.fos = fos
+        self.me = me
 
     @cherrypy.expose
-    def index(self, mds):
-        _mds = MetadataStatement(**json.loads(mds))
+    def index(self, **kwargs):
+        if cherrypy.request.process_request_body is True:
+            _json_doc = cherrypy.request.body.read()
+        else:
+            raise cherrypy.HTTPError(400, 'Missing Client registration body')
+
+        _args = json.loads(as_unicode(_json_doc))
+        _mds = MetadataStatement(**_args)
+
         try:
             _mds.verify()
-        except MessageException as err:
-            raise cherrypy.CherryPyException()
+        except (MessageException, VerificationError) as err:
+            raise cherrypy.CherryPyException(str(err))
         else:
-            _jwt = JWT(self.sign_keys, lifetime=3600, iss=self.iss)
-            jws = _jwt.pack(data=_mds)
+            try:
+                _fo_iss = kwargs['fo']
+            except KeyError:
+                _fo_iss = self.me
+
+            fo = self.fos[_fo_iss]
+            _jwt = fo.pack_metadata_statement(_mds)
             cherrypy.response.headers['Content-Type'] = 'application/jwt'
-            return jws
+            return as_bytes(_jwt)
 
 
 class FoKeys(object):
-    def __init__(self, sign_keys):
-        self.sign_keys = sign_keys
+    def __init__(self, fo):
+        self.fo = fo
 
     @cherrypy.expose
-    def index(self, mds):
-        pass
+    def index(self):
+        cherrypy.response.headers['Content-Type'] = 'application/jwt'
+        return as_bytes(self.fo.export_bundle())
+
+    @cherrypy.expose
+    def sigkey(self):
+        cherrypy.response.headers['Content-Type'] = 'application/json'
+        return as_bytes(json.dumps(self.fo.keyjar.export_jwks()))
+
+    @cherrypy.expose
+    def signer(self):
+        return as_bytes(self.fo.iss)
+
+
+def named_kc(config, iss):
+    _kc = config.KEYDEFS[:]
+    for kd in _kc:
+        if 'key' in kd:
+            kd['key'] = iss
+    return _kc
 
 
 if __name__ == '__main__':
@@ -81,9 +116,26 @@ if __name__ == '__main__':
 
     _com_args, _op_arg, config = cb_setup(args)
 
-    sign_key = get_signing_keys(args.iss, KEYDEFS, args.sign_key)
-    jb = get_bundle(args.iss, config.FOS, sign_key, args.bundle,
-                    config.KEYDEFS, config.BASE_PATH)
+    _fos = {}
+
+    me = FederationOperator(iss=args.iss, bundle_sign_alg='RS256',
+                            keyconf=named_kc(config, args.iss),
+                            jwks_file='{}.json'.format(args.iss))
+    _fos[args.iss] = me
+
+    for fo in config.FOS:
+        _fo = FederationOperator(iss=fo, keyconf=named_kc(config, fo),
+                                 jwks_file='{}.json'.format(fo))
+        me.add_to_bundle(fo, _fo.export_jwks())
+        _fos[fo] = _fo
+
+    fp = open(args.bundle, 'w')
+    fp.write(me.export_bundle())
+    fp.close()
+
+    # sign_key = get_signing_keys(args.iss, KEYDEFS, args.sign_key)
+    # jb = get_bundle(args.iss, config.FOS, sign_key, args.bundle,
+    #                 config.KEYDEFS, config.BASE_PATH)
 
     folder = os.path.abspath(os.curdir)
     _flows = Flow(args.flowsdir, profile_handler=SimpleProfileHandler)
@@ -114,8 +166,9 @@ if __name__ == '__main__':
 
     webfinger_config = {'/': {'base_url': _op_arg['baseurl']}}
 
-    cherrypy.tree.mount(Sign(sign_key, args.iss), '/sign')
-    cherrypy.tree.mount(FoKeys(jb), '/fokeys')
+    cherrypy.tree.mount(Sign(_fos, args.iss), '/sign')
+    cherrypy.tree.mount(FoKeys(me), '/bundle')
+    cherrypy.tree.mount(Who(_fos), '/who')
     cherrypy.tree.mount(WebFinger(webfinger.WebFinger()),
                         '/.well-known/webfinger', webfinger_config)
     cherrypy.tree.mount(Provider(op_handler, _flows), '/', provider_config)
