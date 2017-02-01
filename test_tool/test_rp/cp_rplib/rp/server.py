@@ -4,6 +4,8 @@ import os
 import cherrypy
 import logging
 from oic.utils import webfinger
+
+from oidctest.cp import dump_log
 from oidctest.cp.op import Provider
 from oidctest.cp.op import WebFinger
 from oidctest.cp.op_handler import OPHandler
@@ -41,14 +43,11 @@ if __name__ == '__main__':
     from oidctest.rp import provider
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-b', dest='bundle', required=True)
     parser.add_argument('-d', dest='debug', action='store_true')
     parser.add_argument('-f', dest='flowsdir', required=True)
-    parser.add_argument('-i', dest='iss', required=True)
     parser.add_argument('-k', dest='insecure', action='store_true')
     parser.add_argument('-p', dest='port', default=80, type=int)
     parser.add_argument('-P', dest='path')
-    parser.add_argument('-s', dest='sign_key', required=True)
     parser.add_argument('-t', dest='tls', action='store_true')
     parser.add_argument(dest="config")
     args = parser.parse_args()
@@ -59,6 +58,8 @@ if __name__ == '__main__':
     _flows = Flow(args.flowsdir, profile_handler=SimpleProfileHandler)
     op_handler = OPHandler(provider.Provider, _op_arg, _com_args, _flows)
 
+    cherrypy.tools.dumplog = cherrypy.Tool('before_finalize', dump_log)
+
     cherrypy.config.update(
         {'environment': 'production',
          'log.error_file': 'site.log',
@@ -67,7 +68,8 @@ if __name__ == '__main__':
          'log.screen': True,
          'tools.sessions.on': True,
          'tools.encode.on': True,
-         'tools.encode.encoding': 'utf-8'
+         'tools.encode.encoding': 'utf-8',
+         'tools.dumplog.on': True
          })
 
     provider_config = {

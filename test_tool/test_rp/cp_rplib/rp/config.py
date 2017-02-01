@@ -3,11 +3,22 @@ import os
 
 BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "static"))
 
-baseurl = "http://localhost"
+baseurl = "https://localhost"
 
 keys = [
     {"type": "RSA", "key": "keys/pyoidc_enc", "use": ["enc"]},
     {"type": "RSA", "key": "keys/pyoidc_sig", "use": ["sig"]},
+    {"type": "EC", "crv": "P-256", "use": ["sig"]},
+    {"type": "EC", "crv": "P-256", "use": ["enc"]}
+]
+
+multi_keys = [
+    {"type": "RSA", "use": ["enc"], "name": "rsa_enc_1", "key": "keys/pyoidc_enc"},
+    {"type": "RSA", "use": ["sig"], "name": "rsa_sig_1", "key": "keys/pyoidc_sig"},
+    {"type": "RSA", "use": ["enc"], "name": "rsa_enc_2", "key": "keys/sec_enc"},
+    {"type": "RSA", "use": ["sig"], "name": "rsa_sig_2", "key": "keys/sec_sig"},
+    {"type": "EC", "crv": "P-256", "use": ["sig"]},
+    {"type": "EC", "crv": "P-256", "use": ["enc"]},
     {"type": "EC", "crv": "P-256", "use": ["sig"]},
     {"type": "EC", "crv": "P-256", "use": ["enc"]}
 ]

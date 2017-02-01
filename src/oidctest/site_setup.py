@@ -89,6 +89,24 @@ def oidc_rpinst_setup(distroot):
         copy_if_not_same(_file, _fname, True)
 
 
+def oidc_cp_rpinst_setup(distroot):
+    for _dir in ['certs', 'keys', 'server_log', 'log']:
+        if os.path.isdir(_dir) is False:
+            os.mkdir(_dir)
+
+    _op_dir = os.path.join(distroot, 'test_tool', 'test_rp', 'rpinst')
+    for _dir in ['static', 'htdocs', 'flows']:
+        _src = os.path.join(_op_dir, _dir)
+        if os.path.isdir(_dir):
+            shutil.rmtree(_dir)
+        shutil.copytree(_src, _dir)
+
+    for _fname in ['run.sh', 'example_conf.py', 'profiles.json',
+                   'path2port.csv']:
+        _file = os.path.join(_op_dir, _fname)
+        copy_if_not_same(_file, _fname, True)
+
+
 def oidc_rplib_setup(distroot):
     for _dir in ['certs', 'keys', 'log']:
         if os.path.isdir(_dir) is False:

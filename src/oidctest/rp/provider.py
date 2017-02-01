@@ -428,7 +428,7 @@ class Provider(provider.Provider):
 
         # This is just for logging purposes
         try:
-            _resp = self.server.http_request(_req["request_uri"][0])
+            _resp = self.server.http_request(_req["request_uri"])
         except KeyError:
             pass
         except requests.ConnectionError as err:

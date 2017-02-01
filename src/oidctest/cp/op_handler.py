@@ -81,6 +81,8 @@ class OPHandler(object):
     def setup_op(self, oper_id, test_id, com_args, op_arg, test_conf, events):
         op = self.provider_cls(sdb=SessionDB(com_args["baseurl"]), **com_args)
         op.events = events
+        op.oper_id = oper_id
+        op.test_id = test_id
 
         for _authn in com_args["authn_broker"]:
             _authn.srv = op

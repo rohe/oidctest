@@ -1,1 +1,16 @@
-{"desc": "Complain about href as http URL", "sequence": [{"Webfinger": {"expect_exception": "WebFingerError", "set_webfinger_resource": null}}], "usage": {"return_type": ["C"]}}
+{
+  "desc": "Complain about href as http URL",
+  "sequence": [
+    {
+      "Webfinger": {
+        "expect_exception": "WebFingerError",
+        "set_webfinger_resource": null
+      }
+    }
+  ],
+  "usage": {
+    "return_type": [
+      "C"
+    ]
+  }
+}
