@@ -69,7 +69,8 @@ if __name__ == '__main__':
          'tools.sessions.on': True,
          'tools.encode.on': True,
          'tools.encode.encoding': 'utf-8',
-         'tools.dumplog.on': True
+         'tools.dumplog.on': True,
+         'server.socket_port': args.port
          })
 
     provider_config = {
@@ -109,6 +110,8 @@ if __name__ == '__main__':
     if args.tls:
         cherrypy.server.ssl_certificate = config.SERVER_CERT
         cherrypy.server.ssl_private_key = config.SERVER_KEY
+        if config.CA_BUNDLE:
+            cherrypy.server.ssl_certificate_chain = config.CA_BUNDLE
 
     cherrypy.engine.start()
     cherrypy.engine.block()
