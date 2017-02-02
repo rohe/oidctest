@@ -17,8 +17,7 @@ from otest.events import Operation
 from otest.flow import ABBR
 
 from oidctest.cp import write_events
-
-from src.oidctest.cp import init_events
+from oidctest.cp import init_events
 
 logger = logging.getLogger(__name__)
 
@@ -219,9 +218,9 @@ def choice(profiles):
         '<table>',
         '<tr><th>Response type</th><th></th></tr>']
     for k in keys:
-        line.append('<tr><td>{}</td><td>')
+        line.append('<tr><td>{}</td><td>'.format(k))
         line.append('<input type="radio" name="profile" value="{}">'.format(
-            k, profiles[k]))
+            profiles[k]))
         line.append('</td></tr>')
     line.append('</table>')
     return '\n'.join(line)
@@ -236,7 +235,7 @@ class Root(object):
             '<h3>Before you start testing please read the ',
             '<a href="http://openid.net/certification/rp_testing/" '
             'target="_blank">',
-            'how to use the RPtest</a>introduction guide</h3>',
+            'how to use the RPtest </a>introduction guide</h3>',
             '<h3>For a list of OIDC RP library tests per response_type chose '
             'your preference:</h3>',
             '<form action="list">',
