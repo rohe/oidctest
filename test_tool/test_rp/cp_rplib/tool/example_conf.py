@@ -46,8 +46,8 @@ COOKIENAME = 'pyoic'
 COOKIETTL = 4 * 60  # 4 hours
 SYM_KEY = "SoLittleTime,Got"
 
-SERVER_CERT = "certs/server.crt"
-SERVER_KEY = "certs/server.key"
+SERVER_CERT = "certs/cert.pem"
+SERVER_KEY = "certs/key.pem"
 #CA_BUNDLE="certs/chain.pem"
 CA_BUNDLE = None
 
