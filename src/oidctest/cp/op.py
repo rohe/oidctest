@@ -178,7 +178,7 @@ class UserInfo(object):
             pass
 
         kwargs.update(args)
-        resp = op.userinfo_endpoint(kwargs)
+        resp = op.userinfo_endpoint(**kwargs)
         return conv_response(op, resp)
 
 
