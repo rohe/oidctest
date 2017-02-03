@@ -168,6 +168,16 @@ class UserInfo(object):
     @cherrypy.expose
     def index(self, op, **kwargs):
         store_request(op, 'UserinfoRequest')
+        if cherrypy.request.process_request_body is True:
+            args = {'request': cherrypy.request.body.read()}
+        else:
+            args = {}
+        try:
+            args['authn'] = cherrypy.request.headers['Authorization']
+        except KeyError:
+            pass
+
+        kwargs.update(args)
         resp = op.userinfo_endpoint(kwargs)
         return conv_response(op, resp)
 
