@@ -300,7 +300,7 @@ class Provider(Root):
                     a = vpath.pop(0)
                     b = vpath.pop(0)
                     endpoint = '{}/{}'.format(a, b)
-                    if endpoint == "/.well-known/openid-configuration":
+                    if endpoint == ".well-known/openid-configuration":
                         op = self.op_handler.get(oper_id, test_id, Events(),
                                                  endpoint)[0]
                         cherrypy.request.params['op'] = op
