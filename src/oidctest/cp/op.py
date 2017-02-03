@@ -135,9 +135,8 @@ class Registration(object):
             _request = cherrypy.request.body.read()
         else:
             raise cherrypy.HTTPError(400, 'Missing Client registration body')
+        logger.debug('request_body: {}'.format(_request))
         resp = op.registration_endpoint(as_unicode(_request))
-        # cherrypy.response.status = 201
-        # cherrypy.response.headers['Content-Type'] = 'application/json'
         return conv_response(op, resp)
 
 
