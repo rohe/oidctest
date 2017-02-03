@@ -1,5 +1,7 @@
 import cherrypy
 import logging
+
+import cherrypy_cors
 from cherrypy import url
 
 from future.backports.urllib.parse import urlparse
@@ -119,66 +121,96 @@ class WebFinger(object):
 
 class Configuration(object):
     @cherrypy.expose
+    @cherrypy.tools.allow(
+        methods=["GET", "OPTIONS"])
     def index(self, op):
-        store_request(op, 'ProviderInfo')
-        resp = op.providerinfo_endpoint()
-        # cherrypy.response.headers['Content-Type'] = 'application/json'
-        # return as_bytes(resp.message)
-        return conv_response(op, resp)
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["GET"])
+        else:
+            store_request(op, 'ProviderInfo')
+            resp = op.providerinfo_endpoint()
+            # cherrypy.response.headers['Content-Type'] = 'application/json'
+            # return as_bytes(resp.message)
+            return conv_response(op, resp)
 
 
 class Registration(object):
     @cherrypy.expose
+    @cherrypy.tools.allow(
+        methods=["POST", "OPTIONS"])
     def index(self, op):
-        store_request(op, 'ClientRegistration')
-        if cherrypy.request.process_request_body is True:
-            _request = cherrypy.request.body.read()
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["POST"])
         else:
-            raise cherrypy.HTTPError(400, 'Missing Client registration body')
-        logger.debug('request_body: {}'.format(_request))
-        resp = op.registration_endpoint(as_unicode(_request))
-        return conv_response(op, resp)
+            store_request(op, 'ClientRegistration')
+            if cherrypy.request.process_request_body is True:
+                _request = cherrypy.request.body.read()
+            else:
+                raise cherrypy.HTTPError(400, 'Missing Client registration body')
+            logger.debug('request_body: {}'.format(_request))
+            resp = op.registration_endpoint(as_unicode(_request))
+            return conv_response(op, resp)
 
 
 class Authorization(object):
     @cherrypy.expose
+    @cherrypy.tools.allow(
+        methods=["GET", "OPTIONS"])
     def index(self, op, **kwargs):
-        store_request(op, 'AuthorizationRequest')
-        resp = op.authorization_endpoint(kwargs)
-        return conv_response(op, resp)
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["GET"])
+        else:
+            store_request(op, 'AuthorizationRequest')
+            resp = op.authorization_endpoint(kwargs)
+            return conv_response(op, resp)
 
 
 class Token(object):
     _cp_config = {"request.methods_with_bodies": ("POST", "PUT")}
 
     @cherrypy.expose
+    @cherrypy.tools.allow(
+        methods=["POST", "OPTIONS"])
     def index(self, op, **kwargs):
-        store_request(op, 'AccessTokenRequest')
-        try:
-            authn = cherrypy.request.headers['Authorization']
-        except KeyError:
-            authn = None
-        logger.debug('Authorization: {}'.format(authn))
-        resp = op.token_endpoint(as_unicode(kwargs), authn, 'dict')
-        return conv_response(op, resp)
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["POST"])
+        else:
+            store_request(op, 'AccessTokenRequest')
+            try:
+                authn = cherrypy.request.headers['Authorization']
+            except KeyError:
+                authn = None
+            logger.debug('Authorization: {}'.format(authn))
+            resp = op.token_endpoint(as_unicode(kwargs), authn, 'dict')
+            return conv_response(op, resp)
 
 
 class UserInfo(object):
     @cherrypy.expose
+    @cherrypy.tools.allow(
+        methods=["GET", "POST", "OPTIONS"])
     def index(self, op, **kwargs):
-        store_request(op, 'UserinfoRequest')
-        if cherrypy.request.process_request_body is True:
-            args = {'request': cherrypy.request.body.read()}
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["GET", "POST"])
         else:
-            args = {}
-        try:
-            args['authn'] = cherrypy.request.headers['Authorization']
-        except KeyError:
-            pass
+            store_request(op, 'UserinfoRequest')
+            if cherrypy.request.process_request_body is True:
+                args = {'request': cherrypy.request.body.read()}
+            else:
+                args = {}
+            try:
+                args['authn'] = cherrypy.request.headers['Authorization']
+            except KeyError:
+                pass
 
-        kwargs.update(args)
-        resp = op.userinfo_endpoint(**kwargs)
-        return conv_response(op, resp)
+            kwargs.update(args)
+            resp = op.userinfo_endpoint(**kwargs)
+            return conv_response(op, resp)
 
 
 class Claims(object):
