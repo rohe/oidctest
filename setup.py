@@ -47,7 +47,8 @@ setup(
         'CherryPy == 8.9.1',
         'oic >= 0.9.4',
         'otest >= 0.6.3',
-        'psutil'
+        'psutil',
+        'cherrypy-cors >= 1.5'
     ],
     zip_safe=False,
     scripts=['script/optest.py', 'script/make_test_dir.py',

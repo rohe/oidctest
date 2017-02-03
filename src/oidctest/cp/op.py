@@ -159,6 +159,7 @@ class Token(object):
             authn = cherrypy.request.headers['Authorization']
         except KeyError:
             authn = None
+        logger.debug('Authorization: {}'.format(authn))
         resp = op.token_endpoint(as_unicode(kwargs), authn, 'dict')
         return conv_response(op, resp)
 
@@ -299,9 +300,10 @@ class Provider(Root):
                     a = vpath.pop(0)
                     b = vpath.pop(0)
                     endpoint = '{}/{}'.format(a, b)
-                    op = self.op_handler.get(oper_id, test_id, Events(),
-                                             endpoint)[0]
-                    cherrypy.request.params['op'] = op
-                    return self.configuration
+                    if endpoint == "/.well-known/openid-configuration":
+                        op = self.op_handler.get(oper_id, test_id, Events(),
+                                                 endpoint)[0]
+                        cherrypy.request.params['op'] = op
+                        return self.configuration
 
         return self

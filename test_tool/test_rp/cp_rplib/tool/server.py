@@ -40,6 +40,7 @@ def named_kc(config, iss):
 
 if __name__ == '__main__':
     import argparse
+    import cherrypy_cors
     from oidctest.rp import provider
 
     parser = argparse.ArgumentParser()
@@ -58,6 +59,7 @@ if __name__ == '__main__':
     _flows = Flow(args.flowsdir, profile_handler=SimpleProfileHandler)
     op_handler = OPHandler(provider.Provider, _op_arg, _com_args, _flows)
 
+    cherrypy_cors.install()
     cherrypy.tools.dumplog = cherrypy.Tool('before_finalize', dump_log)
 
     cherrypy.config.update(
@@ -65,6 +67,7 @@ if __name__ == '__main__':
          'log.error_file': 'site.log',
          'tools.trailing_slash.on': False,
          'server.socket_host': '0.0.0.0',
+         'server.socket_port': args.port,
          'log.screen': True,
          'tools.sessions.on': True,
          'tools.encode.on': True,
@@ -76,16 +79,23 @@ if __name__ == '__main__':
         '/': {
             'root_path': 'localhost',
             'log.screen': True,
+            'cors.expose.on': True
         },
         '/static': {
             'tools.staticdir.dir': os.path.join(folder, 'static'),
             'tools.staticdir.debug': True,
             'tools.staticdir.on': True,
-            'log.screen': True
+            'log.screen': True,
+            'cors.expose.on': True
         }}
 
     # WebFinger
-    webfinger_config = {'/': {'base_url': _op_arg['baseurl']}}
+    webfinger_config = {
+        '/': {
+            'base_url': _op_arg['baseurl'],
+            'cors.expose.on': True
+        }}
+
     cherrypy.tree.mount(WebFinger(webfinger.WebFinger()),
                         '/.well-known/webfinger', webfinger_config)
 
