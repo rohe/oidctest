@@ -39,15 +39,16 @@ def conv_response(op, resp):
     #    return [mte.render(**argv)]
     if _stat < 300:
         op.events.store(EV_RESPONSE, resp.message)
+        cherrypy.response.status = _stat
         for key, val in resp.headers:
             cherrypy.response.headers[key] = val
         return as_bytes(resp.message)
     elif 300 <= _stat < 400:
         op.events.store('Redirect', resp.message)
-        raise cherrypy.HTTPRedirect(resp.message)
+        raise cherrypy.HTTPRedirect(resp.message, status=_stat)
     else:
         op.events.store(EV_FAULT, resp.message)
-        raise cherrypy.HTTPError(_stat, resp.message)
+        raise cherrypy.HTTPError(_stat, message=resp.message)
 
 
 def store_request(op, where):
