@@ -71,7 +71,7 @@ def run_return_types(test_id, oper_id, kwargs, return_types):
         if single:
             _res = tester.run(test_id, **kwargs)
             try:
-                print('{} {} {}'.format(SIGN[_res], return_types, test_id))
+                print('{} [{}] {}'.format(SIGN[_res], rtyp, test_id))
             except Exception as err:
                 print('****' + test_id + '*****')
                 raise
@@ -83,8 +83,7 @@ def run_return_types(test_id, oper_id, kwargs, return_types):
             if not tester.match_profile(test_id):
                 continue
             elif tester.run(test_id, **kwargs):
-                print('+ {}'.format(test_id))
-                return True
+                print('+ [{}] {}'.format(rtyp, test_id))
             else:
                 sh.test_flows.store_test_info(tester)
                 return False

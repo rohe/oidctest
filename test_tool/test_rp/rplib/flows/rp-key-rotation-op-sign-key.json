@@ -13,14 +13,26 @@
     },
     "Registration",
     "SyncAuthn",
-    "AccessToken",
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "profile": "CIT,CI,C,CT"
+        }
+      }
+    },
     {
       "UpdateProviderKeys": {
         "remove_grant": null
       }
     },
     "SyncAuthn",
-    "AccessToken",
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "profile": "CIT,CI,C,CT"
+        }
+      }
+    },
     {
       "RestoreKeyJar": {
         "set_op_args": {
@@ -31,7 +43,7 @@
   ],
   "usage": {
     "return_type": [
-      "C"
+      "C", "I", "IT", "CI", "CT", "CIT"
     ]
   }
 }
