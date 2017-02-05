@@ -178,7 +178,7 @@ if __name__ == '__main__':
                 exit()
     else:
         if cargs.profile:
-            rtypes = cargs.profile
+            rtypes = [cargs.profile]
         else:
             rtypes = PROFILES
 

@@ -89,7 +89,7 @@ def oidc_rpinst_setup(distroot):
         copy_if_not_same(_file, _fname, True)
 
 
-def oidc_cp_rpinst_setup(distroot):
+def oidc_cp_rplib_setup(distroot):
     _op_dir = os.path.join(distroot, 'rp')
     for _dir in ['certs', 'keys', 'log']:
         if os.path.isdir(_op_dir) is False:

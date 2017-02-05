@@ -1,5 +1,7 @@
 import cherrypy
 import logging
+
+import cherrypy_cors
 from cherrypy import url
 
 from future.backports.urllib.parse import urlparse
@@ -38,15 +40,16 @@ def conv_response(op, resp):
     #    return [mte.render(**argv)]
     if _stat < 300:
         op.events.store(EV_RESPONSE, resp.message)
+        cherrypy.response.status = _stat
         for key, val in resp.headers:
             cherrypy.response.headers[key] = val
         return as_bytes(resp.message)
     elif 300 <= _stat < 400:
         op.events.store('Redirect', resp.message)
-        raise cherrypy.HTTPRedirect(resp.message)
+        raise cherrypy.HTTPRedirect(resp.message, status=_stat)
     else:
         op.events.store(EV_FAULT, resp.message)
-        raise cherrypy.HTTPError(_stat, resp.message)
+        raise cherrypy.HTTPError(_stat, message=resp.message)
 
 
 def store_request(op, where):
@@ -120,56 +123,96 @@ class WebFinger(object):
 
 class Configuration(object):
     @cherrypy.expose
+    @cherrypy.tools.allow(
+        methods=["GET", "OPTIONS"])
     def index(self, op):
-        store_request(op, 'ProviderInfo')
-        resp = op.providerinfo_endpoint()
-        # cherrypy.response.headers['Content-Type'] = 'application/json'
-        # return as_bytes(resp.message)
-        return conv_response(op, resp)
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["GET"])
+        else:
+            store_request(op, 'ProviderInfo')
+            resp = op.providerinfo_endpoint()
+            # cherrypy.response.headers['Content-Type'] = 'application/json'
+            # return as_bytes(resp.message)
+            return conv_response(op, resp)
 
 
 class Registration(object):
     @cherrypy.expose
+    @cherrypy.tools.allow(
+        methods=["POST", "OPTIONS"])
     def index(self, op):
-        store_request(op, 'ClientRegistration')
-        if cherrypy.request.process_request_body is True:
-            _request = cherrypy.request.body.read()
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["POST"])
         else:
-            raise cherrypy.HTTPError(400, 'Missing Client registration body')
-        resp = op.registration_endpoint(as_unicode(_request))
-        # cherrypy.response.status = 201
-        # cherrypy.response.headers['Content-Type'] = 'application/json'
-        return conv_response(op, resp)
+            store_request(op, 'ClientRegistration')
+            if cherrypy.request.process_request_body is True:
+                _request = cherrypy.request.body.read()
+            else:
+                raise cherrypy.HTTPError(400, 'Missing Client registration body')
+            logger.debug('request_body: {}'.format(_request))
+            resp = op.registration_endpoint(as_unicode(_request))
+            return conv_response(op, resp)
 
 
 class Authorization(object):
     @cherrypy.expose
+    @cherrypy.tools.allow(
+        methods=["GET", "OPTIONS"])
     def index(self, op, **kwargs):
-        store_request(op, 'AuthorizationRequest')
-        resp = op.authorization_endpoint(kwargs)
-        return conv_response(op, resp)
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["GET"])
+        else:
+            store_request(op, 'AuthorizationRequest')
+            resp = op.authorization_endpoint(kwargs)
+            return conv_response(op, resp)
 
 
 class Token(object):
     _cp_config = {"request.methods_with_bodies": ("POST", "PUT")}
 
     @cherrypy.expose
+    @cherrypy.tools.allow(
+        methods=["POST", "OPTIONS"])
     def index(self, op, **kwargs):
-        store_request(op, 'AccessTokenRequest')
-        try:
-            authn = cherrypy.request.headers['Authorization']
-        except KeyError:
-            authn = None
-        resp = op.token_endpoint(as_unicode(kwargs), authn, 'dict')
-        return conv_response(op, resp)
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["POST"])
+        else:
+            store_request(op, 'AccessTokenRequest')
+            try:
+                authn = cherrypy.request.headers['Authorization']
+            except KeyError:
+                authn = None
+            logger.debug('Authorization: {}'.format(authn))
+            resp = op.token_endpoint(as_unicode(kwargs), authn, 'dict')
+            return conv_response(op, resp)
 
 
 class UserInfo(object):
     @cherrypy.expose
+    @cherrypy.tools.allow(
+        methods=["GET", "POST", "OPTIONS"])
     def index(self, op, **kwargs):
-        store_request(op, 'UserinfoRequest')
-        resp = op.userinfo_endpoint(kwargs)
-        return conv_response(op, resp)
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["GET", "POST"])
+        else:
+            store_request(op, 'UserinfoRequest')
+            if cherrypy.request.process_request_body is True:
+                args = {'request': cherrypy.request.body.read()}
+            else:
+                args = {}
+            try:
+                args['authn'] = cherrypy.request.headers['Authorization']
+            except KeyError:
+                pass
+
+            kwargs.update(args)
+            resp = op.userinfo_endpoint(**kwargs)
+            return conv_response(op, resp)
 
 
 class Claims(object):
@@ -219,9 +262,9 @@ def choice(profiles):
         '<table>',
         '<tr><th>Response type</th><th></th></tr>']
     for k in keys:
-        line.append('<tr><td>{}</td><td>')
+        line.append('<tr><td>{}</td><td>'.format(k))
         line.append('<input type="radio" name="profile" value="{}">'.format(
-            k, profiles[k]))
+            profiles[k]))
         line.append('</td></tr>')
     line.append('</table>')
     return '\n'.join(line)
@@ -236,7 +279,7 @@ class Root(object):
             '<h3>Before you start testing please read the ',
             '<a href="http://openid.net/certification/rp_testing/" '
             'target="_blank">',
-            'how to use the RPtest</a>introduction guide</h3>',
+            'how to use the RPtest </a>introduction guide</h3>',
             '<h3>For a list of OIDC RP library tests per response_type chose '
             'your preference:</h3>',
             '<form action="list">',
@@ -300,9 +343,10 @@ class Provider(Root):
                     a = vpath.pop(0)
                     b = vpath.pop(0)
                     endpoint = '{}/{}'.format(a, b)
-                    op = self.op_handler.get(oper_id, test_id, Events(),
-                                             endpoint)[0]
-                    cherrypy.request.params['op'] = op
-                    return self.configuration
+                    if endpoint == ".well-known/openid-configuration":
+                        op = self.op_handler.get(oper_id, test_id, Events(),
+                                                 endpoint)[0]
+                        cherrypy.request.params['op'] = op
+                        return self.configuration
 
         return self
