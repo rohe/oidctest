@@ -20,8 +20,8 @@ KEYS = [
 ]
 
 TOOL = {
-    'issuer': "https://localhost:8080",
-    'webfinger_url': "https://localhost:8080"
+    'issuer': "https://localhost:8090",
+    'webfinger_url': "https://localhost:8090"
 }
 
 CLIENT = {

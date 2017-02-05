@@ -39,53 +39,54 @@ def main_setup(args, lookup=None):
     if not _baseurl.endswith("/"):
         _baseurl += "/"
 
-    #config.issuer = config.issuer % args.port
-    #config.SERVICE_URL = config.SERVICE_URL % args.port
-
-    # Client data base
-    cdb = shelve.open(config.CLIENT_DB, writeback=True)
-
-    ac = AuthnBroker()
-
-    for authkey, value in list(config.AUTHENTICATION.items()):
-        authn = None
-        # if "UserPassword" == authkey:
-        #     from oic.utils.authn.user import UsernamePasswordMako
-        #     authn = UsernamePasswordMako(None, "login.mako", LOOKUP, PASSWD,
-        #                                  "authorization")
-
-        if "NoAuthn" == authkey:
-            from oic.utils.authn.user import NoAuthn
-
-            authn = NoAuthn(None, user=config.AUTHENTICATION[authkey]["user"])
-
-        if authn is not None:
-            ac.add(config.AUTHENTICATION[authkey]["ACR"], authn,
-                   config.AUTHENTICATION[authkey]["WEIGHT"])
-
-    # dealing with authorization
-    authz = AuthzHandling()
-
-    if config.USERINFO == "SIMPLE":
-        # User info is a simple dictionary in this case statically defined in
-        # the configuration file
-        userinfo = UserInfo(config.USERDB)
-    else:
-        userinfo = None
-
     com_args = {
         "name": config.issuer,
         "baseurl": _baseurl,
-        "cdb": cdb,
-        "authn_broker": ac,
-        "userinfo": userinfo,
-        "authz": authz,
         "client_authn": verify_client,
         "symkey": config.SYM_KEY,
         "template_lookup": lookup,
         "template": {"form_post": "form_response.mako"},
         "jwks_name": "./static/jwks_{}.json"
     }
+
+    # Client data base
+    try:
+        com_args['cdb'] = shelve.open(config.CLIENT_DB, writeback=True)
+    except AttributeError:
+        pass
+
+    try:
+        _auth = config.AUTHENTICATION
+    except AttributeError:
+        pass
+    else:
+        ab = AuthnBroker()
+
+        for authkey, value in list(_auth.items()):
+            authn = None
+
+            if "NoAuthn" == authkey:
+                from oic.utils.authn.user import NoAuthn
+
+                authn = NoAuthn(None, user=_auth[authkey]["user"])
+
+            if authn is not None:
+                ab.add(_auth[authkey]["ACR"], authn, _auth[authkey]["WEIGHT"])
+
+        com_args['authn_broker'] = ab
+
+        # dealing with authorization
+        com_args['authz'] = AuthzHandling()
+
+    try:
+        if config.USERINFO == "SIMPLE":
+            # User info is a simple dictionary in this case statically defined in
+            # the configuration file
+            com_args['userinfo'] = UserInfo(config.USERDB)
+        else:
+            com_args['userinfo'] = None
+    except AttributeError:
+        pass
 
     # Should I care about verifying the certificates used by other entities
     if args.insecure:
@@ -164,53 +165,58 @@ def cb_setup(args, lookup=None):
     if not _baseurl.endswith("/"):
         _baseurl += "/"
 
-    #config.issuer = config.issuer % args.port
-    #config.SERVICE_URL = config.SERVICE_URL % args.port
-
-    # Client data base
-    cdb = shelve.open(config.CLIENT_DB, writeback=True)
-
-    ac = AuthnBroker()
-
-    for authkey, value in list(config.AUTHENTICATION.items()):
-        authn = None
-        # if "UserPassword" == authkey:
-        #     from oic.utils.authn.user import UsernamePasswordMako
-        #     authn = UsernamePasswordMako(None, "login.mako", LOOKUP, PASSWD,
-        #                                  "authorization")
-
-        if "NoAuthn" == authkey:
-            from oic.utils.authn.user import NoAuthn
-
-            authn = NoAuthn(None, user=config.AUTHENTICATION[authkey]["user"])
-
-        if authn is not None:
-            ac.add(config.AUTHENTICATION[authkey]["ACR"], authn,
-                   config.AUTHENTICATION[authkey]["WEIGHT"])
-
-    # dealing with authorization
-    authz = AuthzHandling()
-
-    if config.USERINFO == "SIMPLE":
-        # User info is a simple dictionary in this case statically defined in
-        # the configuration file
-        userinfo = UserInfo(config.USERDB)
-    else:
-        userinfo = None
-
     com_args = {
         "name": config.issuer,
         "baseurl": _baseurl,
-        "cdb": cdb,
-        "authn_broker": ac,
-        "userinfo": userinfo,
-        "authz": authz,
         "client_authn": verify_client,
-        "symkey": config.SYM_KEY,
         "template_lookup": lookup,
         "template": {"form_post": "form_response.mako"},
         "jwks_name": "./static/jwks_{}.json"
     }
+
+    try:
+        com_args["symkey"] = config.SYM_KEY,
+    except AttributeError:
+        pass
+
+    # Client data base
+    try:
+        com_args['cdb'] = shelve.open(config.CLIENT_DB, writeback=True)
+    except AttributeError:
+        pass
+
+    try:
+        _auth = config.AUTHENTICATION
+    except AttributeError:
+        pass
+    else:
+        ab = AuthnBroker()
+
+        for authkey, value in list(_auth.items()):
+            authn = None
+
+            if "NoAuthn" == authkey:
+                from oic.utils.authn.user import NoAuthn
+
+                authn = NoAuthn(None, user=_auth[authkey]["user"])
+
+            if authn is not None:
+                ab.add(_auth[authkey]["ACR"], authn, _auth[authkey]["WEIGHT"])
+
+        com_args['authn_broker'] = ab
+
+        # dealing with authorization
+        com_args['authz'] = AuthzHandling()
+
+    try:
+        if config.USERINFO == "SIMPLE":
+            # User info is a simple dictionary in this case statically defined in
+            # the configuration file
+            com_args['userinfo'] = UserInfo(config.USERDB)
+        else:
+            com_args['userinfo'] = None
+    except AttributeError:
+        pass
 
     # Should I care about verifying the certificates used by other entities
     if args.insecure:

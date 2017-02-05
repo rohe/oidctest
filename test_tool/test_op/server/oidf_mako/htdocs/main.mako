@@ -3,7 +3,7 @@
 <html>
 <head>
   <title>OpenID Connect Provider Certification</title>
-  <link rel="stylesheet" type="text/css" href="${base}/static/theme.css">
+  <link rel="stylesheet" type="text/css" href="/static/theme.css">
 </head>
 <p>
   <div class="inp">

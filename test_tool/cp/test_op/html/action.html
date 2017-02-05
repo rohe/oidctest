@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Test tool instance</title>
+    <link rel="stylesheet" type="text/css" href="/static/theme.css">
+</head>
+<body>
+<h1>What do you want to do with this test tool instance?</h1>
+<p>
+    {display_info}
+</p>
+<p>
+    {active}
+</p>
+<p>
+<form action="{path}/action" method="get">
+    <table>
+        <tr>
+            <td>
+                <button name="action" type="submit" value="delete" class="button">delete</button>
+            </td>
+            <td>
+                <button name="action" type="submit" value="restart" class="button">restart</button>
+            </td>
+            <td>
+                <button name="action" type="submit" value="configure" class="button">reconfigure</button>
+            </td>
+        </tr>
+    </table>
+</form>
+</p>
+</body>
+</html>

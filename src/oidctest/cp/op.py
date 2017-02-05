@@ -6,6 +6,7 @@ from future.backports.urllib.parse import urlparse
 
 from jwkest import as_bytes
 from jwkest import as_unicode
+
 from oic.oauth2 import Message
 
 from otest.events import Events
@@ -17,8 +18,7 @@ from otest.events import Operation
 from otest.flow import ABBR
 
 from oidctest.cp import write_events
-
-from src.oidctest.cp import init_events
+from oidctest.cp import init_events
 
 logger = logging.getLogger(__name__)
 

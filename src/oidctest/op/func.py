@@ -295,8 +295,8 @@ def conditional_expect(oper, args):
 
 def conditional_execution(oper, arg):
     for key, val in arg.items():
-        if key == 'return_type':
-            if get_return_type(oper.profile) not in val:
+        if key == 'profile':
+            if oper.profile[0] not in val.split(','):
                 oper.skip = True
                 return
 
