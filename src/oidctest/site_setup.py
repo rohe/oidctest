@@ -94,7 +94,7 @@ def oidc_cp_rplib_setup(distroot):
         if os.path.isdir(_dir) is False:
             os.mkdir(_dir)
 
-    _op_dir = os.path.join(distroot, 'rp')
+    _op_dir = os.path.join(distroot, 'test_tool', 'cp', 'test_rplib', 'rp')
     for _dir in ['static', 'flows']:
         _src = os.path.join(_op_dir, _dir)
         if os.path.isdir(_dir):
