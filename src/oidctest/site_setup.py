@@ -90,11 +90,11 @@ def oidc_rpinst_setup(distroot):
 
 
 def oidc_cp_rplib_setup(distroot):
-    _op_dir = os.path.join(distroot, 'rp')
     for _dir in ['certs', 'keys', 'log']:
-        if os.path.isdir(_op_dir) is False:
+        if os.path.isdir(_dir) is False:
             os.mkdir(_dir)
 
+    _op_dir = os.path.join(distroot, 'rp')
     for _dir in ['static', 'flows']:
         _src = os.path.join(_op_dir, _dir)
         if os.path.isdir(_dir):
