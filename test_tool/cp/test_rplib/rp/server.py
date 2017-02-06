@@ -80,7 +80,7 @@ if __name__ == '__main__':
     provider_config = {
         '/': {
             'root_path': 'localhost',
-            'log.screen': True,
+            'log.screen': True
         },
         '/static': {
             'tools.staticdir.dir': os.path.join(folder, 'static'),
@@ -90,7 +90,8 @@ if __name__ == '__main__':
         }}
 
     # WebFinger
-    webfinger_config = {'/': {'base_url': _op_arg['baseurl']}}
+    webfinger_config = {
+        '/': {'base_url': _op_arg['baseurl']}}
     cherrypy.tree.mount(WebFinger(webfinger.WebFinger()),
                         '/.well-known/webfinger', webfinger_config)
 

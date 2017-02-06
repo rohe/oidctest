@@ -130,8 +130,11 @@ class Configuration(object):
     def index(self, op):
         if cherrypy.request.method == "OPTIONS":
             logger.debug('Request headers: {}'.format(cherrypy.request.headers))
-            cherrypy_cors.preflight(allowed_methods=["GET"], origins=['*'],
-                                    allowed_headers=['Authorization'])
+            cherrypy_cors.preflight(
+                allowed_methods=["GET"],
+                allowed_headers=['Authorization', 'content-type'],
+                allow_credentials=True, origins='*'
+            )
         else:
             store_request(op, 'ProviderInfo')
             resp = op.providerinfo_endpoint()
@@ -148,8 +151,9 @@ class Registration(object):
     def index(self, op):
         if cherrypy.request.method == "OPTIONS":
             logger.debug('Request headers: {}'.format(cherrypy.request.headers))
-            cherrypy_cors.preflight(allowed_methods=["POST"], origins=['*'],
-                                    allowed_headers=['Authorization'])
+            cherrypy_cors.preflight(
+                allowed_methods=["POST"], origins='*',
+                allowed_headers=['Authorization', 'content-type'])
         else:
             store_request(op, 'ClientRegistration')
             if cherrypy.request.process_request_body is True:
@@ -164,13 +168,14 @@ class Registration(object):
 
 class Authorization(object):
     @cherrypy.expose
+    @cherrypy_cors.tools.expose_public()
     @cherrypy.tools.allow(
         methods=["GET", "OPTIONS"])
     def index(self, op, **kwargs):
         if cherrypy.request.method == "OPTIONS":
             cherrypy_cors.preflight(
                 allowed_methods=["GET"], origins='*',
-                allowed_headers='Authorization')
+                allowed_headers=['Authorization', 'content-type'])
         else:
             store_request(op, 'AuthorizationRequest')
             resp = op.authorization_endpoint(kwargs)
@@ -181,13 +186,14 @@ class Token(object):
     _cp_config = {"request.methods_with_bodies": ("POST", "PUT")}
 
     @cherrypy.expose
+    @cherrypy_cors.tools.expose_public()
     @cherrypy.tools.allow(
         methods=["POST", "OPTIONS"])
     def index(self, op, **kwargs):
         if cherrypy.request.method == "OPTIONS":
             cherrypy_cors.preflight(
                 allowed_methods=["POST"], origins='*',
-                allowed_headers='Authorization')
+                allowed_headers=['Authorization', 'content-type'])
         else:
             store_request(op, 'AccessTokenRequest')
             try:
@@ -201,13 +207,14 @@ class Token(object):
 
 class UserInfo(object):
     @cherrypy.expose
+    @cherrypy_cors.tools.expose_public()
     @cherrypy.tools.allow(
         methods=["GET", "POST", "OPTIONS"])
     def index(self, op, **kwargs):
         if cherrypy.request.method == "OPTIONS":
             cherrypy_cors.preflight(
                 allowed_methods=["GET", "POST"], origins='*',
-                allowed_headers='Authorization')
+                allowed_headers=['Authorization', 'content-type'])
         else:
             store_request(op, 'UserinfoRequest')
             if cherrypy.request.process_request_body is True:

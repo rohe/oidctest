@@ -11,7 +11,6 @@ from jwkest import as_bytes
 from oic.oauth2.provider import error_response
 
 from oic.utils.http_util import BadRequest
-from oic.utils.http_util import CORS_HEADERS
 from oic.utils.http_util import extract_from_request
 from oic.utils.http_util import NotFound
 from oic.utils.http_util import Response
@@ -45,11 +44,7 @@ logger = logging.getLogger(__name__)
 
 HEADER = "---------- %s ----------"
 
-def do_response(cls, *args, **kwargs):
-    resp = cls(*args, **kwargs)
-    resp.headers.extend(CORS_HEADERS)
-    return resp
-
+CORS_HEADERS = []
 
 def dump_log(session_info, events):
     try:
