@@ -3,6 +3,8 @@ import os
 
 import cherrypy
 import logging
+
+import cherrypy_cors
 from oic.utils import webfinger
 
 from oidctest.cp import dump_log
@@ -28,6 +30,8 @@ base_formatter = logging.Formatter(
 hdlr.setFormatter(base_formatter)
 logger.addHandler(hdlr)
 logger.setLevel(logging.DEBUG)
+
+cherrypy_cors.install()
 
 
 def named_kc(config, iss):
