@@ -49,7 +49,9 @@ class OPHandler(object):
             _op = self.op[key]
             _op.events = events
             if endpoint == '.well-known/openid-configuration':
-                if test_id == 'rp-id_token-kid-absent-multiple-jwks':
+                if test_id == 'rp-key-rotation-op-sign-key-native':
+                    pass
+                elif test_id == 'rp-id_token-kid-absent-multiple-jwks':
                     setattr(_op, 'keys', self.op_args['marg']['keys'])
                     _op_args = {
                         'baseurl': self.op_args['baseurl'],

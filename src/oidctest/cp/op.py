@@ -10,6 +10,7 @@ from jwkest import as_bytes
 from jwkest import as_unicode
 
 from oic.oauth2 import Message
+from oidctest.cp.op_handler import init_keyjar, write_jwks_uri
 
 from otest.events import Events
 from otest.events import EV_FAULT
@@ -83,7 +84,7 @@ class WebFinger(object):
 
         if rel != 'http://openid.net/specs/connect/1.0/issuer':
             ev.store(EV_FAULT,
-                     FailedOperation('Webfinger', error='unknown rel',rel=rel))
+                     FailedOperation('Webfinger', error='unknown rel', rel=rel))
             try:
                 op_id, test_id = parse_resource(resource)
             except (ValueError, TypeError):
@@ -127,8 +128,8 @@ class Configuration(object):
         methods=["GET", "OPTIONS"])
     def index(self, op):
         if cherrypy.request.method == "OPTIONS":
-            cherrypy_cors.preflight(
-                allowed_methods=["GET"])
+            cherrypy_cors.preflight(allowed_methods=["GET"], origins='*',
+                                    allowed_headers='Authorization')
         else:
             store_request(op, 'ProviderInfo')
             resp = op.providerinfo_endpoint()
@@ -144,13 +145,15 @@ class Registration(object):
     def index(self, op):
         if cherrypy.request.method == "OPTIONS":
             cherrypy_cors.preflight(
-                allowed_methods=["POST"])
+                allowed_methods=["POST"], origins='*',
+                allowed_headers='Authorization')
         else:
             store_request(op, 'ClientRegistration')
             if cherrypy.request.process_request_body is True:
                 _request = cherrypy.request.body.read()
             else:
-                raise cherrypy.HTTPError(400, 'Missing Client registration body')
+                raise cherrypy.HTTPError(400,
+                                         'Missing Client registration body')
             logger.debug('request_body: {}'.format(_request))
             resp = op.registration_endpoint(as_unicode(_request))
             return conv_response(op, resp)
@@ -163,7 +166,8 @@ class Authorization(object):
     def index(self, op, **kwargs):
         if cherrypy.request.method == "OPTIONS":
             cherrypy_cors.preflight(
-                allowed_methods=["GET"])
+                allowed_methods=["GET"], origins='*',
+                allowed_headers='Authorization')
         else:
             store_request(op, 'AuthorizationRequest')
             resp = op.authorization_endpoint(kwargs)
@@ -179,7 +183,8 @@ class Token(object):
     def index(self, op, **kwargs):
         if cherrypy.request.method == "OPTIONS":
             cherrypy_cors.preflight(
-                allowed_methods=["POST"])
+                allowed_methods=["POST"], origins='*',
+                allowed_headers='Authorization')
         else:
             store_request(op, 'AccessTokenRequest')
             try:
@@ -198,7 +203,8 @@ class UserInfo(object):
     def index(self, op, **kwargs):
         if cherrypy.request.method == "OPTIONS":
             cherrypy_cors.preflight(
-                allowed_methods=["GET", "POST"])
+                allowed_methods=["GET", "POST"], origins='*',
+                allowed_headers='Authorization')
         else:
             store_request(op, 'UserinfoRequest')
             if cherrypy.request.process_request_body is True:
@@ -218,30 +224,35 @@ class UserInfo(object):
 class Claims(object):
     @cherrypy.expose
     def index(self, op, **kwargs):
-        try:
-            authz = cherrypy.request.headers['Authorization']
-        except KeyError:
-            authz = None
-        try:
-            assert authz.startswith("Bearer")
-        except AssertionError:
-            op.events.store(EV_FAULT, "Bad authorization token")
-            cherrypy.HTTPError(400, "Bad authorization token")
-
-        tok = authz[7:]
-        try:
-            _claims = op.claim_access_token[tok]
-        except KeyError:
-            op.events.store(EV_FAULT, "Bad authorization token")
-            cherrypy.HTTPError(400, "Bad authorization token")
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["GET"], origins='*',
+                allowed_headers='Authorization')
         else:
-            # one time token
-            del op.claim_access_token[tok]
-            _info = Message(**_claims)
-            jwt_key = op.keyjar.get_signing_key()
-            op.events.store(EV_RESPONSE, _info.to_dict())
-            cherrypy.response.headers["content-type"] = 'application/jwt'
-            return as_bytes(_info.to_jwt(key=jwt_key, algorithm="RS256"))
+            try:
+                authz = cherrypy.request.headers['Authorization']
+            except KeyError:
+                authz = None
+            try:
+                assert authz.startswith("Bearer")
+            except AssertionError:
+                op.events.store(EV_FAULT, "Bad authorization token")
+                cherrypy.HTTPError(400, "Bad authorization token")
+
+            tok = authz[7:]
+            try:
+                _claims = op.claim_access_token[tok]
+            except KeyError:
+                op.events.store(EV_FAULT, "Bad authorization token")
+                cherrypy.HTTPError(400, "Bad authorization token")
+            else:
+                # one time token
+                del op.claim_access_token[tok]
+                _info = Message(**_claims)
+                jwt_key = op.keyjar.get_signing_key()
+                op.events.store(EV_RESPONSE, _info.to_dict())
+                cherrypy.response.headers["content-type"] = 'application/jwt'
+                return as_bytes(_info.to_jwt(key=jwt_key, algorithm="RS256"))
 
 
 PRE_HTML = """<html>
@@ -268,6 +279,18 @@ def choice(profiles):
         line.append('</td></tr>')
     line.append('</table>')
     return '\n'.join(line)
+
+
+class Reset(object):
+    def __init__(self, com_args, op_args):
+        self.com_args = com_args
+        self.op_args = op_args
+
+    @cherrypy.expose
+    def index(self, op):
+        init_keyjar(op, self.op_args['keyjar'], self.com_args)
+        write_jwks_uri(op, self.op_args)
+        return b'OK'
 
 
 class Root(object):
@@ -302,6 +325,7 @@ class Provider(Root):
         self.token = Token()
         self.userinfo = UserInfo()
         self.claims = Claims()
+        self.reset = Reset(self.op_handler.com_args, self.op_handler.op_args)
 
     def _cp_dispatch(self, vpath):
         # Only get here if vpath != None
@@ -337,6 +361,8 @@ class Provider(Root):
                         return self.userinfo
                     elif endpoint == 'claim':
                         return self.claims
+                    elif endpoint == 'reset':
+                        return self.reset
                     else:  # Shouldn't be any other
                         raise cherrypy.NotFound()
                 if len(vpath) == 2:
