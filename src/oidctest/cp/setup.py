@@ -175,7 +175,7 @@ def cb_setup(args, lookup=None):
     }
 
     try:
-        com_args["symkey"] = config.SYM_KEY,
+        com_args["symkey"] = config.SYM_KEY
     except AttributeError:
         pass
 
