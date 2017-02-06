@@ -129,6 +129,7 @@ class Configuration(object):
         methods=["GET", "OPTIONS"])
     def index(self, op):
         if cherrypy.request.method == "OPTIONS":
+            logger.debug('Request headers: {}'.format(cherrypy.request.headers))
             cherrypy_cors.preflight(allowed_methods=["GET"], origins=['*'],
                                     allowed_headers=['Authorization'])
         else:
@@ -147,9 +148,8 @@ class Registration(object):
     def index(self, op):
         if cherrypy.request.method == "OPTIONS":
             logger.debug('Request headers: {}'.format(cherrypy.request.headers))
-            cherrypy_cors.preflight(
-                allowed_methods=["POST"], origins=['*'],
-                allowed_headers=['Authorization'])
+            cherrypy_cors.preflight(allowed_methods=["POST"], origins=['*'],
+                                    allowed_headers=['Authorization'])
         else:
             store_request(op, 'ClientRegistration')
             if cherrypy.request.process_request_body is True:
