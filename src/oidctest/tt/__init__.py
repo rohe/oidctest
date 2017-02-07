@@ -12,6 +12,9 @@ from otest.events import EV_RESPONSE
 logger = logging.getLogger(__name__)
 
 
+BUT = '<button name="action" type="submit" value="{}" class="choice">{}</button>'
+
+
 def conv_response(events, resp):
     _stat = int(resp._status.split(' ')[0])
     #  if self.mako_lookup and self.mako_template:
@@ -64,7 +67,13 @@ class FileSystem(object):
         if os.path.isfile(fname):
             mtime = self.get_mtime(fname)
 
-            if mtime > self.fmtime[item]:  # has changed
+            try:
+                _ftime = self.fmtime[item]
+            except KeyError: # Never been seen before
+                self.fmtime[item] = mtime
+                return True
+
+            if mtime > _ftime:  # has changed
                 self.fmtime[item] = mtime
                 return True
             else:

@@ -6,11 +6,14 @@ import cherrypy
 import logging
 
 from oidctest.cp import dump_log
-from oidctest.cp.setup import cb_setup
 
 from oidctest.tt import FileSystem
+from oidctest.tt.action import Action
+from oidctest.tt.app import Application
 from oidctest.tt.instance import Instance
 from oidctest.tt.rest import REST
+
+from oidctest.tt.entity import Entity
 
 logger = logging.getLogger("")
 LOGFILE_NAME = 'op_test.log'
@@ -41,6 +44,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     _conf = importlib.import_module(args.config)
+    _ttc = importlib.import_module(args.test_tool_conf)
+
     folder = os.path.abspath(os.curdir)
 
     _html = FileSystem(args.htmldir)
@@ -88,6 +93,13 @@ if __name__ == '__main__':
 
     rest = REST(_base_url)
 
+    cherrypy.tree.mount(
+        Entity(_conf.ENT_PATH, _html), '/entity')
+    cherrypy.tree.mount(
+        Action(rest, _ttc, _html, _conf.ENT_PATH,
+               Application(_conf.TEST_SCRIPT, _conf.FLOWDIR, rest, 10000, 11000,
+                           _ttc.BASE, args.test_tool_conf, args.htmldir)),
+        '/action')
     # Main
     test_tool_conf = args.test_tool_conf
     cherrypy.tree.mount(
