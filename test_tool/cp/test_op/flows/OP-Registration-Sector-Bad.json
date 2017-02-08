@@ -1,0 +1,42 @@
+{
+  "group": "Dynamic Client Registration",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    {
+      "Registration": {
+        "check_support": {
+          "ERROR": {
+            "subject_types_supported": "pairwise"
+          }
+        },
+        "store_sector_redirect_uris": {
+          "other_uris": [
+            "https://example.com/op"
+          ]
+        }
+      }
+    }
+  ],
+  "usage": {
+    "discover": "T"
+  },
+  "desc": "Incorrect registration of sector_identifier_uri",
+  "assert": {
+    "verify-bad-request-response": null,
+    "verify-error-response": {
+      "error": [
+        "invalid_configuration_parameter",
+        "invalid_client_metadata"
+      ]
+    }
+  }
+}

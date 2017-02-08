@@ -1,0 +1,11 @@
+{
+  "tool": {
+    "tag": "default",
+    "profile": "C.T.T.T",
+    "issuer": "https://localhost:8040/",
+    "sig": false,
+    "enc": false,
+    "extra": false,
+    "insecure": false
+  }
+}

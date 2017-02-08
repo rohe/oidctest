@@ -1,0 +1,43 @@
+{
+  "group": "Misc Request Parameters",
+  "usage": {},
+  "desc": "Using prompt=none with user hint through id_token_hint",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null
+      }
+    },
+    "AccessToken",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null,
+        "set_request_args": {
+          "prompt": "none"
+        },
+        "id_token_hint": null
+      }
+    },
+    "AccessToken"
+  ],
+  "assert": {
+    "same-authn": null,
+    "verify-response": {
+      "response_cls": [
+        "AuthorizationResponse",
+        "AccessTokenResponse"
+      ]
+    }
+  }
+}

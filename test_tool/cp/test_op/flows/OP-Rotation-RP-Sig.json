@@ -1,0 +1,63 @@
+{
+  "group": "Key Rotation",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    {
+      "Registration": {
+        "set_request_args": {
+          "token_endpoint_auth_method": "private_key_jwt"
+        },
+        "check_support": {
+          "ERROR": {
+            "token_endpoint_auth_methods_supported": "private_key_jwt"
+          }
+        }
+      }
+    },
+    {
+      "AsyncAuthn": {
+        "set_response_where": null
+      }
+    },
+    {
+      "AccessToken": {
+        "set_op_args": {
+          "authn_method": "private_key_jwt"
+        }
+      }
+    },
+    "RotateSigKeys",
+    {
+      "RefreshAccessToken": {
+        "set_op_args": {
+          "authn_method": "private_key_jwt"
+        }
+      }
+    }
+  ],
+  "usage": {
+    "crypto": {
+      "sign": "T"
+    },
+    "return_type": [
+      "C",
+      "CI",
+      "CT",
+      "CIT"
+    ],
+    "register": "T"
+  },
+  "desc": "Request access token, change RSA signing key and request another access token",
+  "assert": {
+    "check-http-response": null
+  }
+}

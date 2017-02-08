@@ -1,0 +1,50 @@
+{
+  "group": "redirect_uri Request Parameter",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    {
+      "Registration": {
+        "redirect_uris_with_query_component": {
+          "foo": "bar"
+        }
+      }
+    },
+    "Note",
+    {
+      "AsyncAuthn": {
+        "redirect_uris_with_query_component": {
+          "bar": "foo"
+        },
+        "set_response_where": null
+      }
+    }
+  ],
+  "usage": {
+    "register": "T"
+  },
+  "desc": "Rejects redirect_uri when query parameter does not match what is registed",
+  "reference": "http://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-3.1.2",
+  "note": "This test should result in the OpenID Provider displaying an error message in your user agent. You should ignore the status of this test in the test tool, since it will be incomplete. You must submit a screen shot of the error shown as part of your certification application.",
+  "assert": {
+    "verify-response": {
+      "response_cls": [
+        "ErrorResponse"
+      ],
+      "error": [
+        "access_denied"
+      ]
+    }
+  },
+  "MTI": [
+    "DYN"
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "group": "claims Request Parameter",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null,
+        "set_request_args": {
+          "claims": {
+            "userinfo": {
+              "name": {
+                "essential": true
+              }
+            }
+          }
+        }
+      }
+    },
+    "AccessToken",
+    {
+      "UserInfo": {
+        "set_op_args": {
+          "method": "GET",
+          "authn_method": "bearer_header"
+        }
+      }
+    }
+  ],
+  "usage": {
+    "return_type": [
+      "C",
+      "I",
+      "IT",
+      "CI",
+      "CT",
+      "CIT"
+    ]
+  },
+  "desc": "Claims request with essential name claim",
+  "assert": {
+    "verify-claims": {
+      "userinfo": {
+        "name": null
+      }
+    },
+    "check-http-response": null
+  }
+}
