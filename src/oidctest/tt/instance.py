@@ -25,7 +25,6 @@ class Instance(object):
     def new(self):
         return self.html['new_iss.html']
 
-
     @cherrypy.expose
     def index(self):
         return as_bytes(self.html['main.html'])

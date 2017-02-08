@@ -110,7 +110,8 @@ class REST(object):
                     qiss += '%2F'
                 fname = self.entity_file_name(qiss, qtag)
                 if not os.path.isfile(fname):
-                    return self.list_dir(fname, qiss)
+                    raise NoSuchFile(fname)
+                    #return self.list_dir(fname, qiss)
 
             try:
                 _data = open(fname, 'r').read()
