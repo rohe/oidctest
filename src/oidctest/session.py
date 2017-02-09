@@ -26,6 +26,12 @@ class Node(object):
 
 
 class SessionHandler(session.SessionHandler):
+    def __init__(self, iss, tag, profile='', flows=None, order=None, **kwargs):
+        session.SessionHandler.__init__(self, profile=profile, flows=flows,
+                                        order=order, **kwargs)
+        self.iss = iss
+        self.tag = tag
+
     def session_setup(self, path="", flow=None, index=0):
         logger.info("session_setup")
 

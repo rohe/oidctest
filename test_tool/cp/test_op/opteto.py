@@ -14,14 +14,13 @@ from oic.oic.message import factory as oic_message_factory
 from otest.aus.client import Factory
 from otest.aus.handling_ph import WebIh
 from otest.conf_setup import construct_app_args
-from otest.flow import Flow
-from otest.prof_util import SimpleProfileHandler
 from otest.utils import SERVER_LOG_FOLDER
 from otest.utils import setup_logging
 
 from oidctest.tool import WebTester
 from oidctest.cp import dump_log
-from oidctest.cp.log_handler import Log
+from oidctest.cp.log_handler import OPLog
+from oidctest.cp.log_handler import OPTar
 from oidctest.op import oper
 from oidctest.op import func
 from oidctest.op import profiles
@@ -31,7 +30,6 @@ from oidctest.prof_util import ProfileHandler
 from oidctest.session import SessionHandler
 from oidctest.tt import FileSystem
 from oidctest.tt.rest import REST
-
 
 logger = logging.getLogger("")
 LOGFILE_NAME = 'op_test.log'
@@ -163,20 +161,29 @@ if __name__ == '__main__':
     _html = FileSystem(args.htmldir)
     _html.get_files_from_dir()
 
-    flows = Flow(args.flowdir, profile_handler=SimpleProfileHandler)
     rest = REST('')
     webenv = make_webenv(_conf, rest)
 
-    session_handler = SessionHandler(**webenv)
+    session_handler = SessionHandler(args.issuer, args.tag,
+                                     flows = webenv['flow_state'],
+                                     **webenv)
+    session_handler.iss = args.issuer
+    session_handler.tag = args.tag
     info = WebIh(session=session_handler, pre_html=_html, **webenv)
-    tester = WebTester(info, session_handler, **webenv)
+    tester = WebTester(info, session_handler, flows=webenv['flow_state'],
+                       **webenv)
 
-    cherrypy.tree.mount(Log('log'), '/log')
-    cherrypy.tree.mount(Main(tester, flows, webenv, pick_grp), '/',
-                        provider_config)
+    log_root = 'log'
+    cherrypy.tree.mount(OPTar(log_root, 'tar', 'backup'), '/mktar')
+    cherrypy.tree.mount(OPLog(log_root, _html), '/log')
+
+    cherrypy.tree.mount(
+        Main(tester, webenv['flow_state'], webenv, pick_grp), '/',
+        provider_config)
 
     # If HTTPS
     if args.tls:
+        cherrypy.config.update({'cherrypy.server.ssl_module': 'builtin'})
         cherrypy.server.ssl_certificate = _conf.SERVER_CERT
         cherrypy.server.ssl_private_key = _conf.SERVER_KEY
         if _conf.CA_BUNDLE:

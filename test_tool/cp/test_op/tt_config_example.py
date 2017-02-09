@@ -2,12 +2,9 @@ import os
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
-TLS = False
-
-# Only if TLS = True
 # SERVER_CERT = "certs/cert.pem"
 # SERVER_KEY = "certs/key.pem"
-# CERT_CHAIN = None
+# CA_BUNDLE = None
 
 # Make sure BASE starts with https if TLS = True
 BASE = 'http://localhost'

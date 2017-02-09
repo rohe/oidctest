@@ -32,6 +32,8 @@ class Main(object):
                     cherrypy.HTTPRedirect(_url)
                 except KeyError:
                     return as_bytes(self.info.flow_list())
+        except cherrypy.HTTPRedirect:
+            raise
         except Exception as err:
             exception_trace("display_test_list", err)
             cherrypy.HTTPError(message=err)
@@ -47,7 +49,7 @@ class Main(object):
                 return self.run
         elif len(vpath) == 2:
             if vpath[0] == 'test_info':
-                cherrypy.request.params['op_id'] = vpath[1]
+                cherrypy.request.params['test_id'] = vpath[1]
                 return self.test_info
 
     @cherrypy.expose
@@ -67,7 +69,7 @@ class Main(object):
                     self.pick_grp(self.sh['conv'].test_id))
 
             raise HTTPRedirect(_url, 303)
-        except Exception as err:
+        except KeyError as err:
             logger.error(err)
             raise CherryPyException(err)
 
@@ -88,11 +90,11 @@ class Main(object):
         return as_bytes(self.tester.set_profile(kwargs))
 
     @cherrypy.expose
-    def test_info(self, op_id):
+    def test_info(self, test_id):
         try:
-            return as_bytes(self.info.test_info(op_id))
+            return as_bytes(self.info.test_info(test_id))
         except KeyError:
-            return as_bytes(self.info.not_found())
+            raise cherrypy.HTTPError(404, test_id)
 
     @cherrypy.expose
     def next(self):
@@ -105,6 +107,7 @@ class Main(object):
                                          self.pick_grp(self.sh['conv'].test_id))
             HTTPRedirect(_url)
 
+    @cherrypy.expose
     def display(self):
         return as_bytes(self.info.flow_list())
 
