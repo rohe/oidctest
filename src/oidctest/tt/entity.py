@@ -5,6 +5,8 @@ from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
 
 import logging
+
+import time
 from jwkest import as_bytes
 
 from otest.proc import find_test_instance
@@ -14,6 +16,12 @@ from oidctest.tt import BUT
 from oidctest.cp import init_events
 
 logger = logging.getLogger(__name__)
+
+
+def unquote_quote(*part):
+    uqp = [unquote_plus(p) for p in part]
+    qp = [quote_plus(p) for p in uqp]
+    return uqp, qp
 
 
 def iss_table(base, issuers):
@@ -51,9 +59,11 @@ def item_table(qiss, items, active):
 
 
 class Entity(object):
-    def __init__(self, entpath, prehtml):
+    def __init__(self, entpath, prehtml, rest, backuppath='backup'):
         self.entpath = entpath
         self.prehtml = prehtml
+        self.rest = rest
+        self.backup = backuppath
 
     @cherrypy.expose
     def index(self):
@@ -67,8 +77,9 @@ class Entity(object):
 
     @cherrypy.expose
     def list_tag(self, iiss):
-        iss = unquote_plus(iiss)
-        qiss = quote_plus(iss)
+        uqp, qp = unquote_quote(iiss)
+        iss = uqp[0]
+        qiss = qp[0]
         fils = os.listdir(os.path.join(self.entpath, qiss))
 
         active = dict([(fil, isrunning(iss, fil)) for fil in fils])
@@ -79,8 +90,7 @@ class Entity(object):
 
     @cherrypy.expose
     def show_tag(self, iiss, itag):
-        uqp = [unquote_plus(p) for p in [iiss, itag]]
-        qp = [quote_plus(p) for p in uqp]
+        uqp, qp = unquote_quote(iiss, itag)
 
         if find_test_instance(*uqp):
             active = '<div class="active"> Running </div>'
@@ -108,3 +118,36 @@ class Entity(object):
             else:
                 return self.list_tag
 
+    @cherrypy.expose
+    def backup(self, iiss, itag):
+        uqp, qp = unquote_quote(iiss, itag)
+
+        info = open(os.path.join(self.entpath, *qp), 'r').read()
+        bname = '{}.{}.{}'.format(qp[0], qp[1], time.time())
+        fp = open(os.path.join(self.backup, bname), 'w')
+        fp.write(info)
+        fp.close()
+        return ''
+
+    @cherrypy.expose
+    def restore(self, iiss, itag):
+        uqp, qp = unquote_quote(iiss, itag)
+        bname = '{}.{}'.format(qp[0], qp[1])
+        last = 0.0
+        last_backup = None
+        for item in os.listdir(self.backup):
+            if item.startswith("."):
+                continue
+            if not itag.startswith(bname):
+                continue
+
+            # Should be 3 parts, only interested in the last
+            p = item.split('.')[-1]
+            if float(p) > last:
+                last = float(p)
+                last_backup = item
+
+        if last_backup:
+            fn = os.path.join(self.backup, last_backup)
+            info = open(fn, 'r').read()
+            return self.rest.store(qp[0], qp[1], info)

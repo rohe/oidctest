@@ -47,7 +47,7 @@
             "invalid_grant",
             "access_denied"
           ],
-          "stop": false
+          "stop": true
         }
       }
     },
@@ -55,7 +55,8 @@
       "UserInfo": {
         "set_expect_error": {
           "error": [
-            "access_denied"
+            "access_denied",
+            "invalid_token"
           ],
           "stop": false
         },

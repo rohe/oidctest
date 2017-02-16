@@ -5,6 +5,7 @@ import time
 
 import logging
 from jwkest import as_bytes
+from oic.utils.http_util import Response
 from otest.events import EV_FAULT
 from otest.events import EV_RESPONSE
 
@@ -16,11 +17,11 @@ BUT = '<button name="action" type="submit" value="{}" class="choice">{}</button>
 
 
 def conv_response(events, resp):
+    if not isinstance(resp, Response):
+        return resp
+
     _stat = int(resp._status.split(' ')[0])
-    #  if self.mako_lookup and self.mako_template:
-    #    argv["message"] = message
-    #    mte = self.mako_lookup.get_template(self.mako_template)
-    #    return [mte.render(**argv)]
+
     if _stat < 300:
         events.store(EV_RESPONSE, resp.message)
         for key, val in resp.headers:

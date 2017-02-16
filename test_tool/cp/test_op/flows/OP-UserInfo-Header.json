@@ -22,7 +22,7 @@
       "UserInfo": {
         "set_op_args": {
           "method": "POST",
-          "authn_method": "bearer_header"
+          "behavior": "use_authorization_header"
         }
       }
     }
@@ -36,7 +36,7 @@
       "CIT"
     ]
   },
-  "desc": "UserInfo Endpoint access with POST and bearer header]",
+  "desc": "UserInfo Endpoint access with POST and bearer header",
   "assert": {
     "verify-response": {
       "response_cls": [

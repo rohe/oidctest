@@ -94,7 +94,7 @@ if __name__ == '__main__':
     rest = REST(_base_url)
 
     cherrypy.tree.mount(
-        Entity(_conf.ENT_PATH, _html), '/entity')
+        Entity(_conf.ENT_PATH, _html, rest), '/entity')
     cherrypy.tree.mount(
         Action(rest, _ttc, _html, _conf.ENT_PATH,
                Application(_conf.TEST_SCRIPT, _conf.FLOWDIR, rest, 10000, 11000,

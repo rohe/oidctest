@@ -259,6 +259,10 @@ class OPTar(object):
             cherrypy.request.params['op_id'] = vpath.pop(0)
             cherrypy.request.params['tag'] = vpath.pop(0)
             cherrypy.request.params['profile'] = vpath.pop(0)
+
+            if cherrypy.request.script_name == '/backup':
+                return self.backup
+
             return self
 
         return vpath
@@ -298,6 +302,9 @@ class OPTar(object):
         with open(tname, 'rb') as f_in:
             with gzip.open('{}.gz'.format(tname), 'wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
+
+        if backup:  # Don't keep the tar file
+            os.unlink(tname)
 
         _zipped = open('{}.gz'.format(tname), 'rb').read()
         os.chdir(wd)

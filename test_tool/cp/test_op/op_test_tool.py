@@ -10,6 +10,7 @@ import sys
 
 from oic.oic import Client
 from oic.oic.message import factory as oic_message_factory
+from oidctest.op import check
 
 from otest.aus.client import Factory
 from otest.aus.handling_ph import WebIh
@@ -141,20 +142,29 @@ if __name__ == '__main__':
     provider_config = {
         '/': {
             'root_path': 'localhost',
-            'log.screen': True,
+            'tools.staticdir.root': folder,
         },
         '/static': {
-            'tools.staticdir.dir': _static,
+            'tools.staticdir.dir': 'static',
             'tools.staticdir.debug': True,
             'tools.staticdir.on': True,
-            'log.screen': True
         },
         '/jwks': {
             'tools.staticdir.dir': 'jwks',
             'tools.staticdir.debug': True,
             'tools.staticdir.on': True,
-            'log.screen': True
         },
+        '/export': {
+            'tools.staticdir.dir': 'export',
+            'tools.staticdir.debug': True,
+            'tools.staticdir.on': True,
+        },
+        '/requests': {
+            'tools.staticdir.dir': 'requests',
+            'tools.staticdir.debug': True,
+            'tools.staticdir.on': True,
+        }
+
     }
 
     _conf = importlib.import_module(args.config)
@@ -165,16 +175,18 @@ if __name__ == '__main__':
     webenv = make_webenv(_conf, rest)
 
     session_handler = SessionHandler(args.issuer, args.tag,
-                                     flows = webenv['flow_state'],
+                                     flows=webenv['flow_state'],
                                      **webenv)
     session_handler.iss = args.issuer
     session_handler.tag = args.tag
     info = WebIh(session=session_handler, pre_html=_html, **webenv)
     tester = WebTester(info, session_handler, flows=webenv['flow_state'],
-                       **webenv)
+                       check_factory=check.factory, **webenv)
 
     log_root = 'log'
-    cherrypy.tree.mount(OPTar(log_root, 'tar', 'backup'), '/mktar')
+    _tar = OPTar(log_root, 'tar', 'backup')
+    cherrypy.tree.mount(_tar, '/mktar')
+    cherrypy.tree.mount(_tar, '/backup')
     cherrypy.tree.mount(OPLog(log_root, _html), '/log')
 
     cherrypy.tree.mount(

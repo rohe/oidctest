@@ -42,7 +42,7 @@ def test_list(args, grps):
     """
     line = [
         '<table>',
-        '<tr><th>Status</th><th>Description</th><th>Info</th></tr>']
+        '<tr><th>Test ID</th><th>Description</th><th>Info</th></tr>']
 
     for pgrp in grps:
         h = False

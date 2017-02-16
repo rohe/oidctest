@@ -1,6 +1,8 @@
 import logging
 
+import cherrypy
 from oic.utils.http_util import Response
+from oidctest.tt import conv_response
 
 from otest import exception_trace
 from otest.aus import tool
@@ -76,8 +78,8 @@ class WebTester(tool.WebTester):
                  client_factory=None, **kwargs):
         tool.WebTester.__init__(self, io, sh, profiles=profiles,
                                 profile=profile, flows=flows,
+                                check_factory=check_factory,
                                 msg_factory=msg_factory, cache=cache, **kwargs)
-        self.check_factory = check_factory
         self.client_factory = client_factory
         self.map_prof = map_prof or prof_util.map_prof
 
@@ -93,7 +95,7 @@ class WebTester(tool.WebTester):
         self.conv.tool_config = kw_args['tool_conf']
         _cli.conv = self.conv
         _cli.events = self.conv.events
-        self.sh.session_setup(path=test_id,flow=_flow)
+        self.sh.session_setup(path=test_id, flow=_flow)
         self.sh["conv"] = self.conv
         self.conv.sequence = self.sh["sequence"]
 
@@ -103,20 +105,15 @@ class WebTester(tool.WebTester):
         # noinspection PyTypeChecker
         try:
             return self.run_flow(test_id, conf=kw_args["conf"])
+        except (cherrypy.HTTPRedirect, cherrypy.HTTPError):
+            raise
         except Exception as err:
             exception_trace("", err, logger)
-            # self.inut.dump_log(self.sh, test_id)
-            return self.inut.err_response("run", err)
+            raise cherrypy.HTTPError(500, err)
 
     def handle_response(self, resp, index, oper=None):
         if resp:
             self.sh["index"] = index
-            if isinstance(resp, Response):
-                # self.conv.events.store(EV_HTTP_RESPONSE,
-                #                        {'headers': resp.headers,
-                #                         'status_code': resp.status})
-                return resp(self.inut.environ, self.inut.start_response)
-            else:
-                return resp
+            return conv_response(self.conv.events, resp)
         else:
             return None

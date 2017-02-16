@@ -32,7 +32,7 @@
       "UserInfo": {
         "set_op_args": {
           "method": "POST",
-          "authn_method": "bearer_body"
+          "authn_method": "token_in_message_body"
         }
       }
     }

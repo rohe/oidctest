@@ -5,7 +5,10 @@ from cherrypy import CherryPyException
 from cherrypy import HTTPRedirect
 from jwkest import as_bytes
 from oidctest.tt import conv_response
+
 from otest import exception_trace
+from otest.check import CRITICAL
+from otest.events import EV_HTTP_ARGS, EV_EXCEPTION
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +46,9 @@ class Main(object):
         ent = cherrypy.request.remote.ip
         logger.info('ent:{}, vpath: {}'.format(ent, vpath))
 
+        if vpath[0] == 'continue':
+            return self.next
+
         if len(vpath) == 1:
             if vpath[0] in self.flows:
                 cherrypy.request.params['test'] = vpath.pop(0)
@@ -61,12 +67,14 @@ class Main(object):
             pass
         elif isinstance(resp, list):
             return conv_response(self.sh.events, resp)
+        elif isinstance(resp, bytes):
+            return resp
 
         try:
             #  return info.flow_list()
             _url = "{}display#{}".format(
-                    self.webenv['client_info']['base_url'],
-                    self.pick_grp(self.sh['conv'].test_id))
+                self.webenv['client_info']['base_url'],
+                self.pick_grp(self.sh['conv'].test_id))
 
             raise HTTPRedirect(_url, 303)
         except KeyError as err:
@@ -97,11 +105,17 @@ class Main(object):
             raise cherrypy.HTTPError(404, test_id)
 
     @cherrypy.expose
-    def next(self):
-        resp = self.tester.cont(self.webenv)
+    def next(self, **kwargs):
+        resp = self.tester.cont(**kwargs)
         self.sh['session_info'] = self.info.session
         if resp:
-            return conv_response(self.sh.events, resp)
+            if isinstance(resp, int):
+                if resp == CRITICAL:
+                    exp = self.tester.conv.events.get_data(EV_EXCEPTION)
+                    if exp:
+                        raise cherrypy.HTTPError(message=exp[0])
+            else:
+                return conv_response(self.sh['conv'].events, resp)
         else:
             _url = "{}display#{}".format(self.webenv['base_url'],
                                          self.pick_grp(self.sh['conv'].test_id))
@@ -115,3 +129,61 @@ class Main(object):
         _url = "{}display#{}".format(self.webenv['base_url'],
                                      self.pick_grp(self.sh['conv'].test_id))
         cherrypy.HTTPRedirect(_url)
+
+    @cherrypy.expose
+    def authz_cb(self, **kwargs):
+        _conv = self.sh["conv"]
+        try:
+            response_mode = _conv.req.req_args["response_mode"]
+        except KeyError:
+            response_mode = ""
+
+        # Check if fragment encoded
+        if response_mode == "form_post":
+            pass
+        else:
+            try:
+                response_type = _conv.req.req_args["response_type"]
+            except KeyError:
+                response_type = [""]
+
+            if response_type == [""]:  # expect anything
+                if cherrypy.request.params:
+                    kwargs = cherrypy.request.params
+                else:
+                    return self.info.opresult_fragment()
+            elif response_type != ["code"]:
+                # but what if it's all returned as a query anyway ?
+                try:
+                    kwargs = cherrypy.request.params
+                except KeyError:
+                    pass
+                else:
+                    _conv.events.store(EV_HTTP_ARGS, kwargs)
+                    _conv.query_component = kwargs
+
+                return self.info.opresult_fragment()
+
+        try:
+            resp = self.tester.async_response(self.webenv["conf"],
+                                              response=kwargs)
+        except cherrypy.HTTPRedirect:
+            raise
+        except Exception as err:
+            return self.info.err_response("authz_cb", err)
+        else:
+            if resp is False or resp is True:
+                pass
+            elif not isinstance(resp, int):
+                return resp
+
+            try:
+                # return info.flow_list()
+                url = "{}display#{}".format(
+                    self.webenv['client_info']['base_url'],
+                    self.pick_grp(_conv.test_id))
+            except Exception as err:
+                logger.error(err)
+                raise cherrypy.HTTPError(message=err)
+            else:
+                raise cherrypy.HTTPRedirect(url)

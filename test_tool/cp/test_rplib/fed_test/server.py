@@ -1,24 +1,27 @@
 #!/usr/bin/env python3
-import os
-
 import cherrypy
 import logging
+import os
 
+from oic.federation.operator import FederationOperator
 from oic.utils import webfinger
 
 from oidctest.cp import dump_log
-from oidctest.cp.op import Provider
-from oidctest.cp.op import WebFinger
-from oidctest.cp.op_handler import OPHandler
-from oidctest.cp.test_list import TestList
 from oidctest.cp.log_handler import ClearLog
 from oidctest.cp.log_handler import Log
 from oidctest.cp.log_handler import Tar
+from oidctest.cp.op import Provider
+from oidctest.cp.op import WebFinger
+from oidctest.cp.op_handler import OPHandler
 from oidctest.cp.setup import cb_setup
+from oidctest.cp.test_list import TestList
+from oidctest.tt.fed import FoKeys
+from oidctest.tt.fed import named_kc
+from oidctest.tt.fed import Sign
+from oidctest.tt.fed import Who
 
 from otest.flow import Flow
 from otest.prof_util import SimpleProfileHandler
-
 
 logger = logging.getLogger("")
 LOGFILE_NAME = 'rp_test.log'
@@ -42,6 +45,11 @@ if __name__ == '__main__':
     parser.add_argument('-p', dest='port', default=80, type=int)
     parser.add_argument('-P', dest='path')
     parser.add_argument('-t', dest='tls', action='store_true')
+    # federation extras
+    parser.add_argument('-b', dest='bundle', required=True)
+    parser.add_argument('-i', dest='iss', required=True)
+    parser.add_argument('-s', dest='sign_key', required=True)
+
     parser.add_argument(dest="config")
     args = parser.parse_args()
 
@@ -101,7 +109,36 @@ if __name__ == '__main__':
     # OIDC Providers
     cherrypy.tree.mount(Provider(op_handler, _flows), '/', provider_config)
 
-    # If HTTPS
+    #  ================= Federation specific stuff =========================
+
+    _fos = {}
+
+    me = FederationOperator(iss=args.iss, bundle_sign_alg='RS256',
+                            keyconf=named_kc(config, args.iss),
+                            jwks_file='{}.json'.format(args.iss))
+    _fos[args.iss] = me
+
+    for fo in config.FOS:
+        _fo = FederationOperator(iss=fo, keyconf=named_kc(config, fo),
+                                 jwks_file='{}.json'.format(fo))
+        me.add_to_bundle(fo, _fo.export_jwks())
+        _fos[fo] = _fo
+
+    fp = open(args.bundle, 'w')
+    fp.write(me.export_bundle())
+    fp.close()
+
+    # sign_key = get_signing_keys(args.iss, KEYDEFS, args.sign_key)
+    # jb = get_bundle(args.iss, config.FOS, sign_key, args.bundle,
+    #                 config.KEYDEFS, config.BASE_PATH)
+
+    cherrypy.tree.mount(Sign(_fos, args.iss), '/sign')
+    cherrypy.tree.mount(FoKeys(me), '/bundle')
+    cherrypy.tree.mount(Who(_fos), '/who')
+
+    # ======================================================================
+
+    # HTTPS support
     if args.tls:
         cherrypy.server.ssl_certificate = config.SERVER_CERT
         cherrypy.server.ssl_private_key = config.SERVER_KEY

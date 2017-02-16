@@ -997,7 +997,7 @@ class SingleSignOn(Error):
 
 
 class MultipleSignOn(Error):
-    """ Verifies that multiple authentication was used in the flow """
+    """ Verifies that multiple authentications was used in the flow """
     cid = "multiple-sign-on"
 
     def _func(self, conv):

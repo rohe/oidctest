@@ -1,6 +1,14 @@
 {
   "group": "Misc Request Parameters",
   "sequence": [
+    {
+      "VerifyConfiguration":
+      {
+        "check_config": {
+          "login_hint": null
+        }
+      }
+    },
     "Note",
     {
       "Webfinger": {

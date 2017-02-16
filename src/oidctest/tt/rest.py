@@ -6,6 +6,8 @@ import sys
 from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
 
+import cherrypy
+from jwkest import as_bytes
 from oic.utils.http_util import BadRequest, NotFound
 from oic.utils.http_util import Created
 from oic.utils.http_util import Response
@@ -144,17 +146,17 @@ class REST(object):
         try:
             typ, info = self.read_conf(qiss, qtag)
         except (TypeError, NoSuchFile):
-            resp = NotFound('Could not find {}'.format(path))
+            return cherrypy.HTTPError(404, 'Could not find {}'.format(path))
         else:
             if info:
                 if typ == 'json':
-                    resp = Response(json.dumps(info),
-                                    content='application/json')
+                    cherrypy.response.headers[
+                        'Content-Type'] = 'application/json'
+                    return as_bytes(json.dumps(info))
                 else:
-                    resp = Response(info, content='text/html')
+                    return as_bytes(info)
             else:
-                resp = NotFound('Could not find {}'.format(path))
-        return resp
+                return cherrypy.HTTPError(404, 'Could not find {}'.format(path))
 
     def replace(self, qiss, qtag, info):
         # read entity configuration and replace if changed
@@ -169,7 +171,7 @@ class REST(object):
         else:
             self.write(qiss, qtag, json.dumps(_js))
 
-        return Response('OK')
+        return b'OK'
 
     def store(self, qiss, qtag, info):
         """
@@ -181,14 +183,15 @@ class REST(object):
         """
         self.write(qiss, qtag, info)
         fname = '{}{}/{}'.format(self.base_url, qiss, qtag)
-        return Created(fname)
+        cherrypy.response.status = 201
+        return as_bytes(fname)
 
     def delete(self, qiss, qtag):
         fname = self.entity_file_name(qiss, qtag)
         if os.path.isfile(fname):
             os.unlink(fname)
         # If it doesn't exit don't tell because it leaks information.
-        return Response('OK')
+        return b'OK'
 
     def write(self, qiss, qtag, ent_conf):
         fdir = self.entity_dir(qiss)

@@ -120,8 +120,8 @@ def set_uri(oper, args):
 
 def static_jwk(oper, args):
     _client = oper.conv.entity
-    oper.req_args["jwks_uri"] = None
-    oper.req_args["jwks"] = {"keys": _client.keyjar.export_jwks("")}
+    del oper.req_args["jwks_uri"]
+    oper.req_args["jwks"] = _client.keyjar.export_jwks("")
 
 
 def get_base(base):
@@ -241,7 +241,7 @@ def redirect_uris_with_query_component(oper, kwargs):
 
 def redirect_uris_with_scheme(oper, args):
     oper.req_args['redirect_uris'] = [r.replace('https', args) for r in
-                                     oper.conv.get_redirect_uris()]
+                                      oper.conv.get_redirect_uris()]
 
 
 def redirect_uris_with_fragment(oper, kwargs):
@@ -353,6 +353,17 @@ def remove_grant(oper, arg):
 def set_request_base(oper, args):
     oper.op_args['base_path'] = '{}{}/'.format(oper.conv.entity.base_url, args)
     oper.op_args['local_dir'] = args
+
+
+def check_config(oper, args):
+    _cnf = oper.conv.tool_config
+    for key, val in args.items():
+        if key in _cnf:
+            if val and val != _cnf[key]:
+                oper.unsupported = "{}={} not OK, should have been {}".format(
+                    key, val, _cnf[key])
+        else:
+            oper.unsupported = "No {} in the configuration".format(key)
 
 
 def factory(name):

@@ -26,7 +26,8 @@ class Node(object):
 
 
 class SessionHandler(session.SessionHandler):
-    def __init__(self, iss, tag, profile='', flows=None, order=None, **kwargs):
+    def __init__(self, iss='', tag='', profile='', flows=None, order=None,
+                 **kwargs):
         session.SessionHandler.__init__(self, profile=profile, flows=flows,
                                         order=order, **kwargs)
         self.iss = iss
