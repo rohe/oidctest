@@ -74,6 +74,7 @@ class Entity(object):
     @cherrypy.expose
     def list_tag(self, iiss):
         uqp, qp = unquote_quote(iiss)
+        logger.info('List all tags for "{}"'.format(uqp[0]))
         iss = uqp[0]
         qiss = qp[0]
         fils = os.listdir(os.path.join(self.entpath, qiss))
@@ -87,6 +88,7 @@ class Entity(object):
     @cherrypy.expose
     def show_tag(self, iiss, itag):
         uqp, qp = unquote_quote(iiss, itag)
+        logger.info('Show info on iss="{}", tag="{}"'.format(*uqp))
 
         if find_test_instance(*uqp):
             active = '<div class="active"> Running </div>'
@@ -117,6 +119,7 @@ class Entity(object):
     @cherrypy.expose
     def backup(self, iiss, itag):
         uqp, qp = unquote_quote(iiss, itag)
+        logger.info('Do backup of iss="{}", tag="{}"'.format(*uqp))
 
         info = open(os.path.join(self.entpath, *qp), 'r').read()
         bname = '{}.{}.{}'.format(qp[0], qp[1], time.time())
@@ -128,6 +131,7 @@ class Entity(object):
     @cherrypy.expose
     def restore(self, iiss, itag):
         uqp, qp = unquote_quote(iiss, itag)
+        logger.info('Restore iss="{}", tag="{}"'.format(*uqp))
         bname = '{}.{}'.format(qp[0], qp[1])
         last = 0.0
         last_backup = None

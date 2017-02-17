@@ -153,6 +153,7 @@ class Action(object):
 
     @cherrypy.expose
     def update(self, iss, tag, ev=None, **kwargs):
+        logger.debug('update test tool configuration')
         uqp, qp = unquote_quote(iss, tag)
         _format, _conf = self.rest.read_conf(qp[0], qp[1])
 
@@ -195,6 +196,7 @@ class Action(object):
 
     @cherrypy.expose
     def delete(self, iss, tag, ev, pid=0):
+        logger.info('delete test tool configuration')
         uqp, qp = unquote_quote(iss, tag)
         _key = '{}:{}'.format(*uqp)
 
@@ -218,6 +220,7 @@ class Action(object):
 
     @cherrypy.expose
     def restart(self, iss, tag, ev):
+        logging.info('restart test tool')
         uqp, qp = unquote_quote(iss, tag)
         url = self.app.run_test_instance(*qp)
 
@@ -240,6 +243,7 @@ class Action(object):
 
     @cherrypy.expose
     def create(self, **kwargs):
+        logging.info('create test tool configuration')
         # construct profile
         ppiece = [kwargs['return_type']]
         for p in ['webfinger', 'discovery', 'registration']:
@@ -267,6 +271,8 @@ class Action(object):
         _ent_conf['tool']['issuer'] = uqp[0]
         _ent_conf['tool']['tag'] = uqp[1]
         _ent_conf['tool']['profile'] = profile
+
+        logging.info("Test tool config: {}".format(_ent_conf))
 
         self.rest.write(qp[0], qp[1], _ent_conf)
         # Do a redirect

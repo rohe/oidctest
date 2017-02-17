@@ -85,4 +85,5 @@ class Application(object):
             self.running_processes['{}:{}'.format(iss, tag)] = pid
             return url
         else:
+            logger.error('Failed to start the test tool')
             return None

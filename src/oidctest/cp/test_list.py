@@ -3,12 +3,15 @@ import json
 import os
 import re
 
+import logging
 from jwkest import as_bytes
 from otest.flow import ABBR
 
 PAT = re.compile('\${([A-Z_0-9]*)}')
 
 EXP = dict([(v, k) for k, v in ABBR.items()])
+
+logger = logging.getLogger(__name__)
 
 
 def replace_with_url(txt, links):

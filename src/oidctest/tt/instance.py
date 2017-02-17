@@ -1,7 +1,6 @@
 import cherrypy
 import logging
 
-from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
 
 from jwkest import as_bytes
@@ -39,6 +38,7 @@ class Instance(object):
 
     @cherrypy.expose
     def new(self):
+        logger.info("New instance")
         return self.html['new_iss.html']
 
     @cherrypy.expose
@@ -48,6 +48,7 @@ class Instance(object):
     @cherrypy.expose
     def run(self, iss='', tag='', ev=None, **kwargs):
         uqp, qp = unquote_quote(iss, tag)
+        logger.info('Run iss="{}", tag="{}"'.format(*uqp))
         _ent_conf = {}
         for key, val in kwargs.items():
             if val == '':
@@ -70,6 +71,7 @@ class Instance(object):
 
     def restart_instance(self, iss, tag, action='restart'):
         uqp, qp = unquote_quote(iss, tag)
+        logger.info('{} iss="{}", tag="{}"'.format(action, uqp[0], uqp[1]))
         url = self.app.run_test_instance(qp[0], qp[1])
 
         if isinstance(url, Response):

@@ -50,6 +50,7 @@ class FileSystem(object):
 
     def __getitem__(self, item):
         if self.is_changed(item):
+            logger.info("File content change in {}".format(item))
             fname = os.path.join(self.fdir, item)
             self.db[item] = self._read_info(fname)
 
@@ -87,6 +88,7 @@ class FileSystem(object):
             else:
                 return False
         else:
+            logger.error('Could not access {}'.format(fname))
             raise KeyError(item)
 
     @staticmethod
@@ -97,7 +99,8 @@ class FileSystem(object):
             except Exception as err:
                 logger.error(err)
                 raise
-
+        else:
+            logger.error('No such file: {}'.format(fname))
         return None
 
     def get_files_from_dir(self):
