@@ -34,7 +34,7 @@ def oidc_op_setup(distroot):
     #         shutil.copytree(_op_dir, 'server')
     # os.chdir('server')
 
-    for _dir in ['backup', 'certs', 'entities', 'eport', 'keys', 'log',
+    for _dir in ['backup', 'certs', 'entities', 'export', 'keys', 'log',
                  'requests', 'server_log', 'tar']:
         if os.path.isdir(_dir) is False:
             os.mkdir(_dir)
