@@ -11,6 +11,7 @@ BASE = 'http://localhost'
 
 ENT_PATH = 'entities'
 ENT_INFO = 'entity_info'
+PRE_HTML = 'html/tt'
 
 KEYS = [
     {"key": "keys/enc.key", "type": "RSA", "use": ["enc"]},

@@ -21,3 +21,4 @@ ENT_INFO = 'entity_info'
 FLOWDIR = 'flows'
 
 PATH2PORT = 'path2port.csv'
+TEST_SCRIPT = './op_test_tool.py'

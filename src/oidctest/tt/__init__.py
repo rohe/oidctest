@@ -1,4 +1,5 @@
 import os
+from urllib.parse import unquote_plus, quote_plus
 
 import cherrypy
 import time
@@ -33,6 +34,12 @@ def conv_response(events, resp):
     else:
         events.store(EV_FAULT, resp.message)
         raise cherrypy.HTTPError(_stat, resp.message)
+
+
+def unquote_quote(*part):
+    uqp = [unquote_plus(p) for p in part]
+    qp = [quote_plus(p) for p in uqp]
+    return uqp, qp
 
 
 class FileSystem(object):

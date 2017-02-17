@@ -12,16 +12,12 @@ from jwkest import as_bytes
 from otest.proc import find_test_instance
 from otest.proc import isrunning
 
-from oidctest.tt import BUT
 from oidctest.cp import init_events
+from oidctest.tt import BUT
+from oidctest.tt import unquote_quote
+
 
 logger = logging.getLogger(__name__)
-
-
-def unquote_quote(*part):
-    uqp = [unquote_plus(p) for p in part]
-    qp = [quote_plus(p) for p in uqp]
-    return uqp, qp
 
 
 def iss_table(base, issuers):

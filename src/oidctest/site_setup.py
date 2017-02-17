@@ -34,27 +34,22 @@ def oidc_op_setup(distroot):
     #         shutil.copytree(_op_dir, 'server')
     # os.chdir('server')
 
-    for _dir in ['certs', 'keys', 'server_log', 'log', 'entities', 'jwks']:
+    for _dir in ['backup', 'certs', 'entities', 'eport', 'keys', 'log',
+                 'requests', 'server_log', 'tar']:
         if os.path.isdir(_dir) is False:
             os.mkdir(_dir)
 
-    _op_dir = os.path.join(distroot, 'test_tool', 'test_op', 'server')
-    for _dir in ['flows', 'static', 'heart_mako', 'oidf_mako', 'entity_info']:
+    _op_dir = os.path.join(distroot, 'test_tool', 'cp', 'test_op',)
+    for _dir in ['entity_info', 'flows', 'html', 'static']:
         _src = os.path.join(_op_dir, _dir)
         if os.path.isdir(_dir):
             shutil.rmtree(_dir)
         shutil.copytree(_src, _dir)
 
-    for _fname in ['run.sh', 'heart_config_example.py',
-                   'oidf_config_example.py', 'path2port.csv',
-                   'config_server.py',
+    for _fname in ['run_example.sh', 'config_example.py', 'config_server.py',
                    'tt_config_example.py']:
         _file = os.path.join(_op_dir, _fname)
         copy_if_not_same(_file, _fname, True)
-
-    for _fname in ['run.sh']:
-        _file = os.path.join(_op_dir, _fname)
-        copy_if_not_same(_file, _fname)
 
     subprocess.call(
         ["make_entity_info.py", "-i", "https://example.com", "-p", "C.T.T.T",

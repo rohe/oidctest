@@ -16,7 +16,7 @@ from oidctest.tt.rest import REST
 from oidctest.tt.entity import Entity
 
 logger = logging.getLogger("")
-LOGFILE_NAME = 'op_test.log'
+LOGFILE_NAME = 'conf_srv.log'
 hdlr = logging.FileHandler(LOGFILE_NAME)
 base_formatter = logging.Formatter(
     "%(asctime)s %(name)s:%(levelname)s %(message)s")
@@ -25,9 +25,9 @@ hdlr.setFormatter(base_formatter)
 logger.addHandler(hdlr)
 logger.setLevel(logging.DEBUG)
 
-tool_conf = ['acr_values', 'claims_locales', 'issuer',
-             'login_hint', 'profile', 'ui_locales', 'webfinger_email',
-             'webfinger_url', 'insecure', 'tag']
+tool_params = ['acr_values', 'claims_locales', 'issuer',
+               'login_hint', 'profile', 'ui_locales', 'webfinger_email',
+               'webfinger_url', 'insecure', 'tag']
 
 if __name__ == '__main__':
     import argparse
@@ -95,15 +95,16 @@ if __name__ == '__main__':
 
     cherrypy.tree.mount(
         Entity(_conf.ENT_PATH, _html, rest), '/entity')
+    _app = Application(_conf.TEST_SCRIPT, _conf.FLOWDIR, rest, 10000, 11000,
+                       _ttc.BASE, args.test_tool_conf, args.htmldir)
     cherrypy.tree.mount(
-        Action(rest, _ttc, _html, _conf.ENT_PATH,
-               Application(_conf.TEST_SCRIPT, _conf.FLOWDIR, rest, 10000, 11000,
-                           _ttc.BASE, args.test_tool_conf, args.htmldir)),
+        Action(rest, _ttc, _html, _conf.ENT_PATH, _conf.ENT_INFO, tool_params,
+               _app),
         '/action')
     # Main
     test_tool_conf = args.test_tool_conf
     cherrypy.tree.mount(
-        Instance(rest, _base_url, test_tool_conf, html=_html),
+         Instance(rest, _base_url, test_tool_conf, _app, html=_html),
         '/',
         provider_config)
 

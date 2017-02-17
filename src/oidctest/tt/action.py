@@ -1,3 +1,5 @@
+import json
+
 import cherrypy
 import logging
 import os
@@ -8,11 +10,13 @@ from jwkest import as_bytes
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
 from oic.utils.http_util import Response
-from oidctest.tt import conv_response
+from oidctest.app_conf import create_model
+from oidctest.cp import init_events
+from oidctest.prof_util import DISCOVER, REGISTER
+from oidctest.tt import conv_response, unquote_quote
 from oidctest.tt import BUT
 from otest.proc import kill_process
 
-from src.oidctest.cp import init_events
 
 logger = logging.getLogger(__name__)
 
@@ -22,8 +26,9 @@ HEADLINE = {
     "provider_info": ""
 }
 
-ball = '<img src="/static/red-ball-16.png" alt="Red Ball">'
+ball = '<img src="/static/Add_16x16.png" alt="Red Ball">'
 
+_cline = '{} <input type="radio" name="{}:{}" value="{}" {}>'
 
 def do_line(grp, key, val, req=False):
     if req:
@@ -34,16 +39,12 @@ def do_line(grp, key, val, req=False):
     if val is False or val is True:
         if val == "True":
             _choice = " ".join(
-                ['True <input type="radio" name="{}:{}"',
-                 'value="True" checked>'.format(grp, key),
-                 'False <input type="radio" name="{}:{}" ',
-                 'value="False">'.format(grp, key)])
+                [ _cline.format('True', grp, key, 'True', 'checked'),
+                  _cline.format('False', grp, key, 'False', '')])
         else:
             _choice = " ".join(
-                ['True <input type="radio" name="{}:{}" ',
-                 'value="True">'.format(grp, key),
-                 'False <input type="radio" name="{}:{}" ',
-                 'value="False" checked>'.format(grp, key)])
+                [_cline.format('True', grp, key, 'True', ''),
+                 _cline.format('False', grp, key, 'False', 'checked')])
 
         return '<tr><th align="left">{}</th><td>{}</td><td>{}</td></tr>'.format(
             key, _choice, _ball)
@@ -58,7 +59,7 @@ def do_line(grp, key, val, req=False):
         return " ".join([
             '<tr><th align="left">{}</th><td><input'.format(key),
             'type="text" name="{}:{}"'.format(grp, key),
-            'value="{}" class="str"></td><td>{}</td></tr>'.format(val, BUT)])
+            'value="{}" class="str"></td><td>{}</td></tr>'.format(val, _ball)])
 
 
 def display_form(head_line, grp, dic, state):
@@ -116,13 +117,16 @@ def update(typ, conf):
 
 
 class Action(object):
-    def __init__(self, rest, tool_conf, html, entpath, app):
+    def __init__(self, rest, tool_conf, html, entpath, ent_info_path,
+                 tool_params, app):
         self.rest = rest
         self.tool_conf = tool_conf
         self.html = html
         self.entpath = entpath
+        self.ent_info_path = ent_info_path
         self.baseurl = ''
         self.app = app
+        self.tool_params = tool_params
 
     @cherrypy.expose
     def index(self, iss, tag, ev, action):
@@ -139,20 +143,22 @@ class Action(object):
         logger.info('ent:{}, vpath: {}'.format(ent, vpath))
 
         if len(vpath):
-            cherrypy.request.params['iss'] = unquote_plus(vpath.pop(0))
-            cherrypy.request.params['tag'] = unquote_plus(vpath.pop(0))
+            if len(vpath) == 2:
+                cherrypy.request.params['iss'] = unquote_plus(vpath.pop(0))
+                cherrypy.request.params['tag'] = unquote_plus(vpath.pop(0))
             cherrypy.request.params['ev'] = init_events(
                 cherrypy.request.path_info)
 
             return self
 
-    def update(self, iss, tag, ev):
-        qp = [quote_plus(p) for p in [iss, tag]]
+    @cherrypy.expose
+    def update(self, iss, tag, ev=None, **kwargs):
+        uqp, qp = unquote_quote(iss, tag)
         _format, _conf = self.rest.read_conf(qp[0], qp[1])
 
         # provider_info and registration_response
         dicts = {'tool': _conf['tool']}
-        for item in self.tool_conf:
+        for item in self.tool_params:
             if item not in dicts['tool']:
                 dicts['tool'][item] = ''
 
@@ -182,15 +188,15 @@ class Action(object):
                 _req.append('token_endpoint')
 
             state['provider_info']['required'] = _req
-        _msg = self.html['instance'].format(
+        _msg = self.html['instance.html'].format(
             display=display('', qp[0], qp[1], dicts, state))
 
         return as_bytes(_msg)
 
     @cherrypy.expose
     def delete(self, iss, tag, ev, pid=0):
-        qp = [quote_plus(p) for p in [iss, tag]]
-        _key = '{}:{}'.format(*lp)
+        uqp, qp = unquote_quote(iss, tag)
+        _key = '{}:{}'.format(*uqp)
 
         if pid:
             kill_process(pid)
@@ -203,7 +209,7 @@ class Action(object):
 
         del self.app.assigned_ports[_key]
 
-        _msg = self.html['message'].format(
+        _msg = self.html['message.html'].format(
             title="Action performed",
             note='Your test tool instance <em>{}:{}</em> has been '
                  'removed'.format(iss, tag))
@@ -212,7 +218,8 @@ class Action(object):
 
     @cherrypy.expose
     def restart(self, iss, tag, ev):
-        url = self.app.run_test_instance(quote_plus(iss), quote_plus(tag))
+        uqp, qp = unquote_quote(iss, tag)
+        url = self.app.run_test_instance(*qp)
 
         if isinstance(url, Response):
             return conv_response(None, url)
@@ -228,5 +235,40 @@ class Action(object):
                 'title': "Action Failed", 'base': self.baseurl,
                 'note': 'Could not restart your test instance'}
 
-        _msg = self.html['message'].format(**args)
+        _msg = self.html['message.html'].format(**args)
         return as_bytes(_msg)
+
+    @cherrypy.expose
+    def create(self, **kwargs):
+        # construct profile
+        ppiece = [kwargs['return_type']]
+        for p in ['webfinger', 'discovery', 'registration']:
+            if p in kwargs:
+                ppiece.append('T')
+            else:
+                ppiece.append('F')
+
+        profile = '.'.join(ppiece)
+        _ent_conf = create_model(profile, ent_info_path=self.ent_info_path)
+        state = {}
+
+        if ppiece[DISCOVER] == 'F':
+            _ent_conf['client']['provider_info']['issuer'] = kwargs['iss']
+
+        if ppiece[REGISTER] == 'F':
+            # need to create a redirect_uri, means I need to register a port
+            _eid = self.app.key(kwargs['iss'], kwargs['tag'])
+            _port = self.app.assigned_ports.register_port(_eid)
+            _ent_conf['client']['registration_response'][
+                'redirect_uris'] = '{}:{}/authz_cb'.format(
+                self.app.test_tool_base[:-1], _port)
+
+        uqp, qp = unquote_quote(kwargs['iss'], kwargs['tag'])
+        _ent_conf['tool']['issuer'] = uqp[0]
+        _ent_conf['tool']['tag'] = uqp[1]
+        _ent_conf['tool']['profile'] = profile
+
+        self.rest.write(qp[0], qp[1], _ent_conf)
+        # Do a redirect
+        raise cherrypy.HTTPRedirect(
+            '/action/update?iss={}&tag={}'.format(qp[0], qp[1]))

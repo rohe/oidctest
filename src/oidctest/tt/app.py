@@ -35,8 +35,7 @@ class Application(object):
         _key = self.key(iss, tag)
         _port = self.assigned_ports.register_port(_key)
         args = [self.test_script, "-i", unquote_plus(iss), "-t",
-                unquote_plus(tag), "-p", str(_port), "-H", self.prehtml,
-                "-f", self.flowdir]
+                unquote_plus(tag), "-p", str(_port), "-f", self.flowdir, '-s']
         if self.path2port:
             args.extend(["-m", self.path2port])
             ppmap = read_path2port_map(self.path2port)
@@ -70,7 +69,8 @@ class Application(object):
         # Now get it running
         args.append('&')
         logger.info("Test tool command: {}".format(" ".join(args)))
-        # spawn independent process
+
+        # spawn independent process, leaping blindly here
         os.system(" ".join(args))
 
         pid = 0

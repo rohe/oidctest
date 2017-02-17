@@ -168,7 +168,10 @@ if __name__ == '__main__':
     }
 
     _conf = importlib.import_module(args.config)
-    _html = FileSystem(args.htmldir)
+    if args.htmldir:
+        _html = FileSystem(args.htmldir)
+    else:
+        _html = FileSystem(_conf.PRE_HTML)
     _html.get_files_from_dir()
 
     rest = REST('')
