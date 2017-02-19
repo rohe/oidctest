@@ -1,0 +1,18 @@
+{
+  "MTI": [
+    "CI",
+    "CIT"
+  ],
+  "behavior": "mch",
+  "group": "ID Token",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code id_token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Rejects ID Token with missing 'c_hash' claim when hybrid flow is used",
+  "detailed_description": "Retrieve Authorization Code and ID Token from the Authorization Endpoint, using Hybrid Flow. Verify the c_hash presence in the returned ID token.",
+  "expected_result": "Identify missing 'c_hash' value and reject the ID Token."
+}

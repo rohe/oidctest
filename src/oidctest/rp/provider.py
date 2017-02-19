@@ -119,11 +119,19 @@ class Server(oic.Server):
             except KeyError:
                 raise TestError("Missing at_hash in id_token")
 
+        if "math" in self.behavior_type:  # remove the at_hash if available
+            if "at_hash" in idt:
+                del idt['at_hash']
+
         if "ch" in self.behavior_type:  # modify the c_hash if available
             try:
                 idt["c_hash"] = sort_string(idt["c_hash"])
             except (KeyError, TypeError):
                 pass
+
+        if "mch" in self.behavior_type:  # modify the c_hash if available
+            if "c_hash" in idt:
+                del idt['c_hash']
 
         if "issi" in self.behavior_type:  # mess with the iss value
             idt["iss"] = "https://example.org/"
