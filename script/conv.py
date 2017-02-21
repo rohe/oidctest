@@ -7,7 +7,7 @@ from urllib.parse import quote_plus
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
 
-from oidctest.app_conf import REST, create_model
+from oidctest.app_conf import REST
 
 
 def convert(conf):
