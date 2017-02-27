@@ -35,7 +35,11 @@ POLICY = {
     'F': {'scope': ['openid', 'email']}
 }
 
-CMS = [
-    (POLICY['C'], ORG['example']['OA'], FO[1]),
-    (POLICY['F'], ORG['example']['EO'], ORG['example']['OA'])
+SMSDEF = [
+    [
+        {'request': POLICY['C'], 'requester': ORG['example']['OA'],
+         'signer_add': {}, 'signer': FO[1]},
+        {'request': POLICY['F'], 'requester': ORG['example']['EO'][0],
+         'signer_add': {}, 'signer': ORG['example']['OA']}
+    ]
 ]
