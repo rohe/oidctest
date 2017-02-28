@@ -8,6 +8,7 @@ import logging
 import os
 import sys
 
+from oic.federation.file_system import FileSystem
 from oic.oic import Client
 from oic.oic.message import factory as oic_message_factory
 from oidctest.op import check
@@ -29,7 +30,6 @@ from oidctest.op.profiles import PROFILEMAP
 from oidctest.optt import Main
 from oidctest.prof_util import ProfileHandler
 from oidctest.session import SessionHandler
-from oidctest.tt import FileSystem
 from oidctest.tt.rest import REST
 
 logger = logging.getLogger("")
@@ -172,7 +172,7 @@ if __name__ == '__main__':
         _html = FileSystem(args.htmldir)
     else:
         _html = FileSystem(_conf.PRE_HTML)
-    _html.get_files_from_dir()
+    _html.sync()
 
     rest = REST('')
     webenv = make_webenv(_conf, rest)

@@ -5,9 +5,9 @@ import os
 import cherrypy
 import logging
 
+from oic.federation.file_system import FileSystem
 from oidctest.cp import dump_log
 
-from oidctest.tt import FileSystem
 from oidctest.tt.action import Action
 from oidctest.tt.app import Application
 from oidctest.tt.instance import Instance
@@ -49,7 +49,7 @@ if __name__ == '__main__':
     folder = os.path.abspath(os.curdir)
 
     _html = FileSystem(args.htmldir)
-    _html.get_files_from_dir()
+    _html.sync()
 
     cherrypy.tools.dumplog = cherrypy.Tool('before_finalize', dump_log)
 

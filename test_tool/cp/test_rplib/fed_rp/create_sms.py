@@ -1,90 +1,91 @@
 import importlib
-import os
 import sys
-from urllib.parse import quote_plus, unquote_plus
+from urllib.parse import quote_plus
+from urllib.parse import unquote_plus
 
-from oic.federation import MetadataStatement
-from oic.federation.bundle import FSJWKSBundle, keyjar_to_jwks_private
-from oic.federation.operator import Operator
-from oic.utils.keyio import build_keyjar
+from fedoidc import MetadataStatement
+from fedoidc.bundle import FSJWKSBundle
+from fedoidc.bundle import keyjar_to_jwks_private
+from fedoidc.operator import Operator
 
 sys.path.insert(0, ".")
 config = importlib.import_module('sms_conf')
 
-BASE_PATH = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "fo_keys"))
 
-KEYDEFS = [
-    {"type": "RSA", "key": '', "use": ["sig"]},
-    {"type": "EC", "crv": "P-256", "use": ["sig"]}
-]
+def make_ms(desc, ms, root, leaf, operator):
+    req = MetadataStatement(**desc['request'])
+    _requester = operator[desc['requester']]
+    req['signing_keys'] = _requester.signing_keys_as_jwks()
+    if ms:
+        if isinstance(ms, list):
+            req['metadata_statements'] = ms[:]
+        else:
+            req['metadata_statements'] = [ms[:]]
+    req.update(desc['signer_add'])
+
+    if leaf:
+        jwt_args = {'aud': [_requester.iss]}
+    else:
+        jwt_args = {}
+
+    _signer = operator[desc['signer']]
+    ms = _signer.pack_metadata_statement(req, jwt_args=jwt_args)
+    if root is True:
+        _fo = _signer.iss
+    else:
+        _fo = ''
+
+    return ms, _fo
 
 
-def make_jwks_bundle(iss, fo_liss, sign_keyjar, keydefs, base_path=''):
-    jb = FSJWKSBundle(iss, sign_keyjar, 'fo_jwks',
-                      key_conv={'to': quote_plus, 'from': unquote_plus})
+def make_signed_metadata_statements(smsdef, operator):
+    res = []
+
+    for ms_chain in smsdef:
+        _ms = []
+        depth = len(ms_chain)
+        i = 1
+        _fo = []
+        _root_fo = []
+        root = True
+        leaf = False
+        for desc in ms_chain:
+            if i == depth:
+                leaf = True
+            if isinstance(desc, dict):
+                _ms, _fo = make_ms(desc, _ms, root, leaf, operator)
+            else:
+                _mss = []
+                _fos = []
+                for d in desc:
+                    _m, _f = make_ms(d, _ms, root, leaf, operator)
+                    _mss.append(_m)
+                    if _f:
+                        _fos.append(_f)
+                _ms = _mss
+                if _fos:
+                    _fo = _fos
+            if root:
+                _root_fo = _fo
+            root = False
+            i += 1
+
+        res.append({'fo':_root_fo, 'ms':_ms})
+    return res
+
+
+if __name__ == "__main__":
+    jb = FSJWKSBundle(config.TOOL_ISS, None, 'fo_jwks',
+                          key_conv={'to': quote_plus, 'from': unquote_plus})
 
     # Need to save the private parts
     jb.bundle.value_conv['to'] = keyjar_to_jwks_private
+    jb.bundle.sync()
 
     operator = {}
 
-    for entity, _name in fo_liss.items():
-        fname = os.path.join(base_path, "{}.key".format(_name))
-        _keydef = keydefs[:]
-        _keydef[0]['key'] = fname
-
-        _jwks, _keyjar, _kidd = build_keyjar(_keydef)
-        jb[entity] = _keyjar
+    for entity, _keyjar in jb.items():
         operator[entity] = Operator(iss=entity, keyjar=_keyjar)
-    return jb, operator
 
-_liss = {}
-for fo in config.FO:
-    _fo = fo.replace('/', '_')
-    _liss[fo] = _fo
-
-for o, val in config.ORG.items():
-    for ent in ['OA','LO','EO']:
-        if ent in val:
-            if ent in ['OA']:
-                item = val[ent]
-                _item = item.replace('/','_')
-                _liss[item] = _item
-            else:
-                for item in val[ent]:
-                    _item = item.replace('/','_')
-                    _liss[item] = _item
-
-_jb, operator = make_jwks_bundle(config.TOOL_ISS, _liss, None, KEYDEFS, './')
-
-
-res = {}
-
-for sms in config.SMSDEF:
-    _ms = None
-    depth = len(sms)
-    i = 1
-    _fo = ''
-    for event in sms:
-        req = MetadataStatement(**event['request'])
-        _requester = operator[event['requester']]
-        req['signing_keys'] = _requester.signing_keys_as_jwks()
-        if _ms:
-            req['metadata_statements'] = [_ms[:]]
-        req.update(event['signer_add'])
-
-        if i == depth:
-            jwt_args = {'aud': [_requester.iss]}
-        else:
-            jwt_args = {}
-
-        _signer = operator[event['signer']]
-        _ms = _signer.pack_metadata_statement(req, jwt_args=jwt_args)
-        if i == 1:
-            _fo = _signer.iss
-
-    res[_fo] = _ms
-
-for key, item in res.items():
-    print(key, item)
+    for sms in make_signed_metadata_statements(config.SMSDEF, operator):
+        print(sms['fo'], sms['ms'])
