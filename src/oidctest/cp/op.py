@@ -107,19 +107,22 @@ class WebFinger(object):
         cnf = cherrypy.request.config
         subj = resource
         _base = cnf['base_url']
+        dummy = None
 
         # introducing an error
         if 'rp-discovery-webfinger-http-href' in resource:
             _base = _base.replace('https', 'http')
+        if 'rp-discovery-webfinger-unknown-member' in resource:
+            dummy = "foobar"
 
         if _base.endswith('/'):
             href = '{}{}'.format(_base, _path)
         else:
             href = '{}/{}'.format(_base, _path)
 
-        ev.store(EV_RESPONSE, Operation('Webfinger', href=href, subj=resource))
+        ev.store(EV_RESPONSE, Operation('Webfinger', href=href, subj=resource, dummy=dummy))
         write_events(ev, op_id, test_id)
-        return self.srv.response(subj, href)
+        return self.srv.response(subj, href, dummy)
 
 
 class Configuration(object):
