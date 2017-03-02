@@ -64,3 +64,5 @@ jwk*.json
 
 accounting
 parse_log
+/.project
+/.pydevproject
