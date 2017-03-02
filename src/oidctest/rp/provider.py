@@ -129,7 +129,7 @@ class Server(oic.Server):
             except (KeyError, TypeError):
                 pass
 
-        if "mch" in self.behavior_type:  # modify the c_hash if available
+        if "mch" in self.behavior_type:  # remove the c_hash if available
             if "c_hash" in idt:
                 del idt['c_hash']
 
