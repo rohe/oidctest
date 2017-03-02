@@ -120,9 +120,10 @@ class WebFinger(object):
         else:
             href = '{}/{}'.format(_base, _path)
 
-        ev.store(EV_RESPONSE, Operation('Webfinger', href=href, subj=resource, dummy=dummy))
+        ev.store(EV_RESPONSE,
+                 Operation('Webfinger', href=href, subj=resource, dummy=dummy))
         write_events(ev, op_id, test_id)
-        return self.srv.response(subj, href, dummy)
+        return self.srv.response(subj, href, dummy=dummy)
 
 
 class Configuration(object):
