@@ -17,10 +17,8 @@ from jwkest.jwk import ECKey
 from jwkest.jwk import SYMKey
 
 from oic import oic
-from oic import rndstr
 from oic.oauth2 import error
 from oic.oauth2 import error_response
-from oic.oauth2 import Message
 from oic.oic.message import AccessTokenRequest
 from oic.oic.message import ProviderConfigurationResponse
 from oic.oic.message import RegistrationResponse
@@ -111,8 +109,8 @@ class Provider(provider.Provider):
                  client_authn, symkey, urlmap=None, ca_certs="", keyjar=None,
                  hostname="", template_lookup=None, template=None,
                  verify_ssl=True, capabilities=None, client_cert=None,
-                 federation_entity=None, fo_priority=None, ms_dir='',
-                 signing_service=None, **kwargs):
+                 federation_entity=None, fo_priority=None, signers=None,
+                 **kwargs):
 
         provider.Provider.__init__(
             self, name, sdb, cdb, authn_broker, userinfo, authz,
@@ -120,8 +118,7 @@ class Provider(provider.Provider):
             symkey, urlmap, ca_certs, keyjar, hostname, template_lookup,
             template, verify_ssl, capabilities, client_cert=client_cert,
             federation_entity=federation_entity, fo_priority=fo_priority,
-            ms_dir=ms_dir, signing_service=signing_service
-        )
+            signers=signers)
 
         self.claims_type = ["normal"]
         self.behavior_type = []

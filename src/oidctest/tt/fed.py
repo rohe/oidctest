@@ -49,22 +49,22 @@ class Sign(object):
 
 
 class FoKeys(object):
-    def __init__(self, fo):
-        self.fo = fo
+    def __init__(self, bundle):
+        self.bundle = bundle
 
     @cherrypy.expose
     def index(self):
         cherrypy.response.headers['Content-Type'] = 'application/jwt'
-        return as_bytes(self.fo.export_bundle())
+        return as_bytes(self.bundle.create_signed_bundle())
 
     @cherrypy.expose
     def sigkey(self):
         cherrypy.response.headers['Content-Type'] = 'application/json'
-        return as_bytes(json.dumps(self.fo.keyjar.export_jwks()))
+        return as_bytes(json.dumps(self.bundle.sign_keys.export_jwks()))
 
     @cherrypy.expose
     def signer(self):
-        return as_bytes(self.fo.iss)
+        return as_bytes(self.bundle.iss)
 
 
 def named_kc(config, iss):

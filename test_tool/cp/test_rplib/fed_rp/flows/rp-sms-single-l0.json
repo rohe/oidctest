@@ -1,6 +1,8 @@
 {
   "group": "Single SMS",
   "short_description": "Can handle a singel-level single signed metadata statement",
-  "detailed_description": "Make a ${OPENID_PROVIDER_ISSUER_DISCOVERY} and interpret the ${SIGNED_METADATA_STATEMENT}.",
-  "expected_result": "Correctly verified the signature and interpreted the information in the response."
+  "sms": null,
+  "signer": "sunet",
+  "detailed_description": "Make a ${OPENID_PROVIDER_ISSUER_DISCOVERY} and interpret the received ${SIGNED_METADATA_STATEMENT}. The response will be <b>directly</b> signed by a federation without any intermediate.",
+  "expected_result": "Correctly verified the signature and interpreted the provider information received."
 }

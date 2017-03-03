@@ -64,6 +64,7 @@
     "SELF_ISSUED_ID_TOKEN": ["https://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedValidation", "Self-Issued ID Token"],
     "SELF_ISSUED_OPENID_PROVIDERS": ["https://openid.net/specs/openid-connect-core-1_0.html#SelfIssued", "Self-Issued OpenID Provider"],
     "SIGN_THE_REQUEST_OBJECT": ["https://openid.net/specs/openid-connect-core-1_0.html#SignedRequestObject", "Sign the Request Object"],
+    "SIGNED_METADATA_STATEMENT": ["http://openid.net/specs/openid-connect-federation-1_0.html#rfc.section.4.3", "Signed Metadata Statement"],
     "SIGNED_REQUEST": ["${JWT_REQUESTS_URL}", "signed authentication request"],
     "SIGNING_KEY_ROTATION": ["${ROTATE_SIGNING_KEY_URL}", "rotated signing keys"],
     "SUB": ["${ID_TOKEN_URL}", "sub"],
