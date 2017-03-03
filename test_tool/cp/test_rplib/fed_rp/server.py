@@ -3,7 +3,8 @@ import cherrypy
 import logging
 import os
 
-from oic.federation.operator import FederationOperator
+from fedoidc.bundle import FSJWKSBundle
+from fedoidc.operator import FederationOperator
 from oic.utils import webfinger
 
 from oidctest.cp import dump_log
@@ -33,10 +34,9 @@ hdlr.setFormatter(base_formatter)
 logger.addHandler(hdlr)
 logger.setLevel(logging.DEBUG)
 
-
 if __name__ == '__main__':
     import argparse
-    from oidctest.rp import provider
+    from oidctest.fed import provider
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', dest='debug', action='store_true')
@@ -113,14 +113,16 @@ if __name__ == '__main__':
 
     _fos = {}
 
-    me = FederationOperator(iss=args.iss, bundle_sign_alg='RS256',
-                            keyconf=named_kc(config, args.iss),
-                            jwks_file='{}.json'.format(args.iss))
+    me = provider.Provider(iss=args.iss, bundle_sign_alg='RS256',
+                           keyconf=named_kc(config, args.iss),
+                           jwks_file='{}.json'.format(args.iss))
+
     _fos[args.iss] = me
 
     for fo in config.FOS:
-        _fo = FederationOperator(iss=fo, keyconf=named_kc(config, fo),
-                                 jwks_file='{}.json'.format(fo))
+        bundle = FSJWKSBundle(iss=fo, fdir='fdir')
+        _fo = FederationOperator(jwks_bundle=bundle, iss=fo,
+                                 keyconf=named_kc(config, fo))
         me.add_to_bundle(fo, _fo.export_jwks())
         _fos[fo] = _fo
 
