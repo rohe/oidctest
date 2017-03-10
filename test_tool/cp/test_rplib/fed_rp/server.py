@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
+import importlib
+
 import cherrypy
 import logging
 import os
 
-from fedoidc.bundle import FSJWKSBundle
-from fedoidc.operator import FederationOperator
+import sys
+from fedoidc import test_utils
 from oic.utils import webfinger
 
 from oidctest.cp import dump_log
@@ -46,14 +48,23 @@ if __name__ == '__main__':
     parser.add_argument('-P', dest='path')
     parser.add_argument('-t', dest='tls', action='store_true')
     # federation extras
-    parser.add_argument('-b', dest='bundle', required=True)
     parser.add_argument('-i', dest='iss', required=True)
-    parser.add_argument('-s', dest='sign_key', required=True)
-
+    parser.add_argument('-F', dest='fed_conf')
     parser.add_argument(dest="config")
     args = parser.parse_args()
 
     _com_args, _op_arg, config = cb_setup(args)
+
+    sys.path.insert(0, ".")
+    fed_conf = importlib.import_module(args.fed_conf)
+
+    liss = list(fed_conf.FO.values())
+    liss.extend(list(fed_conf.OA.values()))
+    liss.extend(list(fed_conf.EO.values()))
+
+    signer, keybundle = test_utils.setup(fed_conf.KEYDEFS, fed_conf.TOOL_ISS,
+                                         liss, fed_conf.SMS_DEF, fed_conf.OA,
+                                         'ms_dir')
 
     folder = os.path.abspath(os.curdir)
     _flows = Flow(args.flowsdir, profile_handler=SimpleProfileHandler)
@@ -111,32 +122,9 @@ if __name__ == '__main__':
 
     #  ================= Federation specific stuff =========================
 
-    _fos = {}
-
-    me = provider.Provider(iss=args.iss, bundle_sign_alg='RS256',
-                           keyconf=named_kc(config, args.iss),
-                           jwks_file='{}.json'.format(args.iss))
-
-    _fos[args.iss] = me
-
-    for fo in config.FOS:
-        bundle = FSJWKSBundle(iss=fo, fdir='fdir')
-        _fo = FederationOperator(jwks_bundle=bundle, iss=fo,
-                                 keyconf=named_kc(config, fo))
-        me.add_to_bundle(fo, _fo.export_jwks())
-        _fos[fo] = _fo
-
-    fp = open(args.bundle, 'w')
-    fp.write(me.export_bundle())
-    fp.close()
-
-    # sign_key = get_signing_keys(args.iss, KEYDEFS, args.sign_key)
-    # jb = get_bundle(args.iss, config.FOS, sign_key, args.bundle,
-    #                 config.KEYDEFS, config.BASE_PATH)
-
-    cherrypy.tree.mount(Sign(_fos, args.iss), '/sign')
-    cherrypy.tree.mount(FoKeys(me), '/bundle')
-    cherrypy.tree.mount(Who(_fos), '/who')
+    cherrypy.tree.mount(Sign(signer), '/sign')
+    cherrypy.tree.mount(FoKeys(keybundle), '/bundle')
+    cherrypy.tree.mount(Who(fed_conf.FO), '/who')
 
     # ======================================================================
 

@@ -15,19 +15,19 @@ BASE = {'sunet.op': EO['sunet.op']}
 
 SMS_DEF = {
     'sunet':{
-        'sunet.swamid': [
+        FO['swamid']: [
             {'request': {}, 'requester': OA['sunet'],
              'signer_add': {}, 'signer': FO['swamid']},
         ],
-        'sunet.feide': [
+        FO['feide']: [
             {'request': {}, 'requester': OA['sunet'],
              'signer_add': {}, 'signer': FO['feide']},
         ],
-        'sunet.surfnet': [
+        FO['surfnet']: [
             {'request': {}, 'requester': OA['sunet'],
              'signer_add': {}, 'signer': FO['surfnet']},
         ],
-        'sunet.swamid.edugain': [
+        FO['edugain']: [
             {'request': {}, 'requester': FO['swamid'],
              'signer_add': {}, 'signer': FO['edugain']},
             {'request': {}, 'requester': OA['sunet'],
@@ -35,7 +35,7 @@ SMS_DEF = {
         ]
     },
     'uninett':{
-        'uninett.feide': [
+        FO['feide']: [
             {'request': {}, 'requester': OA['uninett'],
              'signer_add': {}, 'signer': FO['feide']},
         ]
