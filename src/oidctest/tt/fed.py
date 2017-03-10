@@ -14,19 +14,26 @@ class Who(object):
     @cherrypy.expose
     def index(self):
         cherrypy.response.headers['Content-Type'] = 'application/json'
-        return as_bytes(json.dumps(list(self.fos.keys())))
+        return as_bytes(json.dumps(list(self.fos.values())))
 
 
 class Sign(object):
-    def __init__(self, fos, me):
-        self.fos = fos
-        self.me = me
+    def __init__(self, signer):
+        self.signer = signer
 
     @cherrypy.expose
-    def index(self, **kwargs):
+    def index(self, signer='', **kwargs):
+        if not signer:
+            raise cherrypy.HTTPError(400, 'Missing signer')
+        if signer not in self.signer:
+            raise cherrypy.HTTPError(400, 'unknown signer')
+
         if cherrypy.request.process_request_body is True:
             _json_doc = cherrypy.request.body.read()
         else:
+            raise cherrypy.HTTPError(400, 'Missing Client registration body')
+
+        if _json_doc == b'':
             raise cherrypy.HTTPError(400, 'Missing Client registration body')
 
         _args = json.loads(as_unicode(_json_doc))
@@ -37,13 +44,8 @@ class Sign(object):
         except (MessageException, VerificationError) as err:
             raise cherrypy.CherryPyException(str(err))
         else:
-            try:
-                _fo_iss = kwargs['fo']
-            except KeyError:
-                _fo_iss = self.me
-
-            fo = self.fos[_fo_iss]
-            _jwt = fo.pack_metadata_statement(_mds)
+            _sign = self.signer[signer]
+            _jwt = _sign.create_signed_metadata_statement(_mds)
             cherrypy.response.headers['Content-Type'] = 'application/jwt'
             return as_bytes(_jwt)
 
