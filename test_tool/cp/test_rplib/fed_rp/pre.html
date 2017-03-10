@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Manual</title>
+</head>
+<body>
+<h1>User Manual</h1>
+
+This tool that can be used to test OpenID Connect (OIDC) federation
+aware RP library have several different interfaces.
+Each one presenting part of the necessary functionality.
+
+<h3>Federation operator</h3>
+<p>
+The tool can act as several federation operators. What this
+means is that you can request that the tool signed a statement you
+presents it with as if the tool represented a federation operator.
+</p>
+<dl>
+    <dt>The syntax is</dt>
+    <dd><i>base_url</i>/sign?signer=fo_identifier</dd>
+</dl>
+
+<p>
+For instance:
+<br>
+    <pre>
+<code>
+    POST /sign?signer=https%3A%2F%2Fswamid.sunet.se HTTP/1.1
+    Host: server.example.com
+    Content-Type: application/x-www-form-urlencoded
+
+    { "redirect_uris": [ "https://www.example.org" ]}
+</code></pre>
+</p>
+<p>
+To find out which federation operators the tool can act as
+send this command:
+    <br>
+<pre><code>
+    GET /who
+    Host: server.example.com
+
+</code></pre>
+</p>
+It will return a list of URLs each one an identifier for a
+federation operator.
+
+<h3>Federation keys</h3>
+
+Each federation will have keys it can use to sign metadata statements
+with. You can get all the necessary validation keys from
+the tool. To get them you need to use another command:
+<pre><code>
+    GET /bundle
+    Host: server.example.com
+</code></pre>
+<p>
+If you do GET /bundle you will get a signed JWT containing a
+JSON document with all the public keys.
+The format of the bundle is:
+</p>
+<pre><code>
+    {&lt;FO1 identifier&gt;: JWKS, ... , &lt;FOn identifier&gt;: JWKS}
+</code></pre>
+
+The format of a JWKS is defined in RFC 7517.
+<p>
+Now you don't have the key to verify the signature of the bundle.
+But don't despair, you can get that too from the tool.
+Now in real life you would not do it like this, but for our testing
+it is sufficient.
+</p>
+To get the signing key issue:
+
+<pre><code>
+    GET /bundle/sigkey
+    Host: Server.example.com
+</code></pre>
+
+This command will return a JWKS containing the public part of the signing key.
+
+<h3>Try it out!</h3>
+
+<h4> Find which federations are around </h4>
+
+<a href="{base_url}/who">/who</a>
+
+<h4>Sign a metadata statement</h4>
+<p>
+    Construct a metadata statement and place it in a file. Once
+    you have it in a file and if you have <em>curl</em> on your machine
+    you can do (assuming the metadata statement file is named <i>ms.json</i>):
+</p>
+<pre><code>
+    $ curl -k -H "Content-Type: application/json" -X POST -d @ms.json {base_url}/sign?signer=https%3A%2F%2Fsunet.se
+</code></pre>
+
+<h4>Verifying a metadata statement signed by a FO</h4>
+<p>
+    To do this you need the signing key of the FO
+</p>
+</body>
+</html>
