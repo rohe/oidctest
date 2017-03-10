@@ -5,7 +5,7 @@ import os
 import cherrypy
 import logging
 
-from oic.federation.file_system import FileSystem
+from fedoidc.file_system import FileSystem
 from oidctest.cp import dump_log
 
 from oidctest.tt.action import Action

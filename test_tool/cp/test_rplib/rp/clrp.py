@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 import json
 import random
-from oic.federation import MetadataStatement
-from oic.federation.bundle import JWKSBundle
-from oic.federation.bundle import verify_signed_bundle
-from oic.federation.operator import Operator
+from fedoidc import MetadataStatement
+from fedoidc.bundle import JWKSBundle
+from fedoidc.bundle import verify_signed_bundle
 from oic.utils.jwt import JWT
 from oic.utils.keyio import build_keyjar
 from oic.utils.keyio import KeyJar

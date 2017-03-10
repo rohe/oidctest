@@ -8,7 +8,7 @@ import logging
 import os
 import sys
 
-from oic.federation.file_system import FileSystem
+from fedoidc.file_system import FileSystem
 from oic.oic import Client
 from oic.oic.message import factory as oic_message_factory
 from oidctest.op import check
