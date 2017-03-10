@@ -2,8 +2,8 @@ import json
 
 import cherrypy
 from jwkest import as_bytes, as_unicode
-from oic.exception import MessageException
-from oic.federation import MetadataStatement
+from fedoidc import MetadataStatement
+from oic.oauth2 import MessageException
 from oic.oauth2 import VerificationError
 
 
