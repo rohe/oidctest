@@ -19,6 +19,7 @@ from oidctest.cp.setup import cb_setup
 from otest.flow import Flow
 from otest.prof_util import SimpleProfileHandler
 
+from oidctest.tt.fed import Sign
 
 logger = logging.getLogger("")
 LOGFILE_NAME = 'rp_test.log'
@@ -97,6 +98,9 @@ if __name__ == '__main__':
     cherrypy.tree.mount(Log(log_root), '/log')
     cherrypy.tree.mount(ClearLog(log_root), '/clear')
     cherrypy.tree.mount(Tar(log_root), '/mktar')
+
+    # Signers
+    cherrypy.tree.mount(Sign(), '/sign')
 
     # OIDC Providers
     cherrypy.tree.mount(Provider(op_handler, _flows), '/', provider_config)
