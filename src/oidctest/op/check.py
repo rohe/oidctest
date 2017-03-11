@@ -1625,6 +1625,32 @@ class VerifyOPEndpointsUseHTTPS(Information):
         return {}
 
 
+class VerifyHTTPSUsage(Information):
+    """
+    Verify that specific endpoints uses https
+    """
+    cid = "verify-https-usage"
+    msg = "Some OP endpoints are not using HTTPS"
+
+    def _func(self, conv):
+        _pi = get_provider_info(conv)
+        _not_https = []
+        for endp in self._kwargs['endpoints']:
+            try:
+                assert _pi[endp].startswith("https://")
+            except KeyError:
+                pass
+            except AssertionError:
+                self._status = self.status
+                _not_https.append(endp)
+                break
+
+        if _not_https:
+            self._message = "{} did not use HTTPS".format(_not_https)
+
+        return {}
+
+
 class VerifyOPHasRegistrationEndpoint(Error):
     """
     Verify that the OP has a registration endpoint

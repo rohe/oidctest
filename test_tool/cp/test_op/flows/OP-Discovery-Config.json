@@ -20,6 +20,8 @@
     "DYN", "CNF"
   ],
   "assert": {
-    "check-http-response": null
+    "check-http-response": null,
+    "verify-op-endpoints-use-https": null,
+    "verify-https-usage": {"endpoints": ["jwks_uri"]}
   }
 }
