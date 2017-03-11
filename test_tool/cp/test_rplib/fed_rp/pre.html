@@ -22,11 +22,14 @@ presents it with as if the tool represented a federation operator.
     <dd><i>base_url</i>/sign?signer=fo_identifier</dd>
 </dl>
 
+<b>Note:</b> <i>base_url</i> being the base URL for the test tool.
+For this instance <i>base_url</i>={base_url} <br>
+<i>base_url</i> will not be used in the examples but will be in the active links below.
+
 <p>
 For instance:
 <br>
-    <pre>
-<code>
+<pre><code>
     POST /sign?signer=https%3A%2F%2Fswamid.sunet.se HTTP/1.1
     Host: server.example.com
     Content-Type: application/x-www-form-urlencoded
@@ -34,8 +37,9 @@ For instance:
     { "redirect_uris": [ "https://www.example.org" ]}
 </code></pre>
 </p>
+
 <p>
-To find out which federation operators the tool can act as
+To find out which federation operators the tool can act as,
 send this command:
     <br>
 <pre><code>
@@ -68,7 +72,7 @@ The format of the bundle is:
 The format of a JWKS is defined in RFC 7517.
 <p>
 Now you don't have the key to verify the signature of the bundle.
-But don't despair, you can get that too from the tool.
+But don't despair, you can get that too from the tool.<br>
 Now in real life you would not do it like this, but for our testing
 it is sufficient.
 </p>
@@ -85,7 +89,7 @@ This command will return a JWKS containing the public part of the signing key.
 
 <h4> Find which federations are around </h4>
 
-<a href="{base_url}/who">/who</a>
+<a href="{base_url}who">/who</a>
 
 <h4>Sign a metadata statement</h4>
 <p>
