@@ -42,7 +42,7 @@ SMS_DEF = {
     }
 }
 
-KEYDEFS = [
+KEY_DEFS = [
     {"type": "RSA", "key": '', "use": ["sig"]},
     {"type": "EC", "crv": "P-256", "use": ["sig"]}
 ]

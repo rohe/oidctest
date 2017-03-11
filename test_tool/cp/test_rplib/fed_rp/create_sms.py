@@ -1,4 +1,7 @@
+#!/usr/bin/env python3
+
 import importlib
+import os
 import sys
 from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
@@ -25,8 +28,12 @@ if __name__ == "__main__":
     for entity, _keyjar in jb.items():
         operator[entity] = Operator(iss=entity, keyjar=_keyjar)
 
-    metadata_statements = FileSystem('ms_dir')
     for name, spec in config.SMS_DEF.items():
-        res = make_signed_metadata_statement(spec, operator)
-        metadata_statements[name] = res['ms']
-        print(name, res['ms'])
+        _dir = os.path.join('ms_dir', name)
+        metadata_statements = FileSystem(_dir,
+                                         key_conv={'to': quote_plus,
+                                                   'from': unquote_plus})
+        for fo, desc in spec.items():
+            res = make_signed_metadata_statement(desc, operator)
+            metadata_statements[fo] = res['ms']
+            print(name, fo, res['ms'])
