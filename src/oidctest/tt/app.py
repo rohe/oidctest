@@ -51,8 +51,13 @@ class Application(object):
             url = '{}:{}'.format(self.test_tool_base, _port)
 
         typ, _econf = self.rest.read_conf(iss, tag)
-        if _econf['tool']['insecure']:
-            args.append('-k')
+        try:
+            _insecure = _econf['tool']['insecure']
+        except KeyError:
+            pass
+        else:
+            if _insecure:
+                args.append('-k')
 
         args.append(self.test_tool_conf)
 
