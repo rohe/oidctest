@@ -4,6 +4,8 @@ import os
 import re
 
 import logging
+
+import sys
 from jwkest import as_bytes
 from otest.flow import ABBR
 
@@ -63,6 +65,26 @@ def test_list(args, grps):
     return line
 
 
+def get_mandatory(file_dir, links):
+    mandatory = []
+    # optional = []
+
+    for fn in os.listdir(file_dir):
+        if fn.startswith('rp-') and fn.endswith('.json'):
+            fname = os.path.join(file_dir, fn)
+            fp = open(fname, 'r')
+            try:
+                _info = json.load(fp)
+            except Exception:
+                continue
+            fp.close()
+
+            _det_desc = replace_with_link(_info['detailed_description'], links)
+            _exp_res = replace_with_link(_info['expected_result'], links)
+            mandatory.append((fn[:-5], _det_desc, _exp_res, _info['group']))
+    return mandatory
+
+
 class TestList(object):
     def __init__(self, fdir, links_file, headline, grps):
         self.fdir = fdir
@@ -74,25 +96,7 @@ class TestList(object):
 
     @cherrypy.expose
     def index(self, profile=''):
-        mandatory = []
-        #optional = []
-
-        for fn in os.listdir(self.fdir):
-            if fn.startswith('rp-') and fn.endswith('.json'):
-                fname = os.path.join(self.fdir, fn)
-                fp = open(fname, 'r')
-                try:
-                    _info = json.load(fp)
-                except Exception:
-                    continue
-                fp.close()
-
-                _det_desc = replace_with_link(_info['detailed_description'],
-                                              self.links)
-                _exp_res = replace_with_link(_info['expected_result'],
-                                             self.links)
-                mandatory.append((fn[:-5], _det_desc, _exp_res,
-                                  _info['group']))
+        mandatory = get_mandatory(self.fdir, self.links)
 
         hl = 'Federation functionality tests'
 
@@ -114,3 +118,13 @@ class TestList(object):
 
 # headline = 'List of OIDC RP library tests for profile: "<i>{}</i>"'
 
+if __name__ == "__main__":
+    file_dir = sys.argv[1]
+
+    fp = open(sys.argv[2], 'r')
+    links = json.load(fp)
+    fp.close()
+
+    grps = sys.argv[3:]
+    mandatory = get_mandatory(file_dir, links)
+    print("\n".join(test_list(mandatory, grps)))

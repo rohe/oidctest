@@ -9,10 +9,7 @@ keys = [
     {"type": "EC", "crv": "P-256", "use": ["enc"]}
 ]
 
-FOS = ['https://swamid.sunet.se/oidc',
-       'https://surfnet.nl/oidc']
-
-KEYDEFS = []
+GRPS = ["Single SMS", "Multiple SMS"]
 
 #Only Username and password.
 AUTHENTICATION = {

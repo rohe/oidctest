@@ -1,8 +1,8 @@
 {
   "group": "Multiple SMS",
-  "short_description": "Can handle a set of level0 signed metadata statements",
+  "short_description": "Can handle a set of level 0 signed metadata statements",
   "sms": null,
   "signer": ["swamid", "feide"],
-  "detailed_description": "Make a ${OPENID_PROVIDER_ISSUER_DISCOVERY} and interpret the ${SIGNED_METADATA_STATEMENT}. The response will contain a set of L0 signed metadata statements",
+  "detailed_description": "Make a ${OPENID_PROVIDER_ISSUER_DISCOVERY} and interpret the ${SIGNED_METADATA_STATEMENT}. The response will contain a set of <b>Level 0</b> signed metadata statements",
   "expected_result": "Correctly verified the signature and interpreted the information in the response."
 }

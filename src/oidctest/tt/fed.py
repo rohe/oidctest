@@ -55,9 +55,16 @@ class FoKeys(object):
         self.bundle = bundle
 
     @cherrypy.expose
-    def index(self):
+    def index(self, iss=''):
         cherrypy.response.headers['Content-Type'] = 'application/jwt'
-        return as_bytes(self.bundle.create_signed_bundle())
+        if iss:
+            if isinstance(iss, list):
+                return as_bytes(self.bundle.create_signed_bundle(iss_list=iss))
+            else:
+                return as_bytes(
+                    self.bundle.create_signed_bundle(iss_list=[iss]))
+        else:
+            return as_bytes(self.bundle.create_signed_bundle())
 
     @cherrypy.expose
     def sigkey(self):
