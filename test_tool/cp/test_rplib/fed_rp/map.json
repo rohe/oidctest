@@ -1,0 +1,27 @@
+{
+  "rp-sms-multiple-l0": [
+    {
+      "signer": "https://swamid.sunet.se"
+    },
+    {
+      "signer": "https://edugain.com"
+    }
+  ],
+  "rp-sms-single-l0": [
+    {
+      "signer": "https://swamid.sunet.se"
+    }
+  ],
+  "rp-sms-single-l1": [
+    {
+      "signer": "https://sunet.se",
+      "federation": "https://swamid.sunet.se"
+    }
+  ],
+  "rp-sms-single-l2": [
+    {
+      "signer": "https://sunet.se",
+      "federation": "https://edugain.com"
+    }
+  ]
+}
