@@ -1,1 +1,5 @@
-tool_url = "https://0.0.0.0:8080"
+tool_url = "https://localhost:8080"
+tester = 'dummy'
+KEY_DEFS = [
+    {"type": "RSA", "key": '', "use": ["sig"]},
+]
