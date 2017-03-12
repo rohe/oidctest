@@ -114,14 +114,14 @@ This command will return a JWKS containing the public part of the signing key.
 </p>
 <a href="{base_url}bundle?iss=https%3A%2F%2Fswamid.sunet.se">{base_url}bundle?iss=https%3A%2F%2Fswamid.sunet.se</a>
 <br>
-You can just fetch all the Federation Operators keys know to the test toll
-by clicking on:
+You can just fetch all the Federation Operators keys know to the test tool
+by clicking on:<br>
 <a href="{base_url}bundle">{base_url}bundle</a>
 <br>
-Which ever of these you chose to do is should lead to you now having a file
-called 'bundle' in your download directory.
+Whichever of these you chose to do is should lead to you now having a file
+called 'bundle' in your download directory.<br>
 This bundle (a signed JWT) is signed by the tools signing key.
-Which you then have to fetch here:
+Which you then have to fetch here:<br>
 <a href="{base_url}bundle/sigkey">{base_url}bundle/sigkey</a>
 <h4>Dealing with Provider info discovery</h4>
 In the descriptions of the tests I use level 0/1/2 metadata statements.
@@ -260,5 +260,8 @@ the request.
 <b><i>Note</i></b> that different tests will provide different registration_endpoints
 since the URL contains the <b>tester_id</b> and the <b>test_id</b>.
 
+<p>
+    And that's it, now you're on your own !!
+</p>
 </body>
 </html>
