@@ -13,6 +13,9 @@ from oic.utils.keyio import build_keyjar
 from oic.utils.keyio import KeyJar
 from otest.flow import Flow
 
+from requests.packages import urllib3
+urllib3.disable_warnings()
+
 parser = argparse.ArgumentParser()
 parser.add_argument('-f', dest='flowsdir', required=True)
 parser.add_argument('-k', dest='insecure', action='store_true')

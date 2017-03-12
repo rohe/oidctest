@@ -242,7 +242,7 @@ An example on what it may look like:
 <pre><code>
     $ curl -k {base_url}foo/rp-sms-single-l1/.well-known/openid-configuration
 </code></pre>
-here <i>foo</i> is the <b>tester_id</b> and <i>rp-sms-single-l1</i> is the <i>test_id</i>
+here <i>foo</i> is the <b>tester_id</b> and <i>rp-sms-single-l1</i> is the <b>test_id</b>
 <br>
 As response you should get a JSON document.
 
@@ -253,10 +253,11 @@ registration_endpoint in the JSON document. It should be: <br>
 
 <code> {base_url}foo/rp-sms-single-l1/registration </code>
 
+<br>
 When you have constructed your registration request this is where you must send
 the request.
 <br>
-<em>Note</em> that different tests will provide different registration_endpoints
+<b><i>Note</i></b> that different tests will provide different registration_endpoints
 since the URL contains the <b>tester_id</b> and the <b>test_id</b>.
 
 </body>

@@ -39,7 +39,7 @@ def oidc_op_setup(distroot):
         if os.path.isdir(_dir) is False:
             os.mkdir(_dir)
 
-    _op_dir = os.path.join(distroot, 'test_tool', 'cp', 'test_op',)
+    _op_dir = os.path.join(distroot, 'test_tool', 'cp', 'test_op', )
     for _dir in ['entity_info', 'flows', 'html', 'static']:
         _src = os.path.join(_op_dir, _dir)
         if os.path.isdir(_dir):
@@ -118,5 +118,25 @@ def oidc_rplib_setup(distroot):
 
     for _fname in ['example_conf.py', 'test_rp_op.py', 'setup.py', 'run.sh',
                    'link.json']:
+        _file = os.path.join(_op_dir, _fname)
+        copy_if_not_same(_file, _fname, overwrite=True)
+
+
+def fedoidc_rplib_setup(distroot):
+    for _dir in ['certs', 'keys', 'log', 'fo_jwks', 'ms_dir']:
+        if os.path.isdir(_dir) is False:
+            os.mkdir(_dir)
+
+    _op_dir = os.path.join(distroot, 'test_tool', 'cp', 'test_rplib', 'fed_rp')
+
+    for _dir in ['static', 'flows']:
+        _src = os.path.join(_op_dir, _dir)
+        if os.path.isdir(_dir):
+            shutil.rmtree(_dir)
+        shutil.copytree(_src, _dir)
+
+    for _fname in ['create_bundle.py', 'create_sms.py', 'example_conf.py',
+                   'fed_conf.py', 'install.sh', 'links.json', 'pre.html',
+                   'server.py']:
         _file = os.path.join(_op_dir, _fname)
         copy_if_not_same(_file, _fname, overwrite=True)

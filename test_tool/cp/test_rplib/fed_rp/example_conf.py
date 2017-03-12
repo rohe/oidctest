@@ -11,9 +11,8 @@ keys = [
 
 GRPS = ["Single SMS", "Multiple SMS"]
 
-#Only Username and password.
+#
 AUTHENTICATION = {
-    #"UserPassword": {"ACR": "PASSWORD", "WEIGHT": 1, "URL": SERVICE_URL}
     "NoAuthn": {"ACR": "PASSWORD", "WEIGHT": 1, "user": "diana"}
 }
 
@@ -48,29 +47,5 @@ USERDB = {
             "postal_code": "SE-90187",
             "country": "Sweden"
         },
-    },
-    "babs": {
-        "sub": "babs0001",
-        "name": "Barbara J Jensen",
-        "given_name": "Barbara",
-        "family_name": "Jensen",
-        "nickname": "babs",
-        "email": "babs@example.com",
-        "email_verified": True,
-        "address": {
-            "street_address": "100 Universal City Plaza",
-            "locality": "Hollywood",
-            "region": "CA",
-            "postal_code": "91608",
-            "country": "USA",
-        },
-    },
-    "upper": {
-        "sub": "uppe0001",
-        "name": "Upper Crust",
-        "given_name": "Upper",
-        "family_name": "Crust",
-        "email": "uc@example.com",
-        "email_verified": True,
     }
 }
