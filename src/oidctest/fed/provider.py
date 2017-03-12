@@ -109,7 +109,7 @@ class Provider(provider.Provider):
                  client_authn, symkey, urlmap=None, ca_certs="", keyjar=None,
                  hostname="", template_lookup=None, template=None,
                  verify_ssl=True, capabilities=None, client_cert=None,
-                 federation_entity=None, fo_priority=None, signers=None,
+                 federation_entity=None, fo_priority=None,
                  **kwargs):
 
         provider.Provider.__init__(
@@ -117,8 +117,7 @@ class Provider(provider.Provider):
             client_authn,
             symkey, urlmap, ca_certs, keyjar, hostname, template_lookup,
             template, verify_ssl, capabilities, client_cert=client_cert,
-            federation_entity=federation_entity, fo_priority=fo_priority,
-            signers=signers)
+            federation_entity=federation_entity, fo_priority=fo_priority)
 
         self.claims_type = ["normal"]
         self.behavior_type = []
@@ -135,6 +134,8 @@ class Provider(provider.Provider):
                 pass
         self.jwx_def = {}
         self.build_jwx_def()
+        self.ms_conf = None
+        self.signers = None
 
     def build_jwx_def(self):
         self.jwx_def = {}
@@ -162,11 +163,24 @@ class Provider(provider.Provider):
             k.kid = None
         return keys
 
-    def create_providerinfo(self, pcr_class=ProviderConfigurationResponse,
+    def create_fed_providerinfo(self, pcr_class=ProviderConfigurationResponse,
                             setup=None):
+        _sms = []
+        for spec in self.ms_conf:
+            self.federation_entity.signer = self.signers[spec['signer']]
+            try:
+                fos = spec['federations']
+            except KeyError:
+                try:
+                    fos = [spec['federation']]
+                except KeyError:
+                    fos = []
+
+            _sms.append(self.create_signed_metadata_statement(fos))
+
         _response = provider.Provider.create_providerinfo(self, pcr_class,
                                                           setup)
-
+        _response['metadata_statements'] = _sms
         return _response
 
     def _split_query(self, uri):

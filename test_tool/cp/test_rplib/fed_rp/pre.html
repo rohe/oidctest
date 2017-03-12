@@ -223,5 +223,41 @@ What it means is that for
         </td>
     </tr>
 </table>
+
+<h5>Step 1, how do you get the provider info ?</h5>
+
+You construct a URL using this pattern:<br>
+<i>base_url</i>/{tester_id}/{test_id}/.well-known/openid-configuration <br>
+
+<dl>
+    <dt>tester_id</dt>
+    <dd>Is something you chose as your identifier. It is the name
+    of the log directory where the test tools logs on what happen between
+    you and it appears</dd>
+    <dt>test_id</dt>
+    <dd>This is the test ID that appears in the table above</dd>
+</dl>
+
+An example on what it may look like:
+<pre><code>
+    $ curl -k {base_url}foo/rp-sms-single-l1/.well-known/openid-configuration
+</code></pre>
+here <i>foo</i> is the <b>tester_id</b> and <i>rp-sms-single-l1</i> is the <i>test_id</i>
+<br>
+As response you should get a JSON document.
+
+<h5>Step 2 registering a client</h5>
+
+When you have done the provider info discovery as described above you find the
+registration_endpoint in the JSON document. It should be: <br>
+
+<code> {base_url}foo/rp-sms-single-l1/registration </code>
+
+When you have constructed your registration request this is where you must send
+the request.
+<br>
+<em>Note</em> that different tests will provide different registration_endpoints
+since the URL contains the <b>tester_id</b> and the <b>test_id</b>.
+
 </body>
 </html>

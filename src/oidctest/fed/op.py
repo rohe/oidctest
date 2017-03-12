@@ -9,7 +9,7 @@ from future.backports.urllib.parse import urlparse
 from jwkest import as_bytes
 from jwkest import as_unicode
 
-from oic.oauth2 import Message
+from oic.oauth2 import Message, json
 from oidctest.cp.op_handler import init_keyjar, write_jwks_uri
 
 from otest.events import Events
@@ -141,10 +141,10 @@ class Configuration(object):
             )
         else:
             store_request(op, 'ProviderInfo')
-            resp = op.providerinfo_endpoint()
-            # cherrypy.response.headers['Content-Type'] = 'application/json'
+            resp = op.create_fed_providerinfo()
+            cherrypy.response.headers['Content-Type'] = 'application/json'
             # return as_bytes(resp.message)
-            return conv_response(op, resp)
+            return as_bytes(json.dumps(resp.to_dict()))
 
 
 class Registration(object):

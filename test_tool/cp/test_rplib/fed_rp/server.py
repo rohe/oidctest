@@ -1,29 +1,33 @@
 #!/usr/bin/env python3
 import importlib
+from urllib.parse import quote_plus, unquote_plus
 
 import cherrypy
 import logging
 import os
 
 import sys
-from fedoidc import test_utils
+from fedoidc.bundle import FSJWKSBundle
 from oic.utils import webfinger
+from oic.utils.keyio import build_keyjar
 
 from oidctest.cp import dump_log
 from oidctest.cp.log_handler import ClearLog
 from oidctest.cp.log_handler import Log
 from oidctest.cp.log_handler import Tar
-from oidctest.cp.op_handler import OPHandler
 from oidctest.cp.setup import cb_setup
 from oidctest.cp.test_list import TestList
 from oidctest.fed.op import Provider
 from oidctest.fed.op import WebFinger
+from oidctest.fed.op_handler import FedOPHandler
+from oidctest.fed.setup import create_signers
 from oidctest.tt.fed import FoKeys
 from oidctest.tt.fed import Sign
 from oidctest.tt.fed import Who
 
 from otest.flow import Flow
 from otest.prof_util import SimpleProfileHandler
+
 
 logger = logging.getLogger("")
 LOGFILE_NAME = 'rp_test.log'
@@ -61,13 +65,20 @@ if __name__ == '__main__':
     liss.extend(list(fed_conf.OA.values()))
     liss.extend(list(fed_conf.EO.values()))
 
-    signer, keybundle = test_utils.setup(fed_conf.KEY_DEFS, fed_conf.TOOL_ISS,
-                                         liss, fed_conf.SMS_DEF, fed_conf.OA,
-                                         'ms_dir')
+    sig_keys = build_keyjar(fed_conf.KEY_DEFS)[1]
+    keybundle = FSJWKSBundle(fed_conf.TOOL_ISS, sig_keys, 'fo_jwks',
+                             key_conv={'to': quote_plus, 'from': unquote_plus})
+    signers = create_signers(keybundle, 'ms_dir', fed_conf.SMS_DEF,
+                             fed_conf.FO.values())
+
+    #signer, keybundle = test_utils.setup(fed_conf.KEY_DEFS, fed_conf.TOOL_ISS,
+    #                                     liss, fed_conf.SMS_DEF, fed_conf.OA,
+    #                                     'ms_dir')
 
     folder = os.path.abspath(os.curdir)
     _flows = Flow(args.flowsdir, profile_handler=SimpleProfileHandler)
-    op_handler = OPHandler(provider.Provider, _op_arg, _com_args, _flows)
+    op_handler = FedOPHandler(provider.Provider, _op_arg, _com_args, _flows,
+                              key_defs=fed_conf.KEY_DEFS, signers=signers)
 
     cherrypy.tools.dumplog = cherrypy.Tool('before_finalize', dump_log)
 
@@ -125,7 +136,7 @@ if __name__ == '__main__':
 
     #  ================= Federation specific stuff =========================
 
-    cherrypy.tree.mount(Sign(signer), '/sign')
+    cherrypy.tree.mount(Sign(signers), '/sign')
     cherrypy.tree.mount(FoKeys(keybundle), '/bundle')
     cherrypy.tree.mount(Who(fed_conf.FO), '/who')
 

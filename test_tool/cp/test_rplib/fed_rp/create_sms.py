@@ -29,7 +29,7 @@ if __name__ == "__main__":
         operator[entity] = Operator(iss=entity, keyjar=_keyjar)
 
     for name, spec in config.SMS_DEF.items():
-        _dir = os.path.join('ms_dir', name)
+        _dir = os.path.join('ms_dir', quote_plus(name))
         metadata_statements = FileSystem(_dir,
                                          key_conv={'to': quote_plus,
                                                    'from': unquote_plus})

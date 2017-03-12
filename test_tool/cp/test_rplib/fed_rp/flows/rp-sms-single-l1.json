@@ -1,8 +1,12 @@
 {
   "group": "Single SMS",
   "short_description": "Can handle a single level 1 signed metadata statement",
-  "sms": ["sunet.swamid"],
-  "signer": "sunet",
+  "metadata_statements": [
+    {
+      "federation": "https://swamid.sunet.se",
+      "signer": "https://sunet.se"
+    }
+  ],
   "detailed_description": "Make a ${OPENID_PROVIDER_ISSUER_DISCOVERY} and interpret the ${SIGNED_METADATA_STATEMENT}. The response will contain a single <b>level 1</b> signed metadata",
   "expected_result": "Correctly verified the signature and interpreted the information in the response."
 }

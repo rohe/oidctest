@@ -1,8 +1,16 @@
 {
   "group": "Multiple SMS",
   "short_description": "Can handle a set of <b>level 1</b> signed metadata statements",
-  "sms": ["sunet.swamid", "sunet.feide", "sunet.surfnet"],
-  "signer": "sunet",
+  "metadata_statements": [
+    {
+      "signer": "https://sunet.se",
+      "federations": [
+        "https://edugain.com",
+        "https://swamid.sunet.se",
+        "https://www.feide.no"
+      ]
+    }
+  ],
   "detailed_description": "Make a ${OPENID_PROVIDER_ISSUER_DISCOVERY} and interpret the ${SIGNED_METADATA_STATEMENT}. The response will contain a set of <b>Level 1</b> signed metadata statements",
   "expected_result": "Correctly verified the signature and interpreted the information in the response."
 }

@@ -38,7 +38,7 @@ class OPHandler(object):
         self.provider_cls = provider_cls
         self.op_args = op_args
         self.com_args = com_args
-        self.test_conf = test_conf
+        self.test_conf = test_conf  # elsewhere called flows
         self.op = {}
 
     def get(self, oper_id, test_id, events, endpoint):
