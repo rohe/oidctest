@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
-import json
 import argparse
+import json
 import requests
 
+from fedoidc import ProviderConfigurationResponse
 from fedoidc.bundle import JWKSBundle
 from fedoidc.client import Client
 from fedoidc.entity import FederationEntity
+
 from oic.utils.keyio import build_keyjar
 from oic.utils.keyio import KeyJar
+
 from otest.flow import Flow
 
 from requests.packages import urllib3
@@ -65,7 +68,8 @@ for test_id in tests:
     rp = Client(federation_entity=rp_fed_ent)
 
     # Will raise an exception if there is no metadata statement I can use
-    rp.parse_federation_provider_info(json.loads(resp.text), _iss)
+    rp.handle_response(resp, _iss, rp.parse_federation_provider_info,
+                       ProviderConfigurationResponse)
 
     # If there are more the one metadata statement I can use
     # provider_federations will be set and will contain a dictionary
