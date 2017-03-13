@@ -51,7 +51,7 @@ if __name__ == '__main__':
     parser.add_argument('-P', dest='path')
     parser.add_argument('-t', dest='tls', action='store_true')
     # federation extras
-    parser.add_argument('-i', dest='iss', required=True)
+    #parser.add_argument('-i', dest='iss', required=True)
     parser.add_argument('-F', dest='fed_conf')
     parser.add_argument(dest="config")
     args = parser.parse_args()
