@@ -1,0 +1,26 @@
+{
+  "MTI": [
+    "C",
+    "I",
+    "IT",
+    "CI",
+    "CT",
+    "CIT"
+  ],
+  "behavior": "nokid1jwks",
+  "group": "ID Token",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Accepts ID Token without 'kid' claim in JOSE header if only one JWK supplied in 'jwks_uri'",
+  "detailed_description": "Request an ID token and verify its signature using the keys provided by the Issuer.",
+  "expected_result": "Use the single key published by the Issuer to verify the ID Tokens signature and accept the ID Token after doing ${ID_TOKEN_VALIDATION}."
+}

@@ -1,0 +1,26 @@
+{
+  "group": "ID Token",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ],
+    "id_token_signing_alg_values_supported": [
+      "RS256"
+    ],
+    "id_token_encryption_alg_values_supported": [
+      "RSA1_5"
+    ],
+    "id_token_encryption_enc_values_supported": [
+      "A128CBC-HS256"
+    ]
+  },
+  "short_description": "Can request and use signed and encrypted ID Token",
+  "detailed_description": "Request an signed and encrypted ID Token. Decrypt the returned the ID Token and verify its signature using the keys published by the Issuer.",
+  "expected_result": "Accept the ID Token after doing ${ID_TOKEN_VALIDATION}."
+}

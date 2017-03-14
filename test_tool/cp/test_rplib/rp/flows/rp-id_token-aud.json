@@ -1,0 +1,26 @@
+{
+  "MTI": [
+    "C",
+    "I",
+    "IT",
+    "CI",
+    "CT",
+    "CIT"
+  ],
+  "group": "ID Token",
+  "behavior": "aud",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Rejects ID Token with invalid 'aud' claim",
+  "detailed_description": "Request an ID token and compare its ${AUD} value to the Relying Party's '${CLIENT_ID}'.",
+  "expected_result": "Identify that the 'aud' value is missing or doesn't match the 'client_id' and reject the ID Token after doing ${ID_TOKEN_VALIDATION}."
+}
