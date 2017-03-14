@@ -99,9 +99,6 @@ if __name__ == '__main__':
     cherrypy.tree.mount(ClearLog(log_root), '/clear')
     cherrypy.tree.mount(Tar(log_root), '/mktar')
 
-    # Signers
-    cherrypy.tree.mount(Sign(), '/sign')
-
     # OIDC Providers
     cherrypy.tree.mount(Provider(op_handler, _flows), '/', provider_config)
 
