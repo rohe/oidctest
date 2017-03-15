@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import importlib
 import os
 from urllib.parse import quote_plus
