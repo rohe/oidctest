@@ -18,8 +18,8 @@ from requests.packages import urllib3
 urllib3.disable_warnings()
 
 # ----- config -------
-#tool_url = "https://agaton-sax.com:8080"
-tool_url = "https://localhost:8080"
+tool_url = "https://agaton-sax.com:8080"
+#tool_url = "https://localhost:8080"
 tester = 'dummy'
 KEY_DEFS = [
     {"type": "RSA", "key": '', "use": ["sig"]},
