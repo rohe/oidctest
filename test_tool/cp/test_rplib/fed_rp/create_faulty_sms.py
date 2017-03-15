@@ -18,6 +18,9 @@ if __name__ == "__main__":
 
     jb = FSJWKSBundle(config.TOOL_ISS, None, 'fo_jwks',
                       key_conv={'to': quote_plus, 'from': unquote_plus})
+
+    # Need to save the private parts
+    jb.bundle.value_conv['to'] = keyjar_to_jwks_private
     jb.bundle.sync()
 
     operator = {}

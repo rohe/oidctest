@@ -3,18 +3,21 @@ TOOL_ISS = 'https://localhost'
 FO = {'swamid': 'https://swamid.sunet.se',
       'surfnet': 'https://surfnet.nl/oidc',
       'feide': 'https://www.feide.no',
-      'edugain': 'https://edugain.com'}
+      'edugain': 'https://edugain.com',
+      'example.com': 'https://example.com'}
 
-OA = {'sunet': 'https://sunet.se', 'uninett': 'https://uninett.no'}
+OA = {'sunet': 'https://sunet.se', 'uninett': 'https://uninett.no',
+      'example.org': 'https://example.org'}
 
-IA = {}
+IA = {'cs.example.org': 'https://cs.example.org'}
 
-EO = {'sunet.op': 'https://sunet.se/op'}
+EO = {'sunet.op': 'https://sunet.se/op',
+      'example.org.op': 'https://example.org/op'}
 
 BASE = {'sunet.op': EO['sunet.op']}
 
 SMS_DEF = {
-    OA['sunet']:{
+    OA['sunet']: {
         FO['swamid']: [
             {'request': {}, 'requester': OA['sunet'],
              'signer_add': {}, 'signer': FO['swamid']},
@@ -34,7 +37,7 @@ SMS_DEF = {
              'signer_add': {}, 'signer': FO['swamid']}
         ]
     },
-    OA['uninett']:{
+    OA['uninett']: {
         FO['feide']: [
             {'request': {}, 'requester': OA['uninett'],
              'signer_add': {}, 'signer': FO['feide']},
