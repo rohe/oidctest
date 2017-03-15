@@ -1,13 +1,16 @@
 #!/usr/bin/env python3
-import importlib
-from urllib.parse import quote_plus, unquote_plus
 
 import cherrypy
+import importlib
 import logging
 import os
-
 import sys
+
+from urllib.parse import quote_plus
+from urllib.parse import unquote_plus
+
 from fedoidc.bundle import FSJWKSBundle
+
 from oic.utils import webfinger
 from oic.utils.keyio import build_keyjar
 
@@ -23,6 +26,7 @@ from oidctest.fed.op_handler import FedOPHandler
 from oidctest.fed.setup import create_signers
 from oidctest.tt.fed import FoKeys
 from oidctest.tt.fed import Sign
+from oidctest.tt.fed import Verify
 from oidctest.tt.fed import Who
 
 from otest.flow import Flow
@@ -136,6 +140,7 @@ if __name__ == '__main__':
     cherrypy.tree.mount(Sign(signers), '/sign')
     cherrypy.tree.mount(FoKeys(keybundle), '/bundle')
     cherrypy.tree.mount(Who(fed_conf.FO), '/who')
+    cherrypy.tree.mount(Verify(), '/verify')
 
     # ======================================================================
 

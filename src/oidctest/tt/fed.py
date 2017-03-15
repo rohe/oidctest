@@ -1,10 +1,16 @@
+import cherrypy
 import json
 
-import cherrypy
+from fedoidc import MetadataStatement, ProviderConfigurationResponse
+from fedoidc.client import Client
+from fedoidc.entity import FederationEntity
+
 from jwkest import as_bytes, as_unicode
-from fedoidc import MetadataStatement
+from oic.exception import RegistrationError, ParameterError
+
 from oic.oauth2 import MessageException
 from oic.oauth2 import VerificationError
+from oic.utils.keyio import KeyJar
 
 
 class Who(object):
@@ -74,6 +80,29 @@ class FoKeys(object):
     @cherrypy.expose
     def signer(self):
         return as_bytes(self.bundle.iss)
+
+
+class Verify(object):
+    @cherrypy.expose
+    def index(self):
+        if cherrypy.request.process_request_body is True:
+            _request = cherrypy.request.body.read()
+        else:
+            raise cherrypy.HTTPError(400, 'No POST body')
+
+        _kj = KeyJar()
+        _kj.import_jwks(_request['jwks'], _request['iss'])
+        rp_fed_ent = FederationEntity(None, keyjar=_kj)
+
+        rp = Client(federation_entity=rp_fed_ent)
+
+        try:
+            rp.handle_response(_request['ms_json'], _request['iss'],
+                               rp.parse_federation_provider_info,
+                               ProviderConfigurationResponse)
+            return b'OK'
+        except (RegistrationError, ParameterError):
+            raise cherrypy.HTTPError(400, b'Invalid Metadata statement')
 
 
 def named_kc(config, iss):
