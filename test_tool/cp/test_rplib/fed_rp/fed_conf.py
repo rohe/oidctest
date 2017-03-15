@@ -7,7 +7,8 @@ FO = {'swamid': 'https://swamid.sunet.se',
       'example.com': 'https://example.com'}
 
 OA = {'sunet': 'https://sunet.se', 'uninett': 'https://uninett.no',
-      'example.org': 'https://example.org'}
+      'example.org': 'https://example.org',
+      'bogus.example.org': 'https://bogus.example.org'}
 
 IA = {'cs.example.org': 'https://cs.example.org'}
 
@@ -61,7 +62,8 @@ SMS_DEF = {
                 'requester': IA['cs.example.org'],
                 'signer_add': {}, 'signer': OA['example.org']}
         ],
-    }
+    },
+    OA['bogus.example.org']: {}
 }
 
 KEY_DEFS = [

@@ -18,12 +18,29 @@ from requests.packages import urllib3
 urllib3.disable_warnings()
 
 # ----- config -------
-tool_url = "https://agaton-sax.com:8080"
-#tool_url = "https://localhost:8080"
+#tool_url = "https://agaton-sax.com:8080"
+tool_url = "https://localhost:8080"
 tester = 'dummy'
 KEY_DEFS = [
     {"type": "RSA", "key": '', "use": ["sig"]},
 ]
+
+
+def fo_jb(jb, test_info):
+    fjb = JWKSBundle('')
+    for ms in test_info['metadata_statements']:
+        try:
+            for fo in ms['federations']:
+                fjb[fo] = jb[fo]
+        except KeyError:
+            try:
+                fo = ms['federation']
+                fjb[fo] = jb[fo]
+            except KeyError:
+                fo = ms['signer']
+                fjb[fo] = jb[fo]
+    return fjb
+
 # --------------------
 
 parser = argparse.ArgumentParser()
@@ -59,7 +76,7 @@ _kj = build_keyjar(KEY_DEFS)[1]
 # A federation aware RP includes a FederationEntity instance.
 # This is where it is instantiated
 rp_fed_ent = FederationEntity(None, keyjar=_kj, iss='https://sunet.se/rp',
-                              signer=None, fo_bundle=jb)
+                              signer=None, fo_bundle=None)
 
 # And now for running the tests
 for test_id in tests:
@@ -67,6 +84,7 @@ for test_id in tests:
     _url = "{}/{}".format(_iss, ".well-known/openid-configuration")
     resp = requests.request('GET', _url, verify=False)
 
+    rp_fed_ent.jwks_bundle = fo_jb(jb, _flows[test_id])
     rp = Client(federation_entity=rp_fed_ent)
 
     # Will raise an exception if there is no metadata statement I can use
