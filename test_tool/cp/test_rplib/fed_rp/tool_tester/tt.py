@@ -7,6 +7,7 @@ from fedoidc import ProviderConfigurationResponse
 from fedoidc.bundle import JWKSBundle
 from fedoidc.client import Client
 from fedoidc.entity import FederationEntity
+from oic.exception import RegistrationError, ParameterError
 
 from oic.utils.keyio import build_keyjar
 from oic.utils.keyio import KeyJar
@@ -17,7 +18,8 @@ from requests.packages import urllib3
 urllib3.disable_warnings()
 
 # ----- config -------
-tool_url = "https://agaton-sax.com:8080"
+#tool_url = "https://agaton-sax.com:8080"
+tool_url = "https://localhost:8080"
 tester = 'dummy'
 KEY_DEFS = [
     {"type": "RSA", "key": '', "use": ["sig"]},
@@ -68,8 +70,12 @@ for test_id in tests:
     rp = Client(federation_entity=rp_fed_ent)
 
     # Will raise an exception if there is no metadata statement I can use
-    rp.handle_response(resp, _iss, rp.parse_federation_provider_info,
-                       ProviderConfigurationResponse)
+    try:
+        rp.handle_response(resp, _iss, rp.parse_federation_provider_info,
+                           ProviderConfigurationResponse)
+    except (RegistrationError, ParameterError) as err:
+        print(test_id, "Exception: {}".format(err))
+        continue
 
     # If there are more the one metadata statement I can use
     # provider_federations will be set and will contain a dictionary

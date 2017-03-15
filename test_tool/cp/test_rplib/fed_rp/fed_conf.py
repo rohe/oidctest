@@ -42,6 +42,25 @@ SMS_DEF = {
             {'request': {}, 'requester': OA['uninett'],
              'signer_add': {}, 'signer': FO['feide']},
         ]
+    },
+    OA['example.org']: {
+        FO['example.com']: [
+            {'request': {}, 'requester': OA['example.org'],
+             'signer_add': {'scopes_supported': ['openid', 'mail']},
+             'signer': FO['example.com']},
+        ],
+    },
+    IA['cs.example.org']: {
+        FO['example.com']: [
+            {'request': {}, 'requester': OA['example.org'],
+             'signer_add': {'scopes_supported': ['openid', 'email']},
+             'signer': FO['example.com']},
+            {'request': {
+                'scopes_supported': ["openid", "profile", "email", "address",
+                                     "phone", "offline_access"]},
+                'requester': IA['cs.example.org'],
+                'signer_add': {}, 'signer': OA['example.org']}
+        ],
     }
 }
 

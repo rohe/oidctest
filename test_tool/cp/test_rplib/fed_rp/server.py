@@ -61,13 +61,10 @@ if __name__ == '__main__':
     sys.path.insert(0, ".")
     fed_conf = importlib.import_module(args.fed_conf)
 
-    liss = list(fed_conf.FO.values())
-    liss.extend(list(fed_conf.OA.values()))
-    liss.extend(list(fed_conf.EO.values()))
-
     sig_keys = build_keyjar(fed_conf.KEY_DEFS)[1]
     keybundle = FSJWKSBundle(fed_conf.TOOL_ISS, sig_keys, 'fo_jwks',
                              key_conv={'to': quote_plus, 'from': unquote_plus})
+
     signers = create_signers(keybundle, 'ms_dir', fed_conf.SMS_DEF,
                              fed_conf.FO.values())
 
