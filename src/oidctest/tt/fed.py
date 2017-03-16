@@ -9,7 +9,7 @@ from fedoidc.operator import Operator
 from jwkest import as_bytes, as_unicode
 from oic.exception import RegistrationError, ParameterError
 
-from oic.oauth2 import MessageException
+from oic.oauth2 import MessageException, MissingSigningKey
 from oic.oauth2 import VerificationError
 from oic.utils.keyio import KeyJar
 
@@ -97,8 +97,9 @@ class Verify(object):
                                   separators=(',', ': '))
             cherrypy.response.headers['Content-Type'] = 'text/plain'
             return as_bytes(response)
-        except (RegistrationError, ParameterError):
-            raise cherrypy.HTTPError(400, b'Invalid Metadata statement')
+        except (RegistrationError, ParameterError, MissingSigningKey) as err:
+            raise cherrypy.HTTPError(
+                400, as_bytes('Invalid Metadata statement: {}'.format(err)))
 
 
 def named_kc(config, iss):
