@@ -4,6 +4,7 @@ import json
 from fedoidc import MetadataStatement, ProviderConfigurationResponse
 from fedoidc.client import Client
 from fedoidc.entity import FederationEntity
+from fedoidc.operator import Operator
 
 from jwkest import as_bytes, as_unicode
 from oic.exception import RegistrationError, ParameterError
@@ -84,22 +85,14 @@ class FoKeys(object):
 
 class Verify(object):
     @cherrypy.expose
-    def index(self):
-        if cherrypy.request.process_request_body is True:
-            _request = cherrypy.request.body.read()
-        else:
-            raise cherrypy.HTTPError(400, 'No POST body')
-
+    def index(self, iss, jwks, ms, **kwargs):
         _kj = KeyJar()
-        _kj.import_jwks(_request['jwks'], _request['iss'])
-        rp_fed_ent = FederationEntity(None, keyjar=_kj)
-
-        rp = Client(federation_entity=rp_fed_ent)
+        _kj.import_jwks(json.loads(jwks), iss)
+        op = Operator()
 
         try:
-            rp.handle_response(_request['ms_json'], _request['iss'],
-                               rp.parse_federation_provider_info,
-                               ProviderConfigurationResponse)
+            _ms = op.unpack_metadata_statement(jwt_ms=ms, keyjar=_kj,
+                                               cls=MetadataStatement)
             return b'OK'
         except (RegistrationError, ParameterError):
             raise cherrypy.HTTPError(400, b'Invalid Metadata statement')
