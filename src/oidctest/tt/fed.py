@@ -93,7 +93,10 @@ class Verify(object):
         try:
             _ms = op.unpack_metadata_statement(jwt_ms=ms, keyjar=_kj,
                                                cls=MetadataStatement)
-            return b'OK'
+            response = json.dumps(_ms.to_dict(), sort_keys=True, indent=2,
+                                  separators=(',', ': '))
+            cherrypy.response.headers['Content-Type'] = 'text/plain'
+            return as_bytes(response)
         except (RegistrationError, ParameterError):
             raise cherrypy.HTTPError(400, b'Invalid Metadata statement')
 

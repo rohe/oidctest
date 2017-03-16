@@ -15,6 +15,33 @@ Each one presenting part of the necessary functionality.
 You can find the OIDC federation draft here:
 <a href="http://openid.net/specs/openid-connect-federation-1_0.html">openid-connect-federation-1_0</a>
 
+<b>Note:</b> <i>base_url</i> being the base URL for the test tool.
+For this instance <i>base_url</i>={base_url} <br>
+<i>base_url</i> will not be used in the examples but will be in the active links
+below.
+
+<h3>Verifying a Metadata statement</h3>
+If you can construct a metadata statement you can use this site to check if
+it was OK. To do this you do:
+
+<pre><code>
+    POST /verify HTTP/1.1
+    Host: server.example.com
+    Content-Type: application/x-www-form-urlencoded
+
+    iss=...&ms=eyJraWQiOiJkMlk4a0tK...&jwks=%7B%22keys%22%3A...
+
+</code></pre>
+
+<dl>
+    <dt>iss</dt>
+    <dd>The Federation operators (FO) identifier</dd>
+    <dt>ms</dt>
+    <dd>The metadata statement</dd>
+    <dt>jwks</dt>
+    <dd>A JWKS containing the FOs signing key/-s</dd>
+</dl>
+
 <h3>Federation operator</h3>
 <p>
     The tool can act as several federation operators. What this
@@ -25,11 +52,6 @@ You can find the OIDC federation draft here:
     <dt>The syntax is</dt>
     <dd><i>base_url</i>/sign?signer=fo_identifier</dd>
 </dl>
-
-<b>Note:</b> <i>base_url</i> being the base URL for the test tool.
-For this instance <i>base_url</i>={base_url} <br>
-<i>base_url</i> will not be used in the examples but will be in the active links
-below.
 
 <p>
     For instance:
