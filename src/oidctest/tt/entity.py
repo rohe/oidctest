@@ -49,6 +49,7 @@ def item_table(qiss, items, active):
             _ball = '<img src="/static/red-ball-32.png" alt="Red">'
         line.append("<tr><td>{}</td><td>{}</td><td>{}</td></tr>".format(
             item, _ball, _action))
+        line.append('</form>')
 
     line.append("</table>")
     return '\n'.join(line)
@@ -64,8 +65,12 @@ class Entity(object):
     @cherrypy.expose
     def index(self):
         fils = os.listdir(self.entpath)
+
         # Remove examples
-        fils.remove('https%3A%2F%2Fexample.com')
+        try:
+            fils.remove('https%3A%2F%2Fexample.com')
+        except ValueError:
+            pass
 
         _msg = self.prehtml['list_iss.html'].format(
             iss_table=iss_table('', fils))
