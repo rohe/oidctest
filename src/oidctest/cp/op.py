@@ -182,6 +182,7 @@ class Authorization(object):
                 allowed_headers=['Authorization', 'content-type'])
         else:
             store_request(op, 'AuthorizationRequest')
+            logger.debug('AuthorizationRequest: {}'.format(kwargs))
             resp = op.authorization_endpoint(kwargs)
             return conv_response(op, resp)
 
