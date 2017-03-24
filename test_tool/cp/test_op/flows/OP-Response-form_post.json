@@ -24,7 +24,9 @@
     }
   ],
   "usage": {
-    "crypto": {}
+    "return_type": [
+      "C", "I", "IT","CI", "CT", "CIT"
+    ]
   },
   "desc": "Request with response_mode=form_post",
   "assert": {
