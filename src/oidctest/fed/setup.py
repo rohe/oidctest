@@ -9,7 +9,7 @@ from fedoidc.bundle import keyjar_to_jwks_private
 from fedoidc.file_system import FileSystem
 from fedoidc.operator import Operator
 from fedoidc.signing_service import Signer
-from fedoidc.signing_service import SigningService
+from fedoidc.signing_service import InternalSigningService
 from fedoidc.test_utils import make_fs_jwks_bundle
 from fedoidc.test_utils import make_signed_metadata_statement
 from oic.utils.keyio import build_keyjar
@@ -21,11 +21,10 @@ def create_signers(jb, ms_path, csms_def, fos):
         ms_spec = {}
         for usage, spec in use_def.items():
             ms_spec[usage] = os.path.join(ms_path, quote_plus(sig), usage)
-        signers[sig] = Signer(SigningService(sig, jb[sig]), ms_spec)
+        signers[sig] = Signer(InternalSigningService(sig, jb[sig]), ms_spec)
 
     for fo in fos:
-        signers[fo] = Signer(SigningService(fo, jb[fo]),
-                             {"discovery":ms_path, "response":ms_path})
+        signers[fo] = Signer(InternalSigningService(fo, jb[fo]))
 
     return signers
 
@@ -56,7 +55,7 @@ def setup(keydefs, tool_iss, liss, csms_def, oa, ms_path):
             metadata_statements[name] = res['ms']
         _iss = oa[sig]
         signers[_iss] = Signer(
-            SigningService(_iss, operator[_iss].keyjar), ms_dir)
+            InternalSigningService(_iss, operator[_iss].keyjar), ms_dir)
 
     return signers, key_bundle
 
