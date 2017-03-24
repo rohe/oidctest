@@ -1,9 +1,7 @@
 import cherrypy
 import json
 
-from fedoidc import MetadataStatement, ProviderConfigurationResponse
-from fedoidc.client import Client
-from fedoidc.entity import FederationEntity
+from fedoidc import MetadataStatement
 from fedoidc.operator import Operator
 
 from jwkest import as_bytes, as_unicode
@@ -43,13 +41,18 @@ class Sign(object):
         if _json_doc == b'':
             raise cherrypy.HTTPError(400, 'Missing Client registration body')
 
-        _args = json.loads(as_unicode(_json_doc))
+        try:
+            _args = json.loads(as_unicode(_json_doc))
+        except json.JSONDecodeError as err:
+            raise cherrypy.HTTPError(
+                message="JSON decode error: {}".format(str(err)))
         _mds = MetadataStatement(**_args)
 
         try:
             _mds.verify()
         except (MessageException, VerificationError) as err:
-            raise cherrypy.CherryPyException(str(err))
+            raise cherrypy.HTTPError(
+                message="Message verification error: {}".format(str(err)))
         else:
             _sign = self.signer[signer]
             _jwt = _sign.create_signed_metadata_statement(_mds, context)
