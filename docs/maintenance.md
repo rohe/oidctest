@@ -1,8 +1,8 @@
 # Operational Maintenance
 
-*Version 0.5 - March 2nd, 2017*
+*Version 1.0 - March 20, 2017*
 
-This document describes operational maintenance procedures for the OpenID Connect RP certification environment
+This document describes operational maintenance procedures for the OpenID Connect OP and RP certification environments
 that the OpenID Foundation provides. It lists important directory/file structures and the steps one would have to take
 to update the code, documentation and/or configuration of these environments.
 
@@ -10,66 +10,88 @@ For regular maintanance go directly to the [Deployment](#deployment) section.
 
 ### SSH Login
 
-Make sure you have an account on the machine that is allowed to `su` into the `oictest` user. Login to the server with:
+Make sure you have an account on the machine that is allowed to execute `sudo` commands. Login to the server with:
 ````shell
-ssh <username>@rp.certification.openid.net
-````
-
-Change to the oictest user with the right permissions:
-````shell
-sudo su oictest
+ssh <username>@[op|rp].certification.openid.net
 ````
 
 ### Directories/Files Layout
-The directories and files that are important for the OP test environment.
+The directories and files that are important for the OP and RP test environment.
 
-Home directory:
+Main source directory:
 ````
-/home/oictest
+/usr/local/src
 ````
 
-Toplevel directory:
+Dependencies are in the sub directories:
 ````
-~/projects
+fedoidc
+oidctest
+otest
+pyjwkest
+pyoidc
 ````
-Dependencies are in library directories:
+
+### Installation
+
+NB: not needed on RP machine itself anymore, see:  
+[https://github.com/rohe/oidctest/blob/master/INSTALL.md](https://github.com/rohe/oidctest/blob/master/INSTALL.md)
+
+Install:
 ````
-~/projects/pyjwkest/
-~/projects/pyoidc/
+cd /usr/local
+oidc_setup /usr/local/src/oidctest oidf
+copy/edit config.py and tt_config.py into oidc_op
+````
+
+Migrate existing OP test instances:
+````
+copy entities into oidc_op
+copy assigned_ports.json into oidc_op
+````
+
+### Certificates
+The certificates for the test instances are configured in the configuration files, `config.py` and `conf.py` for the OP and RP respectively
+and set to the following paths:
+````
+SERVER_CERT = "/usr/local/oidf/certs/op.certification.openid.net-Public.crt" 
+SERVER_KEY = "/usr/local/oidf/certs/openid.key" 
+CERT_CHAIN = "/usr/local/oidf/certs/op.certification.openid.net-Intermediate.crt"
+CA_BUNDLE = "/usr/local/oidf/certs/op.certification.openid.net-Intermediate.crt"
+````
+Note that when these certificates are rolled over, the test instances need to be restarted to pickup the new certs.
+The Apache webserver that serves the default landing page on port 443 also points to these certificates so make sure
+the names are retained and the apache server is also restarted when the certificates are rolled over with:
+````
+sudo service apache2 restart
 ````
 
 ### Deployment
 These are the actual commands one would give to update the code/configuration and make it available in the production environment.
 
-###### INSTALL
-NB: not needed on RP machine itself anymore, see:  
-[https://github.com/rohe/oidctest/blob/master/INSTALL.md](https://github.com/rohe/oidctest/blob/master/INSTALL.md)
-
 ###### UPDATE
 Pulls down source code, needs deploy after that:
 ````	
-cd oictest
-sudo git pull
-<Already up-to-date>
+cd /usr/local/src
+pullall.sh
 ````
 
 ###### DEPLOY
 Deploys code into Python packages:
 ````
-cd oictest
-sudo python3 setup.py install
+cd /usr/local/src
+makeall.sh
 ````
 
-Setup OP instances on 8080 and 8090:
+Setup OP and RP instances:
 ````
-cd /home/oictest
-oidc_setup.py ~/projects/oidctest/ oidf
-oidc_setup.py ~/projects/oidctest/ oidf2
+cd /usr/local
+sudo oidc_setup.py /usr/local/src/oidctest oidf
 ````
 
-Restart OP instance on 8080:
+Restart RP test instance:
 ````
-cd /home/oictest/oidf/oidc_cp_rplib
+cd /usr/local/oidf/oidc_cp_rplib
 ps -aef | grep python
 sudo kill 44661
 ps -aef | grep python
@@ -77,12 +99,9 @@ ps -aef | grep python
 ps -aef | grep python
 ````
 
-Restart OP instance on 8090:
+Restart OP test instance:
 ````
-cd ../../oidf2/oidc_cp_rplib/
-ps -aef | grep python
-sudo kill 3241
-ps -aef | grep python
-./run.sh 
-ps -aef | grep python
+cd /usr/local/oidf/oidc_op
+sudo ./run.sh
 ````
+NB: the `run.sh` script will also kill the existing OP test instance
