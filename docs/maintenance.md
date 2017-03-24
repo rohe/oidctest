@@ -50,6 +50,22 @@ copy entities into oidc_op
 copy assigned_ports.json into oidc_op
 ````
 
+### Certificates
+The certificates for the test instances are configured in the configuration files, `config.py` and `conf.py` for the OP and RP respectively
+and set to the following paths:
+````
+SERVER_CERT = "/usr/local/oidf/certs/op.certification.openid.net-Public.crt" 
+SERVER_KEY = "/usr/local/oidf/certs/openid.key" 
+CERT_CHAIN = "/usr/local/oidf/certs/op.certification.openid.net-Intermediate.crt"
+CA_BUNDLE = "/usr/local/oidf/certs/op.certification.openid.net-Intermediate.crt"
+````
+Note that when these certificates are rolled over, the test instances need to be restarted to pickup the new certs.
+The Apache webserver that serves the default landing page on port 443 also points to these certificates so make sure
+the names are retained and the apache server is also restarted when the certificates are rolled over with:
+````
+sudo service apache2 restart
+````
+
 ### Deployment
 These are the actual commands one would give to update the code/configuration and make it available in the production environment.
 
