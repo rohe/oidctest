@@ -136,7 +136,7 @@ def fedoidc_rplib_setup(distroot):
         shutil.copytree(_src, _dir)
 
     for _fname in ['create_bundle.py', 'create_sms.py', 'example_conf.py',
-                   'fed_conf.py', 'install.sh', 'links.json', 'pre.html',
+                   'fed_conf_usage.py', 'install.sh', 'links.json', 'pre.html',
                    'server.py', 'example_run.sh', 'bogus_sms.py']:
         _file = os.path.join(_op_dir, _fname)
         copy_if_not_same(_file, _fname, overwrite=True)
