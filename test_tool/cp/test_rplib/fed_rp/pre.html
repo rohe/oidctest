@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>User Manual</title>
-    <link rel="stylesheet" type="text/css" href="/static/theme.css">
+  <meta charset="UTF-8">
+  <title>User Manual</title>
+  <link rel="stylesheet" type="text/css" href="/static/theme.css">
 </head>
 <body>
 <h1>User Manual</h1>
 <p>
-This tool that can be used to test OpenID Connect (OIDC) federation
-aware RP library have several different interfaces.
-Each one presenting part of the necessary functionality.
+  This tool that can be used to test OpenID Connect (OIDC) federation
+  aware RP library have several different interfaces.
+  Each one presenting part of the necessary functionality.
 </p>
 You can find the OIDC federation draft here:
 <a href="http://openid.net/specs/openid-connect-federation-1_0.html">openid-connect-federation-1_0</a>
@@ -34,36 +34,55 @@ it was OK. To do this you do:
 </code></pre>
 
 <dl>
-    <dt>iss</dt>
-    <dd>The Federation operators (FO) identifier</dd>
-    <dt>ms</dt>
-    <dd>The metadata statement</dd>
-    <dt>jwks</dt>
-    <dd>A JWKS containing the FOs signing key/-s</dd>
+  <dt>iss</dt>
+  <dd>The Federation operators (FO) identifier</dd>
+  <dt>ms</dt>
+  <dd>The metadata statement</dd>
+  <dt>jwks</dt>
+  <dd>A JWKS containing the FOs signing key/-s</dd>
 </dl>
 
 <p>
-As response you will either get a 200 OK with the parsed and verified metadata statement or
-a 400 with some hopefully insightful information into why the test tool did not
-like what it got.
+  As response you will either get a 200 OK with the parsed and verified metadata
+  statement or
+  a 400 with some hopefully insightful information into why the test tool did
+  not
+  like what it got.
 </p>
 
 <h3>Federation operator</h3>
 <p>
-    The tool can act as several federation operators. What this
-    means is that you can request that the tool signed a statement you
-    presents it with as if the tool represented a federation operator.
+  The tool can act as several federation operators. What this
+  means is that you can request that the tool signed a statement you
+  presents it with as if the tool represented a federation operator.
 </p>
 <dl>
-    <dt>The syntax is</dt>
-    <dd><i>base_url</i>/sign?signer=fo_identifier</dd>
+  <dt>The syntax is</dt>
+  <dd>
+    <i>base_url</i>/sign?signer=fo_identifier&context=context
+    <dl>
+      <dt>fo_identifier</dt>
+      <dd>Identifier for the Federation Operator</dd>
+      <dt>context</dt>
+      <dd>One out of this set:
+        <dl>
+          <dt>discovery</dt>
+          <dd>Provider info discovery</dd>
+          <dt>registration</dt>
+          <dd>Dynamic Client Registration request</dd>
+          <dt>response</dt>
+          <dd>Dynamic Client Registration request response</dd>
+        </dl>
+      </dd>
+    </dl>
+  </dd>
 </dl>
 
 <p>
-    For instance:
-    <br>
+  For instance:
+  <br>
 <pre><code>
-    POST /sign?signer=https%3A%2F%2Fswamid.sunet.se HTTP/1.1
+    POST /sign?signer=https%3A%2F%2Fswamid.sunet.se&context=discovery HTTP/1.1
     Host: server.example.com
     Content-Type: application/x-www-form-urlencoded
 
@@ -72,9 +91,9 @@ like what it got.
 </p>
 
 <p>
-    To find out which federation operators the tool can act as,
-    send this command:
-    <br>
+  To find out which federation operators the tool can act as,
+  send this command:
+  <br>
 <pre><code>
     GET /who
     Host: server.example.com
@@ -94,9 +113,9 @@ the tool. To get them you need to use another command:
     Host: server.example.com
 </code></pre>
 <p>
-    If you do GET /bundle you will get a signed JWT containing a
-    JSON document with all the public keys.
-    The format of the bundle is:
+  If you do GET /bundle you will get a signed JWT containing a
+  JSON document with all the public keys.
+  The format of the bundle is:
 </p>
 <pre><code>
     {&lt;FO1 identifier&gt;: JWKS, ... , &lt;FOn identifier&gt;: JWKS}
@@ -104,10 +123,10 @@ the tool. To get them you need to use another command:
 
 The format of a JWKS is defined in RFC 7517.
 <p>
-    Now you don't have the key to verify the signature of the bundle.
-    But don't despair, you can get that too from the tool.<br>
-    Now in real life you would not do it like this, but for our testing
-    it is sufficient.
+  Now you don't have the key to verify the signature of the bundle.
+  But don't despair, you can get that too from the tool.<br>
+  Now in real life you would not do it like this, but for our testing
+  it is sufficient.
 </p>
 To get the signing key issue:
 
@@ -126,22 +145,22 @@ This command will return a JWKS containing the public part of the signing key.
 
 <h4>Sign a metadata statement</h4>
 <p>
-    Construct a metadata statement and place it in a file. Once
-    you have it in a file and if you have <em>curl</em> on your machine
-    you can do (assuming the metadata statement file is named <i>ms.json</i>):
+  Construct a metadata statement and place it in a file. Once
+  you have it in a file and if you have <em>curl</em> on your machine
+  you can do (assuming the metadata statement file is named <i>ms.json</i>):
 </p>
 <pre><code>
-    $ curl -k -H "Content-Type: application/json" -X POST -d @ms.json {base_url}/sign?signer=https%3A%2F%2Fswamid.sunet.se
+    $ curl -k -H "Content-Type: application/json" -X POST -d @ms.json {base_url}/sign?signer=https%3A%2F%2Fswamid.sunet.se&context=discovery
 </code></pre>
 
 <h4>Verifying a metadata statement signed by a FO</h4>
 <p>
-    To do this you need the signing key of the FO
+  To do this you need the signing key of the FO
 </p>
 <p>
-    Assuming your federation you used was SWAMID then you can get just that
-    Federation
-    operators key by doing.
+  Assuming your federation you used was SWAMID then you can get just that
+  Federation
+  operators key by doing.
 </p>
 <a href="{base_url}bundle?iss=https%3A%2F%2Fswamid.sunet.se">{base_url}bundle?iss=https%3A%2F%2Fswamid.sunet.se</a>
 <br>
@@ -158,102 +177,148 @@ Which you then have to fetch here:<br>
 In the descriptions of the tests I use level 0/1/2 metadata statements.
 What it means is that for
 <dl>
-    <dt>Level 0</dt>
-    <dd>the OP's metadata statement is signed directly by the Federation
-        operator.
-    </dd>
-    <dt>Level 1</dt>
-    <dd>the OP's metadata statement is signed by an organisation, so we have the
-        chain OP-Organisation-FO
-    </dd>
-    <dt>Level 2</dt>
-    <dd>
-        the OP's metadata statement is signed by an intermediate agent which
-        gives the chain OP-IA-Organisation-FO or to be really correct in our
-        case
-        OP-Organisation-FO1-FO2.
-    </dd>
+  <dt>Level 0</dt>
+  <dd>the OP's metadata statement is signed directly by the Federation
+    operator.
+  </dd>
+  <dt>Level 1</dt>
+  <dd>the OP's metadata statement is signed by an organisation, so we have the
+    chain OP-Organisation-FO
+  </dd>
+  <dt>Level 2</dt>
+  <dd>
+    the OP's metadata statement is signed by an intermediate agent which
+    gives the chain OP-IA-Organisation-FO or to be really correct in our
+    case
+    OP-Organisation-FO1-FO2.
+  </dd>
 </dl>
 
 <br>
 <table border="1">
-    <tr>
-        <th>Test ID</th>
-        <th>Description</th>
-        <th>Info</th>
-    </tr>
-    <tr style>
-        <td colspan="3" class="center"><b>Single SMS</b></td>
-    </tr>
-    <tr>
-        <td style="white-space:nowrap">rp-sms-single-l0</td>
-        <td>Make a <a
-                href="https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery">OpenID
-            Provider Issuer Discovery</a> and interpret the received <a
-                href="http://openid.net/specs/openid-connect-federation-1_0.html#rfc.section.4.3">Signed
-            Metadata Statement</a>. The response will be <b>directly</b> signed
-            by a federation without any intermediate.
-        </td>
-        <td>Correctly verified the signature and interpreted the provider
-            information received.
-        </td>
-    </tr>
-    <tr>
-        <td style="white-space:nowrap">rp-sms-single-l1</td>
-        <td>Make a <a
-                href="https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery">OpenID
-            Provider Issuer Discovery</a> and interpret the <a
-                href="http://openid.net/specs/openid-connect-federation-1_0.html#rfc.section.4.3">Signed
-            Metadata Statement</a>. The response will contain a single <b>level
-            1</b> signed metadata
-        </td>
-        <td>Correctly verified the signature and interpreted the information in
-            the response.
-        </td>
-    </tr>
-    <tr>
-        <td style="white-space:nowrap">rp-sms-single-l2</td>
-        <td>Make a <a
-                href="https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery">OpenID
-            Provider Issuer Discovery</a> and interpret the <a
-                href="http://openid.net/specs/openid-connect-federation-1_0.html#rfc.section.4.3">Signed
-            Metadata Statement</a>. The response will contain a single <b>level
-            2</b> signed metadata
-        </td>
-        <td>Correctly verified the signature and interpreted the information in
-            the response.
-        </td>
-    </tr>
-    <tr style>
-        <td colspan="3" class="center"><b>Multiple SMS</b></td>
-    </tr>
-    <tr>
-        <td style="white-space:nowrap">rp-sms-mutiple-l0</td>
-        <td>Make a <a
-                href="https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery">OpenID
-            Provider Issuer Discovery</a> and interpret the <a
-                href="http://openid.net/specs/openid-connect-federation-1_0.html#rfc.section.4.3">Signed
-            Metadata Statement</a>. The response will contain a set of <b>Level
-            0</b> signed metadata statements
-        </td>
-        <td>Correctly verified the signature and interpreted the information in
-            the response.
-        </td>
-    </tr>
-    <tr>
-        <td style="white-space:nowrap">rp-sms-mutiple-l1</td>
-        <td>Make a <a
-                href="https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery">OpenID
-            Provider Issuer Discovery</a> and interpret the <a
-                href="http://openid.net/specs/openid-connect-federation-1_0.html#rfc.section.4.3">Signed
-            Metadata Statement</a>. The response will contain a set of <b>Level
-            1</b> signed metadata statements
-        </td>
-        <td>Correctly verified the signature and interpreted the information in
-            the response.
-        </td>
-    </tr>
+  <tr>
+    <th>Test ID</th>
+    <th>Description</th>
+    <th>Info</th>
+  </tr>
+  <tr style>
+    <td colspan="3" class="center"><b>Single SMS</b></td>
+  </tr>
+  <tr>
+    <td style="white-space:nowrap">rp-sms-single-l0</td>
+    <td>Make a <a
+        href="https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery">OpenID
+      Provider Issuer Discovery</a> and interpret the received <a
+        href="http://openid.net/specs/openid-connect-federation-1_0.html#rfc.section.4.3">Signed
+      Metadata Statement</a>. The response will be <b>directly</b> signed by a
+      federation without any intermediate.
+    </td>
+    <td>Correctly verified the signature and interpreted the provider
+      information received.
+    </td>
+  </tr>
+  <tr>
+    <td style="white-space:nowrap">rp-sms-single-l1</td>
+    <td>Make a <a
+        href="https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery">OpenID
+      Provider Issuer Discovery</a> and interpret the <a
+        href="http://openid.net/specs/openid-connect-federation-1_0.html#rfc.section.4.3">Signed
+      Metadata Statement</a>. The response will contain a single <b>level 1</b>
+      signed metadata
+    </td>
+    <td>Correctly verified the signature and interpreted the information in the
+      response.
+    </td>
+  </tr>
+  <tr>
+    <td style="white-space:nowrap">rp-sms-single-l2</td>
+    <td>Make a <a
+        href="https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery">OpenID
+      Provider Issuer Discovery</a> and interpret the <a
+        href="http://openid.net/specs/openid-connect-federation-1_0.html#rfc.section.4.3">Signed
+      Metadata Statement</a>. The response will contain a single <b>level 2</b>
+      signed metadata
+    </td>
+    <td>Correctly verified the signature and interpreted the information in the
+      response.
+    </td>
+  </tr>
+  <tr style>
+    <td colspan="3" class="center"><b>Multiple SMS</b></td>
+  </tr>
+  <tr>
+    <td style="white-space:nowrap">rp-sms-mutiple-l0</td>
+    <td>Make a <a
+        href="https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery">OpenID
+      Provider Issuer Discovery</a> and interpret the <a
+        href="http://openid.net/specs/openid-connect-federation-1_0.html#rfc.section.4.3">Signed
+      Metadata Statement</a>. The response will contain a set of <b>Level 0</b>
+      signed metadata statements
+    </td>
+    <td>Correctly verified the signature and interpreted the information in the
+      response.
+    </td>
+  </tr>
+  <tr>
+    <td style="white-space:nowrap">rp-sms-mutiple-l1</td>
+    <td>Make a <a
+        href="https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery">OpenID
+      Provider Issuer Discovery</a> and interpret the <a
+        href="http://openid.net/specs/openid-connect-federation-1_0.html#rfc.section.4.3">Signed
+      Metadata Statement</a>. The response will contain a set of <b>Level 1</b>
+      signed metadata statements
+    </td>
+    <td>Correctly verified the signature and interpreted the information in the
+      response.
+    </td>
+  </tr>
+  <tr style>
+    <td colspan="3" class="center"><b>Policy Breach</b></td>
+  </tr>
+  <tr>
+    <td style="white-space:nowrap">rp-sms-policy-err-l1</td>
+    <td>Make a <a
+        href="https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery">OpenID
+      Provider Issuer Discovery</a> and interpret the <a
+        href="http://openid.net/specs/openid-connect-federation-1_0.html#rfc.section.4.3">Signed
+      Metadata Statement</a>. The response will compounded metadata statement
+      with a policy breach
+    </td>
+    <td>The RP library should flag that there is a policy breach in the
+      compounded metadata statement.
+    </td>
+  </tr>
+  <tr>
+    <td style="white-space:nowrap">rp-sms-policy-err-l2</td>
+    <td>Make a <a
+        href="https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery">OpenID
+      Provider Issuer Discovery</a> and interpret the <a
+        href="http://openid.net/specs/openid-connect-federation-1_0.html#rfc.section.4.3">Signed
+      Metadata Statement</a>. The response will compounded metadata statement
+      with a policy breach
+    </td>
+    <td>The RP library should flag that there is a policy breach in the
+      compounded metadata statement.
+    </td>
+  </tr>
+  <tr style>
+    <td colspan="3" class="center"><b>Wrong Signing Key</b></td>
+  </tr>
+  <tr>
+    <td style="white-space:nowrap">rp-sms-wrong-key</td>
+    <td>Make a <a
+        href="https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery">OpenID
+      Provider Issuer Discovery</a> and interpret the <a
+        href="http://openid.net/specs/openid-connect-federation-1_0.html#rfc.section.4.3">Signed
+      Metadata Statement</a>. The response will compounded metadata statement
+      with a signing key issue
+    </td>
+    <td>The RP library should flag that a published signing key was not the one
+      used to sign.
+    </td>
+  </tr>
 </table>
+
 
 <h5>Step 1, how do you get the provider info ?</h5>
 
@@ -261,12 +326,13 @@ You construct a URL using this pattern:<br>
 <i>base_url</i>/{tester_id}/{test_id}/.well-known/openid-configuration <br>
 
 <dl>
-    <dt>tester_id</dt>
-    <dd>Is something you chose as your identifier. It is the name
+  <dt>tester_id</dt>
+  <dd>Is something you chose as your identifier. It is the name
     of the log directory where the test tools logs on what happen between
-    you and it appears</dd>
-    <dt>test_id</dt>
-    <dd>This is the test ID that appears in the table above</dd>
+    you and it appears
+  </dd>
+  <dt>test_id</dt>
+  <dd>This is the test ID that appears in the table above</dd>
 </dl>
 
 An example on what it may look like:
@@ -288,11 +354,12 @@ registration_endpoint in the JSON document. It should be: <br>
 When you have constructed your registration request this is where you must send
 the request.
 <br>
-<b><i>Note</i></b> that different tests will provide different registration_endpoints
+<b><i>Note</i></b> that different tests will provide different
+registration_endpoints
 since the URL contains the <b>tester_id</b> and the <b>test_id</b>.
 
 <p>
-    And that's it, now you're on your own !!
+  And that's it, now you're on your own !!
 </p>
 </body>
 </html>

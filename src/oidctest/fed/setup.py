@@ -17,12 +17,15 @@ from oic.utils.keyio import build_keyjar
 
 def create_signers(jb, ms_path, csms_def, fos):
     signers = {}
-    for sig, sms_def in csms_def.items():
-        ms_dir = os.path.join(ms_path, quote_plus(sig))
-        signers[sig] = Signer(SigningService(sig, jb[sig]), ms_dir)
+    for sig, use_def in csms_def.items():
+        ms_spec = {}
+        for usage, spec in use_def.items():
+            ms_spec[usage] = os.path.join(ms_path, quote_plus(sig), usage)
+        signers[sig] = Signer(SigningService(sig, jb[sig]), ms_spec)
 
     for fo in fos:
-        signers[fo] = Signer(SigningService(fo, jb[fo]), ms_path)
+        signers[fo] = Signer(SigningService(fo, jb[fo]),
+                             {"discovery":ms_path, "response":ms_path})
 
     return signers
 

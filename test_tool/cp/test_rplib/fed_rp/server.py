@@ -116,11 +116,11 @@ if __name__ == '__main__':
                         '/.well-known/webfinger', webfinger_config)
 
     # test list
-    cherrypy.tree.mount(
-        TestList('flows', 'links.json',
-                 'List of OIDC RP library tests for profile: "<i>{}</i>"',
-                 config.GRPS),
-        '/list')
+    # cherrypy.tree.mount(
+    #     TestList('flows', 'links.json',
+    #              'List of OIDC RP library tests for profile: "<i>{}</i>"',
+    #              config.GRPS),
+    #     '/list')
 
     log_root = folder + '/log'
 

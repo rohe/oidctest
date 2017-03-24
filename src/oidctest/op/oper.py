@@ -245,7 +245,67 @@ class AccessToken(SyncPostRequest):
             if _jws_alg == "none":
                 pass
             elif "kid" not in atr[
-                    "id_token"].jws_header and not _jws_alg == "HS256":
+                "id_token"].jws_header and not _jws_alg == "HS256":
+                keys = self.conv.entity.keyjar.keys_by_alg_and_usage(
+                    self.conv.info["issuer"], _jws_alg, "ver")
+                if len(keys) > 1:
+                    raise ParameterError("No 'kid' in id_token header!")
+
+        if not same_issuer(self.conv.info["issuer"], atr["id_token"]["iss"]):
+            raise IssuerMismatch(" {} != {}".format(self.conv.info["issuer"],
+                                                    atr["id_token"]["iss"]))
+
+        # assert isinstance(atr, AccessTokenResponse)
+        return atr
+
+
+class RefreshToken(SyncPostRequest):
+    def __init__(self, conv, inut, sh, **kwargs):
+        super(RefreshToken, self).__init__(conv, inut, sh, **kwargs)
+        self.op_args["state"] = conv.state
+        self.req_args["redirect_uri"] = conv.entity.redirect_uris[0]
+
+    def run(self):
+        self.catch_exception(self._run)
+
+    def _run(self):
+        if self.skip:
+            return
+
+        if 'authn_method' not in self.op_args:
+            _ent = self.conv.entity
+            try:
+                self.op_args['authn_method'] = _ent.registration_response[
+                    'token_endpoint_auth_method']
+            except KeyError:
+                for am in _ent.client_authn_method.keys():
+                    if am in _ent.provider_info[
+                        'token_endpoint_auth_methods_supported']:
+                        self.op_args['authn_method'] = am
+                        break
+
+        self.conv.events.store(
+            EV_REQUEST,
+            "op_args: {}, req_args: {}".format(self.op_args, self.req_args),
+            direction=OUTGOING)
+
+        atr = self.conv.entity.do_access_token_refresh(
+            request_args=self.req_args, **self.op_args)
+
+        if "error" in atr:
+            self.conv.events.store(EV_PROTOCOL_RESPONSE, atr,
+                                   direction=INCOMING)
+            return False
+
+        try:
+            _jws_alg = atr["id_token"].jws_header["alg"]
+        except (KeyError, AttributeError):
+            pass
+        else:
+            if _jws_alg == "none":
+                pass
+            elif "kid" not in atr[
+                "id_token"].jws_header and not _jws_alg == "HS256":
                 keys = self.conv.entity.keyjar.keys_by_alg_and_usage(
                     self.conv.info["issuer"], _jws_alg, "ver")
                 if len(keys) > 1:
@@ -285,7 +345,7 @@ class UserInfo(SyncGetRequest):
             else:
                 self.conv.entity.userinfo = response
                 self.conv.events.store(EV_PROTOCOL_RESPONSE, response)
-            # return response
+                # return response
 
     @staticmethod
     def _verify_subject_identifier(client, user_info):
