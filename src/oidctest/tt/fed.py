@@ -1,9 +1,7 @@
 import cherrypy
 import json
 
-from fedoidc import MetadataStatement, ProviderConfigurationResponse
-from fedoidc.client import Client
-from fedoidc.entity import FederationEntity
+from fedoidc import MetadataStatement
 from fedoidc.operator import Operator
 
 from jwkest import as_bytes, as_unicode
@@ -29,7 +27,7 @@ class Sign(object):
         self.signer = signer
 
     @cherrypy.expose
-    def index(self, signer='', **kwargs):
+    def index(self, signer='', context='discovery', **kwargs):
         if not signer:
             raise cherrypy.HTTPError(400, 'Missing signer')
         if signer not in self.signer:
@@ -43,16 +41,21 @@ class Sign(object):
         if _json_doc == b'':
             raise cherrypy.HTTPError(400, 'Missing Client registration body')
 
-        _args = json.loads(as_unicode(_json_doc))
+        try:
+            _args = json.loads(as_unicode(_json_doc))
+        except json.JSONDecodeError as err:
+            raise cherrypy.HTTPError(
+                message="JSON decode error: {}".format(str(err)))
         _mds = MetadataStatement(**_args)
 
         try:
             _mds.verify()
         except (MessageException, VerificationError) as err:
-            raise cherrypy.CherryPyException(str(err))
+            raise cherrypy.HTTPError(
+                message="Message verification error: {}".format(str(err)))
         else:
             _sign = self.signer[signer]
-            _jwt = _sign.create_signed_metadata_statement(_mds)
+            _jwt = _sign.create_signed_metadata_statement(_mds, context)
             cherrypy.response.headers['Content-Type'] = 'application/jwt'
             return as_bytes(_jwt)
 

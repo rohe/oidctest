@@ -1,6 +1,6 @@
 from fedoidc.entity import FederationEntity
-from fedoidc.signing_service import SigningService, Signer
-from oic.utils.keyio import key_summary, build_keyjar
+from oic.utils.keyio import build_keyjar
+from oic.utils.keyio import key_summary
 from oic.utils.sdb import SessionDB
 from oidctest import UnknownTestID
 from oidctest.cp.op_handler import init_keyjar
