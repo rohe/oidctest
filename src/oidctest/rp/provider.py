@@ -460,7 +460,7 @@ class Provider(provider.Provider):
             logger.error(err)
             self.events.store(EV_EXCEPTION,
                               "Failed to verify client due to: %s" % err)
-            return error(error="incorrect_behavior",
+            return error(error="invalid_client",
                          descr="Failed to verify client")
 
         try:
