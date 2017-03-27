@@ -49,6 +49,7 @@ def conv_response(op, resp):
         op.events.store('Redirect', resp.message)
         raise cherrypy.HTTPRedirect(resp.message, status=_stat)
     else:
+        logger.debug("Error - Status:{}, message:{}".format(_stat, resp.message))
         op.events.store(EV_FAULT, resp.message)
         raise cherrypy.HTTPError(_stat, message=resp.message)
 
