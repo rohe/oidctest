@@ -24,6 +24,7 @@ from oic.oic.message import AccessTokenRequest
 from oic.oic.message import ProviderConfigurationResponse
 from oic.oic.message import RegistrationResponse
 from oic.oic.message import RegistrationRequest
+from oic.oic.provider import FailedAuthentication
 from oic.oic.provider import InvalidRedirectURIError
 from oic.utils.keyio import keyjar_init
 from oic.utils.keyio import key_summary
@@ -456,12 +457,17 @@ class Provider(provider.Provider):
         try:
             req = AccessTokenRequest().deserialize(request, dtype)
             client_id = self.client_authn(self, req, authn)
+        except FailedAuthentication as err:
+            logger.error(err)
+            self.events.store(EV_EXCEPTION,
+                              "Failed to verify client due to: {}".format(err))
+            return error(error="invalid_client", descr=err.args[0])
         except Exception as err:
             logger.error(err)
             self.events.store(EV_EXCEPTION,
                               "Failed to verify client due to: %s" % err)
             return error(error="invalid_client",
-                         descr="Failed to verify client")
+                         descr="Failed to verify client: {}".format(err))
 
         try:
             self._update_client_keys(client_id)
