@@ -34,7 +34,7 @@ def handle_error():
 
 
 def conv_response(op, resp):
-    _stat = int(resp._status.split(' ')[0])
+    _stat = int(resp.status.split(' ')[0])
     #  if self.mako_lookup and self.mako_template:
     #    argv["message"] = message
     #    mte = self.mako_lookup.get_template(self.mako_template)
