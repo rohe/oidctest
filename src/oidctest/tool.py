@@ -109,7 +109,7 @@ class WebTester(tool.WebTester):
             raise
         except Exception as err:
             exception_trace("", err, logger)
-            raise cherrypy.HTTPError(500, err)
+            raise cherrypy.HTTPError(500, str(err))
 
     def handle_response(self, resp, index, oper=None):
         if resp:

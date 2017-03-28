@@ -39,7 +39,7 @@ class Main(object):
             raise
         except Exception as err:
             exception_trace("display_test_list", err)
-            cherrypy.HTTPError(message=err)
+            cherrypy.HTTPError(message=str(err))
 
     def _cp_dispatch(self, vpath):
         # Only get here if vpath != None
@@ -184,6 +184,6 @@ class Main(object):
                     self.pick_grp(_conv.test_id))
             except Exception as err:
                 logger.error(err)
-                raise cherrypy.HTTPError(message=err)
+                raise cherrypy.HTTPError(message=str(err))
             else:
                 raise cherrypy.HTTPRedirect(url)
