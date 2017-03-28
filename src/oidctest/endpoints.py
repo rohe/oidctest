@@ -46,6 +46,13 @@ HEADER = "---------- %s ----------"
 
 CORS_HEADERS = []
 
+
+def do_response(cls, *args, **kwargs):
+    resp = cls(*args, **kwargs)
+    resp.headers.extend(CORS_HEADERS)
+    return resp
+
+
 def dump_log(session_info, events):
     try:
         file_name = os.path.join("log", session_info["oper_id"],
