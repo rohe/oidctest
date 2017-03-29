@@ -150,7 +150,7 @@ This command will return a JWKS containing the public part of the signing key.
   you can do (assuming the metadata statement file is named <i>ms.json</i>):
 </p>
 <pre><code>
-    $ curl -k -H "Content-Type: application/json" -X POST -d @ms.json {base_url}/sign?signer=https%3A%2F%2Fswamid.sunet.se&context=discovery
+    $ curl -k -H "Content-Type: application/json" -X POST -d @ms.json "{base_url}/sign?signer=https%3A%2F%2Fswamid.sunet.se&context=discovery"
 </code></pre>
 
 <h4>Verifying a metadata statement signed by a FO</h4>
