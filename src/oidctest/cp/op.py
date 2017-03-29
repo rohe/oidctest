@@ -241,7 +241,7 @@ class UserInfo(object):
             args = {'request': kwargs}
             if cherrypy.request.process_request_body is True:
                 _req = cherrypy.request.body.read()
-                if _req:
+                if _req:  # The request is either in kwargs or in body
                     args['request'] = _req
 
             try:
