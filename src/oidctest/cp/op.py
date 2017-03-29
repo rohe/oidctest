@@ -64,12 +64,27 @@ def store_request(op, where):
 
 
 def parse_resource(resource):
+    """
+
+    :param resource:
+    :return: A tuple: op_id and test_id
+    """
     p = urlparse(resource)
     if p[0] == 'acct':
-        loc, dom = p[2].split('@')  # Should I check the domain part ?
-        return loc.split('.')
+        loc, dom = p[2].split('@', 1)  # Should I check the domain part ?
+        _x = loc.split('.')
+        if len(_x) == 2:
+            return _x
+        elif len(_x) > 2:
+            return '.'.join(_x[0:-1]), _x[-1]
+        else:
+            raise ValueError('Need both op_id and test_id, got {}'.format(_x))
     elif p[0] in ['http', 'https']:
-        return p[2][1:].split('/')  # skip leading '/'
+        _x = p[2][1:].split('/')  # skip leading '/'
+        if len(_x) >= 2:
+            return _x[:2]  # only return the first two parts
+        else:
+            raise ValueError('Need both op_id and test_id, got {}'.format(_x))
     else:
         return None
 
@@ -223,17 +238,19 @@ class UserInfo(object):
                 allowed_headers=['Authorization', 'content-type'])
         else:
             store_request(op, 'UserinfoRequest')
+            args = {'request': kwargs}
             if cherrypy.request.process_request_body is True:
-                args = {'request': cherrypy.request.body.read()}
-            else:
-                args = {}
+                _req = cherrypy.request.body.read()
+                if _req:
+                    args['request'] = _req
+
             try:
                 args['authn'] = cherrypy.request.headers['Authorization']
             except KeyError:
                 pass
 
-            kwargs.update(args)
-            resp = op.userinfo_endpoint(**kwargs)
+            #kwargs.update(args)
+            resp = op.userinfo_endpoint(**args)
             return conv_response(op, resp)
 
 
