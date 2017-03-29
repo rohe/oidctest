@@ -34,8 +34,9 @@ class Application(object):
     def run_test_instance(self, iss, tag):
         _key = self.key(iss, tag)
         _port = self.assigned_ports.register_port(_key)
-        args = [self.test_script, "-i", unquote_plus(iss), "-t",
-                unquote_plus(tag), "-p", str(_port), "-f", self.flowdir, '-s']
+        args = [self.test_script, "-i", '"{}"'.format(unquote_plus(iss)), "-t",
+                '"{}"'.format(unquote_plus(tag)), "-p", str(_port),
+                "-f", self.flowdir, '-s']
         if self.path2port:
             args.extend(["-m", self.path2port])
             ppmap = read_path2port_map(self.path2port)
