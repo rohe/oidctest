@@ -1,9 +1,9 @@
-import cherrypy
 import json
+import logging
 import os
 import re
 
-import logging
+import cherrypy
 from jwkest import as_bytes
 from otest.flow import ABBR
 
@@ -127,4 +127,3 @@ class TestList(object):
 
 
 # headline = 'List of OIDC RP library tests for profile: "<i>{}</i>"'
-

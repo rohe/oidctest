@@ -1,32 +1,29 @@
-import json
-import logging
-import time
-import copy
-
-import requests
-from Cryptodome.PublicKey import RSA
 from future.backports.urllib.parse import parse_qs
 from future.backports.urllib.parse import splitquery
 from future.backports.urllib.parse import urlencode
 
+import copy
+import json
+import logging
+import time
+
+import requests
+from Cryptodome.PublicKey import RSA
 from fedoidc import provider
-
 from jwkest.ecc import P256
-from jwkest.jwk import RSAKey
 from jwkest.jwk import ECKey
+from jwkest.jwk import RSAKey
 from jwkest.jwk import SYMKey
-
 from oic import oic
 from oic.oauth2 import error
 from oic.oauth2 import error_response
 from oic.oic.message import AccessTokenRequest
 from oic.oic.message import ProviderConfigurationResponse
-from oic.oic.message import RegistrationResponse
 from oic.oic.message import RegistrationRequest
+from oic.oic.message import RegistrationResponse
 from oic.oic.provider import InvalidRedirectURIError
-from oic.utils.keyio import keyjar_init
 from oic.utils.keyio import key_summary
-
+from oic.utils.keyio import keyjar_init
 from otest.events import EV_EXCEPTION
 from otest.events import EV_FAULT
 from otest.events import EV_HTTP_RESPONSE

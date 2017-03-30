@@ -1,7 +1,7 @@
+import importlib
 import logging
 import os
 import shelve
-import importlib
 import sys
 
 from oic.utils.authn.authn_context import AuthnBroker
@@ -11,8 +11,8 @@ from oic.utils.keyio import keyjar_init
 from oic.utils.sdb import SessionDB
 from oic.utils.userinfo import UserInfo
 
-from oidctest.endpoints import add_endpoints
 from oidctest.endpoints import ENDPOINTS
+from oidctest.endpoints import add_endpoints
 from oidctest.rp.provider import Provider
 
 LOGGER = logging.getLogger(__name__)
@@ -281,4 +281,3 @@ def multi_keys(com_args, key_conf):
     jwks = keyjar_init(_op, key_conf, "m%d")
 
     return {"jwks": jwks, "keys": key_conf}
-

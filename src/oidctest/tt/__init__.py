@@ -2,7 +2,6 @@ import os
 from urllib.parse import unquote_plus, quote_plus
 
 import cherrypy
-import time
 
 import logging
 from jwkest import as_bytes
@@ -40,3 +39,4 @@ def unquote_quote(*part):
     uqp = [unquote_plus(p) for p in part]
     qp = [quote_plus(p) for p in uqp]
     return uqp, qp
+

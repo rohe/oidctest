@@ -4,9 +4,11 @@ import json
 
 from oic import rndstr
 from oic.oic import OIDCONF_PATTERN
-from oic.utils.keyio import KeyJar, KeyBundle
+from oic.utils.keyio import KeyBundle
+from oic.utils.keyio import KeyJar
 from oic.utils.sdb import SessionDB
 from oic.utils.webfinger import WF_URL
+
 from oidctest import UnknownTestID
 from oidctest.rp.provider import Provider
 

@@ -2,11 +2,12 @@ from fedoidc.entity import FederationEntity
 from oic.utils.keyio import build_keyjar
 from oic.utils.keyio import key_summary
 from oic.utils.sdb import SessionDB
-from oidctest import UnknownTestID
-from oidctest.cp.op_handler import init_keyjar
-from oidctest.cp.op_handler import OPHandler
-from oidctest.cp.op_handler import write_jwks_uri
 from otest.conversation import Conversation
+
+from oidctest import UnknownTestID
+from oidctest.cp.op_handler import OPHandler
+from oidctest.cp.op_handler import init_keyjar
+from oidctest.cp.op_handler import write_jwks_uri
 
 
 class FedOPHandler(OPHandler):

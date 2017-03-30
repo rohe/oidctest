@@ -1,27 +1,25 @@
-import cherrypy
-import logging
-
-import cherrypy_cors
-from cherrypy import url
-
 from future.backports.urllib.parse import urlparse
 
+import logging
+
+import cherrypy
+import cherrypy_cors
+from cherrypy import url
 from jwkest import as_bytes
 from jwkest import as_unicode
-
 from oic.oauth2 import Message
-from oidctest.cp.op_handler import init_keyjar, write_jwks_uri
-
-from otest.events import Events
 from otest.events import EV_FAULT
 from otest.events import EV_REQUEST
 from otest.events import EV_RESPONSE
+from otest.events import Events
 from otest.events import FailedOperation
 from otest.events import Operation
 from otest.flow import ABBR
 
-from oidctest.cp import write_events
 from oidctest.cp import init_events
+from oidctest.cp import write_events
+from oidctest.cp.op_handler import init_keyjar
+from oidctest.cp.op_handler import write_jwks_uri
 
 logger = logging.getLogger(__name__)
 

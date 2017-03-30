@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
 import sys
+
 from oidctest.site_setup import fedoidc_rplib_setup
 from oidctest.site_setup import oidc_cp_rplib_setup
 from oidctest.site_setup import oidc_op_setup

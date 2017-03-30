@@ -1,7 +1,8 @@
 import BaseHTTPServer
-import SimpleHTTPServer
 import ssl
 import sys
+
+import SimpleHTTPServer
 
 httpd = BaseHTTPServer.HTTPServer(('', int(sys.argv[3])),
                                   SimpleHTTPServer.SimpleHTTPRequestHandler)

@@ -2,26 +2,27 @@
 """
 Command line tool for testing the pyoidc RP library
 """
+from future.backports.urllib.parse import urlparse
+
+import argparse
 import importlib
 import json
 import logging
-import argparse
 
-from future.backports.urllib.parse import urlparse
 from oic.oic import Client
-
 from oic.utils.keyio import build_keyjar
 from otest.aus.client import Factory
-from otest.flow import RPFlow, FlowState
-
 from otest.common import setup_logger
+from otest.flow import FlowState
+from otest.flow import RPFlow
+from otest.flow import match_usage
 from otest.io import ClIO
 from otest.prof_util import prof2usage
-from otest.result import Result, SIGN
-from otest.flow import match_usage
+from otest.result import SIGN
+from otest.result import Result
 
-from oidctest.op import func
 from oidctest.op import check
+from oidctest.op import func
 from oidctest.prof_util import SimpleProfileHandler
 from oidctest.session import SessionHandler
 from oidctest.tool import ClTester

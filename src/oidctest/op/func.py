@@ -1,24 +1,23 @@
+from future.backports.urllib.parse import urlencode
+from future.backports.urllib.parse import urlparse
+from past.types import basestring
+
 import inspect
 import json
 import os
 import sys
 
-from future.backports.urllib.parse import urlparse
-from future.backports.urllib.parse import urlencode
-
 from otest import ConfigurationError
 from otest.check import ERROR
-from otest.check import get_signed_id_tokens
-from otest.check import State
 from otest.check import STATUSCODE_TRANSL
+from otest.check import State
+from otest.check import get_signed_id_tokens
 from otest.events import EV_CONDITION
 from otest.events import EV_RESPONSE
 from otest.flow import get_return_type
 from otest.result import get_issuer
 
 from oidctest.op.check import get_id_tokens
-
-from past.types import basestring
 
 __author__ = 'roland'
 

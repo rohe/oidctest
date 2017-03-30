@@ -1,9 +1,9 @@
-import argparse
 from future.backports.urllib.parse import quote_plus
 
-from oidctest.app_conf import create_model
+import argparse
 
 from oidctest.app_conf import REST
+from oidctest.app_conf import create_model
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-a', dest='acr_values', action='append')

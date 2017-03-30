@@ -1,9 +1,10 @@
-import sys
-import inspect
-
 from future.backports.urllib.parse import urlparse
 
-from otest.check import ERROR, State
+import inspect
+import sys
+
+from otest.check import ERROR
+from otest.check import State
 from otest.events import EV_CONDITION
 from otest.events import EV_RESPONSE
 

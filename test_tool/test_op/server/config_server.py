@@ -1,8 +1,7 @@
 #!/usr/bin/env python
+import argparse
 import importlib
 import logging
-
-import argparse
 
 from mako.lookup import TemplateLookup
 from otest.utils import setup_logging

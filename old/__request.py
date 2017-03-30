@@ -1,19 +1,17 @@
-import logging
-import requests
-import copy
-
-# from urllib.parse import parse_qs
-from bs4 import BeautifulSoup
-from requests.models import Response
 from future.backports.urllib.parse import parse_qs
 
+import copy
+import logging
+
+import requests
 from aatest import Break
-from aatest.events import EV_PROTOCOL_RESPONSE
 from aatest.events import EV_HTTP_RESPONSE
-from aatest.events import EV_RESPONSE
+from aatest.events import EV_PROTOCOL_RESPONSE
 from aatest.events import EV_REDIRECT_URL
 from aatest.events import EV_REQUEST
-
+from aatest.events import EV_RESPONSE
+# from urllib.parse import parse_qs
+from bs4 import BeautifulSoup
 from oic.exception import IssuerMismatch
 from oic.exception import PyoidcError
 from oic.oauth2 import ErrorResponse
@@ -21,12 +19,12 @@ from oic.oauth2 import ResponseError
 from oic.oauth2.util import URL_ENCODED
 from oic.utils.http_util import Redirect
 from oic.utils.http_util import get_post
-
 from otest.aus.request import same_issuer
+from requests.models import Response
 
+from oidctest.log import Log
 from oidctest.op.oper import Operation
 from oidctest.op.prof_util import RESPONSE
-from oidctest.log import Log
 
 __author__ = 'rolandh'
 

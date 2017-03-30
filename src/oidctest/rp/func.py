@@ -1,7 +1,7 @@
+from future.backports.urllib.parse import urlencode
+
 import inspect
 import sys
-
-from future.backports.urllib.parse import urlencode
 
 
 def set_configuration(oper, arg):

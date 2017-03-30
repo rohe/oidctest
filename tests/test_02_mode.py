@@ -1,4 +1,5 @@
-from oidctest.rp.mode import extract_mode, mode2path
+from oidctest.rp.mode import extract_mode
+from oidctest.rp.mode import mode2path
 
 
 def test_extract_1():
@@ -35,5 +36,3 @@ def test_2path_2():
     path = mode2path(m[0])
 
     assert path == 'foobar/rp-id_token-bad_c_hash/_/_/ch/normal'
-
-

@@ -1,24 +1,21 @@
 #!/usr/bin/env python3
+import logging
 import os
 
 import cherrypy
-import logging
-
 from oic.utils import webfinger
-
-from oidctest.cp import dump_log
-from oidctest.cp.op import Provider
-from oidctest.cp.op import WebFinger
-from oidctest.cp.op_handler import OPHandler
-from oidctest.cp.test_list import TestList
-from oidctest.cp.log_handler import ClearLog
-from oidctest.cp.log_handler import Log
-from oidctest.cp.log_handler import Tar
-from oidctest.cp.setup import cb_setup
-
 from otest.flow import Flow
 from otest.prof_util import SimpleProfileHandler
 
+from oidctest.cp import dump_log
+from oidctest.cp.log_handler import ClearLog
+from oidctest.cp.log_handler import Log
+from oidctest.cp.log_handler import Tar
+from oidctest.cp.op import Provider
+from oidctest.cp.op import WebFinger
+from oidctest.cp.op_handler import OPHandler
+from oidctest.cp.setup import cb_setup
+from oidctest.cp.test_list import TestList
 from oidctest.tt.fed import Sign
 
 logger = logging.getLogger("")

@@ -1,34 +1,32 @@
 #!/usr/bin/env python3
-import importlib
-import os
-import traceback
+from future.backports.urllib.parse import quote_plus
 
 import argparse
+import importlib
 import logging
-
+import os
 import sys
-from future.backports.urllib.parse import quote_plus
+import traceback
+
 from oic.oic import Client
 from oic.oic.message import factory as oic_message_factory
-
 from otest.aus.app import WebApplication
 from otest.aus.client import Factory
 from otest.aus.handling import WebIh
 from otest.conf_setup import construct_app_args
 from otest.utils import SERVER_LOG_FOLDER
-from otest.utils import setup_logging
 from otest.utils import setup_common_log
+from otest.utils import setup_logging
+from requests.packages import urllib3
 
 from oidctest.app_conf import REST
 from oidctest.op import check
-from oidctest.op import oper
 from oidctest.op import func
+from oidctest.op import oper
 from oidctest.op import profiles
 from oidctest.op.profiles import PROFILEMAP
 from oidctest.prof_util import ProfileHandler
 from oidctest.tool import WebTester
-
-from requests.packages import urllib3
 
 urllib3.disable_warnings()
 

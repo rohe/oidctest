@@ -3,49 +3,53 @@
 """
 The OP used when testing RP libraries
 """
+from future.backports.urllib.parse import parse_qs
+from future.backports.urllib.parse import urlparse
+
 import json
+import logging
 import os
 import re
 import sys
 import traceback
-import logging
 
-from future.backports.urllib.parse import parse_qs
-from future.backports.urllib.parse import urlparse
+from mako.lookup import TemplateLookup
 from oic.oauth2.message import Message
-
 from oic.utils.client_management import CDB
-from oic.utils.http_util import BadRequest, CORS_HEADERS
-from oic.utils.http_util import Response
+from oic.utils.http_util import CORS_HEADERS
+from oic.utils.http_util import BadRequest
 from oic.utils.http_util import NotFound
+from oic.utils.http_util import Response
 from oic.utils.http_util import ServiceError
 from oic.utils.keyio import key_summary
-from otest.prof_util import SimpleProfileHandler
-
-from oidctest import UnknownTestID
-from oidctest.endpoints import clear_log
-from oidctest.endpoints import display_log
-from oidctest.endpoints import make_tar
-from oidctest.endpoints import static
-from oidctest.endpoints import URLS
-from oidctest.response_encoder import ResponseEncoder
-from oidctest.rp.mode import extract_mode
-from oidctest.rp.mode import init_keyjar
-from oidctest.rp.mode import write_jwks_uri
-from oidctest.rp.mode import setup_op
-
 from otest.conversation import Conversation
-from otest.events import Events
 from otest.events import EV_EXCEPTION
 from otest.events import EV_FAULT
 from otest.events import EV_HTTP_REQUEST
 from otest.events import EV_REQUEST
+from otest.events import Events
 from otest.events import FailedOperation
 from otest.events import HTTPRequest
 from otest.events import Operation
-from otest.flow import ABBR, replace_with_link, EXP, GRPS
+from otest.flow import ABBR
+from otest.flow import EXP
+from otest.flow import GRPS
 from otest.flow import Flow
+from otest.flow import replace_with_link
 from otest.jlog import JLog
+from otest.prof_util import SimpleProfileHandler
+
+from oidctest import UnknownTestID
+from oidctest.endpoints import URLS
+from oidctest.endpoints import clear_log
+from oidctest.endpoints import display_log
+from oidctest.endpoints import make_tar
+from oidctest.endpoints import static
+from oidctest.response_encoder import ResponseEncoder
+from oidctest.rp.mode import extract_mode
+from oidctest.rp.mode import init_keyjar
+from oidctest.rp.mode import setup_op
+from oidctest.rp.mode import write_jwks_uri
 
 try:
     from requests.packages import urllib3
@@ -56,7 +60,6 @@ else:
 
 __author__ = 'rohe0002'
 
-from mako.lookup import TemplateLookup
 
 LOGGER = logging.getLogger("")
 LOGFILE_NAME = 'oc.log'

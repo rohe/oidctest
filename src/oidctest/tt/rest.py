@@ -2,15 +2,12 @@ import json
 import logging
 import os
 import sys
-
 from urllib.parse import quote_plus
-from urllib.parse import unquote_plus
 
 import cherrypy
 from jwkest import as_bytes
-from oic.utils.http_util import BadRequest, NotFound
-from oic.utils.http_util import Created
-from oic.utils.http_util import Response
+from oic.utils.http_util import BadRequest
+
 from oidctest.tt import unquote_quote
 
 logger = logging.getLogger(__name__)
@@ -222,7 +219,7 @@ class REST(object):
         logger.info('Write configuration file: {}'.format(fname))
         fp = open(fname, 'w')
         if isinstance(ent_conf, dict):
-            json.dump(ent_conf, fp)
-        else:
-            fp.write(ent_conf)
+            ent_conf = json.dumps(ent_conf)
+
+        fp.write(ent_conf)
         fp.close()

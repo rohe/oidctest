@@ -2,6 +2,7 @@
 import json
 import os
 import sys
+
 import yaml
 from otest.prof_util import RT
 

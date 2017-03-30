@@ -1,6 +1,6 @@
 import inspect
-
 import sys
+
 from fedoidc import ProviderConfigurationResponse
 from otest.check import Check
 from otest.check import Error

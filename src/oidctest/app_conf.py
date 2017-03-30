@@ -1,28 +1,25 @@
+from future.backports.urllib.parse import parse_qs
+from future.backports.urllib.parse import quote_plus
+from future.backports.urllib.parse import unquote_plus
+
 import importlib
 import json
 import logging
 import os
 import re
 import subprocess
-
 import sys
-
 import time
-
-from future.backports.urllib.parse import parse_qs
-from future.backports.urllib.parse import quote_plus
-from future.backports.urllib.parse import unquote_plus
 
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
-from oic.utils.http_util import get_post
 from oic.utils.http_util import BadRequest
 from oic.utils.http_util import Created
-from oic.utils.http_util import ServiceError
 from oic.utils.http_util import NotFound
 from oic.utils.http_util import Response
 from oic.utils.http_util import SeeOther
-
+from oic.utils.http_util import ServiceError
+from oic.utils.http_util import get_post
 from otest.proc import find_test_instance
 from otest.proc import isrunning
 from otest.proc import kill_process

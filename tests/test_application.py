@@ -1,5 +1,7 @@
 from future.backports.urllib.parse import quote_plus
-from oidctest.app_conf import Application, OutOfRange
+
+from oidctest.app_conf import Application
+from oidctest.app_conf import OutOfRange
 
 
 def test_port():

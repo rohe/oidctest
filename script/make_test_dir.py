@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-import sys
+import fileinput
 import os
 import shutil
-import fileinput
+import sys
 
 _distroot = sys.argv[1]
 _root = sys.argv[2]

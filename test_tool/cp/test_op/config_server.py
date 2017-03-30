@@ -1,19 +1,17 @@
 #!/usr/bin/env python3
 import importlib
+import logging
 import os
 
 import cherrypy
-import logging
-
 from fedoidc.file_system import FileSystem
-from oidctest.cp import dump_log
 
+from oidctest.cp import dump_log
 from oidctest.tt.action import Action
 from oidctest.tt.app import Application
+from oidctest.tt.entity import Entity
 from oidctest.tt.instance import Instance
 from oidctest.tt.rest import REST
-
-from oidctest.tt.entity import Entity
 
 logger = logging.getLogger("")
 LOGFILE_NAME = 'conf_srv.log'

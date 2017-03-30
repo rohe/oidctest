@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 import json
 import random
+
+import requests
 from fedoidc import MetadataStatement
 from fedoidc.bundle import JWKSBundle
 from fedoidc.bundle import verify_signed_bundle
 from oic.utils.jwt import JWT
-from oic.utils.keyio import build_keyjar
 from oic.utils.keyio import KeyJar
-import requests
+from oic.utils.keyio import build_keyjar
 
 __author__ = 'roland'
 

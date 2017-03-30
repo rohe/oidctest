@@ -1,11 +1,10 @@
-import cherrypy
 import json
+import logging
 import os
 import re
-
-import logging
-
 import sys
+
+import cherrypy
 from jwkest import as_bytes
 from otest.flow import ABBR
 

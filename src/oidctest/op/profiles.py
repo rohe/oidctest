@@ -10,7 +10,6 @@ from oidctest.op.oper import Registration
 from oidctest.op.oper import SyncAuthn
 from oidctest.op.oper import UserInfo
 from oidctest.op.oper import Webfinger
-
 from oidctest.testfunc import check_endpoint
 
 __author__ = 'roland'
