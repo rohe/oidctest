@@ -6,7 +6,6 @@ import time
 from urllib.parse import unquote_plus
 
 from oic.utils.http_util import ServiceError
-from oidctest.ass_port import AssignedPorts
 from otest.proc import isrunning
 from otest.rp.setup import read_path2port_map
 

@@ -1,3 +1,5 @@
+import json
+
 from future.backports.urllib.parse import urlparse
 
 import logging
@@ -7,8 +9,7 @@ import cherrypy_cors
 from cherrypy import url
 from jwkest import as_bytes
 from jwkest import as_unicode
-from oic.oauth2 import Message
-from oic.oauth2 import json
+from oic.oauth2.message import Message
 from otest.events import EV_FAULT
 from otest.events import EV_REQUEST
 from otest.events import EV_RESPONSE
