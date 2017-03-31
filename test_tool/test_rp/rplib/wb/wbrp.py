@@ -1,15 +1,16 @@
 import logging
+
 from mako.lookup import TemplateLookup
+from oic.utils.http_util import NotFound
 from oic.utils.http_util import Response
 from oic.utils.http_util import ServiceError
-from oic.utils.http_util import NotFound
 
+from oidctest.common import Conversation
 from oidctest.common import main_setup
 from oidctest.common import make_client
 from oidctest.common import make_list
-from oidctest.common import Conversation
-from oidctest.common import run_flow
 from oidctest.common import node_dict
+from oidctest.common import run_flow
 
 __author__ = 'roland'
 

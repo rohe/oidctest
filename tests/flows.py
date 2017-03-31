@@ -1,21 +1,22 @@
+from func import set_discovery_issuer
+from func import set_webfinger_resource
 from jwkest import BadSignature
-from oic.exception import IssuerMismatch, PyoidcError
+from oic.exception import IssuerMismatch
+from oic.exception import PyoidcError
 
-from oidctest.oper import Webfinger
-from oidctest.oper import SubjectMismatch
-from oidctest.oper import UpdateProviderKeys
-from oidctest.oper import UserInfo
 from oidctest.oper import AccessToken
 from oidctest.oper import Discovery
 from oidctest.oper import Registration
+from oidctest.oper import SubjectMismatch
 from oidctest.oper import SyncAuthn
+from oidctest.oper import UpdateProviderKeys
+from oidctest.oper import UserInfo
+from oidctest.oper import Webfinger
+from oidctest.testfunc import expect_exception
 from oidctest.testfunc import resource
 from oidctest.testfunc import set_jwks_uri
 from oidctest.testfunc import set_op_args
-from oidctest.testfunc import expect_exception
 from oidctest.testfunc import set_request_args
-
-from func import set_webfinger_resource, set_discovery_issuer
 
 __author__ = 'roland'
 

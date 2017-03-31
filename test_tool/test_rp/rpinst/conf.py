@@ -1,22 +1,20 @@
 # -*- coding: utf-8 -*-
 from oic.oic import ProviderConfigurationResponse
 from oic.oic.provider import AuthorizationEndpoint
-from oic.oic.provider import TokenEndpoint
 from oic.oic.provider import RegistrationEndpoint
+from oic.oic.provider import TokenEndpoint
 from oic.oic.provider import UserinfoEndpoint
-
 from otest.parse_cnf import parse_yaml_conf
 from otest.prof_util import SimpleProfileHandler
-from otest.rp import operation
 from otest.rp import check
-
+from otest.rp import operation
 from otest.rp.endpoints import authorization
 from otest.rp.endpoints import css
 from otest.rp.endpoints import op_info
 from otest.rp.endpoints import registration
 from otest.rp.endpoints import token
-from otest.rp.endpoints import webfinger
 from otest.rp.endpoints import userinfo
+from otest.rp.endpoints import webfinger
 from otest.rp.setup import main_setup
 
 from oidctest.rp import func

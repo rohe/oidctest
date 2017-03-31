@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 
-import cherrypy
 import importlib
 import logging
 import os
 import sys
-
 from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
 
+import cherrypy
 from fedoidc.bundle import FSJWKSBundle
-
 from oic.utils import webfinger
 from oic.utils.keyio import build_keyjar
+from otest.flow import Flow
+from otest.prof_util import SimpleProfileHandler
 
 from oidctest.cp import dump_log
 from oidctest.cp.log_handler import ClearLog
@@ -28,10 +28,6 @@ from oidctest.tt.fed import FoKeys
 from oidctest.tt.fed import Sign
 from oidctest.tt.fed import Verify
 from oidctest.tt.fed import Who
-
-from otest.flow import Flow
-from otest.prof_util import SimpleProfileHandler
-
 
 logger = logging.getLogger("")
 LOGFILE_NAME = 'rp_test.log'

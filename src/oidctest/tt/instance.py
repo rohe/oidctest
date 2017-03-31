@@ -1,15 +1,24 @@
-import cherrypy
 import logging
-
 from urllib.parse import unquote_plus
 
+import cherrypy
 from jwkest import as_bytes
+from oic.oauth2.message import list_serializer
 from oic.utils.http_util import Response
-from oidctest.cp import init_events
 
-from oidctest.tt import conv_response, unquote_quote
+from oidctest.app_conf import TYPE2CLS
+from oidctest.cp import init_events
+from oidctest.tt import conv_response
+from oidctest.tt import unquote_quote
 
 logger = logging.getLogger(__name__)
+
+
+def is_multi_valued(item, typ):
+    if typ in ['tool', '']:
+        return item in ['acr_values', 'claims_locales', 'ui_locales']
+    else:
+        return TYPE2CLS[typ].c_param[item][2] == list_serializer
 
 
 class Instance(object):
@@ -60,6 +69,8 @@ class Instance(object):
                 val = False
             elif val == 'True':
                 val = True
+            elif is_multi_valued(item, grp):
+                val = [v.strip() for v in val.split(',')]
 
             try:
                 _ent_conf[grp][item] = val

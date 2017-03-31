@@ -1,6 +1,6 @@
-import json
-
 from future.backports.urllib.parse import unquote_plus
+
+import json
 
 from otest.proc import find_test_instances
 

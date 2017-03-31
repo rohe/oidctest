@@ -1,6 +1,7 @@
 import json
 
-from oidctest.fed.test_list import test_list, get_mandatory
+from oidctest.fed.test_list import get_mandatory
+from oidctest.fed.test_list import test_list
 
 file_dir = 'flows'
 

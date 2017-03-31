@@ -1,32 +1,30 @@
 #!/usr/bin/env python
 
+from future.backports.urllib.parse import urlparse
+
+import argparse
 import importlib
 import json
 import logging
-import argparse
-
-from future.backports.urllib.parse import urlparse
 
 from oic.utils.authn.client import BearerHeader
 from oic.utils.keyio import build_keyjar
-
 from otest import ConfigurationError
 from otest import NotSupported
 from otest import exception_trace
 from otest.check import OK
 from otest.conversation import Conversation
 from otest.parse_cnf import parse_yaml_conf
+from requests.packages import urllib3
 
-from oidctest.op import make_list
-from oidctest.common import make_client
-from oidctest.common import setup_logger
-from oidctest.common import run_flow
 from oidctest.common import Trace
+from oidctest.common import make_client
+from oidctest.common import run_flow
+from oidctest.common import setup_logger
 from oidctest.io import ClIO
+from oidctest.op import make_list
 from oidctest.session import SessionHandler
 from oidctest.utils import get_check
-
-from requests.packages import urllib3
 
 urllib3.disable_warnings()
 

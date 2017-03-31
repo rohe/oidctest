@@ -1,21 +1,16 @@
-import cherrypy
+import logging
 import os
-
-from urllib.parse import quote_plus
+import time
 from urllib.parse import unquote_plus
 
-import logging
-
-import time
+import cherrypy
 from jwkest import as_bytes
-
 from otest.proc import find_test_instance
 from otest.proc import isrunning
 
 from oidctest.cp import init_events
 from oidctest.tt import BUT
 from oidctest.tt import unquote_quote
-
 
 logger = logging.getLogger(__name__)
 

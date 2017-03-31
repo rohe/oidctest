@@ -1,20 +1,20 @@
+from future.backports.http.cookies import CookieError
+from future.backports.http.cookies import SimpleCookie
+
 import inspect
 import logging
 import sys
 
-from otest import operation
+from oic.oauth2.util import set_cookie
+from oic.oic import message
 from otest import OperationError
-
-from otest.events import EV_HTTP_RESPONSE, EV_RUN
+from otest import operation
+from otest.events import EV_HTTP_RESPONSE
 from otest.events import EV_PROTOCOL_RESPONSE
 from otest.events import EV_REDIRECT_URL
 from otest.events import EV_REQUEST
+from otest.events import EV_RUN
 from otest.verify import Verify
-from future.backports.http.cookies import CookieError
-from future.backports.http.cookies import SimpleCookie
-from oic.oauth2.util import set_cookie
-
-from oic.oic import message
 
 from oidctest.rp.response import Response
 

@@ -1,35 +1,33 @@
 #!/usr/bin/env python3
-import traceback
-from urllib.parse import quote_plus
-
-import cherrypy
 import importlib
 import logging
 import os
 import sys
+import traceback
+from urllib.parse import quote_plus
 
+import cherrypy
 from fedoidc.file_system import FileSystem
 from oic.oic import Client
 from oic.oic.message import factory as oic_message_factory
-from oidctest.op import check
-
 from otest.aus.client import Factory
 from otest.aus.handling_ph import WebIh
 from otest.conf_setup import construct_app_args
 from otest.utils import SERVER_LOG_FOLDER
 from otest.utils import setup_logging
 
-from oidctest.tool import WebTester
 from oidctest.cp import dump_log
 from oidctest.cp.log_handler import OPLog
 from oidctest.cp.log_handler import OPTar
-from oidctest.op import oper
+from oidctest.op import check
 from oidctest.op import func
+from oidctest.op import oper
 from oidctest.op import profiles
 from oidctest.op.profiles import PROFILEMAP
 from oidctest.optt import Main
 from oidctest.prof_util import ProfileHandler
 from oidctest.session import SessionHandler
+from oidctest.tool import WebTester
 from oidctest.tt.rest import REST
 
 logger = logging.getLogger("")

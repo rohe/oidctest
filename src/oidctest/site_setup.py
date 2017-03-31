@@ -1,7 +1,7 @@
+import datetime
+import filecmp
 import os
 import shutil
-import filecmp
-import datetime
 import subprocess
 
 

@@ -1,61 +1,57 @@
-import json
-import inspect
-import sys
-from future.backports.urllib.parse import urlsplit
 from future.backports.urllib.parse import parse_qs
 from future.backports.urllib.parse import urlparse
+from future.backports.urllib.parse import urlsplit
+
+import inspect
+import json
+import sys
 
 from jwkest.jwk import base64url_to_long
 from jwkest.jwt import split_token
-
+from oic.exception import MessageException
 from oic.oauth2 import message
 from oic.oauth2.message import ErrorResponse
-
-from oic.exception import MessageException
 from oic.oic import claims_match
-from oic.oic.message import AuthorizationResponse
-from oic.oic.message import AuthorizationRequest
-from oic.oic.message import OpenIDSchema
 from oic.oic.message import factory as msg_factory
+from oic.oic.message import SCOPE2CLAIMS
+from oic.oic.message import AuthorizationRequest
+from oic.oic.message import AuthorizationResponse
+from oic.oic.message import IdToken
+from oic.oic.message import OpenIDSchema
+from oic.utils import time_util
 from oic.utils.time_util import utc_time_sans_frac
-
 from otest.aus.check import CONT_JSON
 from otest.aus.check import CONT_JWT
-
-from otest.check import get_protocol_response
+from otest.check import CRITICAL
+from otest.check import ERROR
+from otest.check import INFORMATION
+from otest.check import INTERACTION
+from otest.check import OK
+from otest.check import WARNING
+from otest.check import Check
+from otest.check import CriticalError
+from otest.check import Error
+from otest.check import Information
+from otest.check import Other
+from otest.check import ResponseInfo
+from otest.check import Warnings
 from otest.check import get_authorization_request
-from otest.check import get_provider_info
 from otest.check import get_id_tokens
+from otest.check import get_protocol_response
+from otest.check import get_provider_info
+from otest.events import EV_HTTP_RESPONSE
+from otest.events import EV_PROTOCOL_REQUEST
+from otest.events import EV_PROTOCOL_RESPONSE
+from otest.events import EV_REDIRECT_URL
+from otest.events import EV_RESPONSE
 
 from oidctest.regalg import MTI
 from oidctest.regalg import REGISTERED_JWS_ALGORITHMS
 from oidctest.regalg import REGISTERED_JWE_alg_ALGORITHMS
 from oidctest.regalg import REGISTERED_JWE_enc_ALGORITHMS
 
-from otest.check import Check
-from otest.check import Warnings
-from otest.check import Information
-from otest.check import CriticalError
-from otest.check import Other
-from otest.check import Error
-from otest.check import ResponseInfo
-from otest.check import WARNING
-from otest.check import OK
-from otest.check import CRITICAL
-from otest.check import ERROR
-from otest.check import INTERACTION
-from otest.check import INFORMATION
-from otest.events import EV_RESPONSE
-from otest.events import EV_REDIRECT_URL
-from otest.events import EV_PROTOCOL_REQUEST
-from otest.events import EV_PROTOCOL_RESPONSE
-from otest.events import EV_HTTP_RESPONSE
-
 __author__ = 'rohe0002'
 
-from oic.oic.message import SCOPE2CLAIMS
-from oic.oic.message import IdToken
-from oic.utils import time_util
 
 
 class CmpIdtoken(Other):

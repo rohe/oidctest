@@ -1,15 +1,16 @@
 import inspect
 import json
-import traceback
 import sys
-from aatest.events import EV_RESPONSE
-from aatest.events import EV_PROTOCOL_RESPONSE
-from aatest.events import EV_HTTP_RESPONSE
+import traceback
 
+from aatest.events import EV_HTTP_RESPONSE
+from aatest.events import EV_PROTOCOL_RESPONSE
+from aatest.events import EV_RESPONSE
 from oic.oauth2 import SUCCESSFUL
 from oic.oauth2.message import ErrorResponse
 from oic.oauth2.message import MissingRequiredAttribute
 from oic.oic.message import AuthorizationResponse
+
 from oidctest.check import get_protocol_response
 
 __author__ = 'rolandh'

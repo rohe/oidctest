@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 from urllib.parse import quote_plus
 
-from oidctest.app_conf import create_model
 from oidctest.app_conf import REST
+from oidctest.app_conf import create_model
 
 
 def test_1():

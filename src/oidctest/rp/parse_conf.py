@@ -1,4 +1,5 @@
 import json
+
 from otest import Unknown
 
 __author__ = 'roland'

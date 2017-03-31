@@ -1,40 +1,37 @@
+from future.backports.urllib.parse import urlparse
+
 import json
 import logging
 import os
 import shutil
 
-from future.backports.urllib.parse import urlparse
-
-from jwkest import as_unicode
 from jwkest import as_bytes
-
+from jwkest import as_unicode
 from oic.oauth2.provider import error_response
-
+# All endpoints the OpenID Connect Provider should answer on
+from oic.oic.provider import AuthorizationEndpoint
+from oic.oic.provider import EndSessionEndpoint
+from oic.oic.provider import RegistrationEndpoint
+from oic.oic.provider import TokenEndpoint
+from oic.oic.provider import UserinfoEndpoint
 from oic.utils.http_util import BadRequest
-from oic.utils.http_util import extract_from_request
 from oic.utils.http_util import NotFound
 from oic.utils.http_util import Response
 from oic.utils.http_util import SeeOther
 from oic.utils.http_util import ServiceError
 from oic.utils.http_util import Unauthorized
+from oic.utils.http_util import extract_from_request
 from oic.utils.keyio import key_summary
 from oic.utils.webfinger import OIC_ISSUER
 from oic.utils.webfinger import WebFinger
-# All endpoints the OpenID Connect Provider should answer on
-from oic.oic.provider import AuthorizationEndpoint
-from oic.oic.provider import EndSessionEndpoint
-from oic.oic.provider import TokenEndpoint
-from oic.oic.provider import UserinfoEndpoint
-from oic.oic.provider import RegistrationEndpoint
-
 from otest import resp2json
 from otest.events import EV_EXCEPTION
 from otest.events import EV_FAULT
 from otest.events import EV_REQUEST
 from otest.events import EV_REQUEST_ARGS
 from otest.events import EV_RESPONSE
-from otest.events import layout
 from otest.events import Operation
+from otest.events import layout
 
 from oidctest.utils import create_rp_tar_archive
 

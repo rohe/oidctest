@@ -1,8 +1,9 @@
 import time
+
 from oic import rndstr
+from otest.conversation import Conversation
 
 from oidctest.session import SessionHandler
-from otest.conversation import Conversation
 
 __author__ = 'roland'
 

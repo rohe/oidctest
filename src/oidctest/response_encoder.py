@@ -1,4 +1,5 @@
 import json
+
 from oic.utils.http_util import Response
 from oic.utils.http_util import ServiceError
 

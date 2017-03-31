@@ -10,6 +10,8 @@ from oidctest.ass_port import AssignedPorts
 from otest.proc import isrunning
 from otest.rp.setup import read_path2port_map
 
+from oidctest.ass_port import AssignedPorts
+
 logger = logging.getLogger(__name__)
 
 
@@ -35,8 +37,8 @@ class Application(object):
         _key = self.key(iss, tag)
         _port = self.assigned_ports.register_port(_key)
         args = [self.test_script, "-i", '"{}"'.format(unquote_plus(iss)), "-t",
-                '"{}"'.format(unquote_plus(tag)), "-p", str(_port),
-                "-f", self.flowdir, '-s']
+                '"{}"'.format(unquote_plus(tag)), "-p", str(_port), "-f",
+                self.flowdir, '-s']
         if self.path2port:
             args.extend(["-m", self.path2port])
             ppmap = read_path2port_map(self.path2port)

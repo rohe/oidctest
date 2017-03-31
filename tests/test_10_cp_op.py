@@ -28,4 +28,3 @@ def test_parse_resource():
         parse_resource('https://example.com/rp-discovery-webfinger-url')
     except ValueError:
         pass
-

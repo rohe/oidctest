@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import importlib
-import sys
 import logging
+import sys
 
 from fedoidc.test_utils import make_fs_jwks_bundle
 

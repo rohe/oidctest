@@ -2,16 +2,14 @@
 
 import importlib
 import os
+import sys
 from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
-
-import sys
 
 from fedoidc import MetadataStatement
 from fedoidc.bundle import FSJWKSBundle
 from fedoidc.file_system import FileSystem
 from fedoidc.operator import Operator
-
 from oic.utils.keyio import build_keyjar
 
 sys.path.insert(0, ".")

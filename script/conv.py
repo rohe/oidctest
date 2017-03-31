@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import importlib
-import sys
 import json
+import sys
 from urllib.parse import quote_plus
 
 from oic.oic import ProviderConfigurationResponse

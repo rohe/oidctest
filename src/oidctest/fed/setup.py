@@ -1,15 +1,15 @@
 import importlib
 import os
 import sys
-from urllib.parse import unquote_plus
 from urllib.parse import quote_plus
+from urllib.parse import unquote_plus
 
 from fedoidc.bundle import FSJWKSBundle
 from fedoidc.bundle import keyjar_to_jwks_private
 from fedoidc.file_system import FileSystem
 from fedoidc.operator import Operator
-from fedoidc.signing_service import Signer
 from fedoidc.signing_service import InternalSigningService
+from fedoidc.signing_service import Signer
 from fedoidc.test_utils import make_fs_jwks_bundle
 from fedoidc.test_utils import make_signed_metadata_statement
 from oic.utils.keyio import build_keyjar

@@ -1,22 +1,21 @@
 import json
-
-import cherrypy
 import logging
 import os
+from urllib.parse import unquote_plus
 
-from urllib.parse import unquote_plus, quote_plus
-
+import cherrypy
 from jwkest import as_bytes
-from oic.oic import ProviderConfigurationResponse
-from oic.oic import RegistrationResponse
+from oic.oauth2.message import list_serializer
 from oic.utils.http_util import Response
-from oidctest.app_conf import create_model
-from oidctest.cp import init_events
-from oidctest.prof_util import DISCOVER, REGISTER
-from oidctest.tt import conv_response, unquote_quote
-from oidctest.tt import BUT
 from otest.proc import kill_process
 
+from oidctest.app_conf import create_model
+from oidctest.app_conf import TYPE2CLS
+from oidctest.cp import init_events
+from oidctest.prof_util import DISCOVER
+from oidctest.prof_util import REGISTER
+from oidctest.tt import conv_response
+from oidctest.tt import unquote_quote
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +29,7 @@ ball = '<img src="/static/Add_16x16.png" alt="Red Ball">'
 
 _cline = '{} <input type="radio" name="{}:{}" value="{}" {}>'
 
+
 def do_line(grp, key, val, req=False):
     if req:
         _ball = ball
@@ -39,8 +39,8 @@ def do_line(grp, key, val, req=False):
     if val is False or val is True:
         if val == "True":
             _choice = " ".join(
-                [ _cline.format('True', grp, key, 'True', 'checked'),
-                  _cline.format('False', grp, key, 'False', '')])
+                [_cline.format('True', grp, key, 'True', 'checked'),
+                 _cline.format('False', grp, key, 'False', '')])
         else:
             _choice = " ".join(
                 [_cline.format('True', grp, key, 'True', ''),
@@ -62,13 +62,20 @@ def do_line(grp, key, val, req=False):
             'value="{}" class="str"></td><td>{}</td></tr>'.format(val, _ball)])
 
 
-def display_form(head_line, grp, dic, state):
+def comma_sep_list(key, val, multi):
+    if key in multi:
+        if isinstance(val, list):
+            return ', '.join(val)
+    return val
+
+
+def display_form(head_line, grp, dic, state, multi):
     lines = ['<h3>{}</h3>'.format(head_line), '<table>']
     keys = list(dic.keys())
     keys.sort()
     if grp in state:
         for param in state[grp]['immutable']:
-            val = dic[param]
+            val = comma_sep_list(param, dic[param], multi[grp])
             l = [
                 '<tr><th align="left">{}</th>'.format(param),
                 '<td>{}</td><td>{}</td></tr>'.format(val, ball),
@@ -79,22 +86,22 @@ def display_form(head_line, grp, dic, state):
             lines.append(''.join(l))
             keys.remove(param)
         for param in state[grp]['required']:
-            val = dic[param]
+            val = comma_sep_list(param, dic[param], multi[grp])
             lines.append(do_line(grp, param, val, True))
             keys.remove(param)
     for key in keys:
-        val = dic[key]
+        val = comma_sep_list(key, dic[key], multi[grp])
         lines.append(do_line(grp, key, val, False))
     lines.append('</table>')
     return lines
 
 
-def display(base, iss, tag, dicts, state):
+def display(base, iss, tag, dicts, state, multi):
     lines = [
         '<form action="{}/run/{}/{}" method="post">'.format(base, iss, tag)]
     for grp, info in dicts.items():
         lines.append('<br>')
-        lines.extend(display_form(HEADLINE[grp], grp, info, state))
+        lines.extend(display_form(HEADLINE[grp], grp, info, state, multi))
     lines.append(
         '<button type="submit" value="configure" class="button">Save & '
         'Start</button>')
@@ -104,16 +111,21 @@ def display(base, iss, tag, dicts, state):
     return "\n".join(lines)
 
 
-TYPE2CLS = {'provider_info': ProviderConfigurationResponse,
-            'registration_response': RegistrationResponse}
-
-
 def update(typ, conf):
     cls = TYPE2CLS[typ]
     for param in cls.c_param:
         if param not in conf:
             conf[param] = ''
     return conf
+
+
+def multi_value(typ):
+    cls = TYPE2CLS[typ]
+    res = []
+    for param, spec in cls.c_param.items():
+        if spec[2] == list_serializer:
+            res.append(param)
+    return res
 
 
 class Action(object):
@@ -163,7 +175,9 @@ class Action(object):
             if item not in dicts['tool']:
                 dicts['tool'][item] = ''
 
+        multi = {'tool': ['acr_values', 'claims_locales', 'ui_locales']}
         for typ in ['provider_info', 'registration_response']:
+            multi[typ] = multi_value(typ)
             try:
                 dicts[typ] = _conf['client'][typ]
             except KeyError:
@@ -190,7 +204,7 @@ class Action(object):
 
             state['provider_info']['required'] = _req
         _msg = self.html['instance.html'].format(
-            display=display('', qp[0], qp[1], dicts, state))
+            display=display('', qp[0], qp[1], dicts, state, multi))
 
         return as_bytes(_msg)
 

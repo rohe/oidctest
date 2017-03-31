@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
 import argparse
 import json
-import requests
 
+import requests
 from fedoidc import ProviderConfigurationResponse
 from fedoidc.bundle import JWKSBundle
 from fedoidc.client import Client
 from fedoidc.entity import FederationEntity
-from oic.exception import RegistrationError, ParameterError
-
-from oic.utils.keyio import build_keyjar
+from oic.exception import ParameterError
+from oic.exception import RegistrationError
 from oic.utils.keyio import KeyJar
-
+from oic.utils.keyio import build_keyjar
 from otest.flow import Flow
-
 from requests.packages import urllib3
+
 urllib3.disable_warnings()
 
 # ----- config -------

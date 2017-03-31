@@ -1,3 +1,5 @@
+from future.backports.urllib.parse import urlparse
+
 import inspect
 import json
 import logging
@@ -6,13 +8,8 @@ import sys
 import time
 
 from Cryptodome.PublicKey import RSA
-
-from future.backports.urllib.parse import urlparse
-
 from jwkest.jwk import RSAKey
-
 from oic import rndstr
-
 from oic.exception import IssuerMismatch
 from oic.exception import ParameterError
 from oic.oauth2.message import ErrorResponse
@@ -20,15 +17,14 @@ from oic.oauth2.util import JSON_ENCODED
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
 from oic.utils.keyio import KeyBundle
-from oic.utils.keyio import ec_init
 from oic.utils.keyio import dump_jwks
-
+from oic.utils.keyio import ec_init
+from otest import Break
 from otest import RequirementsNotMet
 from otest import Unknown
-from otest import Break
 from otest.aus.operation import Operation
-from otest.aus.request import SyncGetRequest
 from otest.aus.request import AsyncGetRequest
+from otest.aus.request import SyncGetRequest
 from otest.aus.request import SyncPostRequest
 from otest.aus.request import same_issuer
 from otest.events import EV_EXCEPTION

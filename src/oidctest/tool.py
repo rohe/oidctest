@@ -2,17 +2,16 @@ import logging
 
 import cherrypy
 from oic.utils.http_util import Response
-from oidctest.tt import conv_response
-
 from otest import exception_trace
 from otest.aus import tool
 from otest.check import NOT_APPLICABLE
 from otest.conversation import Conversation
-
-from oidctest import prof_util
 from otest.flow import match_usage
 from otest.prof_util import prof2usage
 from otest.tool import get_redirect_uris
+
+from oidctest import prof_util
+from oidctest.tt import conv_response
 
 __author__ = 'roland'
 

@@ -1,14 +1,15 @@
-import cherrypy
 import json
 
+import cherrypy
 from fedoidc import MetadataStatement
 from fedoidc.operator import Operator
-
-from jwkest import as_bytes, as_unicode
-from oic.exception import RegistrationError, ParameterError
-
-from oic.oauth2 import MessageException, MissingSigningKey
-from oic.oauth2 import VerificationError
+from jwkest import as_bytes
+from jwkest import as_unicode
+from oic.exception import ParameterError
+from oic.exception import RegistrationError
+from oic.exception import MessageException
+from oic.oauth2.message import MissingSigningKey
+from oic.oauth2.exception import VerificationError
 from oic.utils.keyio import KeyJar
 
 

@@ -2,9 +2,9 @@ import gzip
 import os
 import shutil
 import tarfile
+import time
 
 import cherrypy
-import time
 
 PRE_HTML = """<html>
   <head>

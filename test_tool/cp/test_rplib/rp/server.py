@@ -1,24 +1,21 @@
 #!/usr/bin/env python3
+import logging
 import os
 
 import cherrypy
-import logging
-
 from oic.utils import webfinger
-
-from oidctest.cp import dump_log
-from oidctest.cp.op import Provider
-from oidctest.cp.op import WebFinger
-from oidctest.cp.op_handler import OPHandler
-from oidctest.cp.test_list import TestList
-from oidctest.cp.log_handler import ClearLog
-from oidctest.cp.log_handler import Log
-from oidctest.cp.log_handler import Tar
-from oidctest.cp.setup import cb_setup
-
 from otest.flow import Flow
 from otest.prof_util import SimpleProfileHandler
 
+from oidctest.cp import dump_log
+from oidctest.cp.log_handler import ClearLog
+from oidctest.cp.log_handler import Log
+from oidctest.cp.log_handler import Tar
+from oidctest.cp.op import Provider
+from oidctest.cp.op import WebFinger
+from oidctest.cp.op_handler import OPHandler
+from oidctest.cp.setup import cb_setup
+from oidctest.cp.test_list import TestList
 from oidctest.tt.fed import Sign
 
 logger = logging.getLogger("")
@@ -49,7 +46,8 @@ if __name__ == '__main__':
     _com_args, _op_arg, config = cb_setup(args)
 
     folder = os.path.abspath(os.curdir)
-    _flows = Flow(args.flowsdir, profile_handler=SimpleProfileHandler)
+    _flowsdir = os.path.normpath(os.path.join(folder, args.flowsdir))
+    _flows = Flow(_flowsdir, profile_handler=SimpleProfileHandler)
     op_handler = OPHandler(provider.Provider, _op_arg, _com_args, _flows)
 
     cherrypy.tools.dumplog = cherrypy.Tool('before_finalize', dump_log)

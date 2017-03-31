@@ -1,8 +1,8 @@
+import flows
+
 from oidctest import oper
 from oidctest import profiles
 from oidctest.session import SessionHandler
-
-import flows
 
 __author__ = 'roland'
 
