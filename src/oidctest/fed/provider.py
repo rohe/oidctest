@@ -173,7 +173,8 @@ class Provider(provider.Provider):
                 except KeyError:
                     fos = []
 
-            _sms.append(self.create_signed_metadata_statement(fos))
+            _sms.append(
+                self.create_signed_metadata_statement('discovery', fos=fos))
 
         _response = provider.Provider.create_providerinfo(self, pcr_class,
                                                           setup)
