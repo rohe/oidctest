@@ -7,9 +7,9 @@ from jwkest import as_bytes
 from jwkest import as_unicode
 from oic.exception import ParameterError
 from oic.exception import RegistrationError
-from oic.oauth2 import MessageException
-from oic.oauth2 import MissingSigningKey
-from oic.oauth2 import VerificationError
+from oic.exception import MessageException
+from oic.oauth2.message import MissingSigningKey
+from oic.oauth2.exception import VerificationError
 from oic.utils.keyio import KeyJar
 
 
