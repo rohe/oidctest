@@ -46,7 +46,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-f', dest='flowsdir', required=True)
 parser.add_argument('-k', dest='insecure', action='store_true')
 parser.add_argument('-t', dest='tester')
-parser.add_argument(dest="config")
+#parser.add_argument(dest="config")
 args = parser.parse_args()
 
 _flows = Flow(args.flowsdir, profile_handler=None)
