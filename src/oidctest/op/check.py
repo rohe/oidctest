@@ -682,7 +682,7 @@ class InteractionCheck(CriticalError):
         self._status = INTERACTION
         self._message = conv.events.last_item(EV_RESPONSE)
         parts = urlsplit(conv.position)
-        return {"url": "{}://{}{}".format(parts[:3])}
+        return {"url": "{}://{}{}".format(parts[0], parts[1], parts[2])}
 
 
 class VerifyClaims(Error):
