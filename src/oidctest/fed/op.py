@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 def handle_error():
     cherrypy.response.status = 500
     cherrypy.response.body = [
-        "<html><body>Sorry, an error occured</body></html>"
+        b"<html><body>Sorry, an error occured</body></html>"
     ]
 
 
@@ -141,7 +141,11 @@ class Configuration(object):
             )
         else:
             store_request(op, 'ProviderInfo')
-            resp = op.create_fed_providerinfo()
+            try:
+                resp = op.create_fed_providerinfo()
+            except Exception as err:
+                raise cherrypy.HTTPError(message=as_bytes(str(err)))
+
             cherrypy.response.headers['Content-Type'] = 'application/json'
             # return as_bytes(resp.message)
             return as_bytes(json.dumps(resp.to_dict()))
