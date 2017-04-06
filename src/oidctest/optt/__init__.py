@@ -187,3 +187,31 @@ class Main(object):
                 raise cherrypy.HTTPError(message=str(err))
             else:
                 raise cherrypy.HTTPRedirect(url)
+
+    @cherrypy.expose
+    def authz_post(self, **kwargs):
+        _conv = self.sh["conv"]
+
+        try:
+            resp = self.tester.async_response(self.webenv["conf"],
+                                              response=kwargs)
+        except cherrypy.HTTPRedirect:
+            raise
+        except Exception as err:
+            return self.info.err_response("authz_cb", err)
+        else:
+            if resp is False or resp is True:
+                pass
+            elif not isinstance(resp, int):
+                return resp
+
+            try:
+                # return info.flow_list()
+                url = "{}display#{}".format(
+                    self.webenv['client_info']['base_url'],
+                    self.pick_grp(_conv.test_id))
+            except Exception as err:
+                logger.error(err)
+                raise cherrypy.HTTPError(message=str(err))
+            else:
+                raise cherrypy.HTTPRedirect(url)
