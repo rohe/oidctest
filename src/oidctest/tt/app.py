@@ -30,7 +30,7 @@ class Application(object):
         self.prehtml = prehtml
 
     def key(self, iss, tag):
-        return '{}:{}'.format(unquote_plus(iss), unquote_plus(tag))
+        return self.assigned_ports.make_key(iss, tag)
 
     def run_test_instance(self, iss, tag):
         _port = self.assigned_ports.register_port(iss, tag)
