@@ -277,9 +277,12 @@ class Action(object):
             # need to create a redirect_uri, means I need to register a port
             _port = self.app.assigned_ports.register_port(kwargs['iss'],
                                                           kwargs['tag'])
+            if self.app.test_tool_base.endswith('/'):
+                _base = self.app.test_tool_base[:-1]
+            else:
+                _base = self.app.test_tool_base
             _ent_conf['client']['registration_response'][
-                'redirect_uris'] = '{}:{}/authz_cb'.format(
-                self.app.test_tool_base[:-1], _port)
+                'redirect_uris'] = '{}:{}/authz_cb'.format(_base, _port)
 
         uqp, qp = unquote_quote(kwargs['iss'], kwargs['tag'])
         _ent_conf['tool']['issuer'] = uqp[0]
