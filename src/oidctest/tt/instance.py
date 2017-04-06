@@ -70,7 +70,13 @@ class Instance(object):
             elif val == 'True':
                 val = True
             elif is_multi_valued(item, grp):
-                val = [v.strip() for v in val.split(',')]
+                val = val.strip()
+                val = val.strip("[]")
+                _tmp = [v.strip() for v in val.split(',')]
+                val = [v.strip("'\"") for v in _tmp]
+            else:
+                val = val.strip()
+                val = val.strip("'\"")
 
             try:
                 _ent_conf[grp][item] = val
