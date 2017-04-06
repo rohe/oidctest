@@ -22,22 +22,22 @@ SMS_DEF = {
         "discovery": {
             FO['swamid']: [
                 {'request': {}, 'requester': OA['sunet'],
-                 'signer_add': {'usage': 'discovery'},
+                 'signer_add': {'federation_usage': 'discovery'},
                  'signer': FO['swamid']},
             ],
             FO['feide']: [
                 {'request': {}, 'requester': OA['sunet'],
-                 'signer_add': {'usage': 'discovery'},
+                 'signer_add': {'federation_usage': 'discovery'},
                  'signer': FO['feide']},
             ],
             FO['surfnet']: [
                 {'request': {}, 'requester': OA['sunet'],
-                 'signer_add': {'usage': 'discovery'},
+                 'signer_add': {'federation_usage': 'discovery'},
                  'signer': FO['surfnet']},
             ],
             FO['edugain']: [
                 {'request': {}, 'requester': FO['swamid'],
-                 'signer_add': {'usage': 'discovery'},
+                 'signer_add': {'federation_usage': 'discovery'},
                  'signer': FO['edugain']},
                 {'request': {}, 'requester': OA['sunet'],
                  'signer_add': {}, 'signer': FO['swamid']}
@@ -46,22 +46,22 @@ SMS_DEF = {
         "response": {
             FO['swamid']: [
                 {'request': {}, 'requester': OA['sunet'],
-                 'signer_add': {'usage': 'response'},
+                 'signer_add': {'federation_usage': 'response'},
                  'signer': FO['swamid']},
             ],
             FO['feide']: [
                 {'request': {}, 'requester': OA['sunet'],
-                 'signer_add': {'usage': 'response'},
+                 'signer_add': {'federation_usage': 'response'},
                  'signer': FO['feide']},
             ],
             FO['surfnet']: [
                 {'request': {}, 'requester': OA['sunet'],
-                 'signer_add': {'usage': 'response'},
+                 'signer_add': {'federation_usage': 'response'},
                  'signer': FO['surfnet']},
             ],
             FO['edugain']: [
                 {'request': {}, 'requester': FO['swamid'],
-                 'signer_add': {'usage': 'response'},
+                 'signer_add': {'federation_usage': 'response'},
                  'signer': FO['edugain']},
                 {'request': {}, 'requester': OA['sunet'],
                  'signer_add': {}, 'signer': FO['swamid']}
@@ -72,14 +72,14 @@ SMS_DEF = {
         "discovery": {
             FO['feide']: [
                 {'request': {}, 'requester': OA['uninett'],
-                 'signer_add': {'usage': 'discovery'},
+                 'signer_add': {'federation_usage': 'discovery'},
                  'signer': FO['feide']},
             ]
         },
         "response": {
             FO['feide']: [
                 {'request': {}, 'requester': OA['uninett'],
-                 'signer_add': {'usage': 'response'},
+                 'signer_add': {'federation_usage': 'response'},
                  'signer': FO['feide']},
             ]
         }
@@ -90,14 +90,14 @@ SMS_DEF = {
                 {'request': {}, 'requester': OA['example.org'],
                  'signer_add': {
                      'scopes_supported': ['openid', 'mail'],
-                     'usage': 'discovery'},
+                     'federation_usage': 'discovery'},
                  'signer': FO['example.com']}
             ]
         },
         "response": {
             FO['example.com']: [
                 {'request': {}, 'requester': OA['example.org'],
-                 'signer_add': {'usage': 'response'},
+                 'signer_add': {'federation_usage': 'response'},
                  'signer': FO['example.com']},
             ]
         }
@@ -108,7 +108,7 @@ SMS_DEF = {
                 {'request': {}, 'requester': OA['example.org'],
                  'signer_add': {
                      'scopes_supported': ['openid', 'email'],
-                     'usage': 'discovery'},
+                     'federation_usage': 'discovery'},
                  'signer': FO['example.com']},
                 {'request': {
                     'scopes_supported': ["openid", "profile", "email",
@@ -121,7 +121,7 @@ SMS_DEF = {
         "response": {
             FO['example.com']: [
                 {'request': {}, 'requester': OA['example.org'],
-                 'signer_add': {'usage': 'response'},
+                 'signer_add': {'federation_usage': 'response'},
                  'signer': FO['example.com']},
                 {'request': {}, 'requester': IA['cs.example.org'],
                  'signer_add': {}, 'signer': OA['example.org']}
