@@ -61,9 +61,9 @@ class AssignedPorts(object):
         inst = find_test_instances(test_script)
         if inst:
             for pid, info in inst.items():
-                key = '{}!{}'.format(info["iss"], info["tag"])
+                key = self.make_key(info["iss"], info["tag"])
                 if key not in self._db:
-                    self[key] = info["port"]
+                    self[key] = int(info["port"])
                     update = True
                 running_processes[key] = pid
 
@@ -79,6 +79,7 @@ class AssignedPorts(object):
             pass
         else:
             if _ass:
+                # So not to write back to disc
                 for key, val in json.loads(_ass).items():
                     self._db[key] = val
 
