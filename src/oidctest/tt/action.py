@@ -212,7 +212,7 @@ class Action(object):
     def delete(self, iss, tag, ev, pid=0):
         logger.info('delete test tool configuration')
         uqp, qp = unquote_quote(iss, tag)
-        _key = '{}:{}'.format(*uqp)
+        _key = self.app.assigned_ports(*uqp)
 
         if pid:
             kill_process(pid)
@@ -275,8 +275,8 @@ class Action(object):
 
         if ppiece[REGISTER] == 'F':
             # need to create a redirect_uri, means I need to register a port
-            _eid = self.app.key(kwargs['iss'], kwargs['tag'])
-            _port = self.app.assigned_ports.register_port(_eid)
+            _port = self.app.assigned_ports.register_port(kwargs['iss'],
+                                                          kwargs['tag'])
             _ent_conf['client']['registration_response'][
                 'redirect_uris'] = '{}:{}/authz_cb'.format(
                 self.app.test_tool_base[:-1], _port)

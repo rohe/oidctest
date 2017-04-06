@@ -33,8 +33,7 @@ class Application(object):
         return '{}:{}'.format(unquote_plus(iss), unquote_plus(tag))
 
     def run_test_instance(self, iss, tag):
-        _key = self.key(iss, tag)
-        _port = self.assigned_ports.register_port(_key)
+        _port = self.assigned_ports.register_port(iss, tag)
         args = [self.test_script, "-i", '"{}"'.format(unquote_plus(iss)), "-t",
                 '"{}"'.format(unquote_plus(tag)), "-p", str(_port), "-f",
                 self.flowdir, '-s']
