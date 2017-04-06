@@ -470,7 +470,7 @@ class IO(object):
     def delete_instance(self, parts, pid=0, app=None):
         lp = [unquote_plus(p) for p in parts]
         qp = [quote_plus(p) for p in lp]
-        _key = '{}:{}'.format(*lp)
+        _key = app.assigned_ports.make_key(*lp)
 
         if pid:
             kill_process(pid)
@@ -489,7 +489,7 @@ class IO(object):
 
         args = {'title': "Action performed", 'base': self.baseurl,
                 'note':
-                    'Your test tool instance <em>{}:{}</em> has been '
+                    'Your test tool instance <em>{} {}</em> has been '
                     'removed'.format(*lp)}
         return resp(self.environ, self.start_response, **args)
 
@@ -598,14 +598,11 @@ class Application(object):
         if not self.test_tool_base.endswith('/'):
             self.test_tool_base += '/'
 
-    def key(self, iss, tag):
-        return '{}:{}'.format(unquote_plus(iss), unquote_plus(tag))
-
     def get_pid(self, parts):
         lp = [unquote_plus(p) for p in parts]
         qp = [quote_plus(p) for p in lp]
         try:
-            return self.running_processes['{}:{}'.format(*qp)]
+            return self.running_processes[self.key(*qp)]
         except KeyError:
             return 0
 
@@ -615,15 +612,13 @@ class Application(object):
         :param qiss: quoted identifier
         :param qtag: quoted tag
         """
-        _key = '{}:{}'.format(qiss, qtag)
         try:
-            del self.assigned_ports[_key]
+            del self.assigned_ports[self.assigned_ports.make_key(qiss, qtag)]
         except KeyError:
             pass
 
     def run_test_instance(self, iss, tag):
-        _key = self.key(iss, tag)
-        _port = self.assigned_ports.register_port(_key)
+        _port = self.assigned_ports.register_port(iss, tag)
         args = [self.test_script, "-i", unquote_plus(iss), "-t",
                 unquote_plus(tag), "-p", str(_port), "-M", self.mako_dir,
                 "-f", self.flowdir]
@@ -672,7 +667,7 @@ class Application(object):
 
         if pid:
             logger.info("process id: {}".format(pid))
-            self.running_processes['{}:{}'.format(iss, tag)] = pid
+            self.running_processes[self.key(iss, tag)] = pid
             return url
         else:
             return None
@@ -714,8 +709,7 @@ class Application(object):
 
         if ppiece[REGISTER] == 'F':
             # need to create a redirect_uri, means I need to register a port
-            _eid = self.key(q['iss'][0], q['tag'][0])
-            _port = self.assigned_ports.register_port(_eid)
+            _port = self.assigned_ports.register_port(q['iss'][0], q['tag'][0])
             _ent_conf['client']['registration_response'][
                 'redirect_uris'] = '{}:{}/authz_cb'.format(
                 self.test_tool_base[:-1], _port)
@@ -825,7 +819,7 @@ class Application(object):
             _qtag = quote_plus(_tag)
             _met = environ.get('REQUEST_METHOD')
             if _met == 'GET':
-                return self.assigned_ports.register_port(self.key(_qiss, _qtag))
+                return self.assigned_ports.register_port(_qiss, _qtag)
             elif _met == 'DELETE':
                 return self.return_port(_qiss, _qtag)
         else:

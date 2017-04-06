@@ -1,6 +1,5 @@
-from future.backports.urllib.parse import unquote_plus
-
 import json
+from urllib.parse import unquote_plus
 
 from otest.proc import find_test_instances
 
@@ -15,6 +14,9 @@ class AssignedPorts(object):
         self.min = min
         self.max = max
         self._db = {}
+
+    def make_key(self, *args):
+        return ']['.join([unquote_plus(v) for v in args])
 
     def __setitem__(self, key, value):
         if '%' in key:
@@ -59,7 +61,7 @@ class AssignedPorts(object):
         inst = find_test_instances(test_script)
         if inst:
             for pid, info in inst.items():
-                key = '{}:{}'.format(info["iss"], info["tag"])
+                key = '{}!{}'.format(info["iss"], info["tag"])
                 if key not in self._db:
                     self[key] = info["port"]
                     update = True
@@ -80,12 +82,14 @@ class AssignedPorts(object):
                 for key, val in json.loads(_ass).items():
                     self._db[key] = val
 
-    def register_port(self, eid):
+    def register_port(self, *args):
         """
         Get an assigned port. If no one is assigned, find the next available.
-        :param key: entity identifier
+        :param args: entity identifiers
         :return: Integer
         """
+        eid = self.make_key(*args)
+
         try:
             # already registered ?
             _port = self._db[eid]
