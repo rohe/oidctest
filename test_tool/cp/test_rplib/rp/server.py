@@ -86,7 +86,7 @@ if __name__ == '__main__':
 
     # test list
     cherrypy.tree.mount(
-        TestList('flows', 'links.json',
+        TestList(_flowsdir, 'links.json',
                  'List of OIDC RP library tests for profile: "<i>{}</i>"',
                  config.GRPS),
         '/list')
