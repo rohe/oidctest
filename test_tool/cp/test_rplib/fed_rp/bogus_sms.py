@@ -7,7 +7,7 @@ from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
 
 from fedoidc import MetadataStatement
-from fedoidc.bundle import FSJWKSBundle
+from fedoidc.bundle import FSJWKSBundle, JWKSBundle
 from fedoidc.file_system import FileSystem
 from fedoidc.operator import Operator
 from oic.utils.keyio import build_keyjar
@@ -26,22 +26,42 @@ for entity, _keyjar in jb.items():
 
 name = 'https://bogus.example.org'
 
-_dir = os.path.join('ms_dir', quote_plus(name))
+_dir = os.path.join('ms_dir', quote_plus(name), 'discovery')
 metadata_statements = FileSystem(_dir, key_conv={'to': quote_plus,
                                                  'from': unquote_plus})
 
-fo = "https://example.com"
+fo = "https://edugain.com"
 
-# desc = FO['swamid']: [
-#             {'request': {}, 'requester': OA['sunet'],
-#              'signer_add': {}, 'signer': FO['swamid']},
-#         ]
+# What I want to create is something like
 
-req = MetadataStatement()
-_requester = operator[name]
+# (ms_OA + SK[X])
 _kj = build_keyjar(config.KEY_DEFS)[1]
-req['signing_keys'] = {'keys': [x.serialize() for x in _kj.get_signing_key()]}
-_signer = operator[fo]
-ms = _signer.pack_metadata_statement(req)
+req = MetadataStatement(
+    federation_usage='discovery',
+    signing_keys={'keys': [x.serialize() for x in _kj.get_signing_key()]})
 
-metadata_statements[fo] = ms
+# FO(ms_OA + SK[X])
+_fo_signer = operator[fo]
+ms_0 = _fo_signer.pack_metadata_statement(req)
+
+# OA(ms_IA + SK[IA] + FO(ms_OA + SK[X]))
+_ia_signer = operator["https://bogus.example.org"]
+req = MetadataStatement(
+    tos_uri='https://example.org/tos',
+    metadata_statements=[ms_0],
+    signing_keys=_ia_signer.signing_keys_as_jwks()
+)
+
+oa = "https://example.org"
+_oa_signer = operator[oa]
+ms_1 = _oa_signer.pack_metadata_statement(req)
+
+metadata_statements[fo] = ms_1
+
+
+_jb = JWKSBundle('https://op.sunet.se')
+_jb[_fo_signer.iss] = _fo_signer.signing_keys_as_jwks()
+
+uninett_op = Operator(iss='https://op.sunet.se', jwks_bundle=_jb)
+foo = uninett_op.unpack_metadata_statement(jwt_ms=ms_1)
+print(foo)

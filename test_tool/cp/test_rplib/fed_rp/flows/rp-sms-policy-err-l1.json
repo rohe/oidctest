@@ -1,12 +1,12 @@
 {
-  "group": "Policy Breach",
-  "short_description": "Can detect a policy breach",
+  "group": "Policy faults",
+  "short_description": "Faulty compounded metadata statement where policy overwrite is attempted",
   "metadata_statements": [
     {
       "federation": "https://example.com",
       "signer": "https://example.org"
     }
   ],
-  "detailed_description": "Make a ${OPENID_PROVIDER_ISSUER_DISCOVERY} and interpret the ${SIGNED_METADATA_STATEMENT}. The response will compounded metadata statement with a policy breach",
-  "expected_result": "The RP library should flag that there is a policy breach in the compounded metadata statement."
+  "detailed_description": "Make a ${OPENID_PROVIDER_ISSUER_DISCOVERY} and interpret the ${SIGNED_METADATA_STATEMENT}. The response will contain a faulty <b>level 1</b> signed metadata",
+  "expected_result": "Parsing the metadata statement should lead to an error encountered"
 }
