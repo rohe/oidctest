@@ -298,6 +298,10 @@ def conditional_execution(oper, arg):
             if oper.profile[0] not in val.split(','):
                 oper.skip = True
                 return
+        elif key == 'return_type':
+            if oper.profile[0] not in val:
+                oper.skip = True
+                return
 
 
 def set_jwks_uri(oper, args):
