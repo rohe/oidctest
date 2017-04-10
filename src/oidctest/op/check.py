@@ -760,9 +760,10 @@ class VerifyClaims(Error):
 
         return {}
 
-    def _idtoken_claims(self, conv, req):
+    def _idtoken_claims(self, conv, req, claims=None):
         try:
-            claims = req["claims"]["id_token"]
+            if claims is None:
+                claims = req["claims"]["id_token"]
         except KeyError:
             pass
         else:
@@ -806,9 +807,15 @@ class VerifyClaims(Error):
         req = get_authorization_request(conv, AuthorizationRequest)
 
         if "userinfo" in self._kwargs:
-            ret = self._userinfo_claims(conv, req)
-            if ret:
-                resp["userinfo"] = ret
+            if req['response_type'] == ['id_token']:
+                claims = req["claims"]["userinfo"]
+                ret = self._idtoken_claims(conv, req, claims)
+                if ret:
+                    resp["idtoken"] = ret
+            else:
+                ret = self._userinfo_claims(conv, req)
+                if ret:
+                    resp["userinfo"] = ret
         if "id_token" in self._kwargs:
             ret = self._idtoken_claims(conv, req)
             if ret:
