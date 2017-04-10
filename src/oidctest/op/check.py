@@ -1429,7 +1429,7 @@ class CheckIdTokenNonce(Error):
     def _func(self, conv):
         try:
             _nonce = get_authorization_request(
-                conv, get_authorization_request)["nonce"]
+                conv, AuthorizationRequest)["nonce"]
         except KeyError:
             pass
         else:
