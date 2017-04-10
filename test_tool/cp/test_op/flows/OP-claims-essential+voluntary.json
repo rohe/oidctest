@@ -28,7 +28,13 @@
         }
       }
     },
-    "AccessToken",
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": ["C","CIT","CI","CT"]
+        }
+      }
+    },
     {
       "UserInfo": {
         "set_op_args": {
