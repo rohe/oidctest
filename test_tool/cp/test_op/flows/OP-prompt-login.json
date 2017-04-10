@@ -19,7 +19,13 @@
         "set_response_where": null
       }
     },
-    "AccessToken",
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": ["CIT","CI","CT"]
+        }
+      }
+    },
     "Note",
     {
       "AsyncAuthn": {
@@ -28,7 +34,13 @@
         }
       }
     },
-    "AccessToken"
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": ["CIT","CI","CT"]
+        }
+      }
+    }
   ],
   "note": "You should be prompted to authenticate or re-authenticate. Please submit a screen shot of any authentication user interaction that occurred as part of your certification application.",
   "assert": {

@@ -33,7 +33,13 @@
     },
     "Registration",
     "AsyncAuthn",
-    "AccessToken",
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": ["CIT","CI","CT"]
+        }
+      }
+    },
     {
       "AsyncAuthn": {
         "set_request_args": {
@@ -41,6 +47,12 @@
         }
       }
     },
-    "AccessToken"
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": ["CIT","CI","CT"]
+        }
+      }
+    }
   ]
 }
