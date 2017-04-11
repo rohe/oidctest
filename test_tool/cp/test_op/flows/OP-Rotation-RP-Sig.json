@@ -46,7 +46,7 @@
   ],
   "usage": {
     "crypto": {
-      "sign": "T"
+      "sig": "T"
     },
     "return_type": [
       "C",

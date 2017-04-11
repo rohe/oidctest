@@ -42,7 +42,7 @@
   ],
   "usage": {
     "crypto": {
-      "sign": "T",
+      "sig": "T",
       "enc": "T"
     },
     "register": "T",

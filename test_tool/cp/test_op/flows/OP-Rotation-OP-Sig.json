@@ -28,7 +28,7 @@
   "usage": {
     "discover": "T",
     "crypto": {
-      "sign": "T"
+      "sig": "T"
     }
   },
   "desc": "Can rotate OP signing keys",

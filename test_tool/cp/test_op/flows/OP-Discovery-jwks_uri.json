@@ -3,7 +3,7 @@
   "usage": {
     "discover": "T",
     "crypto": {
-      "sign": "T"
+      "sig": "T"
     }
   },
   "desc": "Verify that jwks_uri is published",

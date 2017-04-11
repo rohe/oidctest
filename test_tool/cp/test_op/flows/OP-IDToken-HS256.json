@@ -33,7 +33,7 @@
   ],
   "usage": {
     "crypto": {
-      "sign": "T"
+      "sig": "T"
     },
     "register": "T",
     "extra": "T"
