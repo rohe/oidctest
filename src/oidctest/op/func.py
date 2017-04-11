@@ -295,9 +295,15 @@ def conditional_expect(oper, args):
 def conditional_execution(oper, arg):
     for key, val in arg.items():
         if key == 'profile':
-            if oper.profile[0] not in val.split(','):
-                oper.skip = True
-                return
+            try:
+                if oper.profile[0] not in val.split(','):
+                    oper.skip = True
+                    return
+            except AttributeError:
+                if oper.profile[0] not in val:
+                    oper.skip = True
+                    return
+
         elif key == 'return_type':
             if oper.profile[0] not in val:
                 oper.skip = True
