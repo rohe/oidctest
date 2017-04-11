@@ -1,0 +1,12 @@
+{
+  "group": "Wrong Signing Key",
+  "short_description": "The published signing key was not use to sign",
+  "metadata_statements": [
+    {
+      "federation": "https://edugain.com",
+      "signer": "https://bogus.example.org"
+    }
+  ],
+  "detailed_description": "Make a ${OPENID_PROVIDER_ISSUER_DISCOVERY} and interpret the ${SIGNED_METADATA_STATEMENT}. The response will compounded metadata statement with a signing key issue",
+  "expected_result": "The RP library should flag that a published signing key was not the one used to sign."
+}
