@@ -1,12 +1,7 @@
-import copy
 import logging
 
-from otest import Done
 from otest import session
-from otest.flow import match_usage
-from otest.prof_util import prof2usage
 
-from oidctest.prof_util import map_prof
 
 __author__ = 'roland'
 
@@ -58,6 +53,7 @@ class SessionHandler(session.SessionHandler):
         if not profile:
             profile = self.profile
 
-        self["tests"] = self.test_flows.matches_profile(profile)
+        self["tests"] = self.test_flows.matches_profile(profile,
+                                                        self.extra['tool_conf'])
         self["profile"] = profile
         return session

@@ -2,7 +2,7 @@
   "group": "ID Token",
   "usage": {
     "crypto": {
-      "sign": "T"
+      "sig": "T"
     },
     "register": "T"
   },
