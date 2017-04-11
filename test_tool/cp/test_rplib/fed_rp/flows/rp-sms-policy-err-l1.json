@@ -7,6 +7,6 @@
       "signer": "https://example.org"
     }
   ],
-  "detailed_description": "Make a ${OPENID_PROVIDER_ISSUER_DISCOVERY} and interpret the ${SIGNED_METADATA_STATEMENT}. The response will contain a faulty <b>level 1</b> signed metadata",
+  "detailed_description": "Make a ${OPENID_PROVIDER_ISSUER_DISCOVERY} and interpret the ${SIGNED_METADATA_STATEMENT}. The response will contain a faulty <b>level 1</b> signed metadata.",
   "expected_result": "Parsing the metadata statement should lead to an error encountered"
 }

@@ -8,7 +8,7 @@ from oidctest.tt import conv_response
 
 from otest import exception_trace
 from otest.check import CRITICAL
-from otest.events import EV_HTTP_ARGS, EV_EXCEPTION
+from otest.events import EV_HTTP_ARGS, EV_EXCEPTION, EV_FAULT
 
 logger = logging.getLogger(__name__)
 
@@ -170,6 +170,8 @@ class Main(object):
         except cherrypy.HTTPRedirect:
             raise
         except Exception as err:
+            _conv.events.store(EV_FAULT, err)
+            self.tester.store_result()
             return self.info.err_response("authz_cb", err)
         else:
             if resp is False or resp is True:
