@@ -40,12 +40,37 @@ def fo_jb(jb, test_info):
                 fjb[fo] = jb[fo]
     return fjb
 
+
+def run_test(test_id, tool_url, tester, rp_fed_ent, jb):
+    _iss = "{}/{}/{}".format(tool_url, tester, test_id)
+    _url = "{}/{}".format(_iss, ".well-known/openid-configuration")
+    resp = requests.request('GET', _url, verify=False)
+
+    rp_fed_ent.jwks_bundle = fo_jb(jb, _flows[test_id])
+    rp = Client(federation_entity=rp_fed_ent)
+
+    # Will raise an exception if there is no metadata statement I can use
+    try:
+        rp.handle_response(resp, _iss, rp.parse_federation_provider_info,
+                           ProviderConfigurationResponse)
+    except (RegistrationError, ParameterError) as err:
+        print(test_id, "Exception: {}".format(err))
+        return
+
+    # If there are more the one metadata statement I can use
+    # provider_federations will be set and will contain a dictionary
+    # keyed on FO identifier
+    if rp.provider_federations:
+        print(test_id, [p.iss for p in rp.provider_federations])
+    else:  # Otherwise there should be exactly one metadata statement I can use
+        print(test_id, rp.federation)
+
 # --------------------
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-f', dest='flowsdir', required=True)
 parser.add_argument('-k', dest='insecure', action='store_true')
-parser.add_argument('-t', dest='tester')
+parser.add_argument('-t', dest='test_id')
 #parser.add_argument(dest="config")
 args = parser.parse_args()
 
@@ -78,26 +103,9 @@ rp_fed_ent = FederationEntity(None, keyjar=_kj, iss='https://sunet.se/rp',
                               signer=None, fo_bundle=None)
 
 # And now for running the tests
-for test_id in tests:
-    _iss = "{}/{}/{}".format(tool_url, tester, test_id)
-    _url = "{}/{}".format(_iss, ".well-known/openid-configuration")
-    resp = requests.request('GET', _url, verify=False)
+if args.test_id:
+    run_test(args.test_id, tool_url, tester, rp_fed_ent, jb)
+else:
+    for test_id in tests:
+        run_test(test_id, tool_url, tester, rp_fed_ent, jb)
 
-    rp_fed_ent.jwks_bundle = fo_jb(jb, _flows[test_id])
-    rp = Client(federation_entity=rp_fed_ent)
-
-    # Will raise an exception if there is no metadata statement I can use
-    try:
-        rp.handle_response(resp, _iss, rp.parse_federation_provider_info,
-                           ProviderConfigurationResponse)
-    except (RegistrationError, ParameterError) as err:
-        print(test_id, "Exception: {}".format(err))
-        continue
-
-    # If there are more the one metadata statement I can use
-    # provider_federations will be set and will contain a dictionary
-    # keyed on FO identifier
-    if rp.provider_federations:
-        print(test_id, list(rp.provider_federations.keys()))
-    else:  # Otherwise there should be exactly one metadata statement I can use
-        print(test_id, rp.federation)
