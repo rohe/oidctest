@@ -9,7 +9,7 @@ import cherrypy
 PRE_HTML = """<html>
   <head>
     <title>List of OIDC RP tests</title>
-    <link rel="stylesheet" type="text/css" href="${base}/static/theme.css">
+    <link rel="stylesheet" type="text/css" href="/static/theme.css">
   </head>
   <body>"""
 
@@ -32,12 +32,17 @@ def display_testers(logs):
     return "\n".join(el)
 
 
-def create_rp_tar_archive(bid, backup=False):
-    # links all the logfiles in log/<tester_id>/<test_id> to
-    # tar/<tester_id>/<test_id>
-    # mk_tardir('backup', userid)
+def create_rp_tar_archive(wd, bid, backup=False):
+    """
+    links all the logfiles in log/<tester_id>/<test_id> to
+    tar/<tester_id>.<test_id> or backup/...
 
-    wd = os.getcwd()
+    :param wd: Base directory
+    :param bid: tester id
+    :param backup: Is this aa backup or not ?
+    :return:
+    """
+
     if backup:
         _dir = os.path.join(wd, "backup", bid)
         tname = "{}.{}.tar".format(bid, time.time())
@@ -48,24 +53,23 @@ def create_rp_tar_archive(bid, backup=False):
     if not os.path.isdir(_dir):
         os.makedirs(_dir)
 
+    # Must open the tar file in the tar/backup directory
     os.chdir(_dir)
-
-    # if not os.path.isdir(userid):
-    #     return None
-
     tar = tarfile.open(tname, "w")
 
+    # back to the log directory
     os.chdir(os.path.join(wd, 'log'))
     for item in os.listdir(bid):
         if item.startswith("."):
             continue
 
         fn = os.path.join(bid, item)
-
         if os.path.isfile(fn):
             tar.add(fn)
+
     tar.close()
 
+    # Back to the tar/backup directory
     os.chdir(_dir)
     with open(tname, 'rb') as f_in:
         with gzip.open('{}.gz'.format(tname), 'wb') as f_out:
@@ -211,12 +215,12 @@ class OPLog(object):
 
 class ClearLog(object):
     def __init__(self, root):
-        self.root = root
+        self.root = root  # The directory where the log directory resides
 
     @cherrypy.expose
     def index(self, op_id=''):
-        create_rp_tar_archive(op_id, True)
-        _dir = os.path.join(self.root, op_id)
+        create_rp_tar_archive(self.root, op_id, True)
+        _dir = os.path.join(self.root, 'log', op_id)
         shutil.rmtree(_dir)
         raise cherrypy.HTTPRedirect("/log", 303)
 
@@ -229,12 +233,12 @@ class ClearLog(object):
 
 class Tar(object):
     def __init__(self, root):
-        self.root = root
+        self.root = root  # The directory where the tar directory resides
 
     @cherrypy.expose
     def index(self, op_id=''):
         cherrypy.response.headers['Content-Type'] = 'application/x-gzip'
-        return create_rp_tar_archive(op_id, True)
+        return create_rp_tar_archive(self.root, op_id, False)
 
     def _cp_dispatch(self, vpath):
         if len(vpath) == 1:
@@ -244,15 +248,13 @@ class Tar(object):
 
 
 class OPTar(object):
-    def __init__(self, log_root, tar_root, backup_root):
-        self.log_root = log_root
-        self.tar_root = tar_root
-        self.backup_root = backup_root
+    def __init__(self, root):
+        self.root = root
 
     @cherrypy.expose
     def index(self, op_id, tag, profile):
         cherrypy.response.headers['Content-Type'] = 'application/x-gzip'
-        return self.create_rp_tar_archive(op_id, tag, profile, False)
+        return self.create_rp_tar_archive(op_id, tag, profile)
 
     def _cp_dispatch(self, vpath):
         if len(vpath) == 3:  # Must be op_is, tag and profile
@@ -273,21 +275,20 @@ class OPTar(object):
         # mk_tardir('backup', userid)
 
         if backup:
-            _target_dir = os.path.join(self.backup_root, op_id)
+            _target_dir = os.path.join(self.root, 'backup', op_id)
             tname = "{}.{}.{}.tar".format(tag, profile, time.time())
         else:
-            _target_dir = os.path.join(self.tar_root, op_id)
+            _target_dir = os.path.join(self.root, 'tar',op_id)
             tname = "{}.{}.tar".format(tag, profile)
 
         if not os.path.isdir(_target_dir):
             os.makedirs(_target_dir)
 
-        wd = os.getcwd()
         os.chdir(_target_dir)
-
         # Start creating the tar file
         tar = tarfile.open(tname, "w")
-        _src_dir = os.path.join(wd, self.log_root, op_id, tag, profile)
+
+        _src_dir = os.path.join(self.root, 'log', op_id, tag, profile)
         for item in os.listdir(_src_dir):
             if item.startswith("."):
                 continue
@@ -298,6 +299,7 @@ class OPTar(object):
                 tar.add(fn)
         tar.close()
 
+        os.chdir(_target_dir)
         # Now for gzipping the tar file
         with open(tname, 'rb') as f_in:
             with gzip.open('{}.gz'.format(tname), 'wb') as f_out:
@@ -307,7 +309,8 @@ class OPTar(object):
             os.unlink(tname)
 
         _zipped = open('{}.gz'.format(tname), 'rb').read()
-        os.chdir(wd)
+        os.chdir(self.root)
+
         return _zipped
 
     @cherrypy.expose
