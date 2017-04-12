@@ -34,8 +34,7 @@ from otest.events import EV_REQUEST
 from otest.events import EV_RESPONSE
 from otest.events import INCOMING
 from otest.events import OUTGOING
-
-from oidctest.prof_util import RESPONSE
+from otest.prof_util import RESPONSE
 
 __author__ = 'roland'
 

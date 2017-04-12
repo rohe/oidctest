@@ -23,6 +23,9 @@ from oic.utils.http_util import get_post
 from otest.proc import find_test_instance
 from otest.proc import isrunning
 from otest.proc import kill_process
+from otest.prof_util import do_discovery, verify_profile, return_type
+from otest.prof_util import do_registration
+from otest.prof_util import to_profile
 from otest.prof_util import DISCOVER
 from otest.prof_util import REGISTER
 from otest.rp.setup import read_path2port_map
@@ -127,20 +130,20 @@ def create_model(profile, tag='default', ent_info_path='entity_info'):
     """
     res = {}
     _tool = json.load(open('{}/tool.json'.format(ent_info_path), 'r'))
+
     res['tool'] = _tool['tool']
-    p = profile.split('.')
     res['tool']['profile'] = profile
     res['tool']['issuer'] = 'Your OPs issuer id goes here'
 
     res['tool']['tag'] = tag
-    if p[2] == 'F':
+    if not do_discovery(profile):
         econf = empty_conf(ProviderConfigurationResponse)
         try:
             res['client']['provider_info'] = econf
         except KeyError:
             res['client'] = {'provider_info': econf}
 
-    if p[3] == 'F':
+    if not do_registration(profile):
         econf = empty_conf(RegistrationResponse)
         try:
             res['client']['registration_response'] = econf
@@ -148,18 +151,6 @@ def create_model(profile, tag='default', ent_info_path='entity_info'):
             res['client'] = {'registration_response': econf}
 
     return res
-
-
-def verify_profile(profile):
-    p = profile.split('.')
-    if len(p) < 4:
-        return False
-    if p[0] not in ['C', 'I', 'IT', 'CT', 'CIT', 'CI']:
-        return False
-    for i in range(1, 4):
-        if p[i] not in ['F', 'T']:
-            return False
-    return True
 
 
 def verify_config(conf):
@@ -225,7 +216,7 @@ class REST(object):
         if _econf is None:
             raise Exception('No configuration for {}:{}'.format(qiss, qtag))
 
-        if _econf['tool']['profile'].split('.')[-1] == 'T':
+        if do_registration(_econf['tool']['profile']):
             reg_info = json.loads(
                 open('{}/registration_info.json'.format(
                     self.entinfo), 'r').read())
@@ -456,7 +447,7 @@ class IO(object):
                              'id_token_signing_alg_values_supported']
             }
 
-            if _conf['tool']['profile'].split('.')[0] not in ['I', 'IT']:
+            if return_type(_conf['tool']['profile']) not in ['I', 'IT']:
                 state['provider_info']['required'].append('token_endpoint')
 
         arg = {'base': '',
@@ -693,21 +684,14 @@ class Application(object):
         q = parse_qs(io.environ.get('QUERY_STRING'))
 
         # construct profile
-        ppiece = [q['return_type'][0]]
-        for p in ['webfinger', 'discovery', 'registration']:
-            if p in q:
-                ppiece.append('T')
-            else:
-                ppiece.append('F')
-
-        profile = '.'.join(ppiece)
+        profile = to_profile(q)
         _ent_conf = create_model(profile, ent_info_path=self.ent_info)
         state = {}
 
-        if ppiece[DISCOVER] == 'F':
+        if not do_discovery(profile):
             _ent_conf['client']['provider_info']['issuer'] = q['iss'][0]
 
-        if ppiece[REGISTER] == 'F':
+        if not do_registration(profile):
             # need to create a redirect_uri, means I need to register a port
             _port = self.assigned_ports.register_port(q['iss'][0], q['tag'][0])
             _ent_conf['client']['registration_response'][

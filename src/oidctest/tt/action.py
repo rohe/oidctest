@@ -1,19 +1,24 @@
-import json
 import logging
 import os
 from urllib.parse import unquote_plus
 
 import cherrypy
 from jwkest import as_bytes
+
 from oic.oauth2.message import list_serializer
 from oic.utils.http_util import Response
+
+from otest.prof_util import abbr_return_type, return_type, do_discovery, \
+    do_registration
+from otest.prof_util import from_profile
+from otest.prof_util import to_profile
+from otest.prof_util import DISCOVER
+from otest.prof_util import REGISTER
 from otest.proc import kill_process
 
 from oidctest.app_conf import create_model
 from oidctest.app_conf import TYPE2CLS
 from oidctest.cp import init_events
-from oidctest.prof_util import DISCOVER
-from oidctest.prof_util import REGISTER
 from oidctest.tt import conv_response
 from oidctest.tt import unquote_quote
 
@@ -37,7 +42,7 @@ def do_line(grp, key, val, req=False):
         _ball = ''
 
     if val is False or val is True:
-        if val == "True":
+        if val is True:
             _choice = " ".join(
                 [_cline.format('True', grp, key, 'True', 'checked'),
                  _cline.format('False', grp, key, 'False', '')])
@@ -48,13 +53,6 @@ def do_line(grp, key, val, req=False):
 
         return '<tr><th align="left">{}</th><td>{}</td><td>{}</td></tr>'.format(
             key, _choice, _ball)
-    elif key in ['profile', 'issuer', 'tag']:
-        l = [
-            '<tr><th align="left">{}</th><td>{}</td><td>{}</td></tr>'.format(
-                key, val, _ball),
-            '<input type="hidden" name="{}:{}" value="{}"'.format(grp, key, val)
-        ]
-        return '\n'.join(l)
     else:
         return " ".join([
             '<tr><th align="left">{}</th><td><input'.format(key),
@@ -96,12 +94,13 @@ def display_form(head_line, grp, dic, state, multi):
     return lines
 
 
-def display(base, iss, tag, dicts, state, multi):
+def display(base, iss, tag, dicts, state, multi, notes):
     lines = [
         '<form action="{}/run/{}/{}" method="post">'.format(base, iss, tag)]
     for grp, info in dicts.items():
         lines.append('<br>')
         lines.extend(display_form(HEADLINE[grp], grp, info, state, multi))
+    lines.append('<p>{}</p>'.format(notes))
     lines.append(
         '<button type="submit" value="configure" class="button">Save & '
         'Start</button>')
@@ -171,6 +170,11 @@ class Action(object):
 
         # provider_info and registration_response
         dicts = {'tool': _conf['tool']}
+        _spec = from_profile(_conf['tool']['profile'])
+        _spec['return_type'] = abbr_return_type(_spec['return_type'])
+        del dicts['tool']['profile']
+        dicts['tool'].update(_spec)
+
         for item in self.tool_params:
             if item not in dicts['tool']:
                 dicts['tool'][item] = ''
@@ -186,7 +190,19 @@ class Action(object):
                 except KeyError:
                     pass
 
-        state = {'immutable': {}, 'required': {}}
+        state = {
+            'tool': {'immutable': ['issuer', 'tag', 'register', 'discover',
+                                   'webfinger'],
+                     'required': ['return_type']}}
+
+        notes = ''
+        if _spec['webfinger']:
+            state['tool']['required'].extend(['webfinger_email',
+                                              'webfinger_url'])
+            notes = ("If <i>webfinger</i> is True then one of "
+                     "<i>webfinger_email</i> and <i>webfinger_url</i> "
+                     "<b>MUST</b> have a value.")
+
         if 'registration_response' in dicts:
             state['registration_response'] = {
                 'immutable': ['redirect_uris'],
@@ -199,12 +215,13 @@ class Action(object):
 
             state['provider_info'] = {'immutable': ['issuer']}
 
-            if _conf['tool']['profile'].split('.')[0] not in ['I', 'IT']:
+            if return_type(_conf['tool']['profile']) not in ['I', 'IT']:
                 _req.append('token_endpoint')
 
             state['provider_info']['required'] = _req
         _msg = self.html['instance.html'].format(
-            display=display('', qp[0], qp[1], dicts, state, multi))
+            display=display('', qp[0], qp[1], dicts, state, multi, notes)
+        )
 
         return as_bytes(_msg)
 
@@ -259,21 +276,14 @@ class Action(object):
     def create(self, **kwargs):
         logging.info('create test tool configuration')
         # construct profile
-        ppiece = [kwargs['return_type']]
-        for p in ['webfinger', 'discovery', 'registration']:
-            if p in kwargs:
-                ppiece.append('T')
-            else:
-                ppiece.append('F')
-
-        profile = '.'.join(ppiece)
+        profile = to_profile(kwargs)
         _ent_conf = create_model(profile, ent_info_path=self.ent_info_path)
         state = {}
 
-        if ppiece[DISCOVER] == 'F':
+        if not do_discovery(profile):
             _ent_conf['client']['provider_info']['issuer'] = kwargs['iss']
 
-        if ppiece[REGISTER] == 'F':
+        if not do_registration(profile):
             # need to create a redirect_uri, means I need to register a port
             _port = self.app.assigned_ports.register_port(kwargs['iss'],
                                                           kwargs['tag'])

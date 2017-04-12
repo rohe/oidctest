@@ -9,6 +9,7 @@ from jwkest import as_bytes
 from oic.utils.http_util import BadRequest
 
 from oidctest.tt import unquote_quote
+from otest.prof_util import REGISTER, do_registration
 
 logger = logging.getLogger(__name__)
 
@@ -57,7 +58,7 @@ class REST(object):
         if _econf is None:
             raise Exception('No configuration for {}:{}'.format(*uqp))
 
-        if _econf['tool']['profile'].split('.')[-1] == 'T':
+        if do_registration(_econf['tool']['profile']):
             reg_info = json.loads(
                 open('{}/registration_info.json'.format(
                     self.entinfo), 'r').read())

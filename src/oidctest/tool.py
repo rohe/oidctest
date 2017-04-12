@@ -1,13 +1,12 @@
 import logging
 
 import cherrypy
-from oic.utils.http_util import Response
 from otest import exception_trace
 from otest.aus import tool
 from otest.check import NOT_APPLICABLE
 from otest.conversation import Conversation
 from otest.flow import match_usage
-from otest.prof_util import prof2usage
+from otest.prof_util import from_profile
 from otest.tool import get_redirect_uris
 
 from oidctest import prof_util
@@ -38,7 +37,7 @@ class ClTester(tool.Tester):
         self.map_prof = prof_util.map_prof
 
     def match_profile(self, test_id):
-        return match_usage(self.flows[test_id], **prof2usage(self.profile))
+        return match_usage(self.flows[test_id], **from_profile(self.profile))
 
     def run(self, test_id, **kw_args):
         if not self.match_profile(test_id):

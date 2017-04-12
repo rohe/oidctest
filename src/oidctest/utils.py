@@ -15,8 +15,7 @@ from otest import check as o_check
 from oidctest.op import check as op_check
 
 # from urllib.parse import quote_plus
-
-
+from otest.prof_util import from_profile
 
 __author__ = 'roland'
 
@@ -165,7 +164,7 @@ def log_path(session, test_id=None):
     if path is None:
         path = os.path.join("log", qiss)
 
-    prof = ".".join(to_profile(session))
+    prof = ".".join(from_profile(session["profile"].split(".")))
 
     if not os.path.isdir("%s/%s" % (path, prof)):
         os.makedirs("%s/%s" % (path, prof))

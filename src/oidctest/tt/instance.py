@@ -10,8 +10,32 @@ from oidctest.app_conf import TYPE2CLS
 from oidctest.cp import init_events
 from oidctest.tt import conv_response
 from oidctest.tt import unquote_quote
+from otest.prof_util import simplify_return_type, LABEL
+from otest.prof_util import to_profile
 
 logger = logging.getLogger(__name__)
+
+
+def tool_conf_massage(tc):
+    tc['return_type'] = simplify_return_type(tc['return_type'])
+    tc['profile'] = to_profile(tc)
+    _rm = LABEL[:]
+    _rm.extend(['enc', 'sig', 'none'])
+    for lab in _rm:
+        try:
+            del tc[lab]
+        except KeyError:
+            pass
+    try:
+        wemail = tc["webfinger_email"]
+    except KeyError:
+        pass
+    else:
+        if wemail.startswith('acct:'):
+            pass
+        else:
+            tc["webfinger_email"] = "acct:{}".format(wemail)
+    return tc
 
 
 def is_multi_valued(item, typ):
@@ -83,6 +107,8 @@ class Instance(object):
             except KeyError:
                 _ent_conf[grp] = {item: val}
 
+        _ent_conf['tool'] = tool_conf_massage(_ent_conf['tool'])
+
         self.rest.write(qp[0], qp[1], _ent_conf)
         return self.restart_instance(iss, tag, 'start')
 
@@ -103,7 +129,7 @@ class Instance(object):
         else:
             args = {
                 'title': "Action Failed", 'base': self.baseurl,
-            'note': 'Could not {} your test instance'.format(action)}
+                'note': 'Could not {} your test instance'.format(action)}
 
         _msg = self.html['message.html'].format(**args)
         return as_bytes(_msg)

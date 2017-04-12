@@ -1,7 +1,10 @@
 {
   "tool": {
     "tag": "default",
-    "profile": "C.T.T.T",
+    "response_type": "code",
+    "webfinger": true,
+    "discovery": true,
+    "registration": true,
     "issuer": "https://localhost:8040/",
     "sig": false,
     "enc": false,

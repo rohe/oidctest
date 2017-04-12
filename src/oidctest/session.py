@@ -53,7 +53,7 @@ class SessionHandler(session.SessionHandler):
         if not profile:
             profile = self.profile
 
-        self["tests"] = self.test_flows.matches_profile(profile,
-                                                        self.extra['tool_conf'])
+        self["tests"] = self.test_flows.matches_profile(profile)
+                                                        #self.extra['tool_conf'])
         self["profile"] = profile
         return session
