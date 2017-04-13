@@ -8,12 +8,12 @@ from jwkest import as_bytes
 from oic.oauth2.message import list_serializer
 from oic.utils.http_util import Response
 
-from otest.prof_util import abbr_return_type, return_type, do_discovery, \
-    do_registration
+from otest.prof_util import abbr_return_type
+from otest.prof_util import do_discovery
+from otest.prof_util import do_registration
+from otest.prof_util import return_type
 from otest.prof_util import from_profile
 from otest.prof_util import to_profile
-from otest.prof_util import DISCOVER
-from otest.prof_util import REGISTER
 from otest.proc import kill_process
 
 from oidctest.app_conf import create_model
@@ -94,9 +94,9 @@ def display_form(head_line, grp, dic, state, multi):
     return lines
 
 
-def display(base, iss, tag, dicts, state, multi, notes):
+def display(dicts, state, multi, notes, action):
     lines = [
-        '<form action="{}/run/{}/{}" method="post">'.format(base, iss, tag)]
+        '<form action="{}" method="post">'.format(action)]
     for grp, info in dicts.items():
         lines.append('<br>')
         lines.extend(display_form(HEADLINE[grp], grp, info, state, multi))
@@ -164,6 +164,15 @@ class Action(object):
 
     @cherrypy.expose
     def update(self, iss, tag, ev=None, **kwargs):
+        """
+        Displays interface for updating configuration
+        
+        :param iss: Issuer ID 
+        :param tag: tag
+        :param ev: Event instance
+        :param kwargs: keyword arguments
+        :return: 
+        """
         logger.debug('update test tool configuration')
         uqp, qp = unquote_quote(iss, tag)
         _format, _conf = self.rest.read_conf(qp[0], qp[1])
@@ -219,8 +228,9 @@ class Action(object):
                 _req.append('token_endpoint')
 
             state['provider_info']['required'] = _req
+        action = "{}/run/{}/{}".format('', qp[0], qp[1])
         _msg = self.html['instance.html'].format(
-            display=display('', qp[0], qp[1], dicts, state, multi, notes)
+            display=display(dicts, state, multi, notes, action)
         )
 
         return as_bytes(_msg)
@@ -251,6 +261,14 @@ class Action(object):
 
     @cherrypy.expose
     def restart(self, iss, tag, ev):
+        """
+        Restart a test instance
+        
+        :param iss: 
+        :param tag: 
+        :param ev: 
+        :return: 
+        """
         logging.info('restart test tool')
         uqp, qp = unquote_quote(iss, tag)
         url = self.app.run_test_instance(*qp)

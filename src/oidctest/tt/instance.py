@@ -45,6 +45,36 @@ def is_multi_valued(item, typ):
         return TYPE2CLS[typ].c_param[item][2] == list_serializer
 
 
+def collect_edit(**kwargs):
+    _ent_conf = {}
+    for key, val in kwargs.items():
+        if val == '':
+            continue
+
+        grp, item = key.split(':')
+
+        if val == 'False':
+            val = False
+        elif val == 'True':
+            val = True
+        elif is_multi_valued(item, grp):
+            val = val.strip()
+            val = val.strip("[]")
+            _tmp = [v.strip() for v in val.split(',')]
+            val = [v.strip("'\"") for v in _tmp]
+        else:
+            val = val.strip()
+            val = val.strip("'\"")
+
+        try:
+            _ent_conf[grp][item] = val
+        except KeyError:
+            _ent_conf[grp] = {item: val}
+
+    _ent_conf['tool'] = tool_conf_massage(_ent_conf['tool'])
+    return _ent_conf
+
+
 class Instance(object):
     def __init__(self, rest, baseurl, tool_conf, app, entpath='entities',
                  html=None):
@@ -78,38 +108,17 @@ class Instance(object):
     def index(self):
         return as_bytes(self.html['main.html'])
 
+    def store_edit(self, qp, **kwargs):
+        _ent_conf = collect_edit(**kwargs)
+        self.rest.write(qp[0], qp[1], _ent_conf)
+
     @cherrypy.expose
     def run(self, iss='', tag='', ev=None, **kwargs):
         uqp, qp = unquote_quote(iss, tag)
         logger.info('Run iss="{}", tag="{}"'.format(*uqp))
-        _ent_conf = {}
-        for key, val in kwargs.items():
-            if val == '':
-                continue
 
-            grp, item = key.split(':')
+        self.store_edit(qp, **kwargs)
 
-            if val == 'False':
-                val = False
-            elif val == 'True':
-                val = True
-            elif is_multi_valued(item, grp):
-                val = val.strip()
-                val = val.strip("[]")
-                _tmp = [v.strip() for v in val.split(',')]
-                val = [v.strip("'\"") for v in _tmp]
-            else:
-                val = val.strip()
-                val = val.strip("'\"")
-
-            try:
-                _ent_conf[grp][item] = val
-            except KeyError:
-                _ent_conf[grp] = {item: val}
-
-        _ent_conf['tool'] = tool_conf_massage(_ent_conf['tool'])
-
-        self.rest.write(qp[0], qp[1], _ent_conf)
         return self.restart_instance(iss, tag, 'start')
 
     def restart_instance(self, iss, tag, action='restart'):

@@ -108,4 +108,3 @@ if args.test_id:
 else:
     for test_id in tests:
         run_test(test_id, tool_url, tester, rp_fed_ent, jb)
-
