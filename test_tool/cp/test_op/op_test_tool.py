@@ -184,8 +184,8 @@ if __name__ == '__main__':
     tester = WebTester(info, session_handler, flows=webenv['flow_state'],
                        check_factory=check.factory, **webenv)
 
-    log_root = 'log'
-    _tar = OPTar(log_root, 'tar', 'backup')
+    log_root = os.path.join(folder, 'log')
+    _tar = OPTar(log_root)
     cherrypy.tree.mount(_tar, '/mktar')
     cherrypy.tree.mount(_tar, '/backup')
     cherrypy.tree.mount(OPLog(log_root, _html), '/log')
