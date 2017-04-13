@@ -2,9 +2,9 @@
   "group": "ID Token",
   "usage": {
     "crypto": {
-      "sig": "T"
+      "sign": true
     },
-    "register": "T"
+    "register": true
   },
   "desc": "Asymmetric ID Token signature with RS256",
   "sequence": [

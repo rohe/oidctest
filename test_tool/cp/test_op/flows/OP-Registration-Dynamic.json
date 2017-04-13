@@ -1,7 +1,7 @@
 {
   "group": "Dynamic Client Registration",
   "usage": {
-    "register": "T"
+    "register": true
   },
   "desc": "Client registration request",
   "sequence": [

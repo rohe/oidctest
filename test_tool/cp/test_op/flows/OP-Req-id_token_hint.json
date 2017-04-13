@@ -19,13 +19,7 @@
         "set_response_where": null
       }
     },
-    {
-      "AccessToken": {
-        "conditional_execution": {
-          "return_type": ["CIT","CI","C","CT"]
-        }
-      }
-    },
+    "AccessToken",
     {
       "AsyncAuthn": {
         "set_response_where": null,
@@ -35,13 +29,7 @@
         "id_token_hint": null
       }
     },
-    {
-      "AccessToken": {
-        "conditional_execution": {
-          "return_type": ["CIT","CI","C","CT"]
-        }
-      }
-    }
+    "AccessToken"
   ],
   "assert": {
     "same-authn": null,

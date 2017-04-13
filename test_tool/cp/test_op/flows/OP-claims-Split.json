@@ -31,18 +31,9 @@
         }
       }
     },
-    {
-      "AccessToken": {
-        "conditional_execution": {
-          "return_type": ["C","CIT","CI","CT"]
-        }
-      }
-    },
+    "AccessToken",
     {
       "UserInfo": {
-        "conditional_execution": {
-          "return_type": ["C","CIT","CI","CT"]
-        },
         "set_op_args": {
           "method": "GET",
           "authn_method": "bearer_header"
@@ -58,7 +49,7 @@
       "CIT",
       "CT"
     ],
-    "extra": "T"
+    "extra": true
   },
   "desc": "Supports returning different claims in ID Token and at UserInfo Endpoint",
   "assert": {

@@ -25,12 +25,6 @@
       "AsyncAuthn": {
         "set_request_args": {
           "nonce": ""
-        },
-        "set_expect_error": {
-          "error": [
-            "invalid_request"
-          ],
-          "stop": false
         }
       }
     }

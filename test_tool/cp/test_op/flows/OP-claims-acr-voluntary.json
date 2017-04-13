@@ -27,7 +27,7 @@
     "AccessToken"
   ],
   "usage": {
-    "extra": "T"
+    "extra": true
   },
   "desc": "Requesting ID Token with voluntary acr claim [Extra]",
   "assert": {

@@ -44,11 +44,11 @@
   ],
   "usage": {
     "crypto": {
-      "sig": "T",
-      "enc": "T"
+      "sign": true,
+      "enc": true
     },
-    "register": "T",
-    "extra": "T"
+    "register": true,
+    "extra": true
   },
   "desc": "Support request_uri request parameter with signed and encrypted request",
   "assert": {

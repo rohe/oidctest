@@ -37,7 +37,7 @@
     }
   ],
   "usage": {
-    "register": "T"
+    "register": true
   },
   "desc": "Support request_uri request parameter with unsigned request",
   "assert": {

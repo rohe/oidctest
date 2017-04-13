@@ -28,7 +28,7 @@
     "AccessToken"
   ],
   "usage": {
-    "extra": "T"
+    "extra": true
   },
   "desc": "Requesting ID Token with essential specific acr claim [Extra]",
   "assert": {

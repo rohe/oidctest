@@ -36,10 +36,10 @@
   ],
   "usage": {
     "crypto": {
-      "sig": "T"
+      "sign": true
     },
-    "register": "T",
-    "extra": "T"
+    "register": true,
+    "extra": true
   },
   "desc": "Support request request parameter with signed request",
   "assert": {

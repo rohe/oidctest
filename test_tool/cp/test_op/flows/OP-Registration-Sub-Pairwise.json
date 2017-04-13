@@ -31,8 +31,8 @@
     "AccessToken"
   ],
   "usage": {
-    "register": "T",
-    "extra": "T"
+    "register": true,
+    "extra": true
   },
   "desc": "Registration of wish for pairwise sub",
   "assert": {

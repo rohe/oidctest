@@ -45,8 +45,8 @@
   ],
   "usage": {
     "crypto": {
-      "sig": "T",
-      "enc": "T"
+      "sign": true,
+      "enc": true
     },
     "return_type": [
       "C",
@@ -54,8 +54,8 @@
       "CT",
       "CIT"
     ],
-    "register": "T",
-    "extra": "T"
+    "register": true,
+    "extra": true
   },
   "desc": "Request encrypted UserInfo, change RSA encryption key and request UserInfo again",
   "assert": {

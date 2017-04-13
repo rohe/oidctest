@@ -28,13 +28,7 @@
         }
       }
     },
-    {
-      "AccessToken": {
-        "conditional_execution": {
-          "return_type": ["C","CIT","CI","CT"]
-        }
-      }
-    },
+    "AccessToken",
     {
       "UserInfo": {
         "set_op_args": {
@@ -52,7 +46,7 @@
       "CIT",
       "CT"
     ],
-    "extra": "T"
+    "extra": true
   },
   "desc": "Claims request with essential name and voluntary email and picture claims [Extra]",
   "assert": {

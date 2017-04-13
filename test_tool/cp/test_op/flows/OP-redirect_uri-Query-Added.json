@@ -1,7 +1,7 @@
 {
   "group": "redirect_uri Request Parameter",
   "usage": {
-    "register": "T"
+    "register": true
   },
   "desc": "Request with redirect_uri with query component when registered redirect_uri has no query component",
   "sequence": [

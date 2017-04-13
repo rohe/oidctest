@@ -29,7 +29,7 @@
     "AccessToken"
   ],
   "usage": {
-    "extra": "T"
+    "extra": true
   },
   "desc": "Support claims request specifying sub value",
   "note": "This test does one login to get a sub claim value. Then it does a fresh login using that sub value in a claims request. Please remove any cookies you received from the OpenID Provider before proceeding.",

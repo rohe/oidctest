@@ -13,8 +13,8 @@
     }
   ],
   "usage": {
-    "discover": "T",
-    "extra": "T"
+    "discover": true,
+    "extra": true
   },
   "desc": "Support request request parameter",
   "assert": {

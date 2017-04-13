@@ -46,7 +46,7 @@
   ],
   "usage": {
     "crypto": {
-      "sig": "T"
+      "sign": true
     },
     "return_type": [
       "C",
@@ -54,7 +54,7 @@
       "CT",
       "CIT"
     ],
-    "register": "T"
+    "register": true
   },
   "desc": "Request access token, change RSA signing key and request another access token",
   "assert": {

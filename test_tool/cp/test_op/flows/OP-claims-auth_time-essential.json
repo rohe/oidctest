@@ -1,7 +1,7 @@
 {
   "group": "claims Request Parameter",
   "usage": {
-    "extra": "T"
+    "extra": true
   },
   "desc": "Requesting ID Token with essential auth_time claim [Extra]",
   "sequence": [

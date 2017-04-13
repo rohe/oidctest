@@ -29,7 +29,7 @@
     }
   ],
   "usage": {
-    "register": "T"
+    "register": true
   },
   "desc": "Rejects redirect_uri when query parameter does not match what is registed",
   "reference": "http://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-3.1.2",

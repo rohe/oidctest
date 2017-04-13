@@ -20,13 +20,7 @@
         "acr_value": null
       }
     },
-    {
-      "AccessToken": {
-        "conditional_execution": {
-          "return_type": ["CIT","CI","C","CT"]
-        }
-      }
-    }
+    "AccessToken"
   ],
   "assert": {
     "used-acr-value": null,

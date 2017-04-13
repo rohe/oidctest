@@ -27,7 +27,7 @@
     }
   ],
   "usage": {
-    "register": "T"
+    "register": true
   },
   "desc": "Registration with tos_uri",
   "note": "This test verifies that an OP displays a link to the RP's terms of service. To make sure you get a fresh login page, you need to remove any cookies you may have received from the OP before proceeding.",

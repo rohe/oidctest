@@ -49,8 +49,8 @@
     "AccessToken"
   ],
   "usage": {
-    "register": "T",
-    "extra": "T"
+    "register": true,
+    "extra": true
   },
   "desc": "Public and pairwise sub values differ",
   "assert": {

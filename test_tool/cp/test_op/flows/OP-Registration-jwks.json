@@ -44,7 +44,7 @@
       "CT",
       "CIT"
     ],
-    "register": "T"
+    "register": true
   },
   "desc": "Uses keys registered with jwks value",
   "assert": {

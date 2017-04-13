@@ -38,7 +38,7 @@
   ],
   "usage": {
     "crypto": {
-      "sig": "T"
+      "sign": true
     },
     "return_type": [
       "C",
@@ -46,7 +46,7 @@
       "CT",
       "CIT"
     ],
-    "extra": "T"
+    "extra": true
   },
   "desc": "Access token request with private_key_jwt authentication",
   "assert": {

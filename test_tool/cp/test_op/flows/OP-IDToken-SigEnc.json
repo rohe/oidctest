@@ -42,11 +42,11 @@
   ],
   "usage": {
     "crypto": {
-      "sig": "T",
-      "enc": "T"
+      "sign": true,
+      "enc": true
     },
-    "register": "T",
-    "extra": "T"
+    "register": true,
+    "extra": true
   },
   "desc": "Signed and encrypted ID Token [Extra]",
   "assert": {

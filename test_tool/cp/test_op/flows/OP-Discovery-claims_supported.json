@@ -1,7 +1,7 @@
 {
   "group": "Discovery",
   "usage": {
-    "discover": "T"
+    "discover": true
   },
   "desc": "Verify that claims_supported is published",
   "sequence": [

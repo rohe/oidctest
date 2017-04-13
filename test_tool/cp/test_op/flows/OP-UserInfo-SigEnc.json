@@ -33,13 +33,7 @@
         "set_response_where": null
       }
     },
-    {
-      "AccessToken": {
-        "conditional_execution": {
-          "return_type": ["CIT","CI","C","CT"]
-        }
-      }
-    },
+    "AccessToken",
     {
       "UserInfo": {
         "set_op_args": {
@@ -51,8 +45,8 @@
   ],
   "usage": {
     "crypto": {
-      "sig": "T",
-      "enc": "T"
+      "sign": true,
+      "enc": true
     },
     "return_type": [
       "C",
@@ -61,8 +55,8 @@
       "CT",
       "CIT"
     ],
-    "register": "T",
-    "extra": "T"
+    "register": true,
+    "extra": true
   },
   "desc": "Can provide signed and encrypted UserInfo response",
   "assert": {

@@ -35,7 +35,7 @@
     }
   ],
   "usage": {
-    "register": "T"
+    "register": true
   },
   "desc": "Support request request parameter with unsigned request]",
   "assert": {

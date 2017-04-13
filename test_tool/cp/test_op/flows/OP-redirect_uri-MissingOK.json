@@ -23,7 +23,7 @@
     }
   ],
   "usage": {
-    "extra": "T"
+    "extra": true
   },
   "desc": "No redirect_uri in request with one registered [Extra]",
   "note": "This test may result in the OpenID Provider displaying an error message in your user agent. You should ignore the status of this test in the test tool if this happens, since it will be incomplete. It is also legal for the OP to successfully process this authentication request.",

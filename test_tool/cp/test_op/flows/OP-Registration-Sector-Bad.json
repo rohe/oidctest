@@ -28,7 +28,7 @@
     }
   ],
   "usage": {
-    "discover": "T"
+    "discover": true
   },
   "desc": "Incorrect registration of sector_identifier_uri"
 }

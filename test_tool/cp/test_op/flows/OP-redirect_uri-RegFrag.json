@@ -1,7 +1,7 @@
 {
   "group": "redirect_uri Request Parameter",
   "usage": {
-    "register": "T"
+    "register": true
   },
   "desc": "Reject registration where a redirect_uri has a fragment",
   "reference": "http://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-3.1.2",

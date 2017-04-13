@@ -15,8 +15,8 @@
     "ReadRegistration"
   ],
   "usage": {
-    "register": "T",
-    "extra": "T"
+    "register": true,
+    "extra": true
   },
   "desc": "Registration and then reading the registered client metadata",
   "assert": {

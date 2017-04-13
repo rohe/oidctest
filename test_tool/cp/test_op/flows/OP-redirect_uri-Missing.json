@@ -1,7 +1,7 @@
 {
   "group": "redirect_uri Request Parameter",
   "usage": {
-    "register": "T"
+    "register": true
   },
   "desc": "Reject request without redirect_uri when multiple registered",
   "sequence": [

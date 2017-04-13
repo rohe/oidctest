@@ -33,10 +33,10 @@
   ],
   "usage": {
     "crypto": {
-      "sig": "T"
+      "sign": true
     },
-    "register": "T",
-    "extra": "T"
+    "register": true,
+    "extra": true
   },
   "desc": "Asymmetric ID Token signature with ES256 [Extra]",
   "assert": {

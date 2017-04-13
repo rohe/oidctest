@@ -13,13 +13,7 @@
     },
     "Registration",
     "AsyncAuthn",
-    {
-      "AccessToken": {
-        "conditional_execution": {
-          "return_type": ["CIT","CI","C","CT"]
-        }
-      }
-    },
+    "AccessToken",
     "Note",
     {
       "Webfinger": {
@@ -40,13 +34,7 @@
         }
       }
     },
-    {
-      "AccessToken": {
-        "conditional_execution": {
-          "return_type": ["CIT","CI","C","CT"]
-        }
-      }
-    }
+    "AccessToken"
   ],
   "usage": {},
   "desc": "Requesting ID Token with max_age=1 seconds restriction",

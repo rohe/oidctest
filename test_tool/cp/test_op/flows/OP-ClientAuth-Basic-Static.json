@@ -31,7 +31,7 @@
       "CIT",
       "CT"
     ],
-    "register": "F"
+    "register": false
   },
   "desc": "Access token request with client_secret_basic authentication",
   "assert": {

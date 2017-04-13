@@ -1,9 +1,9 @@
 {
   "group": "Discovery",
   "usage": {
-    "discover": "T",
+    "discover": true,
     "crypto": {
-      "sig": "T"
+      "sign": true
     }
   },
   "desc": "Verify that jwks_uri is published",

@@ -26,9 +26,9 @@
     "FetchKeys"
   ],
   "usage": {
-    "discover": "T",
+    "discover": true,
     "crypto": {
-      "enc": "T"
+      "enc": true
     }
   },
   "desc": "Can rotate OP encryption keys",
