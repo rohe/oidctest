@@ -52,6 +52,8 @@ class SessionHandler(session.SessionHandler):
     def init_session(self, profile=None):
         if not profile:
             profile = self.profile
+        else:
+            self.profile = profile
 
         self["tests"] = self.test_flows.matches_profile(profile)
                                                         #self.extra['tool_conf'])
