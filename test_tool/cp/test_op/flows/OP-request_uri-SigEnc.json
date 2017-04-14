@@ -43,10 +43,8 @@
     }
   ],
   "usage": {
-    "crypto": {
-      "sign": true,
-      "enc": true
-    },
+    "sig": true,
+    "enc": true,
     "register": true,
     "extra": true
   },

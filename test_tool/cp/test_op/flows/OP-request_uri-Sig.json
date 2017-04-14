@@ -37,9 +37,7 @@
     }
   ],
   "usage": {
-    "crypto": {
-      "sign": true
-    },
+    "sig": true,
     "register": true
   },
   "desc": "Support request_uri request parameter with signed request",

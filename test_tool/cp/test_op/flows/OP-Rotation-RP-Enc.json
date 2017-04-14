@@ -44,10 +44,8 @@
     }
   ],
   "usage": {
-    "crypto": {
-      "sign": true,
-      "enc": true
-    },
+    "sig": true,
+    "enc": true,
     "return_type": [
       "C",
       "CI",

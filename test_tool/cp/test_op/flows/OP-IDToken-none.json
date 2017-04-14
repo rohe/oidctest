@@ -37,9 +37,7 @@
     }
   ],
   "usage": {
-    "crypto": {
-      "none": true
-    },
+    "none": true,
     "register": true
   },
   "desc": "Unsecured ID Token signature with null [Basic]",

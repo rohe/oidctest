@@ -1,9 +1,7 @@
 {
   "group": "ID Token",
   "usage": {
-    "crypto": {
-      "sign": true
-    }
+    "sig": true
   },
   "desc": "IDToken has kid [Basic, Implicit, Hybrid]",
   "sequence": [

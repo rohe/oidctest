@@ -2,9 +2,7 @@
   "group": "Discovery",
   "usage": {
     "discover": true,
-    "crypto": {
-      "sign": true
-    }
+    "sig": true
   },
   "desc": "Verify that jwks_uri is published",
   "sequence": [

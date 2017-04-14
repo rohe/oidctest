@@ -32,9 +32,7 @@
     }
   ],
   "usage": {
-    "crypto": {
-      "sign": true
-    },
+    "sig": true,
     "register": true,
     "extra": true
   },

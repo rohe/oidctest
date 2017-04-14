@@ -1,9 +1,7 @@
 {
   "group": "ID Token",
   "usage": {
-    "crypto": {
-      "sign": true
-    },
+    "sig": true,
     "register": true
   },
   "desc": "Asymmetric ID Token signature with RS256",

@@ -23,11 +23,11 @@ from oic.utils.http_util import get_post
 from otest.proc import find_test_instance
 from otest.proc import isrunning
 from otest.proc import kill_process
-from otest.prof_util import do_discovery, verify_profile, return_type
+from otest.prof_util import do_discovery
 from otest.prof_util import do_registration
+from otest.prof_util import verify_profile
+from otest.prof_util import return_type
 from otest.prof_util import to_profile
-from otest.prof_util import DISCOVER
-from otest.prof_util import REGISTER
 from otest.rp.setup import read_path2port_map
 
 from oidctest.ass_port import AssignedPorts

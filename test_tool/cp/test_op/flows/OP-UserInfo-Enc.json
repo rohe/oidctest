@@ -43,9 +43,7 @@
     }
   ],
   "usage": {
-    "crypto": {
-      "enc": true
-    },
+    "enc": true,
     "return_type": [
       "C",
       "IT",

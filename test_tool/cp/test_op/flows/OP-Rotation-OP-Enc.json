@@ -27,9 +27,7 @@
   ],
   "usage": {
     "discover": true,
-    "crypto": {
-      "enc": true
-    }
+    "enc": true
   },
   "desc": "Can rotate OP encryption keys",
   "note": "Please make your OP rotate its encryption keys now.If you are not able to cause the server to rotate the keys while running the test, then you will have to self-assert that your deployment can do OP encryption key rotation as part of your certification application.",
