@@ -9,7 +9,7 @@ from jwkest import as_bytes
 from oic.utils.http_util import BadRequest
 
 from oidctest.tt import unquote_quote
-from otest.prof_util import REGISTER, do_registration
+from otest.prof_util import do_registration
 
 logger = logging.getLogger(__name__)
 
