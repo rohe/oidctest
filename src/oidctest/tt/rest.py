@@ -1,10 +1,12 @@
+import cherrypy
 import json
 import logging
 import os
 import sys
-from urllib.parse import quote_plus
 
-import cherrypy
+from urllib.parse import quote_plus
+from urllib.parse import unquote_plus
+
 from jwkest import as_bytes
 from oic.utils.http_util import BadRequest
 
@@ -23,6 +25,27 @@ class REST(object):
         self.base_url = base_url
         self.entpath = entpath
         self.entinfo = entinfo
+
+    def _cp_dispatch(self, vpath):
+        # Only get here if vpath != None
+        ent = cherrypy.request.remote.ip
+        logger.info('ent:{}, vpath: {}'.format(ent, vpath))
+
+        if len(vpath):
+            if len(vpath) == 3:
+                cherrypy.request.params['iss'] = unquote_plus(vpath.pop(0))
+                cherrypy.request.params['tag'] = unquote_plus(vpath.pop(0))
+                action = vpath[0]
+                if action == 'read':
+                    return self.read
+                elif action == 'replace':
+                    return self.replace
+                elif action == 'store':
+                    return self.store
+                elif action == 'delete':
+                    return self.delete
+
+            return self
 
     def entity_file_name(self, iss, tag):
         """
@@ -145,7 +168,7 @@ class REST(object):
         else:
             return None
 
-    def read(self, qiss, qtag, path):
+    def read(self, qiss, qtag, path=''):
         """
 
         :param qiss: OP issuer qoute_plus converted
@@ -156,6 +179,8 @@ class REST(object):
         try:
             typ, info = self.read_conf(qiss, qtag)
         except (TypeError, NoSuchFile):
+            if not path:
+                path = '{}/{}'.format(qiss, qtag)
             return cherrypy.HTTPError(404, 'Could not find {}'.format(path))
         else:
             if info:
@@ -169,16 +194,29 @@ class REST(object):
                 return cherrypy.HTTPError(404, 'Could not find {}'.format(path))
 
     def replace(self, qiss, qtag, info):
-        # read entity configuration and replace if changed
+        """
+        read entity configuration and replace if changed
+        
+        :param qiss: OP issuer qoute_plus converted
+        :param qtag: test instance tag quote_plus converted
+        :param info: test instance configuration as JSON document
+
+        """
         uqp, qp = unquote_quote(qiss, qtag)
         logger.info('Replace config: iss="{}", tag="{}"'.format(*uqp))
         try:
             _js = json.loads(info)
         except Exception as err:
-            logger.error('Bogus replacement info!: {}'.format(info))
-            return BadRequest(err)
+            _desc = 'Bogus replacement info!: {}'.format(info)
+            logger.error(_desc)
+            return cherrypy.HTTPError(404, _desc)
 
-        _js0 = self.read_conf(qiss, qtag)
+        try:
+            _js0 = self.read_conf(qiss, qtag)
+        except (TypeError, NoSuchFile):
+            path = '{}/{}'.format(qiss, qtag)
+            return cherrypy.HTTPError(404, 'Could not find {}'.format(path))
+
         if _js == _js0:  # don't bother
             pass
         else:
@@ -198,12 +236,30 @@ class REST(object):
         logger.info(
             'Store config: iss="{}", tag="{}", info={}'.format(uqp[0], uqp[1],
                                                                info))
+        # verify the soundness of the information
+        if isinstance(info, dict):
+            info = json.dumps(info)
+        else:
+            try:
+                json.loads(info)
+            except Exception as err:
+                _desc = 'Bogus replacement info!: {}'.format(info)
+                logger.error(_desc)
+                return cherrypy.HTTPError(404, _desc)
+
         self.write(qiss, qtag, info)
         fname = '{}{}/{}'.format(self.base_url, qiss, qtag)
         cherrypy.response.status = 201
         return as_bytes(fname)
 
     def delete(self, qiss, qtag):
+        """
+        Remove a configuration
+        
+        :param qiss: OP issuer qoute_plus converted
+        :param qtag: test instance tag quote_plus converted
+        :return: 
+        """
         fname = self.entity_file_name(qiss, qtag)
         logger.info('Delete configuration file: {}'.format(fname))
         if os.path.isfile(fname):
@@ -212,6 +268,13 @@ class REST(object):
         return b'OK'
 
     def write(self, qiss, qtag, ent_conf):
+        """
+        Actually writing configuration info to disc.
+        
+        :param qiss: OP issuer qoute_plus converted
+        :param qtag: test instance tag quote_plus converted
+        :param ent_conf: Test instance configuration
+        """
         fdir = self.entity_dir(qiss)
         if os.path.isdir(fdir) is False:
             os.makedirs(fdir)

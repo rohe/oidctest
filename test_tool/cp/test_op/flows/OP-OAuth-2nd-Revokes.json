@@ -47,7 +47,7 @@
             "invalid_grant",
             "access_denied"
           ],
-          "stop": true
+          "stop": false
         }
       }
     },
@@ -57,8 +57,7 @@
           "error": [
             "access_denied",
             "invalid_token"
-          ],
-          "stop": false
+          ]
         },
         "set_op_args": {
           "method": "GET",

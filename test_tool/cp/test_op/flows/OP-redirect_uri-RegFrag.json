@@ -32,7 +32,8 @@
       "Registration": {
         "redirect_uris_with_fragment": {
           "foo": "bar"
-        }
+        },
+        "expect_exception": "RegistrationError"
       }
     }
   ]

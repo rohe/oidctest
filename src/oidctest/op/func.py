@@ -53,12 +53,6 @@ def set_discovery_issuer(oper, args):
         oper.op_args["issuer"] = get_issuer(oper.conv)
 
 
-def redirect_uri_with_query_component(oper, args):
-    ru = oper.conv.get_redirect_uris()[0]
-    ru += "?%s" % urlencode(args)
-    oper.req_args.update({"redirect_uri": ru})
-
-
 def set_response_where(oper, args):
     if oper.req_args["response_type"] != ["code"]:
         oper.response_where = "fragment"
@@ -104,7 +98,7 @@ def check_support(oper, args):
 
 def set_principal(oper, args):
     try:
-        _val = oper.tool_conf[args['param']]
+        _val = oper.conv.tool_config[args['param']]
     except KeyError:
         raise ConfigurationError("Missing parameter: %s" % args["param"])
     else:
@@ -210,9 +204,20 @@ def acr_value(oper, args):
 
 def specific_acr_claims(oper, args):
     _acrs = oper.req_args["acr_values"] = oper.conv.get_tool_attribute(
-        "acr_value", "acr_values_supported", default=["2"])
+        "acr_value", "acr_values_supported", default=[args])
 
     oper.req_args["claims"] = {"id_token": {"acr": {"values": _acrs}}}
+
+
+def essential_and_specific_acr_claim(oper, args):
+    try:
+        _acrs = oper.conv.entity.provider_info['acr_values_supported']
+    except KeyError:
+        _acrs = oper.req_args["acr_values"] = oper.conv.get_tool_attribute(
+            "acr_value", "acr_values_supported", default=[args])
+
+    oper.req_args["claims"] = {
+        "id_token": {"acr": {"value": _acrs[0], 'essential': True}}}
 
 
 def sub_claims(oper, args):
@@ -227,24 +232,31 @@ def sub_claims(oper, args):
 
 
 def multiple_return_uris(oper, args):
-    redirects = oper.conv.entity.redirect_uris
+    redirects = oper.conv.entity.registration_info['redirect_uris']
     redirects.append("%scb" % get_base(oper.conv.entity.base_url))
     oper.req_args["redirect_uris"] = redirects
 
 
 def redirect_uris_with_query_component(oper, kwargs):
-    ru = oper.conv.get_redirect_uris()[0]
+    ru = oper.conv.entity.registration_info['redirect_uris'][0]
     ru += "?%s" % urlencode(kwargs)
-    oper.req_args["redirect_uris"] = ru
+    oper.req_args["redirect_uris"] = [ru]
+
+
+def redirect_uri_with_query_component(oper, args):
+    ru = oper.conv.entity.registration_info['redirect_uris'][0]
+    ru += "?%s" % urlencode(args)
+    oper.req_args.update({"redirect_uri": [ru]})
 
 
 def redirect_uris_with_scheme(oper, args):
-    oper.req_args['redirect_uris'] = [r.replace('https', args) for r in
-                                      oper.conv.get_redirect_uris()]
+    oper.req_args['redirect_uris'] = [
+        r.replace('https', args) for r in
+        oper.conv.entity.registration_info['redirect_uris'][0]]
 
 
 def redirect_uris_with_fragment(oper, kwargs):
-    ru = oper.conv.get_redirect_uris()[0]
+    ru = oper.conv.entity.registration_info['redirect_uris'][0]
     ru += "#" + ".".join(["%s%s" % (x, y) for x, y in list(kwargs.items())])
     oper.req_args["redirect_uris"] = ru
 

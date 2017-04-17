@@ -12,14 +12,13 @@ from jwkest.jwk import RSAKey
 from oic import rndstr
 from oic.exception import IssuerMismatch
 from oic.exception import ParameterError
-from oic.oauth2.message import ErrorResponse
+from oic.oauth2 import Message, ErrorResponse
 from oic.oauth2.util import JSON_ENCODED
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
 from oic.utils.keyio import KeyBundle
 from oic.utils.keyio import dump_jwks
 from oic.utils.keyio import ec_init
-from otest import Break
 from otest import RequirementsNotMet
 from otest import Unknown
 from otest.aus.operation import Operation
@@ -32,7 +31,6 @@ from otest.events import EV_NOOP
 from otest.events import EV_PROTOCOL_RESPONSE
 from otest.events import EV_REQUEST
 from otest.events import EV_RESPONSE
-from otest.events import INCOMING
 from otest.events import OUTGOING
 from otest.prof_util import RESPONSE
 
@@ -86,7 +84,8 @@ class Webfinger(Operation):
                 principal = self.req_args['principal']
 
             _conv.entity.wf.events = _conv.entity.events
-            self.catch_exception(_conv.entity.discover, principal=principal)
+            self.catch_exception_and_error(_conv.entity.discover,
+                                           principal=principal)
 
             if not _conv.events.get(EV_EXCEPTION):
                 issuer = _conv.events.last_item(EV_RESPONSE)
@@ -112,8 +111,8 @@ class Discovery(Operation):
 
     def run(self):
         if self.dynamic:
-            self.catch_exception(self.conv.entity.provider_config,
-                                 **self.op_args)
+            self.catch_exception_and_error(self.conv.entity.provider_config,
+                                           **self.op_args)
         else:
             self.conv.events.store(EV_NOOP, "Dynamic discovery")
             self.conv.entity.provider_info = ProviderConfigurationResponse(
@@ -138,7 +137,8 @@ class Registration(Operation):
 
     def run(self):
         if self.dynamic:
-            self.catch_exception(self.conv.entity.register, **self.req_args)
+            self.catch_exception_and_error(self.conv.entity.register,
+                                           **self.req_args)
         else:
             self.conv.events.store(EV_NOOP, "Dynamic registration")
             self.conv.entity.store_registration_info(
@@ -213,7 +213,9 @@ class AccessToken(SyncPostRequest):
         self.req_args["redirect_uri"] = conv.entity.redirect_uris[0]
 
     def run(self):
-        self.catch_exception(self._run)
+        res = self._run()
+        if not isinstance(res, Message):
+            return res
 
     def _run(self):
         if self.skip:
@@ -224,13 +226,12 @@ class AccessToken(SyncPostRequest):
             "op_args: {}, req_args: {}".format(self.op_args, self.req_args),
             direction=OUTGOING)
 
-        atr = self.conv.entity.do_access_token_request(
+        atr = self.catch_exception_and_error(
+            self.conv.entity.do_access_token_request,
             request_args=self.req_args, **self.op_args)
 
-        if "error" in atr:
-            self.conv.events.store(EV_PROTOCOL_RESPONSE, atr,
-                                   direction=INCOMING)
-            return False
+        if isinstance(atr, ErrorResponse):
+            return atr
 
         try:
             _jws_alg = atr["id_token"].jws_header["alg"]
@@ -261,7 +262,7 @@ class RefreshToken(SyncPostRequest):
         self.req_args["redirect_uri"] = conv.entity.redirect_uris[0]
 
     def run(self):
-        self.catch_exception(self._run)
+        self.catch_exception_and_error(self._run)
 
     def _run(self):
         if self.skip:
@@ -284,13 +285,9 @@ class RefreshToken(SyncPostRequest):
             "op_args: {}, req_args: {}".format(self.op_args, self.req_args),
             direction=OUTGOING)
 
-        atr = self.conv.entity.do_access_token_refresh(
+        atr = self.catch_exception_and_error(
+            self.conv.entity.do_access_token_refresh,
             request_args=self.req_args, **self.op_args)
-
-        if "error" in atr:
-            self.conv.events.store(EV_PROTOCOL_RESPONSE, atr,
-                                   direction=INCOMING)
-            return False
 
         try:
             _jws_alg = atr["id_token"].jws_header["alg"]
@@ -323,24 +320,18 @@ class UserInfo(SyncGetRequest):
         args = self.op_args.copy()
         args.update(self.req_args)
 
-        response = self.conv.entity.do_user_info_request(**args)
-        if self.expect_error:
-            _ = self.expected_error_response(response)
+        response = self.catch_exception_and_error(
+            self.conv.entity.do_user_info_request, **args)
+
+        if "_claim_sources" in response:
+            user_info = self.conv.entity.unpack_aggregated_claims(response)
+            user_info = self.conv.entity.fetch_distributed_claims(user_info)
+            self.conv.entity.userinfo = user_info
+            self.conv.events.store(EV_PROTOCOL_RESPONSE, user_info)
         else:
-            if isinstance(response, ErrorResponse):
-                raise Break("Unexpected error response")
-
-            self.conv.events.store(EV_RESPONSE, response.to_dict())
-
-            if "_claim_sources" in response:
-                user_info = self.conv.entity.unpack_aggregated_claims(response)
-                user_info = self.conv.entity.fetch_distributed_claims(user_info)
-                self.conv.entity.userinfo = user_info
-                self.conv.events.store(EV_PROTOCOL_RESPONSE, user_info)
-            else:
-                self.conv.entity.userinfo = response
-                self.conv.events.store(EV_PROTOCOL_RESPONSE, response)
-                # return response
+            self.conv.entity.userinfo = response
+            self.conv.events.store(EV_PROTOCOL_RESPONSE, response)
+            # return response
 
     @staticmethod
     def _verify_subject_identifier(client, user_info):

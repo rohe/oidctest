@@ -18,9 +18,9 @@ logger = logging.getLogger(__name__)
 
 
 class Tester(tool.Tester):
-    def __init__(self, io, sh, profiles, profile, flows=None,
+    def __init__(self, io, sh, profiles, flows=None,
                  msg_factory=None, cache=None, **kwargs):
-        tool.Tester.__init__(self, io, sh, profiles, profile, flows,
+        tool.Tester.__init__(self, io, sh, profiles, flows,
                              msg_factory=msg_factory, cache=cache,
                              **kwargs)
         # self.chk_factory = get_check
@@ -28,16 +28,16 @@ class Tester(tool.Tester):
 
 
 class ClTester(tool.Tester):
-    def __init__(self, io, sh, profiles, profile, flows=None,
-                 msg_factory=None, cache=None, **kwargs):
-        tool.Tester.__init__(self, io, sh, profiles, profile, flows,
+    def __init__(self, io, sh, profiles, flows=None, msg_factory=None,
+                 cache=None, **kwargs):
+        tool.Tester.__init__(self, io, sh, profiles, flows,
                              msg_factory=msg_factory, cache=cache,
                              **kwargs)
         # self.chk_factory = get_check
         self.map_prof = prof_util.map_prof
 
     def match_profile(self, test_id):
-        return match_usage(self.flows[test_id], **from_profile(self.profile))
+        return match_usage(self.flows[test_id], **from_profile(self.sh.profile))
 
     def run(self, test_id, **kw_args):
         if not self.match_profile(test_id):
@@ -71,11 +71,10 @@ class ClTester(tool.Tester):
 
 
 class WebTester(tool.WebTester):
-    def __init__(self, io, sh, profiles, profile, flows, check_factory=None,
+    def __init__(self, io, sh, profiles, flows, check_factory=None,
                  msg_factory=None, cache=None, map_prof=None,
                  client_factory=None, **kwargs):
-        tool.WebTester.__init__(self, io, sh, profiles=profiles,
-                                profile=profile, flows=flows,
+        tool.WebTester.__init__(self, io, sh, profiles=profiles, flows=flows,
                                 check_factory=check_factory,
                                 msg_factory=msg_factory, cache=cache, **kwargs)
         self.client_factory = client_factory

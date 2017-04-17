@@ -8,7 +8,7 @@ from urllib.parse import quote_plus
 
 import cherrypy
 from fedoidc.file_system import FileSystem
-from oic.oic import Client
+#from oic.oic import Client
 from oic.oic.message import factory as oic_message_factory
 from otest.aus.client import Factory
 from otest.aus.handling_ph import WebIh
@@ -23,6 +23,7 @@ from oidctest.op import check
 from oidctest.op import func
 from oidctest.op import oper
 from oidctest.op import profiles
+from oidctest.op.client import Client
 from oidctest.op.profiles import PROFILEMAP
 from oidctest.optt import Main
 from oidctest.prof_util import ProfileHandler
