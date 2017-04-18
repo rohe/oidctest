@@ -25,7 +25,14 @@
     },
     {
       "AsyncAuthn": {
-        "set_response_where": null
+        "set_response_where": null,
+        "set_request_args": {
+          "scope": [
+            "openid",
+            "offline_access"
+          ],
+          "prompt": "consent"
+        }
       }
     },
     {
@@ -39,8 +46,10 @@
     {
       "RefreshAccessToken": {
         "set_op_args": {
-          "authn_method": "private_key_jwt"
-        }
+          "authn_method": "private_key_jwt",
+          "authn_endpoint": "refresh"
+        },
+        "set_state": null
       }
     }
   ],

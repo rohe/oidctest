@@ -173,7 +173,7 @@ class Action(object):
         :param kwargs: keyword arguments
         :return: 
         """
-        logger.debug('update test tool configuration')
+        logger.debug('update test tool configuration: {} {}'.format(iss, tag))
         uqp, qp = unquote_quote(iss, tag)
         _format, _conf = self.rest.read_conf(qp[0], qp[1])
 
@@ -185,6 +185,8 @@ class Action(object):
         dicts['tool'].update(_spec)
 
         for item in self.tool_params:
+            if item == 'profile':
+                continue
             if item not in dicts['tool']:
                 dicts['tool'][item] = ''
 
@@ -317,6 +319,7 @@ class Action(object):
         _ent_conf['tool']['tag'] = uqp[1]
         _ent_conf['tool']['profile'] = profile
 
+        _ent_conf.update(from_profile(profile))
         logging.info("Test tool config: {}".format(_ent_conf))
 
         self.rest.write(qp[0], qp[1], _ent_conf)

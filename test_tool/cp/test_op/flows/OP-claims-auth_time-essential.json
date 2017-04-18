@@ -30,7 +30,18 @@
         }
       }
     },
-    "AccessToken"
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": [
+            "CIT",
+            "CI",
+            "C",
+            "CT"
+          ]
+        }
+      }
+    }
   ],
   "assert": {
     "verify-claims": {

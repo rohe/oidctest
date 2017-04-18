@@ -6,7 +6,7 @@ from cherrypy import HTTPRedirect
 from jwkest import as_bytes
 from oidctest.tt import conv_response
 
-from otest import exception_trace
+from otest import exception_trace, Break
 from otest.check import CRITICAL
 from otest.events import EV_HTTP_ARGS, EV_EXCEPTION, EV_FAULT
 
@@ -139,7 +139,7 @@ class Main(object):
             response_mode = ""
 
         # Check if fragment encoded
-        if response_mode == "form_post":
+        if response_mode == ["form_post"]:
             pass
         else:
             try:
@@ -169,26 +169,29 @@ class Main(object):
                                               response=kwargs)
         except cherrypy.HTTPRedirect:
             raise
+        except Break:
+            resp = False
+            self.tester.store_result()
         except Exception as err:
             _conv.events.store(EV_FAULT, err)
             self.tester.store_result()
-            return self.info.err_response("authz_cb", err)
-        else:
-            if resp is False or resp is True:
-                pass
-            elif not isinstance(resp, int):
-                return resp
+            resp = False
 
-            try:
-                # return info.flow_list()
-                url = "{}display#{}".format(
-                    self.webenv['client_info']['base_url'],
-                    self.pick_grp(_conv.test_id))
-            except Exception as err:
-                logger.error(err)
-                raise cherrypy.HTTPError(message=str(err))
-            else:
-                raise cherrypy.HTTPRedirect(url)
+        if resp is False or resp is True:
+            pass
+        elif not isinstance(resp, int):
+            return resp
+
+        try:
+            # return info.flow_list()
+            url = "{}display#{}".format(
+                self.webenv['client_info']['base_url'],
+                self.pick_grp(_conv.test_id))
+        except Exception as err:
+            logger.error(err)
+            raise cherrypy.HTTPError(message=str(err))
+        else:
+            raise cherrypy.HTTPRedirect(url)
 
     @cherrypy.expose
     def authz_post(self, **kwargs):

@@ -1,3 +1,4 @@
+import builtins
 from future.backports.urllib.parse import urlparse
 
 import inspect
@@ -16,7 +17,7 @@ from oic.oauth2 import Message, ErrorResponse
 from oic.oauth2.util import JSON_ENCODED
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
-from oic.utils.keyio import KeyBundle
+from oic.utils.keyio import KeyBundle, rsa_init
 from oic.utils.keyio import dump_jwks
 from oic.utils.keyio import ec_init
 from otest import RequirementsNotMet
@@ -433,6 +434,17 @@ class FetchKeys(Operation):
             self.conv.keybundle = [kb]
 
 
+def _new_rsa_key(spec):
+    if 'name' not in spec:
+        if '/' in spec['key']:
+            (head, tail) = os.path.split(spec['key'])
+            spec['path'] = head
+            spec['name'] = tail
+        else:
+            spec['name'] = spec['key']
+    return rsa_init(spec)
+
+
 class RotateKeys(Operation):
     def __init__(self, conv, inut, sh, **kwargs):
         Operation.__init__(self, conv, inut, sh, **kwargs)
@@ -461,9 +473,14 @@ class RotateKeys(Operation):
         _typ = _nk["type"].upper()
 
         if _typ == "RSA":
-            kb = KeyBundle(source="file://%s" % _nk["key"],
-                           fileformat="der", keytype=_typ,
-                           keyusage=_nk["use"])
+            error_to_catch = getattr(builtins, 'FileNotFoundError',
+                                     getattr(builtins, 'IOError'))
+            try:
+                kb = KeyBundle(source="file://%s" % _nk["key"],
+                               fileformat="der", keytype=_typ,
+                               keyusage=_nk["use"])
+            except error_to_catch:
+                kb = _new_rsa_key(_nk)
         else:
             kb = {}
 
@@ -479,7 +496,7 @@ class RotateKeys(Operation):
 class RotateSigKeys(RotateKeys):
     def __init__(self, conv, inut, sh, **kwargs):
         RotateKeys.__init__(self, conv, inut, sh, **kwargs)
-        self.new_key = {"type": "RSA", "key": "../keys/second_sig.key",
+        self.new_key = {"type": "RSA", "key": "./keys/second_sig.key",
                         "use": ["sig"]}
         self.kid_template = "sig%d"
 
@@ -487,7 +504,7 @@ class RotateSigKeys(RotateKeys):
 class RotateEncKeys(RotateKeys):
     def __init__(self, conv, inut, sh, **kwargs):
         RotateKeys.__init__(self, conv, inut, sh, **kwargs)
-        self.new_key = {"type": "RSA", "key": "../keys/second_enc.key",
+        self.new_key = {"type": "RSA", "key": "./keys/second_enc.key",
                         "use": ["enc"]}
         self.kid_template = "enc%d"
 

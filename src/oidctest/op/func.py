@@ -381,10 +381,28 @@ def check_config(oper, args):
     for key, val in args.items():
         if key in _cnf:
             if val and val != _cnf[key]:
-                oper.unsupported = "{}={} not OK, should have been {}".format(
-                    key, val, _cnf[key])
+                _msg = "{}={} not OK, should have been {}".format(key, val,
+                                                                  _cnf[key])
+                oper.conv.events.store(EV_CONDITION,
+                                       State("Check support", status=ERROR,
+                                             message=_msg))
+                oper.unsupported = _msg
         else:
-            oper.unsupported = "No {} in the configuration".format(key)
+            _msg = "No {} in the configuration".format(key)
+            oper.conv.events.store(EV_CONDITION,
+                                   State("Check support", status=ERROR,
+                                         message=_msg))
+
+            oper.unsupported = _msg
+
+
+def set_state(oper, arg):
+    oper.op_args['state'] = oper.conv.state
+
+
+# def set_refresh_token(oper, args):
+#     _state = oper.conv.state
+#     oper.op_args = oper.conv.entity.
 
 
 def factory(name):

@@ -1,10 +1,10 @@
 {
   "tool": {
     "tag": "default",
-    "response_type": "code",
+    "return_type": "code",
     "webfinger": true,
-    "discovery": true,
-    "registration": true,
+    "discover": true,
+    "register": true,
     "issuer": "https://localhost:8040/",
     "sig": false,
     "enc": false,

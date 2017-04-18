@@ -24,7 +24,18 @@
         }
       }
     },
-    "AccessToken"
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": [
+            "CIT",
+            "CI",
+            "C",
+            "CT"
+          ]
+        }
+      }
+    }
   ],
   "usage": {
     "extra": true
