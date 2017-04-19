@@ -8,9 +8,9 @@ from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
 
 from jwkest import as_bytes
-from oic.utils.http_util import BadRequest
 
 from oidctest.tt import unquote_quote
+from otest.prof_util import do_discovery
 from otest.prof_util import do_registration
 
 logger = logging.getLogger(__name__)
@@ -87,11 +87,11 @@ class REST(object):
                     self.entinfo), 'r').read())
             _conf['client']['registration_info'] = reg_info['registration_info']
         else:
-            for typ in ['provider_info', 'registration_response']:
-                try:
-                    _conf['client'][typ] = _econf[typ]
-                except KeyError:
-                    pass
+            _conf['client']['registration_response'] = _econf[
+                'registration_response']
+
+        if not do_discovery(_econf['tool']['profile']):
+            _conf['client']['provider_info'] = _econf['provider_info']
 
         _conf['tool'] = _econf['tool']
         logger.info("Constructed config: {}".format(_conf))
