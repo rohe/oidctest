@@ -20,7 +20,17 @@
         "set_discovery_issuer": null
       }
     },
-    "Registration",
+    {
+      "Registration": {
+        "set_request_args": {
+          "grant_types": [
+            "authorization_code",
+            "implicit",
+            "refresh_token"
+          ]
+        }
+      }
+    },
     {
       "AsyncAuthn": {
         "set_response_where": null,
