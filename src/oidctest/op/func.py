@@ -214,7 +214,7 @@ def essential_and_specific_acr_claim(oper, args):
         _acrs = oper.conv.entity.provider_info['acr_values_supported']
     except KeyError:
         _acrs = oper.req_args["acr_values"] = oper.conv.get_tool_attribute(
-            "acr_value", "acr_values_supported", default=[args])
+            "acr_values", "acr_values_supported", default=[args])
 
     oper.req_args["claims"] = {
         "id_token": {"acr": {"value": _acrs[0], 'essential': True}}}
