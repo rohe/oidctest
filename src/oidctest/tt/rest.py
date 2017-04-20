@@ -87,7 +87,7 @@ class REST(object):
                     self.entinfo), 'r').read())
             _conf['client']['registration_info'] = reg_info['registration_info']
         else:
-            _conf['client']['registration_response'] = _econf[
+            _conf['client']['registration_response'] = _econf['client'][
                 'registration_response']
 
         if not do_discovery(_econf['tool']['profile']):
