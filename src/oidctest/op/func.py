@@ -1,5 +1,6 @@
 from future.backports.urllib.parse import urlencode
 from future.backports.urllib.parse import urlparse
+from otest.prof_util import return_type
 from past.types import basestring
 
 import inspect
@@ -248,6 +249,21 @@ def sub_claims(oper, args):
     idt = res[-1]
     _sub = idt["sub"]
     oper.req_args["claims"] = {"id_token": {"sub": {"value": _sub}}}
+
+
+def set_essential_arg_claim(oper, args):
+    """
+    Context: Authorization Request
+    Action: Specify an essential claim.
+
+    :param oper:
+    :param args:
+    :return:
+    """
+    if return_type(oper.tool_conf['profile']) == 'I':
+        oper.req_args["claims"] = {"id_token": {args: {"essential": True}}}
+    else:
+        oper.req_args["claims"] = {"userinfo": {args: {"essential": True}}}
 
 
 def multiple_return_uris(oper, args):
