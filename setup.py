@@ -46,7 +46,7 @@ setup(
         "requests >= 2.0.0",
         'future',
         'CherryPy == 8.9.1',
-        'oic >= 0.9.5',
+        'oic >= 0.10.0',
         'otest >= 0.7.0',
         'psutil',
         'cherrypy-cors >= 1.5',
