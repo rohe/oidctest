@@ -11,7 +11,16 @@
   },
   "desc": "Request with nonce, verifies it was returned in ID Token [Implicit, Hybrid]",
   "sequence": [
-    "Discovery",
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
     "Registration",
     "AsyncAuthn",
     "AccessToken"

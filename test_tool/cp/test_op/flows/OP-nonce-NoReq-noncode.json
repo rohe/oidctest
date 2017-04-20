@@ -5,6 +5,7 @@
       "I",
       "IT",
       "CI",
+      "CT",
       "CIT"
     ]
   },
@@ -25,6 +26,12 @@
       "AsyncAuthn": {
         "set_request_args": {
           "nonce": ""
+        },
+        "set_expect_error": {
+          "error": [
+            "invalid_request",
+            "access_denied"
+          ]
         }
       }
     }

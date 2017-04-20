@@ -38,9 +38,18 @@
         }
       }
     },
-    "AccessToken",
+    {
+      "AccessToken": {
+        "conditional_execution":{
+          "return_type": ["CIT","CI","C","CT"]
+        }
+      }
+    },
     {
       "UserInfo": {
+        "conditional_execution":{
+          "return_type": ["CIT","CI","C","CT"]
+        },
         "set_op_args": {
           "method": "GET",
           "authn_method": "bearer_header"
