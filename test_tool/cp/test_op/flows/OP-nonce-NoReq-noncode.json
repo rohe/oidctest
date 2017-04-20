@@ -5,7 +5,6 @@
       "I",
       "IT",
       "CI",
-      "CT",
       "CIT"
     ]
   },
@@ -31,6 +30,15 @@
           "error": [
             "invalid_request",
             "access_denied"
+          ]
+        }
+      }
+    },
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": [
+            "CT"
           ]
         }
       }

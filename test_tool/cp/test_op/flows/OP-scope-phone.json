@@ -42,7 +42,7 @@
     {
       "UserInfo": {
         "conditional_execution":{
-          "return_type": ["CIT","CI","C","CT"]
+          "return_type": ["CIT","CI","C","CT", "IT"]
         },
         "set_op_args": {
           "method": "GET",
