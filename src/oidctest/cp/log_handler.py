@@ -147,12 +147,15 @@ class OPLog(object):
 
     @cherrypy.expose
     def index(self, op_id='', tag='', profile='', test_id=''):
+        prefix = ''
         if test_id:
             path = os.path.join(self.root, op_id, tag, profile, test_id)
         elif profile:
             path = os.path.join(self.root, op_id, tag, profile)
+            prefix = '{}/{}/'.format(tag, profile)
         elif tag:
             path = os.path.join(self.root, op_id, tag)
+            prefix = '{}/'.format(tag)
         elif op_id:
             path = os.path.join(self.root, op_id)
         else:
@@ -165,10 +168,10 @@ class OPLog(object):
             item = []
             for (dirpath, dirnames, filenames) in os.walk(path):
                 if dirnames:
-                    item = [(fn, fn) for fn in dirnames]
+                    item = [(fn, '{}{}'.format(prefix,fn)) for fn in dirnames]
                     break
                 if filenames:
-                    item = [(fn, fn) for fn in filenames]
+                    item = [(fn, '{}{}'.format(prefix,fn)) for fn in filenames]
                     break
 
             item.sort()
