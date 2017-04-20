@@ -199,17 +199,28 @@ def claims_locales(oper, args):
 
 def acr_value(oper, args):
     oper.req_args["acr_values"] = oper.conv.get_tool_attribute(
-        "acr_value", "acr_values_supported", default=["1", "2"])
+        "acr_values", "acr_values_supported", default=["1", "2"])
 
 
 def specific_acr_claims(oper, args):
     _acrs = oper.req_args["acr_values"] = oper.conv.get_tool_attribute(
-        "acr_value", "acr_values_supported", default=[args])
+        "acr_values", "acr_values_supported", default=[args])
 
     oper.req_args["claims"] = {"id_token": {"acr": {"values": _acrs}}}
 
 
 def essential_and_specific_acr_claim(oper, args):
+    """
+    Context: Authorization Request
+    Action: Add to the request that an acr claims MUST be returned in the
+     ID token. The value of acr is first picked from acr_values_supported in the
+     provider info. If not acr_values_supported is given the test tool
+     configuration will be used. If that is also missing it will be set to
+     whatever args has as value.
+
+    :param oper:
+    :param args:
+    """
     try:
         _acrs = oper.conv.entity.provider_info['acr_values_supported']
     except KeyError:
@@ -221,6 +232,14 @@ def essential_and_specific_acr_claim(oper, args):
 
 
 def sub_claims(oper, args):
+    """
+    Context: Authorization Request
+    Action: Specify a claim for a specific sub value. This is signalling that
+     the OP should authenticate the specific subject.
+
+    :param oper:
+    :param args:
+    """
     res = get_id_tokens(oper.conv)
     try:
         res.extend(oper.conv.cache["id_token"])
@@ -232,30 +251,66 @@ def sub_claims(oper, args):
 
 
 def multiple_return_uris(oper, args):
-    redirects = oper.conv.entity.registration_info['redirect_uris']
+    """
+    Context: dynamic client registration
+    Action: makes the request contain two redirect_uris. Default is that
+    it only contains one.
+
+    :param oper: An Operation instance
+    :param args: None
+    """
+    redirects = oper.conv.entity.registration_info['redirect_uris'][:]
     redirects.append("%scb" % get_base(oper.conv.entity.base_url))
     oper.req_args["redirect_uris"] = redirects
 
 
 def redirect_uris_with_query_component(oper, kwargs):
+    """
+    Context: Dynamic Client Registration
+    Action: Add a query component to a redirect_uri
+
+    :param oper: An Operation Instance
+    :param kwargs: Values to build the query part from
+    """
     ru = oper.conv.entity.registration_info['redirect_uris'][0]
     ru += "?%s" % urlencode(kwargs)
     oper.req_args["redirect_uris"] = [ru]
 
 
 def redirect_uri_with_query_component(oper, args):
+    """
+    Context: Authorization request
+    Action: Add a query component to the redirect_uri
+
+    :param oper: An Operation Instance
+    :param kwargs: Values to build the query part from
+    """
     ru = oper.conv.entity.registration_info['redirect_uris'][0]
     ru += "?%s" % urlencode(args)
     oper.req_args.update({"redirect_uri": [ru]})
 
 
 def redirect_uris_with_scheme(oper, args):
+    """
+    Context: Authorization Request
+    Action: Create a redirect_uri with a specific scheme.
+
+    :param oper: An Operation Instance
+    :param args: The scheme to use
+    """
     oper.req_args['redirect_uris'] = [
         r.replace('https', args) for r in
         oper.conv.entity.registration_info['redirect_uris'][0]]
 
 
 def redirect_uris_with_fragment(oper, kwargs):
+    """
+    Context: Dynamic Client Registration
+    Action: Add a fragment component to a redirect_uri
+
+    :param oper: An Operation Instance
+    :param kwargs: Values to build the query part from
+    """
     ru = oper.conv.entity.registration_info['redirect_uris'][0]
     ru += "#" + ".".join(["%s%s" % (x, y) for x, y in list(kwargs.items())])
     oper.req_args["redirect_uris"] = ru
