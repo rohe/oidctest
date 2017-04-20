@@ -177,7 +177,7 @@ if __name__ == '__main__':
     webenv = make_webenv(_conf, rest)
 
     session_handler = SessionHandler(args.issuer, args.tag,
-                                     flows=webenv['flow_state'],
+                                     flows=webenv['flow_state'], rest=rest,
                                      **webenv)
     session_handler.iss = args.issuer
     session_handler.tag = args.tag
