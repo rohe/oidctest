@@ -15,15 +15,7 @@
     {
       "AsyncAuthn": {
         "set_response_where": null,
-        "set_request_args": {
-          "claims": {
-            "userinfo": {
-              "name": {
-                "essential": true
-              }
-            }
-          }
-        }
+        "set_essential_arg_claim": "name"
       }
     },
     {

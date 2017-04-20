@@ -23,7 +23,17 @@
     },
     "Registration",
     "AsyncAuthn",
-    "AccessToken"
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": [
+            "CIT",
+            "CI",
+            "CT"
+          ]
+        }
+      }
+    }
   ],
   "MTI": [
     "I",
