@@ -33,22 +33,12 @@
           ]
         }
       }
-    },
-    {
-      "AccessToken": {
-        "conditional_execution": {
-          "return_type": [
-            "CT"
-          ]
-        }
-      }
     }
   ],
   "MTI": [
     "I",
     "IT",
     "CI",
-    "CT",
     "CIT"
   ],
   "assert": {
