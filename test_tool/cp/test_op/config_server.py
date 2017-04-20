@@ -7,6 +7,8 @@ import cherrypy
 from fedoidc.file_system import FileSystem
 
 from oidctest.cp import dump_log
+from oidctest.cp.log_handler import OPLog
+from oidctest.cp.log_handler import OPTar
 from oidctest.tt.action import Action
 from oidctest.tt.app import Application
 from oidctest.tt.entity import Entity
@@ -100,6 +102,13 @@ if __name__ == '__main__':
         Action(rest, _ttc, _html, _conf.ENT_PATH, _conf.ENT_INFO, tool_params,
                _app),
         '/action')
+
+    log_root = os.path.join(folder, 'log')
+    _tar = OPTar(log_root)
+    cherrypy.tree.mount(_tar, '/mktar')
+    cherrypy.tree.mount(_tar, '/backup')
+    cherrypy.tree.mount(OPLog(log_root, _html), '/log')
+
     # Main
     test_tool_conf = args.test_tool_conf
     cherrypy.tree.mount(
