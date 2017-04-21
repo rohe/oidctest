@@ -241,7 +241,7 @@ class Action(object):
     def delete(self, iss, tag, ev, pid=0):
         logger.info('delete test tool configuration')
         uqp, qp = unquote_quote(iss, tag)
-        _key = self.app.assigned_ports(*uqp)
+        _key = self.app.assigned_ports.make_key(*uqp)
 
         if pid:
             kill_process(pid)
@@ -254,12 +254,16 @@ class Action(object):
 
         del self.app.assigned_ports[_key]
 
-        _msg = self.html['message.html'].format(
-            title="Action performed",
-            note='Your test tool instance <em>{}:{}</em> has been '
-                 'removed'.format(iss, tag))
+        # redirect back to entity page
+        loc = '{}entity/{}'.format(self.rest.base_url, qp[0])
+        raise cherrypy.HTTPRedirect(loc)
 
-        return as_bytes(_msg)
+        # _msg = self.html['message.html'].format(
+        #     title="Action performed",
+        #     note='Your test tool instance <em>{}:{}</em> has been '
+        #          'removed'.format(iss, tag))
+        #
+        # return as_bytes(_msg)
 
     @cherrypy.expose
     def restart(self, iss, tag, ev):
