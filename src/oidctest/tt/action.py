@@ -177,6 +177,8 @@ class Action(object):
         uqp, qp = unquote_quote(iss, tag)
         _format, _conf = self.rest.read_conf(qp[0], qp[1])
 
+        logger.info('config: {}'.format(_conf))
+
         # provider_info and registration_response
         dicts = {'tool': _conf['tool']}
         _spec = from_profile(_conf['tool']['profile'])
