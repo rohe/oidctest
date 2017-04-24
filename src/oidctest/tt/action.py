@@ -127,6 +127,65 @@ def multi_value(typ):
     return res
 
 
+def update_config(conf, tool_params):
+    # provider_info and registration_response
+    dicts = {'tool': conf['tool']}
+    _prof = conf['tool']['profile']
+    _spec = from_profile(conf['tool']['profile'])
+    _spec['return_type'] = abbr_return_type(_spec['return_type'])
+    del dicts['tool']['profile']
+    dicts['tool'].update(_spec)
+
+    for item in tool_params:
+        if item == 'profile':
+            continue
+        if item not in dicts['tool']:
+            dicts['tool'][item] = ''
+
+    multi = {'tool': ['acr_values', 'claims_locales', 'ui_locales']}
+    for typ in ['provider_info', 'registration_response']:
+        multi[typ] = multi_value(typ)
+        try:
+            dicts[typ] = conf['client'][typ]
+        except KeyError:
+            try:
+                dicts[typ] = update(typ, conf[typ])
+            except KeyError:
+                pass
+
+    state = {
+        'tool': {'immutable': ['issuer', 'tag', 'register', 'discover',
+                               'webfinger'],
+                 'required': ['return_type']}}
+
+    notes = ''
+    if _spec['webfinger']:
+        state['tool']['required'].extend(['webfinger_email',
+                                          'webfinger_url'])
+        notes = ("If <i>webfinger</i> is True then one of "
+                 "<i>webfinger_email</i> and <i>webfinger_url</i> "
+                 "<b>MUST</b> have a value.")
+
+    if 'registration_response' in dicts:
+        state['registration_response'] = {
+            'immutable': ['redirect_uris'],
+            'required': ['client_id', 'client_secret']}
+
+    if 'provider_info' in dicts:
+        _req = ['authorization_endpoint', 'jwks_uri',
+                'response_types_supported', 'subject_types_supported',
+                'id_token_signing_alg_values_supported']
+
+        state['provider_info'] = {'immutable': ['issuer']}
+
+        if return_type(_prof) not in ['I', 'IT']:
+            _req.append('token_endpoint')
+
+        state['provider_info']['required'] = _req
+
+    return dicts, state, multi, notes
+
+
 class Action(object):
     def __init__(self, rest, tool_conf, html, entpath, ent_info_path,
                  tool_params, app):
@@ -179,59 +238,8 @@ class Action(object):
 
         logger.info('config: {}'.format(_conf))
 
-        # provider_info and registration_response
-        dicts = {'tool': _conf['tool']}
-        _spec = from_profile(_conf['tool']['profile'])
-        _spec['return_type'] = abbr_return_type(_spec['return_type'])
-        del dicts['tool']['profile']
-        dicts['tool'].update(_spec)
+        dicts, state, multi, notes = update_config(_conf, self.tool_params)
 
-        for item in self.tool_params:
-            if item == 'profile':
-                continue
-            if item not in dicts['tool']:
-                dicts['tool'][item] = ''
-
-        multi = {'tool': ['acr_values', 'claims_locales', 'ui_locales']}
-        for typ in ['provider_info', 'registration_response']:
-            multi[typ] = multi_value(typ)
-            try:
-                dicts[typ] = _conf['client'][typ]
-            except KeyError:
-                try:
-                    dicts[typ] = update(typ, _conf[typ])
-                except KeyError:
-                    pass
-
-        state = {
-            'tool': {'immutable': ['issuer', 'tag', 'register', 'discover',
-                                   'webfinger'],
-                     'required': ['return_type']}}
-
-        notes = ''
-        if _spec['webfinger']:
-            state['tool']['required'].extend(['webfinger_email',
-                                              'webfinger_url'])
-            notes = ("If <i>webfinger</i> is True then one of "
-                     "<i>webfinger_email</i> and <i>webfinger_url</i> "
-                     "<b>MUST</b> have a value.")
-
-        if 'registration_response' in dicts:
-            state['registration_response'] = {
-                'immutable': ['redirect_uris'],
-                'required': ['client_id', 'client_secret']}
-
-        if 'provider_info' in dicts:
-            _req = ['authorization_endpoint', 'jwks_uri',
-                    'response_types_supported', 'subject_types_supported',
-                    'id_token_signing_alg_values_supported']
-
-            state['provider_info'] = {'immutable': ['issuer']}
-
-            if return_type(_conf['tool']['profile']) not in ['I', 'IT']:
-                _req.append('token_endpoint')
-
-            state['provider_info']['required'] = _req
         action = "{}/run/{}/{}".format('', qp[0], qp[1])
         _msg = self.html['instance.html'].format(
             display=display(dicts, state, multi, notes, action)
