@@ -1,3 +1,4 @@
+import logging
 from future.backports.urllib.parse import parse_qs
 from future.backports.urllib.parse import urlparse
 from future.backports.urllib.parse import urlsplit
@@ -52,6 +53,8 @@ from oidctest.regalg import REGISTERED_JWE_enc_ALGORITHMS
 
 __author__ = 'rohe0002'
 
+
+logger = logging.getLogger(__name__)
 
 
 class CmpIdtoken(Other):
@@ -687,8 +690,8 @@ class InteractionCheck(CriticalError):
 
 class VerifyClaims(Error):
     """
-    Verifies that the UserInfo returned is consistent with
-    what was asked for
+    Verifies that the claims returned as UserInfo or in the ID Token is
+    consistent with what was asked for
     """
     cid = "verify-claims"
     msg = "Claims received do not match those requested"
@@ -720,6 +723,8 @@ class VerifyClaims(Error):
         else:
             for key, val in list(_userinfo_claims.items()):
                 userinfo_claims[key] = val
+
+        logger.info('userinfo claims: {}'.format(userinfo_claims))
 
         missing = []
         extra = []
@@ -767,6 +772,7 @@ class VerifyClaims(Error):
         except KeyError:
             pass
         else:
+            logger.info('IdToken claims: {}'.format(claims))
             res = get_id_tokens(conv)
             assert len(res)  # must be at least one
             _idt = res[0]
@@ -789,11 +795,11 @@ class VerifyClaims(Error):
                         msg = "Missing required claims: %s" % missing
                 if mm:
                     if msg:
-                        msg += ". "
-                    if len(missing) == 1:
-                        msg = "Claim that didn't match request: %s" % mm[0]
+                        msg += ", "
+                    if len(mm) == 1:
+                        msg += "Claim that didn't match request: %s" % mm[0]
                     else:
-                        msg = "Claim that didn't match request: %s" % mm
+                        msg += "Claims that didn't match request: %s" % mm
 
                 self._message = msg
                 self._status = WARNING
