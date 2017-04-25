@@ -304,10 +304,6 @@ class RefreshToken(SyncPostRequest):
                 if len(keys) > 1:
                     raise ParameterError("No 'kid' in id_token header!")
 
-        if not same_issuer(self.conv.info["issuer"], atr["id_token"]["iss"]):
-            raise IssuerMismatch(" {} != {}".format(self.conv.info["issuer"],
-                                                    atr["id_token"]["iss"]))
-
         # assert isinstance(atr, AccessTokenResponse)
         return atr
 
