@@ -304,7 +304,6 @@ class RefreshToken(SyncPostRequest):
                 if len(keys) > 1:
                     raise ParameterError("No 'kid' in id_token header!")
 
-        # assert isinstance(atr, AccessTokenResponse)
         return atr
 
 
