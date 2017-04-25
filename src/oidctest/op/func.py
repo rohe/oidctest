@@ -23,45 +23,77 @@ __author__ = 'roland'
 
 
 def set_webfinger_resource(oper, args):
+    """
+    Context: WebFinger Query
+    Action: Specifies the webfinger resource. If the OP supports
+    webfinger queries then the resource is set to the value of 'webfinger_url'
+    or 'webfinger_email' from the test instance configuration.
+
+    :param oper: An WebFinger instance
+    :param args: None
+    """
+
     try:
         oper.resource = oper.op_args["resource"]
     except KeyError:
         if oper.dynamic:
-            if args:
-                _p = urlparse(get_issuer(oper.conv))
-                oper.op_args["resource"] = args["pattern"].format(
-                    test_id=oper.conv.test_id, host=_p.netloc,
-                    oper_id=oper.conv.operator_id)
-            else:
-                _base = oper.conv.get_tool_attribute("webfinger_url",
-                                                     "webfinger_email")
-                if _base is None:
-                    raise AttributeError(
-                        'If you want to do dynamic webfinger discovery you '
-                        'must define "webfinger_url" or "webfinger_email" in '
-                        'the "tool" configuration')
+            _base = oper.conv.get_tool_attribute("webfinger_url",
+                                                 "webfinger_email")
+            if _base is None:
+                raise AttributeError(
+                    'If you want to do dynamic webfinger discovery you '
+                    'must define "webfinger_url" or "webfinger_email" in '
+                    'the "tool" configuration')
 
-                if oper.conv.operator_id is None:
-                    oper.resource = _base
-                else:
-                    oper.resource = os.path.join(_base, oper.conv.operator_id,
-                                                 oper.conv.test_id)
+            oper.resource = _base
 
 
 def set_discovery_issuer(oper, args):
+    """
+    Context: Authorization Query
+    Action: Pick up issuer ID either from static configuration or dynamic
+    discovery.
+
+    :param oper: An AsyncAuthn instance
+    :param args: None
+    """
     if oper.dynamic:
         oper.op_args["issuer"] = get_issuer(oper.conv)
 
 
 def set_response_where(oper, args):
+    """
+    Context: Authorization Query
+    Action: Set where the response is expected to occur
+
+    :param oper: An AsyncAuthn instance
+    :param args: None
+    """
     if oper.req_args["response_type"] != ["code"]:
         oper.response_where = "fragment"
 
 
 def check_support(oper, args):
+    """
+    Context: Authorization Query
+    Action: Verify that the needed support is supported by the OP
+    Example:
+
+        "check_support": {
+          "WARNING": {"scopes_supported": ["phone"]}
+        }
+
+        "check_support": {
+          "ERROR": {"id_token_signing_alg_values_supported": null}
+        }
+
+    :param oper: An AsyncAuthn instance
+    :param args: A dictionary of dictionaries. {level: {item: value}}
+    """
     # args = { level : kwargs }
     for level, kwargs in list(args.items()):
         for key, val in list(kwargs.items()):
+            # type of value: boolean, int, string, list, ...
             typ = oper.conv.entity.provider_info.__class__.c_param[key][0]
             try:
                 pinfo = oper.conv.entity.provider_info[key]

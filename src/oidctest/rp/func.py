@@ -1,7 +1,47 @@
-from future.backports.urllib.parse import urlencode
-
 import inspect
+import os
 import sys
+
+from future.backports.urllib.parse import urlencode
+from future.backports.urllib.parse import urlparse
+
+from otest.result import get_issuer
+
+
+def set_webfinger_resource(oper, args):
+    """
+    Context: WebFinger Query
+    Action: Specifies the webfinger resource. If the OP supports
+    webfinger queries then the resource is set to the value of 'webfinger_url'
+    or 'webfinger_email' from the test instance configuration.
+
+    :param oper: An WebFinger instance
+    :param args: None or a dictionary with the key 'pattern'
+    """
+
+    try:
+        oper.resource = oper.op_args["resource"]
+    except KeyError:
+        if oper.dynamic:
+            if args:
+                _p = urlparse(get_issuer(oper.conv))
+                oper.op_args["resource"] = args["pattern"].format(
+                    test_id=oper.conv.test_id, host=_p.netloc,
+                    oper_id=oper.conv.operator_id)
+            else:
+                _base = oper.conv.get_tool_attribute("webfinger_url",
+                                                     "webfinger_email")
+                if _base is None:
+                    raise AttributeError(
+                        'If you want to do dynamic webfinger discovery you '
+                        'must define "webfinger_url" or "webfinger_email" in '
+                        'the "tool" configuration')
+
+                if oper.conv.operator_id is None:
+                    oper.resource = _base
+                else:
+                    oper.resource = os.path.join(_base, oper.conv.operator_id,
+                                                 oper.conv.test_id)
 
 
 def set_configuration(oper, arg):
