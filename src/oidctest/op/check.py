@@ -12,7 +12,7 @@ from jwkest.jwt import split_token
 from oic.exception import MessageException
 from oic.oauth2 import message
 from oic.oauth2.message import ErrorResponse
-from oic.oic import claims_match
+#from oic.oic import claims_match
 from oic.oic.message import factory as msg_factory
 from oic.oic.message import SCOPE2CLAIMS
 from oic.oic.message import AuthorizationRequest
@@ -55,6 +55,21 @@ __author__ = 'rohe0002'
 
 
 logger = logging.getLogger(__name__)
+
+
+def claims_match(value, claimspec):
+    if claimspec is None:
+        return True
+
+    for key, val in claimspec.items():
+        if key == "value":
+            if value != val:
+                return False
+        elif key == "values":
+            if value not in val:
+                return False
+                # Whether it's essential or not doesn't change anything here
+    return True
 
 
 class CmpIdtoken(Other):
