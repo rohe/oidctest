@@ -77,7 +77,7 @@ class CmpIdtoken(Other):
     Compares the JSON received as a CheckID response with my own
     interpretation of the ID Token.
     """
-    cid = "compare-idoken-received-with-check_id-response"
+    cid = "compare-idtoken-received-with-check_id-response"
 
     def _func(self, conv):
         res = {}
@@ -103,7 +103,7 @@ class VerifyPromptNoneResponse(Check):
     """
     The OP may respond in more than one way and still be within
     what the spec says.
-    none
+    Effect of prompt=none
     The Authorization Server MUST NOT display any authentication or
     consent user interface pages.
     """
@@ -819,7 +819,7 @@ class VerifyClaims(Error):
                 self._message = msg
                 self._status = WARNING
                 return {"returned claims": list(_idt.keys()),
-                        "required claims": claims}
+                        "required claims": list(claims.keys())}
 
         return {}
 
