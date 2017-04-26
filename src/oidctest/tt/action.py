@@ -262,18 +262,14 @@ class Action(object):
         if not os.listdir(os.path.join(self.entpath, qp[0])):
             os.rmdir(os.path.join(self.entpath, qp[0]))
 
-        del self.app.assigned_ports[_key]
+        try:
+            del self.app.assigned_ports[_key]
+        except KeyError:  # How could it already have gone ? Ah, well
+            pass
 
         # redirect back to entity page
         loc = '{}entity/{}'.format(self.rest.base_url, qp[0])
         raise cherrypy.HTTPRedirect(loc)
-
-        # _msg = self.html['message.html'].format(
-        #     title="Action performed",
-        #     note='Your test tool instance <em>{}:{}</em> has been '
-        #          'removed'.format(iss, tag))
-        #
-        # return as_bytes(_msg)
 
     @cherrypy.expose
     def restart(self, iss, tag, ev):
