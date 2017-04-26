@@ -44,6 +44,9 @@ class AssignedPorts(object):
     def values(self):
         return self._db.values()
 
+    def items(self):
+        return self._db.items()
+
     def __contains__(self, item):
         if "%" in item:
             item = unquote_plus(item)
