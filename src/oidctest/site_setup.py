@@ -40,7 +40,7 @@ def oidc_op_setup(distroot):
             os.mkdir(_dir)
 
     _op_dir = os.path.join(distroot, 'test_tool', 'cp', 'test_op', )
-    for _dir in ['entity_info', 'flows', 'html', 'static']:
+    for _dir in ['entity_info', 'flows', 'html', 'static', 'tool']:
         _src = os.path.join(_op_dir, _dir)
         if os.path.isdir(_dir):
             shutil.rmtree(_dir)
