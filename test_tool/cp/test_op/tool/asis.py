@@ -15,8 +15,9 @@ def print_conf(c):
     print(json.dumps(cnf, sort_keys=True, indent=2,
                      separators=(',', ': ')))
 
-
-ap = AssignedPorts('assigned_ports.json',0,0)
+folder = os.path.abspath(os.curdir)
+ap = AssignedPorts('{}/assigned_ports.json'.format(folder),0,0)
+ap.load()
 
 #info = open('assigned_ports.json').read()
 #ap = json.loads(info)
