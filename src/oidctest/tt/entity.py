@@ -77,7 +77,10 @@ class Entity(object):
         logger.info('List all tags for "{}"'.format(uqp[0]))
         iss = uqp[0]
         qiss = qp[0]
-        fils = os.listdir(os.path.join(self.entpath, qiss))
+        try:
+            fils = os.listdir(os.path.join(self.entpath, qiss))
+        except FileNotFoundError:
+            return b"No such Issuer exists"
 
         active = dict([(fil, isrunning(iss, fil)) for fil in fils])
 
