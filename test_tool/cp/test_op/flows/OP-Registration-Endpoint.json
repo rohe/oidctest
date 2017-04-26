@@ -1,7 +1,8 @@
 {
   "group": "Dynamic Client Registration",
   "usage": {
-    "discover": true
+    "discover": true,
+    "register": true
   },
   "desc": "Verify that registration_endpoint is published",
   "sequence": [
