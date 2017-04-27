@@ -33,6 +33,13 @@
     },
     {
       "AsyncAuthn": {
+        "check_support": {
+          "ERROR": {
+            "grant_types_supported": [
+              "refresh_token"
+            ]
+          }
+        },
         "set_response_where": null,
         "set_request_args": {
           "scope": [
