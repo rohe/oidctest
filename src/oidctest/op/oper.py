@@ -263,7 +263,9 @@ class RefreshToken(SyncPostRequest):
         self.req_args["redirect_uri"] = conv.entity.redirect_uris[0]
 
     def run(self):
-        self.catch_exception_and_error(self._run)
+        res = self._run()
+        if not isinstance(res, Message):
+            return res
 
     def _run(self):
         if self.skip:
