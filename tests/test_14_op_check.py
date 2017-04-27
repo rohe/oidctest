@@ -1,6 +1,8 @@
 from oic.oic import AccessTokenResponse
 from oic.oic import OpenIDSchema
-from oidctest.op.check import VerifyClaims
+from oidctest.op.check import VerifyClaims, CheckHasClaimsSupported, \
+    VerifyOPEndpointsUseHTTPS, VerifyHTTPSUsage
+from otest.check import OK, ERROR
 
 from otest.test_setup import setup_conv
 from otest.events import EV_PROTOCOL_RESPONSE
@@ -227,4 +229,100 @@ def test_verify_claims_4():
         'nonce', 'sub', 'at_hash', 'iat', 'sid', 'aud', 'exp', 'iss',
         'phone_number', 'phone_number_verified'}
     assert res['idtoken']['required claims'] == ['email']
+
+
+def test_providerinfo_has_claims_supported():
+    _info = setup_conv()
+    conv = _info['conv']
+    conv.entity.provider_info = {'claims_supported': ['sub', 'email', 'phone']}
+
+    c = CheckHasClaimsSupported()
+
+    res = c._func(conv)
+    assert res == {}
+    assert c._status == OK
+
+
+def test_providerinfo_has_claims_supported_false():
+    _info = setup_conv()
+    conv = _info['conv']
+    conv.entity.provider_info = {
+        'issuer': 'https://example.com',
+        'authorization_endpoint': 'https://example.com/authz'}
+
+    c = CheckHasClaimsSupported()
+
+    res = c._func(conv)
+    assert res == {}
+    assert c._status == ERROR
+
+
+def test_verify_op_endpoints_use_https():
+    _info = setup_conv()
+    conv = _info['conv']
+    conv.entity.provider_info = {
+        'issuer': 'https://example.com',
+        'authorization_endpoint': 'https://example.com/authz',
+        'token_endpoint': 'https://example.com/token',
+        'userinfo_endpoint': 'https://example.com/userinfo',
+    }
+
+    v = VerifyOPEndpointsUseHTTPS()
+
+    res = v._func(conv)
+    assert res == {}
+    assert v._status == OK
+
+
+def test_verify_op_endpoints_use_https_false():
+    _info = setup_conv()
+    conv = _info['conv']
+    conv.entity.provider_info = {
+        'issuer': 'https://example.com',
+        'authorization_endpoint': 'https://example.com/authz',
+        'token_endpoint': 'https://example.com/token',
+        'userinfo_endpoint': 'http://example.com/userinfo',
+    }
+
+    v = VerifyOPEndpointsUseHTTPS()
+
+    res = v._func(conv)
+    assert res == {}
+    assert v._status == ERROR
+
+
+def test_verify_https_usage():
+    _info = setup_conv()
+    conv = _info['conv']
+    conv.entity.provider_info = {
+        'issuer': 'https://example.com',
+        'authorization_endpoint': 'https://example.com/authz',
+        'token_endpoint': 'https://example.com/token',
+        'userinfo_endpoint': 'http://example.com/userinfo',
+        'jwks_uri': 'https://example.com/jwks.json'
+    }
+
+    v = VerifyHTTPSUsage()
+    v._kwargs = {"endpoints": ["jwks_uri"]}
+    res = v._func(conv)
+    assert res == {}
+    assert v._status == OK
+
+
+def test_verify_https_usage_false():
+    _info = setup_conv()
+    conv = _info['conv']
+    conv.entity.provider_info = {
+        'issuer': 'https://example.com',
+        'authorization_endpoint': 'https://example.com/authz',
+        'token_endpoint': 'https://example.com/token',
+        'userinfo_endpoint': 'http://example.com/userinfo',
+        'jwks_uri': 'http://example.com/jwks.json'
+    }
+
+    v = VerifyHTTPSUsage()
+    v._kwargs = {"endpoints": ["jwks_uri"]}
+    res = v._func(conv)
+    assert res == {}
+    assert v._status == ERROR
 
