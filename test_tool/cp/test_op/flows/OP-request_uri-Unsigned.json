@@ -17,7 +17,7 @@
           "request_object_signing_alg": null
         },
         "check_support": {
-          "WARNING": {
+          "ERROR": {
             "request_uri_parameter_supported": true,
             "request_object_signing_alg_values_supported": null
           }
@@ -41,9 +41,9 @@
   },
   "desc": "Support request_uri request parameter with unsigned request",
   "assert": {
-    "authn-response-or-error": {
-      "error": [
-        "request_uri_not_supported"
+    "verify-response": {
+      "response_cls": [
+        "AuthorizationResponse"
       ]
     }
   }
