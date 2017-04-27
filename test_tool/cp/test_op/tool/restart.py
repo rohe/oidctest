@@ -3,6 +3,7 @@ import importlib
 import psutil
 
 from oidctest.tt.app import Application
+from oidctest.tt.rest import NoSuchFile
 from oidctest.tt.rest import REST
 from otest.proc import find_test_instances
 
@@ -36,4 +37,7 @@ for pid, proc_info in find_test_instances('op_test_tool.py').items():
     ps = psutil.Process(pid)
     ps.kill()
 
-    _app.run_test_instance(proc_info['iss'], proc_info['tag'])
+    try:
+        _app.run_test_instance(proc_info['iss'], proc_info['tag'])
+    except NoSuchFile as err:
+        print(err)
