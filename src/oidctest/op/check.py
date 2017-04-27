@@ -1629,7 +1629,7 @@ class CheckEncSigAlgorithms(Information):
         return {}
 
 
-class VerifyOPEndpointsUseHTTPS(Information):
+class VerifyOPEndpointsUseHTTPS(Error):
     """
     Verify that all OP endpoints uses https
     """
@@ -1637,6 +1637,7 @@ class VerifyOPEndpointsUseHTTPS(Information):
     msg = "Some OP endpoints are not using HTTPS"
 
     def _func(self, conv):
+        m = []
         _pi = get_provider_info(conv)
         for param, val in list(_pi.items()):
             if param.endswith("_endpoint"):
@@ -1644,12 +1645,14 @@ class VerifyOPEndpointsUseHTTPS(Information):
                     assert val.startswith("https://")
                 except AssertionError:
                     self._status = self.status
-                    break
+                    m.append(param)
+        if m:
+            self._message = 'These endpoint do not use HTTPS: {}'.format(m)
 
         return {}
 
 
-class VerifyHTTPSUsage(Information):
+class VerifyHTTPSUsage(Error):
     """
     Verify that specific endpoints uses https
     """
