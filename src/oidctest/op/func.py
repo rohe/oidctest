@@ -1,11 +1,13 @@
+import os
+
 from future.backports.urllib.parse import urlencode
 from future.backports.urllib.parse import urlparse
+from otest.func import SetUpError
 from otest.prof_util import return_type
 from past.types import basestring
 
 import inspect
 import json
-import os
 import sys
 
 from otest import ConfigurationError
@@ -40,7 +42,7 @@ def set_webfinger_resource(oper, args):
             _base = oper.conv.get_tool_attribute("webfinger_url",
                                                  "webfinger_email")
             if _base is None:
-                raise AttributeError(
+                raise SetUpError(
                     'If you want to do dynamic webfinger discovery you '
                     'must define "webfinger_url" or "webfinger_email" in '
                     'the "tool" configuration')
@@ -182,7 +184,11 @@ def store_sector_redirect_uris(oper, args):
         except KeyError:
             pass
 
-    f = open("%ssiu.json" % "export/", 'w')
+    try:
+        f = open("export/siu.json", 'w')
+    except FileNotFoundError:
+        os.makedirs('export')
+        f = open("export/siu.json", 'w')
     f.write(json.dumps(ruris))
     f.close()
 
@@ -190,17 +196,8 @@ def store_sector_redirect_uris(oper, args):
     oper.req_args["sector_identifier_uri"] = sector_identifier_url
 
 
-def set_expect_error(oper, args):
-    oper.expect_error = args
-
-
 def id_token_hint(oper, kwargs):
     res = get_signed_id_tokens(oper.conv)
-
-    try:
-        res.extend(oper.conv.cache["id_token"])
-    except (KeyError, ValueError):
-        pass
 
     oper.req_args["id_token_hint"] = res[0]
 
@@ -360,7 +357,7 @@ def redirect_uris_with_fragment(oper, kwargs):
     """
     ru = oper.conv.entity.registration_info['redirect_uris'][0]
     ru += "#" + ".".join(["%s%s" % (x, y) for x, y in list(kwargs.items())])
-    oper.req_args["redirect_uris"] = ru
+    oper.req_args["redirect_uris"] = [ru]
 
 
 def request_in_file(oper, kwargs):
@@ -513,6 +510,6 @@ def factory(name):
             if fname == name:
                 return obj
 
-    from otest.func import factory as aafactory
+    from otest.func import factory as ofactory
 
-    return aafactory(name)
+    return ofactory(name)
