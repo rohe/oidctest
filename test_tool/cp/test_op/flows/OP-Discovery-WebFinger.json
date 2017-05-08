@@ -13,6 +13,5 @@
     "extra": true,
     "webfinger": true
   },
-  "desc": "Can discover identifiers using URL syntax [Dynamic]",
-  "assert": null
+  "desc": "Can discover identifiers using URL syntax [Dynamic]"
 }

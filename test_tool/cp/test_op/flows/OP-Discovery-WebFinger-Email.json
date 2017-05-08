@@ -13,6 +13,5 @@
     "extra": true,
     "webfinger": true
   },
-  "desc": "Can discover identifiers using e-mail syntax",
-  "assert": null
+  "desc": "Can discover identifiers using e-mail syntax"
 }
