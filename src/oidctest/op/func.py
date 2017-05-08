@@ -2,7 +2,7 @@ import os
 
 from future.backports.urllib.parse import urlencode
 from future.backports.urllib.parse import urlparse
-from otest.func import SetUpError
+from otest.func import SetUpError, get_base
 from otest.prof_util import return_type
 from past.types import basestring
 
@@ -69,10 +69,24 @@ def set_response_where(oper, args):
     Action: Set where the response is expected to occur
 
     :param oper: An AsyncAuthn instance
-    :param args: None
+    :param args: dictionary with keys: 'response_type', 'not_response_type'
+        and "where"
     """
-    if oper.req_args["response_type"] != ["code"]:
-        oper.response_where = "fragment"
+    if args is None:
+        args = {"not_response_type": ["code"], "where": "fragment"}
+
+    if 'response_type' in args:
+        for rt in args['response_type']:
+            if oper.req_args["response_type"] == [rt]:
+                oper.response_where = args["where"]
+                break
+    elif 'not_response_type' in args:
+        for rt in args['not_response_type']:
+            if oper.req_args["response_type"] != [rt]:
+                oper.response_where = args["where"]
+                break
+    else:
+        oper.response_where = args["where"]
 
 
 def check_support(oper, args):
@@ -139,33 +153,10 @@ def set_principal(oper, args):
         oper.req_args["principal"] = _val
 
 
-def set_uri(oper, args):
-    ru = oper.conv.get_redirect_uris()[0]
-    p = urlparse(ru)
-    oper.req_args[args[0]] = "%s://%s/%s" % (p.scheme, p.netloc, args[1])
-
-
 def static_jwk(oper, args):
     _client = oper.conv.entity
     del oper.req_args["jwks_uri"]
     oper.req_args["jwks"] = _client.keyjar.export_jwks("")
-
-
-def get_base(base):
-    """
-    Make sure a '/' terminated URL is returned
-    """
-    part = urlparse(base)
-
-    if part.path:
-        if not part.path.endswith("/"):
-            _path = part.path[:] + "/"
-        else:
-            _path = part.path[:]
-    else:
-        _path = "/"
-
-    return "%s://%s%s" % (part.scheme, part.netloc, _path,)
 
 
 def store_sector_redirect_uris(oper, args):
@@ -205,12 +196,15 @@ def id_token_hint(oper, kwargs):
 def login_hint(oper, args):
     _iss = oper.conv.entity.provider_info["issuer"]
     p = urlparse(_iss)
+    _default = "buffy@%s" % p.netloc
     try:
         hint = oper.conv.get_tool_attribute("login_hint")
     except KeyError:
-        hint = "buffy@%s" % p.netloc
+        hint = _default
     else:
-        if "@" not in hint:
+        if hint is None:
+            hint = _default
+        elif "@" not in hint:
             hint = "%s@%s" % (hint, p.netloc)
 
     oper.req_args["login_hint"] = hint
@@ -226,15 +220,30 @@ def claims_locales(oper, args):
         "claims_locales", 'locales', default=['se'])
 
 
+def get_attribute_value(oper, tool_attr, provider_attr, default):
+    try:
+        val = oper.conv.get_tool_attribute(*tool_attr)
+    except KeyError:
+        if provider_attr:
+            try:
+                val = oper.conv.entity.provider_info[provider_attr]
+            except (KeyError, AttributeError):
+                val = default
+        else:
+            val = default
+
+    return val
+
+
 def acr_value(oper, args):
-    oper.req_args["acr_values"] = oper.conv.get_tool_attribute(
-        "acr_values", "acr_values_supported", default=["1", "2"])
+    acr = get_attribute_value(oper, ["acr_value", "acr_values_supported"],
+                              "acr_values_supported", ["1", "2"])
+    oper.req_args["acr_values"] = acr
 
 
 def specific_acr_claims(oper, args):
-    _acrs = oper.req_args["acr_values"] = oper.conv.get_tool_attribute(
-        "acr_values", "acr_values_supported", default=[args])
-
+    _acrs = get_attribute_value(oper, ["acr_value", "acr_values_supported"],
+                                "acr_values_supported", args)
     oper.req_args["claims"] = {"id_token": {"acr": {"values": _acrs}}}
 
 
@@ -250,11 +259,8 @@ def essential_and_specific_acr_claim(oper, args):
     :param oper:
     :param args:
     """
-    try:
-        _acrs = oper.conv.entity.provider_info['acr_values_supported']
-    except KeyError:
-        _acrs = oper.req_args["acr_values"] = oper.conv.get_tool_attribute(
-            "acr_values", "acr_values_supported", default=[args])
+    _acrs = get_attribute_value(oper, ["acr_value", "acr_values_supported"],
+                                "acr_values_supported", args)
 
     oper.req_args["claims"] = {
         "id_token": {"acr": {"value": _acrs[0], 'essential': True}}}
@@ -371,38 +377,6 @@ def resource(oper, args):
         oper_id=oper.conv.operator_id)
 
 
-def expect_exception(oper, args):
-    oper.expect_exception = args
-
-
-def conditional_expect(oper, args):
-    condition = args["condition"]
-
-    res = True
-    for key in list(condition.keys()):
-        try:
-            assert oper.req_args[key] in condition[key]
-        except KeyError:
-            pass
-        except AssertionError:
-            res = False
-
-    for param in ['error', 'exception']:
-        do_set = False
-        try:
-            if res == args["oper"]:
-                do_set = True
-        except KeyError:
-            if res is True:
-                do_set = True
-
-        if do_set:
-            try:
-                setattr(oper, 'expect_{}'.format(param), args[param])
-            except KeyError:
-                pass
-
-
 def conditional_execution(oper, arg):
     for key, val in arg.items():
         if key == 'profile':
@@ -452,11 +426,6 @@ def restore_response(oper, arg):
         oper.conv.events.extend(oper.cache[key])
 
     del oper.cache[key]
-
-
-def skip_operation(oper, arg):
-    if oper.profile[0] in arg["flow_type"]:
-        oper.skip = True
 
 
 def remove_post_test(oper, arg):

@@ -6,6 +6,8 @@ from otest.check import ERROR
 from otest.test_setup import setup_conv
 
 from oidctest.op.func import check_support
+from oidctest.op.func import claims_locales
+from oidctest.op.func import login_hint
 from oidctest.op.func import store_sector_redirect_uris
 from oidctest.op.func import sub_claims
 from oidctest.op.func import ui_locales
@@ -15,7 +17,6 @@ from oidctest.op.func import static_jwk
 from oidctest.op.func import set_discovery_issuer
 from oidctest.op.func import set_essential_arg_claim
 from oidctest.op.func import set_principal
-from oidctest.op.func import set_uri
 from oidctest.op.func import multiple_return_uris
 from oidctest.op.func import redirect_uris_with_query_component
 from oidctest.op.func import redirect_uri_with_query_component
@@ -321,19 +322,6 @@ def test_set_state():
     assert oper.op_args['state'] == oper.conv.state
 
 
-def test_set_uri():
-    _info = setup_conv()
-    oper = AsyncAuthn(_info['conv'], _info['io'], None)
-
-    oper.conv.entity.registration_info = {'redirect_uris': [
-        'https://example.org/authzcb']}
-
-    args = ['base', 'ball']
-    set_uri(oper, args)
-
-    assert oper.req_args['base'] == 'https://example.org/ball'
-
-
 def test_static_jwk():
     _info = setup_conv()
     oper = AsyncAuthn(_info['conv'], _info['io'], None)
@@ -402,3 +390,74 @@ def test_ui_locales():
     ui_locales(oper, args)
 
     assert oper.req_args["ui_locales"] == ['es']
+
+
+def test_set_response_where_code_args():
+    _info = setup_conv()
+    oper = AsyncAuthn(_info['conv'], _info['io'], None)
+
+    oper.req_args['response_type'] = ['id_token token']
+
+    args = {'response_type': ['id_token token'], 'where': 'fragment'}
+    set_response_where(oper, args)
+
+    assert oper.response_where == "fragment"
+
+
+def test_acr_value():
+    _info = setup_conv()
+    oper = AsyncAuthn(_info['conv'], _info['io'], None)
+    _acrs = ['pinfo']
+    oper.conv.entity.provider_info = {'acr_values_supported': _acrs}
+    essential_and_specific_acr_claim(oper, ['one'])
+
+    assert 'acr_values' not in oper.req_args
+    assert oper.req_args['claims']['id_token']['acr'] == {"value": _acrs[0],
+                                                          'essential': True}
+
+
+def test_claims_locales():
+    _info = setup_conv()
+    oper = AsyncAuthn(_info['conv'], _info['io'], None)
+
+    oper.conv.tool_config = {'claims_locales': ['ch']}
+    args = None
+    claims_locales(oper, args)
+
+    assert oper.req_args["claims_locales"] == ['ch']
+
+
+def test_login_hint_with_domain():
+    _info = setup_conv()
+    oper = AsyncAuthn(_info['conv'], _info['io'], None)
+
+    oper.conv.entity.provider_info = {'issuer': 'https://example.com'}
+    oper.conv.tool_config = {'login_hint': 'diana@example.org'}
+    args = None
+    login_hint(oper, args)
+
+    assert oper.req_args["login_hint"] == 'diana@example.org'
+
+
+def test_login_hint_with():
+    _info = setup_conv()
+    oper = AsyncAuthn(_info['conv'], _info['io'], None)
+
+    oper.conv.entity.provider_info = {'issuer': 'https://example.com'}
+    oper.conv.tool_config = {'login_hint': 'diana'}
+    args = None
+    login_hint(oper, args)
+
+    assert oper.req_args["login_hint"] == 'diana@example.com'
+
+
+def test_login_hint_without():
+    _info = setup_conv()
+    oper = AsyncAuthn(_info['conv'], _info['io'], None)
+
+    oper.conv.entity.provider_info = {'issuer': 'https://example.com'}
+    args = None
+    login_hint(oper, args)
+
+    assert oper.req_args["login_hint"] == 'buffy@example.com'
+
