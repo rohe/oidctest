@@ -82,7 +82,9 @@ def parse_resource(resource):
         if len(_x) >= 2:
             return _x[:2]  # only return the first two parts
         else:
-            raise ValueError('Need both op_id and test_id, got {}'.format(_x))
+            _txt = 'Need both op_id and test_id, got {}'.format(_x)
+            logger.error(_txt)
+            raise ValueError(_txt)
     else:
         return None
 

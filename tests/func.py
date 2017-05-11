@@ -1,4 +1,4 @@
-from oidctest.oper import include
+from oidctest.op.oper import include
 
 __author__ = 'roland'
 

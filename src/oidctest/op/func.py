@@ -39,9 +39,10 @@ def set_webfinger_resource(oper, args):
         oper.resource = oper.op_args["resource"]
     except KeyError:
         if oper.dynamic:
-            _base = oper.conv.get_tool_attribute("webfinger_url",
-                                                 "webfinger_email")
-            if _base is None:
+            try:
+                _base = oper.conv.get_tool_attribute("webfinger_url",
+                                                     "webfinger_email")
+            except KeyError:
                 raise SetUpError(
                     'If you want to do dynamic webfinger discovery you '
                     'must define "webfinger_url" or "webfinger_email" in '
