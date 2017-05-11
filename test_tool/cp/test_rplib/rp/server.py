@@ -94,8 +94,8 @@ if __name__ == '__main__':
     log_root = folder + '/log'
 
     cherrypy.tree.mount(Log(log_root), '/log')
-    cherrypy.tree.mount(ClearLog(log_root), '/clear')
-    cherrypy.tree.mount(Tar(log_root), '/mktar')
+    cherrypy.tree.mount(ClearLog(folder), '/clear')
+    cherrypy.tree.mount(Tar(folder), '/mktar')
 
     # OIDC Providers
     cherrypy.tree.mount(Provider(op_handler, _flows), '/', provider_config)

@@ -26,15 +26,13 @@ Main source directory:
 Dependencies are in the sub directories:
 ````
 fedoidc
-oidctest
 otest
-pyjwkest
-pyoidc
+oidctest
 ````
 
 ### Installation
 
-NB: not needed on RP machine itself anymore, see:  
+NB: not needed on OP/RP machine itself anymore, see:  
 [https://github.com/rohe/oidctest/blob/master/INSTALL.md](https://github.com/rohe/oidctest/blob/master/INSTALL.md)
 
 Install:
@@ -92,11 +90,7 @@ sudo oidc_setup.py /usr/local/src/oidctest oidf
 Restart RP test instance:
 ````
 cd /usr/local/oidf/oidc_cp_rplib
-ps -aef | grep python
-sudo kill 44661
-ps -aef | grep python
-./run.sh 
-ps -aef | grep python
+./restart.sh
 ````
 
 Restart OP test instance:
