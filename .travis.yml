@@ -20,6 +20,7 @@ addons:
       - google-chrome-beta
       - libnss3-tools
   hosts:
+    - rp_test
     - op_test
     - op
 
@@ -31,6 +32,10 @@ install:
   - git clone https://github.com/openid-certification/oidc-provider-conformance-tests.git
   - cd oidc-provider-conformance-tests
   - git checkout -b new-op origin/new-op
+  - npm install --production
+  - cd $TRAVIS_BUILD_DIR/..
+  - git clone https://github.com/openid-certification/openid-client-conformance-tests.git
+  - cd openid-client-conformance-tests
   - npm install --production
 
 before_script:  
@@ -60,20 +65,29 @@ before_script:
 
 script:
   - cd $TRAVIS_BUILD_DIR/../oidc-provider-conformance-tests
-  - npm run $RESPONSE_TYPE
+  - export ISSUER=https://op:4433
+  - npm run code
+  - npm run id_token
+  - npm run id_token+token
+  - npm run code+id_token
+  - npm run code+id_token+token
+  - npm run code+token
+  - cd $TRAVIS_BUILD_DIR/../openid-client-conformance-tests
+  - export ISSUER=https://rp_test:8080
+  - npm run non-profile
+  - npm run basic
+  - npm run config
+  - npm run dynamic
+  - npm run id_token-implicit 
+  - npm run id_token+token-implicit
+  - npm run code+id_token-hybrid
+  - npm run code+token-hybrid
+  - npm run code+id_token+token-hybrid
 
 env:
   global:
-    - ISSUER=https://op:4433
     - TEST_PORT=60003
     - TEST_HOSTNAME=op_test
     - TEST_PROTOCOL=https
     - TAG=default
     - NODE_TLS_REJECT_UNAUTHORIZED=0
-  matrix:
-    - RESPONSE_TYPE=code
-    - RESPONSE_TYPE=id_token
-    - RESPONSE_TYPE=id_token+token
-    - RESPONSE_TYPE=code+id_token
-    - RESPONSE_TYPE=code+id_token+token
-    - RESPONSE_TYPE=code+token
