@@ -24,3 +24,29 @@ You can then access [https://op_test:60000](https://op_test:60000) for OP testin
 
 Alternatively you can use [https://rp_test:8080](https://rp_test:8080) for RP testing in the same way as you'd use https://rp.certification.openid.net:8080
 i.e. by pointing your RP Client to the issuer `https://rp_test:8080/<rp_id>` using Dynamic Client Registration.
+
+Travis CI
+---------
+For integration into continuous integration builds of your OpenID Connect RP or OP software you can apply the same
+Docker scripts and e.g. use something like the following in  your Travis CI `.travis.yml`:
+````
+sudo: required
+  
+services:
+  - docker
+
+addons:
+  hosts:
+    - op_test
+    - rp_test
+    - op
+
+before_install:
+  - git clone https://github.com/openid-certification/oidctest.git
+  - cd oidctest
+  - docker-compose -f docker/docker-compose.yml up -d
+  - cd -
+
+script:
+  - <test commands that point your software to https://op_test:6000 or https://rp_test:8080/<rp_id>>
+````
