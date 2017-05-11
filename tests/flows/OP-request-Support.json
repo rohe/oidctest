@@ -1,0 +1,24 @@
+{
+  "group": "request Request Parameter",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    }
+  ],
+  "usage": {
+    "discover": true,
+    "extra": true
+  },
+  "desc": "Support request request parameter",
+  "assert": {
+    "check-request-parameter-supported-support": null,
+    "check-http-response": null
+  }
+}

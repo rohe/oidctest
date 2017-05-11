@@ -1,0 +1,83 @@
+{
+  "group": "claims Request Parameter",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null,
+        "check_support": {
+          "WARNING": {
+            "scopes_supported": [
+              "phone"
+            ]
+          }
+        },
+        "set_request_args": {
+          "scope": [
+            "openid",
+            "phone"
+          ],
+          "claims": {
+            "id_token": {
+              "email": {
+                "essential": true
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": [
+            "CIT",
+            "CI",
+            "C",
+            "CT"
+          ]
+        }
+      }
+    },
+    {
+      "UserInfo": {
+        "set_op_args": {
+          "method": "GET",
+          "authn_method": "bearer_header"
+        }
+      }
+    }
+  ],
+  "usage": {
+    "return_type": [
+      "C",
+      "IT",
+      "CI",
+      "CIT",
+      "CT"
+    ],
+    "extra": true
+  },
+  "desc": "Supports combining claims requested with scope and claims request parameter [Extra]",
+  "assert": {
+    "verify-claims": {
+      "id_token": {
+        "email": null
+      },
+      "userinfo": {
+        "phone": null
+      }
+    },
+    "check-http-response": null
+  }
+}

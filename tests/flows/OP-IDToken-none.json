@@ -1,0 +1,50 @@
+{
+  "group": "ID Token",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    {
+      "Registration": {
+        "set_request_args": {
+          "id_token_signed_response_alg": "none",
+          "check_support": {
+            "ERROR": {
+              "id_token_signing_alg_values_supported": null
+            }
+          }
+        }
+      }
+    },
+    {
+      "AsyncAuthn": {
+        "set_response_where": null
+      }
+    },
+    "AccessToken"
+  ],
+  "usage": {
+    "return_type": [
+      "C",
+      "CT"
+    ],
+    "none": true,
+    "register": true
+  },
+  "desc": "Unsecured ID Token signature with null [Basic]",
+  "assert": {
+    "unsigned-idtoken": null,
+    "verify-response": {
+      "response_cls": [
+        "AccessTokenResponse"
+      ]
+    }
+  }
+}

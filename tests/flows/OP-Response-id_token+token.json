@@ -1,0 +1,30 @@
+{
+  "group": "Response Type & Response Mode",
+  "usage": {
+    "return_type": [
+      "IT"
+    ]
+  },
+  "desc": "Request with response_type=id_token token",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null
+      }
+    }
+  ],
+  "assert": {
+    "verify-authn-response": null
+  }
+}
