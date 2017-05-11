@@ -562,9 +562,8 @@ class IO(object):
 
 class Application(object):
     def __init__(self, base_url, lookup, ent_path, ent_info, flowdir,
-                 test_script,
-                 path2port=None, mako_dir='', port_min=60000, port_max=61000,
-                 test_tool_conf=''):
+                 test_script, path2port=None, mako_dir='', port_min=60000,
+                 port_max=61000, test_tool_conf=''):
         self.baseurl = base_url
         self.lookup = lookup
         self.ent_path = ent_path
