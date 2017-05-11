@@ -1693,7 +1693,7 @@ Flows:
     desc: Reject requests without nonce unless using the code flow [Implicit, Hybrid]
     mti:
       all: MUST
-    profile: I,IT,CI,CIT...
+    profile: I,IT,CI,CT,CIT...
     sequence:
       - Webfinger:
           set_webfinger_resource: none
