@@ -1,0 +1,7 @@
+docker/docker-compose.yml
+docker/op_test/Dockerfile
+docker/op/Dockerfile
+.travis.yml
+.project
+.gitignore
+.pydevproject

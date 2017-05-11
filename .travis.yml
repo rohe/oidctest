@@ -1,0 +1,79 @@
+sudo: required
+
+language: node_js
+
+node_js:
+  - "7"
+  
+services:
+  - docker
+
+# docker build -t openid-certification/oidctest -f docker/op_test/Dockerfile .
+# docker run -p 60000-60010:60000-60010 openid-certification/oidctest 
+
+# docker build -t openid-certification/op -f docker/op/Dockerfile .
+# docker run -p 4433:4433 openid-certification/op
+
+addons:
+  apt:
+    packages:
+      - google-chrome-beta
+      - libnss3-tools
+  hosts:
+    - op_test
+    - op
+
+before_install:
+  - docker-compose -f docker/docker-compose.yml up -d
+
+install:
+  - cd $TRAVIS_BUILD_DIR/..
+  - git clone https://github.com/openid-certification/oidc-provider-conformance-tests.git
+  - cd oidc-provider-conformance-tests
+  - git checkout -b new-op origin/new-op
+  - npm install --production
+
+before_script:  
+  # wait for docker containers to start up
+  - while ! curl -k https://op:4433 >/dev/null; do sleep 1; done
+ 
+  # make the SSL certs of the OP test tool and instance trusted for headless Chrome
+  - mkdir -p $HOME/.pki/nssdb
+  - certutil -d sql:$HOME/.pki/nssdb -N --empty-password
+  - certutil -d sql:$HOME/.pki/nssdb -A -t TC -n op -i $TRAVIS_BUILD_DIR/docker/op/cert.pem
+  - certutil -d sql:$HOME/.pki/nssdb -A -t TC -n op_test -i $TRAVIS_BUILD_DIR/docker/op_test/cert.pem
+ 
+  # start a fresh new Chrome instance
+  - google-chrome-beta
+        --user-data-dir=$(mktemp -d)
+        --no-sandbox
+        --no-first-run
+        --headless
+        --disable-extensions
+        --disable-gpu
+        --remote-debugging-port=9222
+        --ignore-certificate-errors
+        about:blank &  
+
+  # wait for Chrome to start up
+  - while ! curl http://localhost:9222 >/dev/null; do sleep 1; done
+
+script:
+  - cd $TRAVIS_BUILD_DIR/../oidc-provider-conformance-tests
+  - npm run $RESPONSE_TYPE
+
+env:
+  global:
+    - ISSUER=https://op:4433
+    - TEST_PORT=60003
+    - TEST_HOSTNAME=op_test
+    - TEST_PROTOCOL=https
+    - TAG=default
+    - NODE_TLS_REJECT_UNAUTHORIZED=0
+  matrix:
+    - RESPONSE_TYPE=code
+    - RESPONSE_TYPE=id_token
+    - RESPONSE_TYPE=id_token+token
+    - RESPONSE_TYPE=code+id_token
+    - RESPONSE_TYPE=code+id_token+token
+    - RESPONSE_TYPE=code+token
