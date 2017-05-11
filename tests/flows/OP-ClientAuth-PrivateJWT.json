@@ -1,0 +1,58 @@
+{
+  "group": "Client Authentication",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    {
+      "Registration": {
+        "set_request_args": {
+          "token_endpoint_auth_method": "private_key_jwt"
+        }
+      }
+    },
+    {
+      "AsyncAuthn": {
+        "set_response_where": null
+      }
+    },
+    {
+      "AccessToken": {
+        "check_support": {
+          "WARNING": {
+            "token_endpoint_auth_methods_supported": "private_key_jwt"
+          }
+        },
+        "set_op_args": {
+          "authn_method": "private_key_jwt"
+        }
+      }
+    }
+  ],
+  "usage": {
+    "sig": true,
+    "return_type": [
+      "C",
+      "CI",
+      "CT",
+      "CIT"
+    ],
+    "extra": true
+  },
+  "desc": "Access token request with private_key_jwt authentication",
+  "assert": {
+    "verify-response": {
+      "response_cls": [
+        "AuthorizationResponse",
+        "AccessTokenResponse"
+      ]
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "group": "display Request Parameter",
+  "usage": {},
+  "desc": "Request with display=page",
+  "sequence": [
+    "Note",
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_request_args": {
+          "display": "page"
+        },
+        "check_support": {
+          "WARNING": {
+            "display_values_supported": "page"
+          }
+        }
+      }
+    }
+  ],
+  "note": "To make sure you get a login page, please remove any cookies you may have received from the OpenID Provider before proceeding. You should get a normal user agent login page view.",
+  "assert": {
+    "verify-response": {
+      "response_cls": [
+        "AuthorizationResponse"
+      ]
+    }
+  }
+}

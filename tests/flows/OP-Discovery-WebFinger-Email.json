@@ -1,0 +1,17 @@
+{
+  "group": "Discovery",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_principal": {
+          "param": "webfinger_email"
+        }
+      }
+    }
+  ],
+  "usage": {
+    "extra": true,
+    "webfinger": true
+  },
+  "desc": "Can discover identifiers using e-mail syntax"
+}

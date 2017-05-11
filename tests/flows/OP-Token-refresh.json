@@ -1,0 +1,72 @@
+{
+  "group": "Access Token",
+  "usage": {
+    "return_type": [
+      "C",
+      "CI",
+      "CT",
+      "CIT"
+    ]
+  },
+  "desc": "To refresh an Access Token",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    {
+      "Registration": {
+        "set_request_args": {
+          "grant_types": [
+            "authorization_code",
+            "implicit",
+            "refresh_token"
+          ]
+        }
+      }
+    },
+    {
+      "AsyncAuthn": {
+        "check_support": {
+          "ERROR": {
+            "grant_types_supported": [
+              "refresh_token"
+            ]
+          }
+        },
+        "set_response_where": null,
+        "set_request_args": {
+          "scope": [
+            "openid",
+            "offline_access"
+          ],
+          "prompt": "consent"
+        }
+      }
+    },
+    "AccessToken",
+    "RefreshToken",
+    {
+      "UserInfo": {
+        "set_op_args": {
+          "method": "GET",
+          "authn_method": "bearer_header"
+        }
+      }
+    }
+  ],
+  "assert": {
+    "verify-response": {
+      "response_cls": [
+        "OpenIDSchema"
+      ],
+      "status": 2
+    }
+  }
+}
