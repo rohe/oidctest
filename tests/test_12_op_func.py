@@ -131,10 +131,10 @@ def test_essential_and_specific_acr_claim_tc():
     _info = setup_conv()
     oper = AsyncAuthn(_info['conv'], _info['io'], None)
     _acrs = ['passwd']
-    _info['conv'].tool_config['acr_values'] = _acrs
+    _info['conv'].tool_config['acr_value'] = _acrs
     essential_and_specific_acr_claim(oper, ['one'])
 
-    assert oper.req_args['acr_values'] == _acrs
+    assert 'acr_values' not in oper.req_args
     assert oper.req_args['claims']['id_token']['acr'] == {"value": _acrs[0],
                                                           'essential': True}
 
@@ -183,6 +183,7 @@ def test_multiple_return_uris():
 
     oper.conv.entity.registration_info = {'redirect_uris': [
         'https://example.org/authzcb']}
+    oper.conv.entity.base_url = 'https://example.org'
     _ruris = len(oper.conv.entity.registration_info['redirect_uris'])
     args = None
     multiple_return_uris(oper, args)

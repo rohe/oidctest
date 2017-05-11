@@ -29,14 +29,7 @@ def set_webfinger_resource(oper, args):
                     test_id=oper.conv.test_id, host=_p.netloc,
                     oper_id=oper.conv.operator_id)
             else:
-                _base = oper.conv.get_tool_attribute("webfinger_url",
-                                                     "webfinger_email")
-                if _base is None:
-                    raise AttributeError(
-                        'If you want to do dynamic webfinger discovery you '
-                        'must define "webfinger_url" or "webfinger_email" in '
-                        'the "tool" configuration')
-
+                _base = oper.sh.tool_conf['issuer']
                 if oper.conv.operator_id is None:
                     oper.resource = _base
                 else:
@@ -70,6 +63,19 @@ def set_op(oper, args):
 def set_request_base(oper, args):
     oper.op_args['base_path'] = '{}{}/'.format(oper.conv.entity.base_url, args)
     oper.op_args['local_dir'] = args
+
+
+def set_discovery_issuer(oper, args):
+    """
+    Context: Authorization Query
+    Action: Pick up issuer ID either from static configuration or dynamic
+    discovery.
+
+    :param oper: An AsyncAuthn instance
+    :param args: None
+    """
+    if oper.dynamic:
+        oper.op_args["issuer"] = get_issuer(oper.conv)
 
 
 def factory(name):

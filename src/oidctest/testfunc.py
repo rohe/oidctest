@@ -86,6 +86,6 @@ def factory(name):
             if fname == name:
                 return obj
 
-    from otest.func import factory as _factory
+    from otest.func import factory as ofactory
 
-    return _factory(name)
+    return ofactory(name)

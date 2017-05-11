@@ -4,19 +4,20 @@ from jwkest import BadSignature
 from oic.exception import IssuerMismatch
 from oic.exception import PyoidcError
 
-from oidctest.oper import AccessToken
-from oidctest.oper import Discovery
-from oidctest.oper import Registration
-from oidctest.oper import SubjectMismatch
-from oidctest.oper import SyncAuthn
-from oidctest.oper import UpdateProviderKeys
-from oidctest.oper import UserInfo
-from oidctest.oper import Webfinger
+from otest.func import set_op_args
+from otest.func import set_request_args
+
+from oidctest.op.oper import AccessToken
+from oidctest.op.oper import Discovery
+from oidctest.op.oper import Registration
+from oidctest.op.oper import SubjectMismatch
+from oidctest.op.oper import SyncAuthn
+from oidctest.op.oper import UpdateProviderKeys
+from oidctest.op.oper import UserInfo
+from oidctest.op.oper import Webfinger
 from oidctest.testfunc import expect_exception
 from oidctest.testfunc import resource
 from oidctest.testfunc import set_jwks_uri
-from oidctest.testfunc import set_op_args
-from oidctest.testfunc import set_request_args
 
 __author__ = 'roland'
 

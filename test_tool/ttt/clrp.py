@@ -14,15 +14,13 @@ from oic.utils.keyio import build_keyjar
 from otest.aus.client import Factory
 from otest.common import setup_logger
 from otest.flow import FlowState
-from otest.flow import RPFlow
 from otest.flow import match_usage
-from otest.io import ClIO
-from otest.prof_util import prof2usage
+from otest.handling import ClIh
+from otest.prof_util import from_profile
 from otest.result import SIGN
-from otest.result import Result
 
 from oidctest.op import check
-from oidctest.op import func
+from oidctest.rp import func
 from oidctest.prof_util import SimpleProfileHandler
 from oidctest.session import SessionHandler
 from oidctest.tool import ClTester
@@ -64,13 +62,16 @@ def run_return_types(test_id, oper_id, kwargs, return_types):
 
         # res = Result(sh, SimpleProfileHandler)
 
-        io = ClIO(**kwargs)
+        io = ClIh(session=sh, **kwargs)
         io.session = sh
 
         tester = ClTester(io, sh, **kwargs)
 
         if single:
             _res = tester.run(test_id, **kwargs)
+            if _res is None:
+                return False
+
             try:
                 print('{} [{}] {}'.format(SIGN[_res], rtyp, test_id))
             except Exception as err:
@@ -165,10 +166,11 @@ if __name__ == '__main__':
             # profile is of the form A.B.C.D.E
             # The first item represents the return_type
             rtypes = []
-            _use = prof2usage(cargs.profile)
+            _use = from_profile(cargs.profile)
             _use['return_type'] = _use['return_type'][0]
             if match_usage(FLOWS[cargs.test_id], **_use):
                 rtypes.append(_use['return_type'])
+            kwargs['tool_conf']['profile'] = cargs.profile
 
         if len(rtypes) == 1:
             run_return_types(cargs.test_id, cargs.id, kwargs, rtypes)

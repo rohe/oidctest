@@ -53,6 +53,10 @@ def create_rp_tar_archive(wd, bid, backup=False):
     if not os.path.isdir(_dir):
         os.makedirs(_dir)
 
+    _log = os.path.join(wd, 'log')
+    if not os.path.isdir(_log):
+        raise cherrypy.HTTPError(400, b'No such directory')
+
     # Must open the tar file in the tar/backup directory
     os.chdir(_dir)
     tar = tarfile.open(tname, "w")
@@ -292,6 +296,9 @@ class OPTar(object):
         tar = tarfile.open(tname, "w")
 
         _src_dir = os.path.join(self.root, 'log', op_id, tag, profile)
+        if not os.path.isdir(_src_dir):
+            raise cherrypy.HTTPError(400, b'No such directory')
+
         for item in os.listdir(_src_dir):
             if item.startswith("."):
                 continue

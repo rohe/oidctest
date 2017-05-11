@@ -96,8 +96,12 @@ class ProfileHandler(prof_util.ProfileHandler):
         :param with_webfinger:
         :return:
         """
-        return repr_profile( self.session["profile"].split("."),
-                             representation, with_webfinger)
+        try:
+            _prof = self.session["profile"].split(".")
+        except KeyError:
+            _prof = self.session.profile.split(".")
+
+        return repr_profile(_prof, representation, with_webfinger)
 
 
 
