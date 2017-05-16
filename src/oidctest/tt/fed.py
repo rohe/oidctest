@@ -112,3 +112,19 @@ def named_kc(config, iss):
         if 'key' in kd:
             kd['key'] = iss
     return _kc
+
+
+class MDSUrl(object):
+    def __init__(self, mds):
+        self.mds = mds
+
+    @cherrypy.expose
+    def index(self, key=''):
+        cherrypy.response.headers['Content-Type'] = 'application/jwt'
+        if key:
+            try:
+                return as_bytes(self.mds[key])
+            except KeyError:
+                raise cherrypy.HTTPError(404, 'Could not find {}'.format(key))
+        else:
+            raise cherrypy.HTTPError(400, 'Bad Request')

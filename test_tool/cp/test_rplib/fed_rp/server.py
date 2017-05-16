@@ -19,12 +19,11 @@ from oidctest.cp.log_handler import ClearLog
 from oidctest.cp.log_handler import Log
 from oidctest.cp.log_handler import Tar
 from oidctest.cp.setup import cb_setup
-from oidctest.cp.test_list import TestList
 from oidctest.fed.op import Provider
 from oidctest.fed.op import WebFinger
 from oidctest.fed.op_handler import FedOPHandler
 from oidctest.fed.setup import create_signers
-from oidctest.tt.fed import FoKeys
+from oidctest.tt.fed import FoKeys, MDSUrl
 from oidctest.tt.fed import Sign
 from oidctest.tt.fed import Verify
 from oidctest.tt.fed import Who
@@ -51,7 +50,7 @@ if __name__ == '__main__':
     parser.add_argument('-P', dest='path')
     parser.add_argument('-t', dest='tls', action='store_true')
     # federation extras
-    #parser.add_argument('-i', dest='iss', required=True)
+    # parser.add_argument('-i', dest='iss', required=True)
     parser.add_argument('-F', dest='fed_conf')
     parser.add_argument(dest="config")
     args = parser.parse_args()
@@ -68,7 +67,7 @@ if __name__ == '__main__':
     signers = create_signers(keybundle, 'ms_dir', fed_conf.SMS_DEF,
                              fed_conf.FO.values())
 
-    #signer, keybundle = test_utils.setup(fed_conf.KEY_DEFS, fed_conf.TOOL_ISS,
+    # signer, keybundle = test_utils.setup(fed_conf.KEY_DEFS, fed_conf.TOOL_ISS,
     #                                     liss, fed_conf.SMS_DEF, fed_conf.OA,
     #                                     'ms_dir')
 
@@ -123,6 +122,7 @@ if __name__ == '__main__':
     cherrypy.tree.mount(Log(log_root), '/log')
     cherrypy.tree.mount(ClearLog(log_root), '/clear')
     cherrypy.tree.mount(Tar(log_root), '/mktar')
+    cherrypy.tree.mount(MDSUrl(folder + '/mds_uri'), '/mdsurl')
 
     _main_page = open('pre.html', 'r').read().replace('{base_url}',
                                                       _op_arg['baseurl'])
