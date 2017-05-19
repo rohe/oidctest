@@ -18,6 +18,9 @@
       "code id_token",
       "code token",
       "code id_token token"
+    ],
+    "id_token_signing_alg_values_supported": [
+      "RS256"
     ]
   },
   "short_description": "Rejects ID Token without 'kid' claim in JOSE header if multiple JWKs supplied in 'jwks_uri'",
