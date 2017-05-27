@@ -48,7 +48,8 @@ if __name__ == '__main__':
     folder = os.path.abspath(os.curdir)
     _flowsdir = os.path.normpath(os.path.join(folder, args.flowsdir))
     _flows = Flow(_flowsdir, profile_handler=SimpleProfileHandler)
-    op_handler = OPHandler(provider.Provider, _op_arg, _com_args, _flows)
+    op_handler = OPHandler(provider.Provider, _op_arg, _com_args, _flows,
+                           folder)
 
     cherrypy.tools.dumplog = cherrypy.Tool('before_finalize', dump_log)
 

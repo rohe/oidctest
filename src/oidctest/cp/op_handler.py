@@ -1,5 +1,6 @@
 import copy
 import json
+import os
 
 from oic import rndstr
 from oic.utils.keyio import KeyJar
@@ -10,9 +11,9 @@ from otest.conversation import Conversation
 from oidctest import UnknownTestID
 
 
-def write_jwks_uri(op, op_arg):
+def write_jwks_uri(op, op_arg, folder):
     _name = "jwks_{}.json".format(rndstr())
-    filename = "./static/{}".format(_name)
+    filename = os.path.join(folder,'static',_name)
     with open(filename, "w") as f:
         f.write(json.dumps(op_arg["jwks"]))
     f.close()
@@ -35,11 +36,12 @@ def init_keyjar(op, kj, com_args):
 
 
 class OPHandler(object):
-    def __init__(self, provider_cls, op_args, com_args, test_conf):
+    def __init__(self, provider_cls, op_args, com_args, test_conf, folder):
         self.provider_cls = provider_cls
         self.op_args = op_args
         self.com_args = com_args
         self.test_conf = test_conf  # elsewhere called flows
+        self.folder = folder
         self.op = {}
 
     def get(self, oper_id, test_id, events, endpoint):
@@ -58,10 +60,10 @@ class OPHandler(object):
                         'baseurl': self.op_args['baseurl'],
                         'jwks': self.op_args['marg']['jwks']
                     }
-                    write_jwks_uri(_op, _op_args)
+                    write_jwks_uri(_op, _op_args, self.folder)
                 else:
                     init_keyjar(_op, self.op_args['keyjar'], self.com_args)
-                    write_jwks_uri(_op, self.op_args)
+                    write_jwks_uri(_op, self.op_args, self.folder)
         except KeyError:
             if test_id in ['rp-id_token-kid-absent-multiple-jwks']:
                 _op_args = {}
@@ -96,7 +98,7 @@ class OPHandler(object):
             else:
                 setattr(op, key, val)
 
-        write_jwks_uri(op, op_arg)
+        write_jwks_uri(op, op_arg, self.folder)
 
         if op.baseurl.endswith("/"):
             div = ""
