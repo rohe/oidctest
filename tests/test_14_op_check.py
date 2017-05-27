@@ -1,7 +1,7 @@
-from oic.oic import AccessTokenResponse
+from oic.oic import AccessTokenResponse, AuthorizationRequest
 from oic.oic import OpenIDSchema
-from otest.aus.check import VerifyAuthnOrErrorResponse, CheckHTTPResponse, \
-    VerifyAuthnResponse, VerifyErrorMessage, VerifyResponse
+from oic.utils.keyio import build_keyjar, KeyBundle
+from oic.utils.time_util import utc_time_sans_frac
 
 from oidctest.op.check import VerifyClaims
 from oidctest.op.check import CheckHasClaimsSupported
@@ -34,11 +34,68 @@ from oidctest.op.check import BareKeys
 from oidctest.op.check import AuthTimeCheck
 from oidctest.op.check import CheckAsymSignedUserInfo
 
-from otest.check import ERROR
+from otest.check import ERROR, WARNING
 from otest.check import OK
-from otest.events import EV_PROTOCOL_RESPONSE
+from otest.events import EV_PROTOCOL_RESPONSE, EV_RESPONSE, EV_PROTOCOL_REQUEST
 from otest.events import EV_REDIRECT_URL
 from otest.test_setup import setup_conv
+
+KEYDEFS = [
+    {"type": "RSA", "key": '', "use": ["sig"]},
+    {"type": "EC", "crv": "P-256", "use": ["sig"]}
+]
+
+KEYJAR = build_keyjar(KEYDEFS)[1]
+kb = KeyBundle([{"kty": "oct", "key": "supersecret", "use": "sig"}])
+KEYJAR.add_kb('', kb)
+
+atr = {
+    "access_token":
+        "ZDZjNWFmNzgtN2IxMi00YTY1LTk2NTEtODIyZjg5YmRlZThm0iWAl1",
+    "expires_in": 7200,
+    "id_token": {
+        "at_hash": "fZlM5SoE8mdM80zBWSOzDQ",
+        "aud": [
+            "cb19ff50-6423-4955-92a2-73bea88796b4"
+        ],
+        "email": "johndoe@example.com",
+        "exp": 1493066674,
+        "iat": 1493059474,
+        "iss": "https://guarded-cliffs-8635.herokuapp.com",
+        "nonce": "WZ3PuYEnGxcM6ddf",
+        "phone_number": "+49 000 000000",
+        "phone_number_verified": False,
+        "sid": "be99eccf-965f-4ba4-b0e4-39b0c26868e1",
+        "sub": "9842f9ae-eb3c-4eba-8e4c-979ecae15fa1",
+        'auth_time': utc_time_sans_frac()
+    },
+    "token_type": "Bearer"
+}
+ACCESS_TOKEN_RESPONSE_1 = AccessTokenResponse(**atr)
+
+atr['id_token']['auth_time'] = utc_time_sans_frac() - 3600
+
+ACCESS_TOKEN_RESPONSE_OLD = AccessTokenResponse(**atr)
+
+atr = {
+    "access_token":
+        "ZDZjNWFmNzgtN2IxMi00YTY1LTk2NTEtODIyZjg5Ym",
+    "expires_in": 7200,
+    "id_token": {
+        "at_hash": "fZlM5SoE8mdM80zBWSOzDQ",
+        "aud": [
+            "cb19ff50-6423-4955-92a2-73bea88796b4"
+        ],
+        "exp": 1493066674,
+        "iat": 1493059474,
+        "iss": "https://guarded-cliffs-8635.herokuapp.com",
+        "nonce": "WZ3PuYEnGxcM6ddf",
+        "sid": "be99eccf-965f-4ba4-b0e4-39b0c26868e1",
+        "sub": "9842f9ae-eb3c-4eba-8e4c-979ecae15fa1"
+    },
+    "token_type": "Bearer"
+}
+ACCESS_TOKEN_RESPONSE_2 = AccessTokenResponse(**atr)
 
 
 def test_verify_claims_1():
@@ -58,28 +115,7 @@ def test_verify_claims_1():
            "-92a2-73bea88796b4"
     conv.events.store(EV_REDIRECT_URL, _url)
 
-    atr = {
-        "access_token":
-            "ZDZjNWFmNzgtN2IxMi00YTY1LTk2NTEtODIyZjg5YmRlZThm0iWAl1VJQBnLcBFYdzkwuyh9TGyf9QDx86DZUn6ho3Pbtr5VPxMihwXpO1AAfxas5XSNNdhFAf3bqATAh2BkuQ",
-        "expires_in": 7200,
-        "id_token": {
-            "at_hash": "fZlM5SoE8mdM80zBWSOzDQ",
-            "aud": [
-                "cb19ff50-6423-4955-92a2-73bea88796b4"
-            ],
-            "email": "johndoe@example.com",
-            "exp": 1493066674,
-            "iat": 1493059474,
-            "iss": "https://guarded-cliffs-8635.herokuapp.com",
-            "nonce": "WZ3PuYEnGxcM6ddf",
-            "phone_number": "+49 000 000000",
-            "phone_number_verified": False,
-            "sid": "be99eccf-965f-4ba4-b0e4-39b0c26868e1",
-            "sub": "9842f9ae-eb3c-4eba-8e4c-979ecae15fa1"
-        },
-        "token_type": "Bearer"
-    }
-    conv.events.store(EV_PROTOCOL_RESPONSE, AccessTokenResponse(**atr))
+    conv.events.store(EV_PROTOCOL_RESPONSE, ACCESS_TOKEN_RESPONSE_1)
 
     user_info = {
         "phone_number": "+49 000 000000",
@@ -112,25 +148,7 @@ def test_verify_claims_2():
            "-92a2-73bea88796b4"
     conv.events.store(EV_REDIRECT_URL, _url)
 
-    atr = {
-        "access_token":
-            "ZDZjNWFmNzgtN2IxMi00YTY1LTk2NTEtODIyZjg5YmRlZThm0iWAl1VJQBnLcBFYdzkwuyh9TGyf9QDx86DZUn6ho3Pbtr5VPxMihwXpO1AAfxas5XSNNdhFAf3bqATAh2BkuQ",
-        "expires_in": 7200,
-        "id_token": {
-            "at_hash": "fZlM5SoE8mdM80zBWSOzDQ",
-            "aud": [
-                "cb19ff50-6423-4955-92a2-73bea88796b4"
-            ],
-            "exp": 1493066674,
-            "iat": 1493059474,
-            "iss": "https://guarded-cliffs-8635.herokuapp.com",
-            "nonce": "WZ3PuYEnGxcM6ddf",
-            "sid": "be99eccf-965f-4ba4-b0e4-39b0c26868e1",
-            "sub": "9842f9ae-eb3c-4eba-8e4c-979ecae15fa1"
-        },
-        "token_type": "Bearer"
-    }
-    conv.events.store(EV_PROTOCOL_RESPONSE, AccessTokenResponse(**atr))
+    conv.events.store(EV_PROTOCOL_RESPONSE, ACCESS_TOKEN_RESPONSE_2)
 
     user_info = {
         "phone_number": "+49 000 000000",
@@ -167,28 +185,7 @@ def test_verify_claims_3():
            "-92a2-73bea88796b4"
     conv.events.store(EV_REDIRECT_URL, _url)
 
-    atr = {
-        "access_token":
-            "ZDZjNWFmNzgtN2IxMi00YTY1LTk2NTEtODIyZjg5YmRlZThm0iWAl1VJQBnLcBFYdzkwuyh9TGyf9QDx86DZUn6ho3Pbtr5VPxMihwXpO1AAfxas5XSNNdhFAf3bqATAh2BkuQ",
-        "expires_in": 7200,
-        "id_token": {
-            "at_hash": "fZlM5SoE8mdM80zBWSOzDQ",
-            "aud": [
-                "cb19ff50-6423-4955-92a2-73bea88796b4"
-            ],
-            "email": "johndoe@example.com",
-            "exp": 1493066674,
-            "iat": 1493059474,
-            "iss": "https://guarded-cliffs-8635.herokuapp.com",
-            "nonce": "WZ3PuYEnGxcM6ddf",
-            "phone_number": "+49 000 000000",
-            "phone_number_verified": False,
-            "sid": "be99eccf-965f-4ba4-b0e4-39b0c26868e1",
-            "sub": "9842f9ae-eb3c-4eba-8e4c-979ecae15fa1"
-        },
-        "token_type": "Bearer"
-    }
-    conv.events.store(EV_PROTOCOL_RESPONSE, AccessTokenResponse(**atr))
+    conv.events.store(EV_PROTOCOL_RESPONSE, ACCESS_TOKEN_RESPONSE_1)
 
     user_info = {
         "sub": "9842f9ae-eb3c-4eba-8e4c-979ecae15fa1"
@@ -222,27 +219,7 @@ def test_verify_claims_4():
            "-92a2-73bea88796b4"
     conv.events.store(EV_REDIRECT_URL, _url)
 
-    atr = {
-        "access_token":
-            "ZDZjNWFmNzgtN2IxMi00YTY1LTk2NTEtODIyZjg5YmRlZThm0iWAl1VJQBnLcBFYdzkwuyh9TGyf9QDx86DZUn6ho3Pbtr5VPxMihwXpO1AAfxas5XSNNdhFAf3bqATAh2BkuQ",
-        "expires_in": 7200,
-        "id_token": {
-            "at_hash": "fZlM5SoE8mdM80zBWSOzDQ",
-            "aud": [
-                "cb19ff50-6423-4955-92a2-73bea88796b4"
-            ],
-            "exp": 1493066674,
-            "iat": 1493059474,
-            "iss": "https://guarded-cliffs-8635.herokuapp.com",
-            "nonce": "WZ3PuYEnGxcM6ddf",
-            "phone_number": "+49 000 000000",
-            "phone_number_verified": False,
-            "sid": "be99eccf-965f-4ba4-b0e4-39b0c26868e1",
-            "sub": "9842f9ae-eb3c-4eba-8e4c-979ecae15fa1"
-        },
-        "token_type": "Bearer"
-    }
-    conv.events.store(EV_PROTOCOL_RESPONSE, AccessTokenResponse(**atr))
+    conv.events.store(EV_PROTOCOL_RESPONSE, ACCESS_TOKEN_RESPONSE_1)
 
     user_info = {
         "sub": "9842f9ae-eb3c-4eba-8e4c-979ecae15fa1"
@@ -359,45 +336,95 @@ def test_verify_https_usage_false():
     assert v._status == ERROR
 
 
-# def test_asym_signed_userinfo():
-#     """
-#     arg={'alg': 'RS256'}
-#     """
-#     _info = setup_conv()
-#     conv = _info['conv']
-#     chk = CheckAsymSignedUserInfo()
-#     kwargs = {}
-#     chk._kwargs = kwargs
-#     res = chk._func(conv)
-#     assert True
-#
-#
-# def test_auth_time_check():
-#     """
-#     arg={'max_age': 10000, 'skew': 600}
-#     """
-#     _info = setup_conv()
-#     conv = _info['conv']
-#     chk = AuthTimeCheck()
-#     kwargs = {}
-#     chk._kwargs = kwargs
-#     res = chk._func(conv)
-#     assert True
-#
-#
-# def test_authn_response_or_error():
-#     """
-#     arg={'error': ['request_uri_not_supported']}
-#     """
-#     _info = setup_conv()
-#     conv = _info['conv']
-#     chk = VerifyAuthnOrErrorResponse()
-#     kwargs = {}
-#     chk._kwargs = kwargs
-#     res = chk._func(conv)
-#     assert True
-#
-#
+def test_asym_signed_userinfo():
+    """
+    arg={'alg': 'RS256'}
+    """
+    _info = setup_conv()
+    conv = _info['conv']
+    user_info = {
+        "sub": "9842f9ae-eb3c-4eba-8e4c-979ecae15fa1"
+    }
+    ui = OpenIDSchema(**user_info)
+    jwt_key = KEYJAR.get_signing_key()
+    jws = ui.to_jwt(key=jwt_key, algorithm="RS256")
+    conv.events.store(EV_RESPONSE, jws)
+    out = OpenIDSchema().from_jwt(jws, keyjar=KEYJAR)
+    conv.events.store(EV_PROTOCOL_RESPONSE, out)
+
+    chk = CheckAsymSignedUserInfo()
+    kwargs = {}
+    chk._kwargs = kwargs
+    res = chk._func(conv)
+    assert res == {}
+    assert chk._status == OK
+
+
+def test_asym_signed_userinfo_sym():
+    """
+    arg={'alg': 'RS256'}
+    """
+    _info = setup_conv()
+    conv = _info['conv']
+    user_info = {"sub": "9842f9ae-eb3c-4eba-8e4c-979ecae15fa1"}
+    ui = OpenIDSchema(**user_info)
+    jwt_key = KEYJAR.get_signing_key()
+    jws = ui.to_jwt(key=jwt_key, algorithm="HS256")
+    conv.events.store(EV_RESPONSE, jws)
+    out = OpenIDSchema().from_jwt(jws, keyjar=KEYJAR)
+    conv.events.store(EV_PROTOCOL_RESPONSE, out)
+
+    chk = CheckAsymSignedUserInfo()
+    kwargs = {}
+    chk._kwargs = kwargs
+    _ = chk._func(conv)
+    assert chk._status == ERROR
+
+
+def test_auth_time_check():
+    """
+    arg={'max_age': 10000, 'skew': 600}
+    """
+    _info = setup_conv()
+    conv = _info['conv']
+
+    # Need an AuthorizationRequest and a response with an IdToken
+    ar = {
+        'scope': 'openid',
+        'redirect_uri': 'https://example.com/cb'
+    }
+    conv.events.store(EV_PROTOCOL_REQUEST, AuthorizationRequest(**ar))
+    conv.events.store(EV_PROTOCOL_RESPONSE, ACCESS_TOKEN_RESPONSE_1)
+
+    chk = AuthTimeCheck()
+    kwargs = {'max_age': 10000, 'skew': 600}
+    chk._kwargs = kwargs
+    _ = chk._func(conv)
+    assert chk._status == OK
+
+
+def test_auth_time_check_to_old():
+    """
+    arg={'max_age': 10000, 'skew': 600}
+    """
+    _info = setup_conv()
+    conv = _info['conv']
+
+    # Need an AuthorizationRequest and a response with an IdToken
+    ar = {
+        'scope': 'openid',
+        'redirect_uri': 'https://example.com/cb'
+    }
+    conv.events.store(EV_PROTOCOL_REQUEST, AuthorizationRequest(**ar))
+    conv.events.store(EV_PROTOCOL_RESPONSE, ACCESS_TOKEN_RESPONSE_OLD)
+
+    chk = AuthTimeCheck()
+    kwargs = {'max_age': 300, 'skew': 600}
+    chk._kwargs = kwargs
+    _ = chk._func(conv)
+    assert chk._status == WARNING
+
+
 # def test_bare_keys():
 #     """
 #     arg=None
@@ -408,7 +435,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_check_http_response():
@@ -421,7 +448,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_check_idtoken_nonce():
@@ -434,7 +461,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_check_query_part():
@@ -447,7 +474,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_check_request_parameter_supported_support():
@@ -460,7 +487,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_check_request_uri_parameter_supported_support():
@@ -473,7 +500,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_claims_check():
@@ -486,7 +513,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_different_sub():
@@ -499,7 +526,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_encrypted_userinfo():
@@ -512,7 +539,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_is_idtoken_signed():
@@ -525,7 +552,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_multiple_sign_on():
@@ -539,7 +566,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_new_encryption_keys():
@@ -552,7 +579,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_new_signing_keys():
@@ -565,7 +592,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_providerinfo_has_jwks_uri():
@@ -578,7 +605,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_same_authn():
@@ -591,7 +618,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_signed_encrypted_idtoken():
@@ -604,7 +631,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_unsigned_idtoken():
@@ -617,7 +644,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_used_acr_value():
@@ -630,7 +657,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_verify_authn_response():
@@ -643,7 +670,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_verify_base64url():
@@ -656,7 +683,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_verify_claims():
@@ -672,7 +699,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_verify_error_response():
@@ -686,7 +713,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_verify_idtoken_is_signed():
@@ -699,7 +726,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_verify_nonce():
@@ -712,7 +739,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_verify_op_has_registration_endpoint():
@@ -725,7 +752,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_verify_response():
@@ -743,7 +770,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_verify_scopes():
@@ -756,7 +783,7 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
 #
 #
 # def test_verify_signed_idtoken_has_kid():
@@ -769,17 +796,108 @@ def test_verify_https_usage_false():
 #     kwargs = {}
 #     chk._kwargs = kwargs
 #     res = chk._func(conv)
-#     assert True
-#
-#
-# def test_verify_sub_value():
-#     """
-#     arg=None
-#     """
-#     _info = setup_conv()
-#     conv = _info['conv']
-#     chk = VerifySubValue()
-#     kwargs = {}
-#     chk._kwargs = kwargs
-#     res = chk._func(conv)
-#     assert True
+#     asssert chk._status == OK
+
+
+def test_verify_sub_value_OK():
+    """
+    arg=None
+    """
+    _info = setup_conv()
+    conv = _info['conv']
+    # Need an IdToken and an AuthorizationRequest with a claims request
+
+    ar = {
+        'scope': 'openid',
+        'redirect_uri': 'https://example.com/cb',
+        'client_id': 'client',
+        'response_type': 'code',
+        'state': 'state',
+        'claims': {
+            'id_token': {
+                'sub': {'value': '9842f9ae-eb3c-4eba-8e4c-979ecae15fa1'}
+            }
+        }
+    }
+    _ar = AuthorizationRequest(**ar)
+    _url = _ar.request('https://guarded-cliffs-8635.herokuapp.com/auth')
+
+    conv.events.store(EV_REDIRECT_URL, _url)
+    conv.events.store(EV_PROTOCOL_REQUEST, _ar)
+
+    # Access token response with id_token with 'sub' claims
+    conv.events.store(EV_PROTOCOL_RESPONSE, ACCESS_TOKEN_RESPONSE_2)
+
+    chk = VerifySubValue()
+    kwargs = {}
+    chk._kwargs = kwargs
+    _ = chk._func(conv)
+    assert chk._status == OK
+
+
+def test_verify_sub_value_NotOK_missing_claims():
+    """
+    arg=None
+    """
+    _info = setup_conv()
+    conv = _info['conv']
+    # Need an IdToken and an AuthorizationRequest with a claims request
+
+    ar = {
+        'scope': 'openid',
+        'redirect_uri': 'https://example.com/cb',
+        'client_id': 'client',
+        'response_type': 'code',
+        'state': 'state',
+    }
+    _ar = AuthorizationRequest(**ar)
+    _url = _ar.request('https://guarded-cliffs-8635.herokuapp.com/auth')
+
+    conv.events.store(EV_REDIRECT_URL, _url)
+    conv.events.store(EV_PROTOCOL_REQUEST, _ar)
+
+    # Access token response with id_token with 'sub' claims
+    conv.events.store(EV_PROTOCOL_RESPONSE, ACCESS_TOKEN_RESPONSE_2)
+
+    chk = VerifySubValue()
+    kwargs = {}
+    chk._kwargs = kwargs
+    _ = chk._func(conv)
+    assert chk._status == ERROR
+
+
+def test_verify_sub_value_NotOK_wrong_sub():
+    """
+    arg=None
+    """
+    _info = setup_conv()
+    conv = _info['conv']
+    # Need an IdToken and an AuthorizationRequest with a claims request
+
+    ar = {
+        'scope': 'openid',
+        'redirect_uri': 'https://example.com/cb',
+        'client_id': 'client',
+        'response_type': 'code',
+        'state': 'state',
+        'claims': {
+            'id_token': {
+                'sub': {'value': 'foo'}
+            }
+        }
+    }
+    _ar = AuthorizationRequest(**ar)
+    _url = _ar.request('https://guarded-cliffs-8635.herokuapp.com/auth')
+
+    conv.events.store(EV_REDIRECT_URL, _url)
+    conv.events.store(EV_PROTOCOL_REQUEST, _ar)
+
+    # Access token response with id_token with 'sub' claims
+    conv.events.store(EV_PROTOCOL_RESPONSE, ACCESS_TOKEN_RESPONSE_2)
+
+    chk = VerifySubValue()
+    kwargs = {}
+    chk._kwargs = kwargs
+    _ = chk._func(conv)
+    assert chk._status == ERROR
+

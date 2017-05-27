@@ -1905,8 +1905,29 @@ class VerifySubValue(Error):
     msg = "Unexpected sub value"
 
     def _func(self, conv):
-        sub = get_authorization_request(
-            conv, AuthorizationRequest)["claims"]["id_token"]["sub"]["value"]
+        areq = get_authorization_request(conv, AuthorizationRequest)
+        try:
+            sub = areq["claims"]["id_token"]["sub"]["value"]
+        except KeyError:
+            try:
+                _claims = areq['claims']
+            except KeyError:
+                self._message = 'No claims request in the Authorization request'
+            else:
+                try:
+                    _ic = _claims['id_token']
+                except KeyError:
+                    self._message = 'No id_token claims request'
+                else:
+                    try:
+                        _sub = _ic['sub']
+                    except:
+                        self._message = 'No claims request for "sub" in id_token'
+                    else:
+                        self._message = 'Faulty claims request'
+            self._status = self.status
+            return {}
+
         res = get_id_tokens(conv)
         if not res:
             self._message = "No response to get the ID Token from"
@@ -2299,7 +2320,7 @@ class AuthTimeCheck(Warnings):
 
         # last authentication request
         sent = conv.events.when(EV_PROTOCOL_REQUEST, AuthorizationRequest)[-1]
-        low = sent - max_age
+        low = int(sent - max_age)
         low -= self._kwargs['skew']
 
         now = utc_time_sans_frac()
