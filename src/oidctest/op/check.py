@@ -1448,7 +1448,7 @@ class VerifyImplicitResponse(Error):
 
 class CheckIdTokenNonce(Error):
     """
-    Verify that I in the IDToken gets back the nonce I included in the
+    Verify that the nonce in the IDToken is the same that's included in the
     Authorization Request.
     """
     cid = "check-idtoken-nonce"
@@ -1793,34 +1793,34 @@ class VerifySignedIdTokenHasKID(Error):
         return {}
 
 
-class VerifySignedIdToken(Error):
-    """
-    Verifies that an ID Token is signed
-    """
-    cid = "verify-idtoken-is-signed"
-    msg = "ID Token unsigned or signed with the wrong algorithm"
-
-    def _func(self, conv):
-        res = get_id_tokens(conv)
-        if not res:
-            self._message = "No response to get the ID Token from"
-            self._status = self.status
-            return {}
-
-        idt = res[-1]
-        try:
-            assert idt.jws_header["alg"] == self._kwargs["alg"]
-        except KeyError:
-            try:
-                assert idt.jws_header["alg"] != "none"
-            except AssertionError:
-                self._status = self.status
-        except AssertionError:
-            self._status = self.status
-        else:
-            self._message = "Signature algorithm='%s'" % idt.jws_header["alg"]
-
-        return {}
+# class VerifySignedIdToken(Error):
+#     """
+#     Verifies that an ID Token is signed
+#     """
+#     cid = "verify-idtoken-is-signed"
+#     msg = "ID Token unsigned or signed with the wrong algorithm"
+#
+#     def _func(self, conv):
+#         res = get_id_tokens(conv)
+#         if not res:
+#             self._message = "No response to get the ID Token from"
+#             self._status = self.status
+#             return {}
+#
+#         idt = res[-1]
+#         try:
+#             assert idt.jws_header["alg"] == self._kwargs["alg"]
+#         except KeyError:
+#             try:
+#                 assert idt.jws_header["alg"] != "none"
+#             except AssertionError:
+#                 self._status = self.status
+#         except AssertionError:
+#             self._status = self.status
+#         else:
+#             self._message = "Signature algorithm='%s'" % idt.jws_header["alg"]
+#
+#         return {}
 
 
 class VerifyNonce(Error):
@@ -1898,7 +1898,7 @@ class CheckSubConfig(Error):
 
 class VerifySubValue(Error):
     """
-    Verifies that the sub claim returned in the id_token matched the
+    Verifies that the sub claim returned in the id_token matched the one
     asked for.
     """
     cid = "verify-sub-value"
@@ -2132,11 +2132,14 @@ class UsedAcrValue(Check):
 
         idt = res[-1]
         try:
-            self._message = "Used acr value: %s, preferred: %s" % (idt["acr"],
-                                                                   pref)
+            _acr = idt["acr"]
         except KeyError:
             self._message = "No acr value present in the ID Token"
             self._status = WARNING
+        else:
+            if _acr not in pref:
+                self._status = WARNING
+            self._message = "Used acr value: %s, preferred: %s" % (_acr, pref)
 
         return {}
 
@@ -2157,10 +2160,11 @@ class IsIDTokenSigned(Information):
 
         idt = res[-1]
         try:
-            self._message = "ID Token signed using alg=%s" % idt.jws_header[
-                "alg"]
-        except KeyError:
+            _alg = idt.jws_header["alg"]
+        except (KeyError, TypeError):
             self._message = "ID Token not signed"
+        else:
+            self._message = "ID Token signed using alg={}".format(_alg)
 
         return {}
 
@@ -2248,7 +2252,7 @@ class CheckQueryPart(Error):
         for key, val in list(self._kwargs.items()):
             try:
                 assert inst[key] == val
-            except AssertionError:
+            except (AssertionError, KeyError):
                 self._status = ERROR
                 self._message = \
                     "The query component {}={} not part of the response".format(
