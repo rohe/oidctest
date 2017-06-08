@@ -1,6 +1,6 @@
-import builtins
 from future.backports.urllib.parse import urlparse
 
+import builtins
 import inspect
 import json
 import logging
@@ -13,13 +13,15 @@ from jwkest.jwk import RSAKey
 from oic import rndstr
 from oic.exception import IssuerMismatch
 from oic.exception import ParameterError
-from oic.oauth2 import Message, ErrorResponse
+from oic.oauth2 import ErrorResponse
+from oic.oauth2 import Message
 from oic.oauth2.util import JSON_ENCODED
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
-from oic.utils.keyio import KeyBundle, rsa_init
+from oic.utils.keyio import KeyBundle
 from oic.utils.keyio import dump_jwks
 from oic.utils.keyio import ec_init
+from oic.utils.keyio import rsa_init
 from otest import RequirementsNotMet
 from otest import Unknown
 from otest.aus.operation import Operation

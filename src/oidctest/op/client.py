@@ -1,7 +1,7 @@
 import hashlib
+import logging
 import os
 
-import logging
 from jwkest import as_bytes
 from oic import oic
 from oic import rndstr

@@ -2,7 +2,6 @@ import logging
 
 from otest import session
 
-
 __author__ = 'roland'
 
 logger = logging.getLogger(__name__)

@@ -2,7 +2,6 @@ import logging
 import os
 import subprocess
 import time
-
 from urllib.parse import unquote_plus
 
 from oic.utils.http_util import ServiceError

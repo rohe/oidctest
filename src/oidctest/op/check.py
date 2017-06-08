@@ -1,10 +1,10 @@
-import logging
 from future.backports.urllib.parse import parse_qs
 from future.backports.urllib.parse import urlparse
 from future.backports.urllib.parse import urlsplit
 
 import inspect
 import json
+import logging
 import sys
 
 from jwkest.jwk import base64url_to_long
@@ -12,8 +12,8 @@ from jwkest.jwt import split_token
 from oic.exception import MessageException
 from oic.oauth2 import message
 from oic.oauth2.message import ErrorResponse
-#from oic.oic import claims_match
 from oic.oic.message import factory as msg_factory
+#from oic.oic import claims_match
 from oic.oic.message import SCOPE2CLAIMS
 from oic.oic.message import AuthorizationRequest
 from oic.oic.message import AuthorizationResponse
@@ -710,6 +710,12 @@ class VerifyClaims(Error):
     """
     cid = "verify-claims"
     msg = "Claims received do not match those requested"
+    doc = """
+    :param userinfo: Whether the method should look for the claims in the user info
+    :type userinfo: boolean
+    :param id_token: Whether the method should look for the claims in the id_token
+    :type id_token: boolean
+    """
 
     def _userinfo_claims(self, conv, req):
         userinfo_claims = {}
@@ -958,6 +964,9 @@ class UnpackAggregatedClaims(Error):
 
 
 class ChangedSecret(Error):
+    """
+    Check whether the client secret has changed or not
+    """
     cid = "changed-client-secret"
 
     def _func(self, conv=None):
@@ -1023,6 +1032,10 @@ class SingleSignOn(Error):
 class MultipleSignOn(Error):
     """ Verifies that multiple authentications was used in the flow """
     cid = "multiple-sign-on"
+    doc = """
+    :param status: Status code returned on error
+    :type status: integer
+    """
 
     def _func(self, conv):
         res = get_id_tokens(conv)
@@ -1097,6 +1110,10 @@ class VerifyRedirectUriQueryComponent(Error):
     URL used by the OP for the response.
     """
     cid = "verify-redirect_uri-query_component"
+    doc = """
+    :param kwargs: query components (key, value) that was expected
+    :type kwargs: dictionary
+    """
 
     def _func(self, conv):
         item = conv.events.last_item(EV_PROTOCOL_RESPONSE)
@@ -1379,6 +1396,14 @@ class CheckSignedEncryptedIDToken(Error):
     """
     cid = "signed-encrypted-idtoken"
     msg = "ID Token was not signed and encrypted"
+    doc = """
+    :param enc_alg: Key Encryption algorithm
+    :type enc_alg: string
+    :param enc_enc: Content Encryption algorithm
+    :type enc_enc: string
+    :param sig_alg: Signature algorithm
+    :type sig_alg: string
+    """
 
     def _func(self, conv):
         res = get_id_tokens(conv)
@@ -1658,7 +1683,10 @@ class VerifyHTTPSUsage(Error):
     """
     cid = "verify-https-usage"
     msg = "Some OP endpoints are not using HTTPS"
-
+    doc = """
+    :param endpoints: Which OP endpoints that should be checked
+    :type endpoints: list of strings
+    """
     def _func(self, conv):
         _pi = get_provider_info(conv)
         _not_https = []
@@ -2175,6 +2203,12 @@ class ClaimsCheck(Information):
     """
     cid = "claims-check"
     msg = ""
+    doc = """
+    :param id_token: Claims that should be present in the id_token
+    :type id_token: list of strings
+    :param required: If the claims are required
+    :type required: boolean
+    """
 
     def _func(self, conv):
         try:
@@ -2245,6 +2279,10 @@ class CheckQueryPart(Error):
     """
     cid = "check-query-part"
     msg = ""
+    doc = """
+    :param kwargs: key-value pairs that should be present in the query part
+    :type kwargs: dictionary
+    """
 
     def _func(self, conv):
         inst = get_protocol_response(conv, AuthorizationResponse)[0]
@@ -2313,6 +2351,12 @@ class AuthTimeCheck(Warnings):
     """ Check that the auth_time returned in the ID Token is in the
     expected range."""
     cid = "auth_time-check"
+    doc = """
+    :param max_age: Maximum age of the id_token
+    :type max_age: int
+    :param skew: The allowed skew in seconds
+    :type skew: int
+    """
 
     def _func(self, conv):
         res = get_id_tokens(conv)
@@ -2368,6 +2412,10 @@ class GotIdTokenClaims(Warnings):
     """ Verify that I got the claims I asked for """
     cid = 'got_id_token_claims'
     _msg_pat = "The following claims didn't make it to the Id Token: {}"
+    doc = """
+    :param claims: claims expected to be in the id_token
+    :type claims: list of strings
+    """
 
     def _func(self, conv):
         res = get_id_tokens(conv)
@@ -2386,6 +2434,10 @@ class GotUserinfoClaims(Warnings):
     """ Verify that I got the claims I asked for """
     cid = 'got_userinfo_claims'
     _msg_pat = "The following claims didn't make it to the UserInfo: {}"
+    doc = """
+    :param claims: claims expected to be among the user info
+    :type claims: list of strings
+    """
 
     def _func(self, conv):
         res = get_protocol_response(conv, OpenIDSchema)
@@ -2404,6 +2456,12 @@ class Got(Error):
     """ Verify that I got the item I expected """
     cid = 'got'
     _msg_pat = "The following attributes didn't make it to the {}"
+    doc = """
+    :param where: In which protocol response the claims should occur
+    :type where: string
+    :param what: Which claims 
+    :type what: string
+    """
 
     def _func(self, conv):
         res = get_protocol_response(conv, msg_factory(self._kwargs['where']))

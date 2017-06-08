@@ -44,7 +44,10 @@ class FedOPHandler(OPHandler):
         op.events = events
         op.oper_id = oper_id
         op.test_id = test_id
-        op.ms_conf = _tc['metadata_statements']
+        try:
+            op.ms_conf = _tc['metadata_statements']
+        except KeyError:
+            op.msu_conf = _tc['metadata_statement_uris']
 
         for _authn in com_args["authn_broker"]:
             _authn.srv = op

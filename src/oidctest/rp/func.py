@@ -1,9 +1,9 @@
+from future.backports.urllib.parse import urlencode
+from future.backports.urllib.parse import urlparse
+
 import inspect
 import os
 import sys
-
-from future.backports.urllib.parse import urlencode
-from future.backports.urllib.parse import urlparse
 
 from otest.result import get_issuer
 
@@ -76,6 +76,51 @@ def set_discovery_issuer(oper, args):
     """
     if oper.dynamic:
         oper.op_args["issuer"] = get_issuer(oper.conv)
+
+
+def resource(oper, args):
+    """
+    Context:
+    Action:
+    Example:
+
+    :param oper: 
+    :param args: 
+    :return: 
+    """
+
+    _p = urlparse(get_issuer(oper.conv))
+    oper.op_args["resource"] = args["pattern"].format(
+        test_id=oper.conv.test_id, host=_p.netloc,
+        oper_id=oper.conv.operator_id)
+
+
+def set_jwks_uri(oper, args):
+    """
+    Context: AsyncAuthn
+    Action:
+    Example:
+
+    :param oper: 
+    :param args: 
+    :return: 
+    """
+
+    oper.req_args["jwks_uri"] = oper.conv.entity.jwks_uri
+
+
+def remove_grant(oper, arg):
+    """
+    Context:
+    Action:
+    Example:
+
+    :param oper: 
+    :param args: 
+    :return: 
+    """
+
+    oper.conv.entity.grant = {}
 
 
 def factory(name):
