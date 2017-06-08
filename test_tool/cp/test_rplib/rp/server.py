@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
+import importlib
 import logging
 import os
 
 import cherrypy
+import sys
 from oic.utils import webfinger
 from otest.flow import Flow
 from otest.prof_util import SimpleProfileHandler
@@ -29,6 +31,12 @@ logger.addHandler(hdlr)
 logger.setLevel(logging.DEBUG)
 
 
+def get_version():
+    sys.path.insert(0, ".")
+    vers = importlib.import_module('version')
+    return vers.VERSION
+
+
 if __name__ == '__main__':
     import argparse
     from oidctest.rp import provider
@@ -43,6 +51,7 @@ if __name__ == '__main__':
     parser.add_argument(dest="config")
     args = parser.parse_args()
 
+    _version = get_version()
     _com_args, _op_arg, config = cb_setup(args)
 
     folder = os.path.abspath(os.curdir)
