@@ -76,7 +76,13 @@ if __name__ == '__main__':
             'tools.staticdir.debug': True,
             'tools.staticdir.on': True,
             'log.screen': True
-        }}
+        },
+        '/favicon.ico':
+        {
+            'tools.staticfile.on': True,
+            'tools.staticfile.filename': os.path.join(folder, 'static/favicon.ico')
+        }
+    }
 
     if args.path:
         if _conf.baseurl.endswith('/'):

@@ -77,7 +77,13 @@ if __name__ == '__main__':
             'tools.staticdir.on': True,
             'log.screen': True,
             'cors.expose_public.on': True
-        }}
+        },
+        '/favicon.ico':
+        {
+            'tools.staticfile.on': True,
+            'tools.staticfile.filename': os.path.join(folder, 'static/favicon.ico')
+        }
+    }
 
     # WebFinger
     webfinger_config = {
