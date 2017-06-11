@@ -14,6 +14,7 @@ from oidctest.tt.app import Application
 from oidctest.tt.entity import Entity
 from oidctest.tt.instance import Instance
 from oidctest.tt.rest import REST
+from oidctest.ass_port import AssignedPorts
 
 logger = logging.getLogger("")
 LOGFILE_NAME = 'conf_srv.log'
@@ -93,10 +94,13 @@ if __name__ == '__main__':
 
     rest = REST(_base_url)
 
+    _assigned_ports = AssignedPorts('assigned_ports.json', _conf.PORT_MIN, _conf.PORT_MAX)
+    _assigned_ports.load()
+
     cherrypy.tree.mount(
-        Entity(_conf.ENT_PATH, _html, rest), '/entity')
-    _app = Application(_conf.TEST_SCRIPT, _conf.FLOWDIR, rest, _conf.PORT_MIN,
-                       _conf.PORT_MAX, _ttc.BASE, args.test_tool_conf,
+        Entity(_conf.ENT_PATH, _html, rest, _assigned_ports, _ttc.BASE), '/entity')
+    _app = Application(_conf.TEST_SCRIPT, _conf.FLOWDIR, rest,
+                       _assigned_ports, _ttc.BASE, args.test_tool_conf,
                        args.htmldir)
     cherrypy.tree.mount(
         Action(rest, _ttc, _html, _conf.ENT_PATH, _conf.ENT_INFO, tool_params,

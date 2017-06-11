@@ -15,6 +15,7 @@ from otest.prof_util import return_type
 from otest.prof_util import from_profile
 from otest.prof_util import to_profile
 from otest.proc import kill_process
+from otest.proc import isrunning
 
 from oidctest.app_conf import create_model
 from oidctest.app_conf import TYPE2CLS
@@ -206,6 +207,8 @@ class Action(object):
             return self.delete(iss, tag, ev)
         elif action == 'configure':
             return self.update(iss, tag, ev)
+        elif action == 'stop':
+            return self.stop(iss, tag, ev)
 
     def _cp_dispatch(self, vpath):
         # Only get here if vpath != None
@@ -246,6 +249,32 @@ class Action(object):
         )
 
         return as_bytes(_msg)
+
+    @cherrypy.expose
+    def stop(self, iss, tag, ev):
+        logger.info('stop test tool')
+
+        uqp, qp = unquote_quote(iss, tag)
+        _key = self.app.assigned_ports.make_key(*uqp)
+        
+        # If already running - kill
+        try:
+            pid = isrunning(unquote_plus(iss), unquote_plus(tag))
+        except KeyError:
+            pass
+        else:
+            if pid:
+                #logger.info('kill {}'.format(pid))
+                #subprocess.call(['kill', str(pid)])
+                kill_process(pid)
+                try:
+                    del self.app.running_processes[_key]
+                except KeyError:
+                    pass
+
+        # redirect back to entity page
+        loc = '{}entity/{}'.format(self.rest.base_url, qp[0])
+        raise cherrypy.HTTPRedirect(loc)
 
     @cherrypy.expose
     def delete(self, iss, tag, ev, pid=0):
@@ -289,11 +318,9 @@ class Action(object):
             return conv_response(None, url)
 
         if url:
-            args = {
-                'title': "Action performed", 'base': self.baseurl,
-                'note': 'Your test instance "{iss}:{tag}" has been '
-                        'restarted as <a href="{url}">{url}</a>'.format(
-                    iss=iss, tag=tag, url=url)}
+            # redirect back to entity page
+            loc = '{}entity/{}'.format(self.rest.base_url, qp[0])
+            raise cherrypy.HTTPRedirect(loc)
         else:
             args = {
                 'title': "Action Failed", 'base': self.baseurl,
