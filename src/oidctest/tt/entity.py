@@ -9,6 +9,7 @@ from otest.proc import find_test_instance
 from otest.proc import isrunning
 
 from oidctest.cp import init_events
+from oidctest.ass_port import AssignedPorts
 from oidctest.tt import BUT
 from oidctest.tt import unquote_quote
 
@@ -27,23 +28,31 @@ def iss_table(base, issuers):
     return '\n'.join(line)
 
 
-def item_table(qiss, items, active):
+def item_table(qiss, items, active, assigned_ports, test_tool_base):
     line = ["<table>", "<tr><th>Tag</th><th>Status</th><th>Actions</th></tr>"]
+    _stop = BUT.format('stop', 'stop')
     _del = BUT.format('delete', 'delete')
     _rst = BUT.format('restart', 'restart')
     _cnf = BUT.format('configure', 'reconfigure')
 
     for item in items:
+        
+        eid = assigned_ports.make_key(qiss, item)
+        _port = assigned_ports[eid]
+        _instance = '{}:{}'.format(test_tool_base, _port)
+
         _url = "/action/{}/{}".format(qiss, item)
         _action = '\n'.join([
-            '<form action="{}" method="get">'.format(_url), _del,
-            _rst, _cnf])
+            '<form action="{}" method="get">'.format(_url), _rst, _stop,
+            _cnf, _del])
         if active[item]:
             _ball = '<img src="/static/green-ball-32.png" alt="Green">'
+            inst = "<a href=\"{}\">{}</a>".format(_instance, item)
         else:
             _ball = '<img src="/static/red-ball-32.png" alt="Red">'
+            inst = item;
         line.append("<tr><td>{}</td><td>{}</td><td>{}</td></tr>".format(
-            item, _ball, _action))
+            inst, _ball, _action))
         line.append('</form>')
 
     line.append("</table>")
@@ -51,10 +60,12 @@ def item_table(qiss, items, active):
 
 
 class Entity(object):
-    def __init__(self, entpath, prehtml, rest, backuppath='backup'):
+    def __init__(self, entpath, prehtml, rest, assigned_ports, test_tool_base, backuppath='backup'):
         self.entpath = entpath
         self.prehtml = prehtml
         self.rest = rest
+        self.assigned_ports = assigned_ports
+        self.test_tool_base = test_tool_base
         self.backup = backuppath
 
     @cherrypy.expose
@@ -84,8 +95,9 @@ class Entity(object):
 
         active = dict([(fil, isrunning(iss, fil)) for fil in fils])
 
+        self.assigned_ports.load()
         _msg = self.prehtml['list_tag.html'].format(
-            item_table=item_table(qiss, fils, active), iss=iss)
+            item_table=item_table(qiss, fils, active, self.assigned_ports, self.test_tool_base), iss=iss)
         return as_bytes(_msg)
 
     @cherrypy.expose

@@ -14,11 +14,9 @@ logger = logging.getLogger(__name__)
 
 
 class Application(object):
-    def __init__(self, test_script, flowdir, rest, port_min, port_max,
+    def __init__(self, test_script, flowdir, rest, assigned_ports,
                  test_tool_base, test_tool_conf, prehtml, path2port=None):
-        self.assigned_ports = AssignedPorts('assigned_ports.json', port_min,
-                                            port_max)
-        self.assigned_ports.load()
+        self.assigned_ports = assigned_ports
         self.running_processes = self.assigned_ports.sync(test_script)
         self.test_script = test_script
         self.flowdir = flowdir
