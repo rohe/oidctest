@@ -1,1 +1,0 @@
-{"desc": "Reject UserInfo with Invalid Sub claim", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", "SyncAuthn", {"AccessToken": {"conditional_execution": {"profile": "C"}}}, {"UserInfo": {"expect_exception": "SubjectMismatch"}}], "usage": {"return_type": ["C", "CI", "CT", "CIT", "IT"]}}
