@@ -1939,7 +1939,7 @@ class VerifySubValue(Error):
 
     def _func(self, conv):
         # Use the last Authorization Request
-        areq = get_authorization_request(conv, AuthorizationRequest)[-1]
+        areq = get_authorization_request(conv, AuthorizationRequest)
         try:
             sub = areq["claims"]["id_token"]["sub"]["value"]
         except KeyError:
