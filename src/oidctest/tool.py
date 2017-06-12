@@ -73,12 +73,13 @@ class ClTester(tool.Tester):
 class WebTester(tool.WebTester):
     def __init__(self, io, sh, profiles, flows, check_factory=None,
                  msg_factory=None, cache=None, map_prof=None,
-                 client_factory=None, **kwargs):
+                 client_factory=None, version='', **kwargs):
         tool.WebTester.__init__(self, io, sh, profiles=profiles, flows=flows,
                                 check_factory=check_factory,
                                 msg_factory=msg_factory, cache=cache, **kwargs)
         self.client_factory = client_factory
         self.map_prof = map_prof or prof_util.map_prof
+        self.version = version
 
     def setup(self, test_id, **kw_args):
         redirs = get_redirect_uris(kw_args["client_info"])
