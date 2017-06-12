@@ -444,6 +444,22 @@ def redirect_uri_with_query_component(oper, args):
     oper.req_args.update({"redirect_uri": [ru]})
 
 
+def redirect_uris_with_query_component(oper, args):
+    """
+    Context: AsyncAuthn
+    Action: Add a query component to the redirect_uris
+    Example:
+        redirect_uris_with_query_component:
+            foo: bar
+
+    :param oper: An Operation Instance
+    :param kwargs: Values to build the query part from
+    """
+    ru = oper.conv.entity.registration_info['redirect_uris'][0]
+    ru += "?%s" % urlencode(args)
+    oper.req_args.update({"redirect_uris": [ru]})
+
+
 def redirect_uris_with_scheme(oper, args):
     """
     Context: Registration
