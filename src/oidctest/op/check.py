@@ -38,7 +38,6 @@ from otest.check import ResponseInfo
 from otest.check import Warnings
 from otest.check import get_authorization_request
 from otest.check import get_id_tokens
-from otest.check import get_protocol_request
 from otest.check import get_protocol_response
 from otest.check import get_provider_info
 from otest.events import EV_HTTP_RESPONSE
@@ -1940,7 +1939,7 @@ class VerifySubValue(Error):
 
     def _func(self, conv):
         # Use the last Authorization Request
-        areq = get_protocol_request(conv, AuthorizationRequest)[-1]
+        areq = get_authorization_request(conv, AuthorizationRequest)[-1]
         try:
             sub = areq["claims"]["id_token"]["sub"]["value"]
         except KeyError:
