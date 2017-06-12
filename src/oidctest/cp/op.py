@@ -329,11 +329,15 @@ class Reset(object):
 
 
 class Root(object):
+    def __init__(self, version=''):
+        self.version = version
+
     @cherrypy.expose
     def index(self):
         response = [
             PRE_HTML,
             "<h1>Welcome to the OpenID Foundation RP library test site</h1>",
+            '<h2>Test tool version: {}</h2>'.format(self.version),
             '<h3>Before you start testing please read the ',
             '<a href="http://openid.net/certification/rp_testing/" '
             'target="_blank">',
@@ -352,9 +356,9 @@ class Provider(Root):
     _cp_config = {'request.error_response': handle_error}
 
     def __init__(self, op_handler, flows, version=''):
+        Root.__init__(self, version)
         self.op_handler = op_handler
         self.flows = flows
-        self.version = version
         self.configuration = Configuration()
         self.registration = Registration()
         self.authorization = Authorization()

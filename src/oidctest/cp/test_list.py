@@ -64,13 +64,14 @@ def test_list(args, grps):
 
 
 class TestList(object):
-    def __init__(self, fdir, links_file, headline, grps):
+    def __init__(self, fdir, links_file, headline, grps, version=''):
         self.fdir = fdir
         fp = open(links_file, 'r')
         self.links = json.load(fp)
         fp.close()
         self.headline = headline
         self.grps = grps
+        self.version = version
 
     @cherrypy.expose
     def index(self, profile):
@@ -115,6 +116,7 @@ class TestList(object):
             '<link rel="stylesheet" type="text/css" href="/static/theme.css">',
             "<title>{}</title></head><body>".format(hl),
             '<h1>{}</h1>'.format(hl),
+            '<h2>Test tool version: {}</h2>'.format(self.version),
             '<h2>Mandatory to implement</h2>'
         ]
 

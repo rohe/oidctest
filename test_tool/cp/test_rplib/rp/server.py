@@ -99,7 +99,7 @@ if __name__ == '__main__':
     cherrypy.tree.mount(
         TestList(_flowsdir, 'links.json',
                  'List of OIDC RP library tests for profile: "<i>{}</i>"',
-                 config.GRPS),
+                 config.GRPS, version=_version),
         '/list')
 
     log_root = folder + '/log'
