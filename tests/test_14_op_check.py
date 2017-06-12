@@ -604,6 +604,13 @@ def test_check_query_part():
     """
     _info = setup_conv()
     conv = _info['conv']
+    # Need AuthorizationRequest
+    _areq_arg = {
+        'response_type': ['code'],
+        'state': 'some'
+    }
+    _ar = AuthorizationRequest(**_areq_arg)
+    conv.events.store(EV_PROTOCOL_REQUEST, _ar)
     # Need AuthorizationResponse
     _arg = {
         'code': '12345678',
@@ -625,6 +632,13 @@ def test_check_query_part_not():
     """
     _info = setup_conv()
     conv = _info['conv']
+    # Need AuthorizationRequest
+    _areq_arg = {
+        'response_type': ['code'],
+        'state': 'some'
+    }
+    _ar = AuthorizationRequest(**_areq_arg)
+    conv.events.store(EV_PROTOCOL_REQUEST, _ar)
     # Need AuthorizationResponse
     _arg = {
         'code': '12345678',
