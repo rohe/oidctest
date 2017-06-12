@@ -194,7 +194,7 @@ if __name__ == '__main__':
                        check_factory=check.factory, **webenv)
 
     log_root = os.path.join(folder, 'log')
-    _tar = OPTar(log_root)
+    _tar = OPTar(folder)
     cherrypy.tree.mount(_tar, '/mktar')
     cherrypy.tree.mount(_tar, '/backup')
     cherrypy.tree.mount(OPLog(log_root, _html), '/log')
