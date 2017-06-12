@@ -46,6 +46,12 @@ def pick_grp(name):
     return name.split('-')[1]
 
 
+def get_version():
+    sys.path.insert(0, ".")
+    vers = importlib.import_module('version')
+    return vers.VERSION
+
+
 def make_webenv(config, rest):
     if args.tag:
         qtag = quote_plus(args.tag)
@@ -116,6 +122,8 @@ if __name__ == '__main__':
     parser.add_argument(dest="config")
     args = parser.parse_args()
 
+    _vers = get_version()
+
     cherrypy.tools.dumplog = cherrypy.Tool('before_finalize', dump_log)
 
     cherrypy.config.update(
@@ -178,7 +186,7 @@ if __name__ == '__main__':
 
     session_handler = SessionHandler(args.issuer, args.tag,
                                      flows=webenv['flow_state'], rest=rest,
-                                     **webenv)
+                                     version=_vers, **webenv)
     session_handler.iss = args.issuer
     session_handler.tag = args.tag
     info = WebIh(session=session_handler, pre_html=_html, **webenv)

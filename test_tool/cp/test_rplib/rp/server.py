@@ -91,7 +91,8 @@ if __name__ == '__main__':
     # WebFinger
     webfinger_config = {
         '/': {'base_url': _op_arg['baseurl']}}
-    cherrypy.tree.mount(WebFinger(webfinger.WebFinger()),
+    cherrypy.tree.mount(WebFinger(webfinger.WebFinger(),
+                                  version=_version),
                         '/.well-known/webfinger', webfinger_config)
 
     # test list
@@ -108,7 +109,8 @@ if __name__ == '__main__':
     cherrypy.tree.mount(Tar(folder), '/mktar')
 
     # OIDC Providers
-    cherrypy.tree.mount(Provider(op_handler, _flows), '/', provider_config)
+    cherrypy.tree.mount(Provider(op_handler, _flows, version=_version),
+                        '/', provider_config)
 
     # If HTTPS
     if args.tls:
