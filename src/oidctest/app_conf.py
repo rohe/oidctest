@@ -25,9 +25,9 @@ from otest.proc import isrunning
 from otest.proc import kill_process
 from otest.prof_util import do_discovery
 from otest.prof_util import do_registration
-from otest.prof_util import verify_profile
 from otest.prof_util import return_type
 from otest.prof_util import to_profile
+from otest.prof_util import verify_profile
 from otest.rp.setup import read_path2port_map
 
 from oidctest.ass_port import AssignedPorts

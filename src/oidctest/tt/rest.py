@@ -1,17 +1,16 @@
-import cherrypy
 import json
 import logging
 import os
 import sys
-
 from urllib.parse import quote_plus
 from urllib.parse import unquote_plus
 
+import cherrypy
 from jwkest import as_bytes
-
-from oidctest.tt import unquote_quote
 from otest.prof_util import do_discovery
 from otest.prof_util import do_registration
+
+from oidctest.tt import unquote_quote
 
 logger = logging.getLogger(__name__)
 

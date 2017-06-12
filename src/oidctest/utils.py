@@ -11,11 +11,10 @@ import time
 from oic.utils.http_util import Response
 from oic.utils.time_util import in_a_while
 from otest import check as o_check
-
-from oidctest.op import check as op_check
-
 # from urllib.parse import quote_plus
 from otest.prof_util import from_profile
+
+from oidctest.op import check as op_check
 
 __author__ = 'roland'
 

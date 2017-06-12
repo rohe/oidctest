@@ -1,13 +1,10 @@
-import os
-
 from future.backports.urllib.parse import urlencode
 from future.backports.urllib.parse import urlparse
-from otest.func import SetUpError, get_base
-from otest.prof_util import return_type
 from past.types import basestring
 
 import inspect
 import json
+import os
 import sys
 
 from otest import ConfigurationError
@@ -16,7 +13,9 @@ from otest.check import STATUSCODE_TRANSL
 from otest.check import State
 from otest.check import get_signed_id_tokens
 from otest.events import EV_CONDITION
-from otest.events import EV_RESPONSE
+from otest.func import SetUpError
+from otest.func import get_base
+from otest.prof_util import return_type
 from otest.result import get_issuer
 
 from oidctest.op.check import get_id_tokens
@@ -26,13 +25,14 @@ __author__ = 'roland'
 
 def set_webfinger_resource(oper, args):
     """
-    Context: WebFinger Query
+    Context: WebFinger
     Action: Specifies the webfinger resource. If the OP supports
     webfinger queries then the resource is set to the value of 'webfinger_url'
     or 'webfinger_email' from the test instance configuration.
 
-    :param oper: An WebFinger instance
-    :param args: None
+    Example:
+        "set_webfinger_resource": null
+        
     """
 
     try:
@@ -53,12 +53,10 @@ def set_webfinger_resource(oper, args):
 
 def set_discovery_issuer(oper, args):
     """
-    Context: Authorization Query
+    Context: AsyncAuthn
     Action: Pick up issuer ID either from static configuration or dynamic
     discovery.
 
-    :param oper: An AsyncAuthn instance
-    :param args: None
     """
     if oper.dynamic:
         oper.op_args["issuer"] = get_issuer(oper.conv)
@@ -66,12 +64,13 @@ def set_discovery_issuer(oper, args):
 
 def set_response_where(oper, args):
     """
-    Context: Authorization Query
-    Action: Set where the response is expected to occur
+    Context: AsyncAuthn
+    Action: Set where the response is expected to occur dependent on which 
+     response_type it is or which it isn't.
 
-    :param oper: An AsyncAuthn instance
-    :param args: dictionary with keys: 'response_type', 'not_response_type'
-        and "where"
+    :param response_type:
+    :param not_response_type: 
+    :param where: Where should the Authroization response occur
     """
     if args is None:
         args = {"not_response_type": ["code"], "where": "fragment"}
@@ -92,19 +91,18 @@ def set_response_where(oper, args):
 
 def check_support(oper, args):
     """
-    Context: Authorization Query
+    Context: AsyncAuthn
     Action: Verify that the needed support is supported by the OP
     Example:
 
-        "check_support": {
-          "WARNING": {"scopes_supported": ["phone"]}
+        check_support: {
+          WARNING: {scopes_supported: [phone]}
         }
 
-        "check_support": {
-          "ERROR": {"id_token_signing_alg_values_supported": null}
+        check_support: {
+          ERROR: {id_token_signing_alg_values_supported: null}
         }
 
-    :param oper: An AsyncAuthn instance
     :param args: A dictionary of dictionaries. {level: {item: value}}
     """
     # args = { level : kwargs }
@@ -146,6 +144,16 @@ def check_support(oper, args):
 
 
 def set_principal(oper, args):
+    """
+    Context: WebFinger
+    Action: Set principal using a specific parameter
+    Example:
+
+        set_principal:
+            param: webfinger_url
+            
+    :param param: Value "webfinger_url" or "webfinger_email"
+    """
     try:
         _val = oper.conv.tool_config[args['param']]
     except KeyError:
@@ -155,12 +163,34 @@ def set_principal(oper, args):
 
 
 def static_jwk(oper, args):
+    """
+    Context: Registration
+    Action: Set a static JWKS, remove jwks_uri if specified.
+    Example:
+        
+        static_jwk: null
+        
+    """
     _client = oper.conv.entity
     del oper.req_args["jwks_uri"]
     oper.req_args["jwks"] = _client.keyjar.export_jwks("")
 
 
 def store_sector_redirect_uris(oper, args):
+    """
+    Context: Registration
+    Action: Will store a number of redirectURIs in a file and add a
+    "sector_identifier_uri" pointing to that file to the request arguments.
+    Example:
+        
+        store_sector_redirect_uris:
+            other_uris:
+              - 'https://example.com/op'
+              
+    :param other_uris: list of complete URLs
+    :param redirect_uris: Use default redirect_uris for this entity
+    :param extra: Extra relative url paths
+    """
     _base = get_base(oper.conv.entity.base_url)
 
     try:
@@ -188,13 +218,34 @@ def store_sector_redirect_uris(oper, args):
     oper.req_args["sector_identifier_uri"] = sector_identifier_url
 
 
-def id_token_hint(oper, kwargs):
+def id_token_hint(oper, args):
+    """
+    Context: AsyncAuthn
+    Action: Will pick up an id_token received in an earlier authorization 
+    request and add it to the request argument "id_token_hint"
+    Example:
+    
+        "id_token_hint": null
+
+    """
     res = get_signed_id_tokens(oper.conv)
 
     oper.req_args["id_token_hint"] = res[0]
 
 
 def login_hint(oper, args):
+    """
+    Context: AsyncAuthn
+    Action: Sets the request argument 'login_hint' to a value picked from the
+    configuration.
+    
+    Example:
+        "login_hint": null
+
+    :param oper: 
+    :param args: 
+    :return: 
+    """
     _iss = oper.conv.entity.provider_info["issuer"]
     p = urlparse(_iss)
     _default = "buffy@%s" % p.netloc
@@ -212,16 +263,48 @@ def login_hint(oper, args):
 
 
 def ui_locales(oper, args):
+    """
+    Context: AsyncAuthn
+    Action: Set the request argument 'ui_locales' to something configured or
+    use the default.
+    Example:
+        "ui_locales": null
+
+    """
+
     oper.req_args["ui_locales"] = oper.conv.get_tool_attribute(
         "ui_locales", 'locales', default=['se'])
 
 
 def claims_locales(oper, args):
+    """
+    Context: AsyncAuthn
+    Action: Set the request argument 'claims_locales' to something configured or
+    use the default.
+    Example:
+        "claims_locales": null
+
+    :param oper: 
+    :param args: 
+    :return: 
+    """
+
     oper.req_args["claims_locales"] = oper.conv.get_tool_attribute(
         "claims_locales", 'locales', default=['se'])
 
 
 def get_attribute_value(oper, tool_attr, provider_attr, default):
+    """
+    Context: Support function 
+    Action: Picks up values from a given set of ordered attributes 
+    Example:
+
+    :param tool_attr: tool configuration attributes.
+    :param provider_attr: Provider info attribute
+    :param default: If no values could be found use this
+    :return: value
+    """
+
     try:
         val = oper.conv.get_tool_attribute(*tool_attr)
     except KeyError:
@@ -237,12 +320,34 @@ def get_attribute_value(oper, tool_attr, provider_attr, default):
 
 
 def acr_value(oper, args):
+    """
+    Context: AsyncAuthn
+    Action: Sets the request attribute 'acr_values' to something configured,
+    something gotten from the OP or to the default.
+    Example:
+        acr_value: null
+
+    :param oper: 
+    :param args: 
+    :return: 
+    """
+
     acr = get_attribute_value(oper, ["acr_value", "acr_values_supported"],
                               "acr_values_supported", ["1", "2"])
     oper.req_args["acr_values"] = acr
 
 
 def specific_acr_claims(oper, args):
+    """
+    Context: AsyncAuthn
+    Action: Use the claims request parameter to specify which acr value should
+    be used
+    Example:
+        specific_acr_claims: '1'
+
+    :param args: A default set of acr_values 
+    """
+
     _acrs = get_attribute_value(oper, ["acr_value", "acr_values_supported"],
                                 "acr_values_supported", args)
     oper.req_args["claims"] = {"id_token": {"acr": {"values": _acrs}}}
@@ -250,15 +355,16 @@ def specific_acr_claims(oper, args):
 
 def essential_and_specific_acr_claim(oper, args):
     """
-    Context: Authorization Request
+    Context: AsyncAuthn
     Action: Add to the request that an acr claims MUST be returned in the
      ID token. The value of acr is first picked from acr_values_supported in the
      provider info. If not acr_values_supported is given the test tool
      configuration will be used. If that is also missing it will be set to
      whatever args has as value.
+    Example:
+        "essential_and_specific_acr_claim": "1"
 
-    :param oper:
-    :param args:
+    :param args: A default set of acr values
     """
     _acrs = get_attribute_value(oper, ["acr_value", "acr_values_supported"],
                                 "acr_values_supported", args)
@@ -269,12 +375,13 @@ def essential_and_specific_acr_claim(oper, args):
 
 def sub_claims(oper, args):
     """
-    Context: Authorization Request
+    Context: AsyncAuthn
     Action: Specify a claim for a specific sub value. This is signalling that
-     the OP should authenticate the specific subject.
+     the OP should authenticate a specific subject. The sub value is fetch from
+     an id_token received in connection to a previous authorization.
+    Example:
+        sub_claims: null
 
-    :param oper:
-    :param args:
     """
     res = get_id_tokens(oper.conv)
     try:
@@ -288,12 +395,14 @@ def sub_claims(oper, args):
 
 def set_essential_arg_claim(oper, args):
     """
-    Context: Authorization Request
-    Action: Specify an essential claim.
+    Context: AsyncAuthn
+    Action: Specify an essential claim. Whether it should be placed in the
+    id_token or returned together with the user info depends on the profile 
+    used.
+    Example:
+        "set_essential_arg_claim": "name"
 
-    :param oper:
-    :param args:
-    :return:
+    :param args: A claim
     """
     if return_type(oper.tool_conf['profile']) == 'I':
         oper.req_args["claims"] = {"id_token": {args: {"essential": True}}}
@@ -303,9 +412,13 @@ def set_essential_arg_claim(oper, args):
 
 def multiple_return_uris(oper, args):
     """
-    Context: dynamic client registration
+    Context: Registration
+    
     Action: makes the request contain two redirect_uris. Default is that
     it only contains one.
+    
+    Example:
+        multiple_return_uris: null
 
     :param oper: An Operation instance
     :param args: None
@@ -315,23 +428,13 @@ def multiple_return_uris(oper, args):
     oper.req_args["redirect_uris"] = redirects
 
 
-def redirect_uris_with_query_component(oper, kwargs):
-    """
-    Context: Dynamic Client Registration
-    Action: Add a query component to a redirect_uri
-
-    :param oper: An Operation Instance
-    :param kwargs: Values to build the query part from
-    """
-    ru = oper.conv.entity.registration_info['redirect_uris'][0]
-    ru += "?%s" % urlencode(kwargs)
-    oper.req_args["redirect_uris"] = [ru]
-
-
 def redirect_uri_with_query_component(oper, args):
     """
-    Context: Authorization request
+    Context: AsyncAuthn
     Action: Add a query component to the redirect_uri
+    Example:
+        redirect_uri_with_query_component:
+            foo: bar
 
     :param oper: An Operation Instance
     :param kwargs: Values to build the query part from
@@ -343,10 +446,9 @@ def redirect_uri_with_query_component(oper, args):
 
 def redirect_uris_with_scheme(oper, args):
     """
-    Context: Authorization Request
+    Context: Registration
     Action: Create a redirect_uri with a specific scheme.
 
-    :param oper: An Operation Instance
     :param args: The scheme to use
     """
     oper.req_args['redirect_uris'] = [
@@ -356,10 +458,13 @@ def redirect_uris_with_scheme(oper, args):
 
 def redirect_uris_with_fragment(oper, kwargs):
     """
-    Context: Dynamic Client Registration
+    Context: Registration
     Action: Add a fragment component to a redirect_uri
+    Example:
+        "redirect_uris_with_fragment": {
+          "foo": "bar"
+        }
 
-    :param oper: An Operation Instance
     :param kwargs: Values to build the query part from
     """
     ru = oper.conv.entity.registration_info['redirect_uris'][0]
@@ -368,17 +473,31 @@ def redirect_uris_with_fragment(oper, kwargs):
 
 
 def request_in_file(oper, kwargs):
+    """
+    Context: AsyncAuthn
+    Action: Sets the operation argument 'base_path' to where the request 
+     can be found
+    Example:
+        request_in_file: null
+
+    """
+
     oper.op_args["base_path"] = get_base(oper.conv.entity.base_url) + "export/"
 
 
-def resource(oper, args):
-    _p = urlparse(get_issuer(oper.conv))
-    oper.op_args["resource"] = args["pattern"].format(
-        test_id=oper.conv.test_id, host=_p.netloc,
-        oper_id=oper.conv.operator_id)
-
-
 def conditional_execution(oper, arg):
+    """
+    Context: AccessToken/UserInfo
+    Action: If the condition is not fulfilled the operation will not be 
+    executed.
+    
+    Example:
+        "conditional_execution":{
+          "return_type": ["CIT","CI","C","CT"]
+        }
+        
+    """
+
     for key, val in arg.items():
         if key == 'profile':
             try:
@@ -396,56 +515,19 @@ def conditional_execution(oper, arg):
                 return
 
 
-def set_jwks_uri(oper, args):
-    oper.req_args["jwks_uri"] = oper.conv.entity.jwks_uri
-
-
-def check_endpoint(oper, args):
-    try:
-        _ = oper.conv.entity.provider_info[args]
-    except KeyError:
-        oper.conv.events.store(
-            EV_CONDITION,
-            State(test_id="check_endpoint", status=ERROR,
-                  message="{} not in provider configuration".format(args)))
-        oper.fail = True
-
-
-def cache_response(oper, arg):
-    key = oper.conv.test_id
-    oper.cache[key] = oper.conv.events.last_item(EV_RESPONSE)
-
-
-def restore_response(oper, arg):
-    key = oper.conv.test_id
-    if oper.conv.events[EV_RESPONSE]:
-        _lst = oper.cache[key][:]
-        for x in oper.conv.events[EV_RESPONSE]:
-            if x not in _lst:
-                oper.conv.events.append(_lst)
-    else:
-        oper.conv.events.extend(oper.cache[key])
-
-    del oper.cache[key]
-
-
-def remove_post_test(oper, arg):
-    try:
-        oper.tests['post'].remove(arg)
-    except ValueError:
-        pass
-
-
-def remove_grant(oper, arg):
-    oper.conv.entity.grant = {}
-
-
-def set_request_base(oper, args):
-    oper.op_args['base_path'] = '{}{}/'.format(oper.conv.entity.base_url, args)
-    oper.op_args['local_dir'] = args
-
-
 def check_config(oper, args):
+    """
+    Context: VerifyConfiguration
+    Action:
+    Example:
+        "check_config": {
+          "login_hint": null
+        }
+
+    :param args: Dictionary with parameters and values that MUST be in the
+    tool configuration
+    """
+
     _cnf = oper.conv.tool_config
     for key, val in args.items():
         if key in _cnf:
@@ -466,12 +548,16 @@ def check_config(oper, args):
 
 
 def set_state(oper, arg):
+    """
+    Context: RefreshAccessToken
+    Action: Sets the operation argument 'state' to what has been used
+    previously in the session.
+    Example:
+        "set_state": null
+
+    """
+
     oper.op_args['state'] = oper.conv.state
-
-
-# def set_refresh_token(oper, args):
-#     _state = oper.conv.state
-#     oper.op_args = oper.conv.entity.
 
 
 def factory(name):

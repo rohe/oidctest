@@ -46,9 +46,12 @@ def dump_log():
         write_events(op.events, op.oper_id, op.test_id)
 
 
-def init_events(path):
+def init_events(path, msg=''):
     ev = Events()
-    ev.store('Init', '===========================================')
+    if msg:
+        ev.store('Init', '{} {} {}'.format(10 * '=', msg, 10 * '='))
+    else:
+        ev.store('Init', 40 * '=')
     req = HTTPRequest(path, method=cherrypy.request.method)
     try:
         req.authz = cherrypy.request.headers['Authorization']

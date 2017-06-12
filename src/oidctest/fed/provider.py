@@ -132,6 +132,7 @@ class Provider(provider.Provider):
         self.jwx_def = {}
         self.build_jwx_def()
         self.ms_conf = None
+        self.msu_conf = None
         self.signers = None
 
     def build_jwx_def(self):
@@ -162,23 +163,41 @@ class Provider(provider.Provider):
 
     def create_fed_providerinfo(self, pcr_class=ProviderConfigurationResponse,
                             setup=None):
-        _sms = []
-        for spec in self.ms_conf:
-            self.federation_entity.signer = self.signers[spec['signer']]
-            try:
-                fos = spec['federations']
-            except KeyError:
-                try:
-                    fos = [spec['federation']]
-                except KeyError:
-                    fos = []
-
-            _sms.append(
-                self.create_signed_metadata_statement('discovery', fos=fos))
-
         _response = provider.Provider.create_providerinfo(self, pcr_class,
                                                           setup)
-        _response['metadata_statements'] = _sms
+        if self.ms_conf:
+            _sms = []
+            for spec in self.ms_conf:
+                self.federation_entity.signer = self.signers[spec['signer']]
+                try:
+                    fos = spec['federations']
+                except KeyError:
+                    try:
+                        fos = [spec['federation']]
+                    except KeyError:
+                        fos = []
+
+                _sms.append(
+                    self.create_signed_metadata_statement('discovery', fos=fos))
+
+            _response['metadata_statements'] = _sms
+        elif self.msu_conf:
+            _sms = []
+            for spec in self.ms_conf:
+                self.federation_entity.signer = self.signers[spec['signer']]
+                try:
+                    fos = spec['federations']
+                except KeyError:
+                    try:
+                        fos = [spec['federation']]
+                    except KeyError:
+                        fos = []
+
+                _sms.append(
+                    self.create_signed_metadata_statement('discovery', fos=fos))
+
+            _response['metadata_statements'] = _sms
+
         return _response
 
     def _split_query(self, uri):

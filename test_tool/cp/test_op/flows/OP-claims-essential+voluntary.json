@@ -62,11 +62,7 @@
   "desc": "Claims request with essential name and voluntary email and picture claims [Extra]",
   "assert": {
     "verify-claims": {
-      "userinfo": {
-        "name": null,
-        "picture": null,
-        "email": null
-      }
+      "userinfo": null
     },
     "check-http-response": null
   }

@@ -61,9 +61,7 @@
   "desc": "Claims request with essential name claim",
   "assert": {
     "verify-claims": {
-      "userinfo": {
-        "name": null
-      }
+      "userinfo": null
     },
     "check-http-response": null
   }

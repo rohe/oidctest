@@ -4,21 +4,20 @@ from urllib.parse import unquote_plus
 
 import cherrypy
 from jwkest import as_bytes
-
 from oic.oauth2.message import list_serializer
 from oic.utils.http_util import Response
-
+from otest.proc import kill_process
 from otest.prof_util import abbr_return_type
 from otest.prof_util import do_discovery
 from otest.prof_util import do_registration
-from otest.prof_util import return_type
 from otest.prof_util import from_profile
+from otest.prof_util import return_type
 from otest.prof_util import to_profile
 from otest.proc import kill_process
 from otest.proc import isrunning
 
-from oidctest.app_conf import create_model
 from oidctest.app_conf import TYPE2CLS
+from oidctest.app_conf import create_model
 from oidctest.cp import init_events
 from oidctest.tt import conv_response
 from oidctest.tt import unquote_quote

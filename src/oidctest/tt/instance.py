@@ -5,13 +5,14 @@ import cherrypy
 from jwkest import as_bytes
 from oic.oauth2.message import list_serializer
 from oic.utils.http_util import Response
+from otest.prof_util import LABEL
+from otest.prof_util import simplify_return_type
+from otest.prof_util import to_profile
 
 from oidctest.app_conf import TYPE2CLS
 from oidctest.cp import init_events
 from oidctest.tt import conv_response
 from oidctest.tt import unquote_quote
-from otest.prof_util import simplify_return_type, LABEL
-from otest.prof_util import to_profile
 
 logger = logging.getLogger(__name__)
 

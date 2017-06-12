@@ -59,10 +59,7 @@
   "desc": "Claims request with voluntary email and picture claims",
   "assert": {
     "verify-claims": {
-      "userinfo": {
-        "picture": null,
-        "email": null
-      }
+      "userinfo": null
     },
     "check-http-response": null
   }

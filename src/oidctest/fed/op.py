@@ -1,7 +1,6 @@
-import json
-
 from future.backports.urllib.parse import urlparse
 
+import json
 import logging
 
 import cherrypy

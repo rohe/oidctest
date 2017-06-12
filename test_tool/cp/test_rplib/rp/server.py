@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
+import importlib
 import logging
 import os
 
 import cherrypy
+import sys
 from oic.utils import webfinger
 from otest.flow import Flow
 from otest.prof_util import SimpleProfileHandler
@@ -29,6 +31,12 @@ logger.addHandler(hdlr)
 logger.setLevel(logging.DEBUG)
 
 
+def get_version():
+    sys.path.insert(0, ".")
+    vers = importlib.import_module('version')
+    return vers.VERSION
+
+
 if __name__ == '__main__':
     import argparse
     from oidctest.rp import provider
@@ -43,6 +51,7 @@ if __name__ == '__main__':
     parser.add_argument(dest="config")
     args = parser.parse_args()
 
+    _version = get_version()
     _com_args, _op_arg, config = cb_setup(args)
 
     folder = os.path.abspath(os.curdir)
@@ -82,14 +91,15 @@ if __name__ == '__main__':
     # WebFinger
     webfinger_config = {
         '/': {'base_url': _op_arg['baseurl']}}
-    cherrypy.tree.mount(WebFinger(webfinger.WebFinger()),
+    cherrypy.tree.mount(WebFinger(webfinger.WebFinger(),
+                                  version=_version),
                         '/.well-known/webfinger', webfinger_config)
 
     # test list
     cherrypy.tree.mount(
         TestList(_flowsdir, 'links.json',
                  'List of OIDC RP library tests for profile: "<i>{}</i>"',
-                 config.GRPS),
+                 config.GRPS, version=_version),
         '/list')
 
     log_root = folder + '/log'
@@ -99,7 +109,8 @@ if __name__ == '__main__':
     cherrypy.tree.mount(Tar(folder), '/mktar')
 
     # OIDC Providers
-    cherrypy.tree.mount(Provider(op_handler, _flows), '/', provider_config)
+    cherrypy.tree.mount(Provider(op_handler, _flows, version=_version),
+                        '/', provider_config)
 
     # If HTTPS
     if args.tls:

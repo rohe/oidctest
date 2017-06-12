@@ -18,7 +18,7 @@ from oidctest.op.func import set_discovery_issuer
 from oidctest.op.func import set_essential_arg_claim
 from oidctest.op.func import set_principal
 from oidctest.op.func import multiple_return_uris
-from oidctest.op.func import redirect_uris_with_query_component
+#from oidctest.op.func import redirect_uris_with_query_component
 from oidctest.op.func import redirect_uri_with_query_component
 from oidctest.op.func import redirect_uris_with_fragment
 from oidctest.op.func import request_in_file
@@ -215,16 +215,16 @@ def test_redirect_uris_with_fragment():
     assert oper.req_args["redirect_uris"][0].endswith('#fragmentone')
 
 
-def test_redirect_uris_with_query_component():
-    _info = setup_conv()
-    oper = AsyncAuthn(_info['conv'], _info['io'], None)
-
-    oper.conv.entity.registration_info = {'redirect_uris': [
-        'https://example.org/authzcb']}
-
-    redirect_uris_with_query_component(oper, {'foo': 'bar'})
-
-    assert oper.req_args["redirect_uris"][0].endswith('?foo=bar')
+# def test_redirect_uris_with_query_component():
+#     _info = setup_conv()
+#     oper = AsyncAuthn(_info['conv'], _info['io'], None)
+#
+#     oper.conv.entity.registration_info = {'redirect_uris': [
+#         'https://example.org/authzcb']}
+#
+#     redirect_uris_with_query_component(oper, {'foo': 'bar'})
+#
+#     assert oper.req_args["redirect_uris"][0].endswith('?foo=bar')
 
 
 def test_request_in_file():

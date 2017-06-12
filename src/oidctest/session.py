@@ -2,7 +2,6 @@ import logging
 
 from otest import session
 
-
 __author__ = 'roland'
 
 logger = logging.getLogger(__name__)
@@ -21,12 +20,13 @@ class Node(object):
 
 
 class SessionHandler(session.SessionHandler):
-    def __init__(self, iss='', tag='', flows=None, order=None,
+    def __init__(self, iss='', tag='', flows=None, order=None, version='',
                  **kwargs):
         session.SessionHandler.__init__(self, flows=flows,
                                         order=order, **kwargs)
         self.iss = iss
         self.tag = tag
+        self.tool_version = version
         self.tool_conf = kwargs['tool_conf']
 
     @property

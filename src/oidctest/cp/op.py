@@ -90,12 +90,14 @@ def parse_resource(resource):
 
 
 class WebFinger(object):
-    def __init__(self, srv):
+    def __init__(self, srv, version=''):
         self.srv = srv
+        self.version = version
 
     @cherrypy.expose
     def index(self, resource, rel):
-        ev = init_events('/.well-known/webfinger')
+        ev = init_events('/.well-known/webfinger',
+                         'Test tool version:{}'.format(self.version))
         ev.store(EV_REQUEST, Operation('WebFinger', resource=resource, rel=rel))
 
         if rel != 'http://openid.net/specs/connect/1.0/issuer':
@@ -327,11 +329,15 @@ class Reset(object):
 
 
 class Root(object):
+    def __init__(self, version=''):
+        self.version = version
+
     @cherrypy.expose
     def index(self):
         response = [
             PRE_HTML,
             "<h1>Welcome to the OpenID Foundation RP library test site</h1>",
+            '<h2>Test tool version: {}</h2>'.format(self.version),
             '<h3>Before you start testing please read the ',
             '<a href="http://openid.net/certification/rp_testing/" '
             'target="_blank">',
@@ -349,7 +355,8 @@ class Root(object):
 class Provider(Root):
     _cp_config = {'request.error_response': handle_error}
 
-    def __init__(self, op_handler, flows):
+    def __init__(self, op_handler, flows, version=''):
+        Root.__init__(self, version)
         self.op_handler = op_handler
         self.flows = flows
         self.configuration = Configuration()
@@ -369,7 +376,8 @@ class Provider(Root):
             return self
 
         if len(vpath) >= 2:
-            ev = init_events(cherrypy.request.path_info)
+            ev = init_events(cherrypy.request.path_info,
+                             'Test tool version:{}'.format(self.version))
             oper_id = vpath.pop(0)
             test_id = vpath.pop(0)
 
@@ -403,7 +411,7 @@ class Provider(Root):
                     b = vpath.pop(0)
                     endpoint = '{}/{}'.format(a, b)
                     if endpoint == ".well-known/openid-configuration":
-                        op = self.op_handler.get(oper_id, test_id, Events(),
+                        op = self.op_handler.get(oper_id, test_id, ev,
                                                  endpoint)[0]
                         cherrypy.request.params['op'] = op
                         return self.configuration

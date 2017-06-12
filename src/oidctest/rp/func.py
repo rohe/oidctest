@@ -1,9 +1,9 @@
+from future.backports.urllib.parse import urlencode
+from future.backports.urllib.parse import urlparse
+
 import inspect
 import os
 import sys
-
-from future.backports.urllib.parse import urlencode
-from future.backports.urllib.parse import urlparse
 
 from otest.result import get_issuer
 
@@ -76,6 +76,81 @@ def set_discovery_issuer(oper, args):
     """
     if oper.dynamic:
         oper.op_args["issuer"] = get_issuer(oper.conv)
+
+
+def resource(oper, args):
+    """
+    Context:
+    Action:
+    Example:
+
+    :param oper: 
+    :param args: 
+    :return: 
+    """
+
+    _p = urlparse(get_issuer(oper.conv))
+    oper.op_args["resource"] = args["pattern"].format(
+        test_id=oper.conv.test_id, host=_p.netloc,
+        oper_id=oper.conv.operator_id)
+
+
+def set_jwks_uri(oper, args):
+    """
+    Context: AsyncAuthn
+    Action:
+    Example:
+
+    :param oper: 
+    :param args: 
+    :return: 
+    """
+
+    oper.req_args["jwks_uri"] = oper.conv.entity.jwks_uri
+
+
+def remove_grant(oper, arg):
+    """
+    Context:
+    Action:
+    Example:
+
+    :param oper: 
+    :param args: 
+    :return: 
+    """
+
+    oper.conv.entity.grant = {}
+
+
+def conditional_execution(oper, arg):
+    """
+    Context: AccessToken/UserInfo
+    Action: If the condition is not fulfilled the operation will not be 
+    executed.
+
+    Example:
+        "conditional_execution":{
+          "return_type": ["CIT","CI","C","CT"]
+        }
+
+    """
+
+    for key, val in arg.items():
+        if key == 'profile':
+            try:
+                if oper.profile[0] not in val.split(','):
+                    oper.skip = True
+                    return
+            except AttributeError:
+                if oper.profile[0] not in val:
+                    oper.skip = True
+                    return
+
+        elif key == 'return_type':
+            if oper.profile[0] not in val:
+                oper.skip = True
+                return
 
 
 def factory(name):
