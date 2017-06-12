@@ -170,8 +170,12 @@ if __name__ == '__main__':
             'tools.staticdir.dir': 'requests',
             'tools.staticdir.debug': True,
             'tools.staticdir.on': True,
+        },
+        '/favicon.ico':
+        {
+            'tools.staticfile.on': True,
+            'tools.staticfile.filename': os.path.join(folder, 'static/favicon.ico')
         }
-
     }
 
     _conf = importlib.import_module(args.config)
