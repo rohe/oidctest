@@ -70,16 +70,7 @@ class Main(object):
         elif isinstance(resp, bytes):
             return resp
 
-        try:
-            #  return info.flow_list()
-            _url = "{}display#{}".format(
-                self.webenv['client_info']['base_url'],
-                self.pick_grp(self.sh['conv'].test_id))
-
-            raise HTTPRedirect(_url, 303)
-        except KeyError as err:
-            logger.error(err)
-            raise CherryPyException(err)
+        self.opresult()
 
     @cherrypy.expose
     def reset(self):
@@ -114,21 +105,32 @@ class Main(object):
                     exp = self.tester.conv.events.get_data(EV_EXCEPTION)
                     if exp:
                         raise cherrypy.HTTPError(message=exp[0])
+                else:
+                    self.opresult()
             else:
                 return conv_response(self.sh['conv'].events, resp)
         else:
-            _url = "{}display#{}".format(self.webenv['base_url'],
-                                         self.pick_grp(self.sh['conv'].test_id))
-            HTTPRedirect(_url)
+            self.opresult()
 
     @cherrypy.expose
     def display(self):
         return as_bytes(self.info.flow_list())
 
     def opresult(self):
-        _url = "{}display#{}".format(self.webenv['base_url'],
-                                     self.pick_grp(self.sh['conv'].test_id))
-        cherrypy.HTTPRedirect(_url)
+        # _url = "{}display#{}".format(self.webenv['base_url'],
+        #                              self.pick_grp(self.sh['conv'].test_id))
+        # cherrypy.HTTPRedirect(_url)
+        try:
+            #  return info.flow_list()
+            _url = "{}display#{}".format(
+                self.webenv['client_info']['base_url'],
+                self.pick_grp(self.sh['conv'].test_id))
+
+            raise HTTPRedirect(_url, 303)
+        except KeyError as err:
+            logger.error(err)
+            raise CherryPyException(err)
+
 
     @cherrypy.expose
     def authz_cb(self, **kwargs):
@@ -182,16 +184,7 @@ class Main(object):
         elif not isinstance(resp, int):
             return resp
 
-        try:
-            # return info.flow_list()
-            url = "{}display#{}".format(
-                self.webenv['client_info']['base_url'],
-                self.pick_grp(_conv.test_id))
-        except Exception as err:
-            logger.error(err)
-            raise cherrypy.HTTPError(message=str(err))
-        else:
-            raise cherrypy.HTTPRedirect(url)
+        self.opresult()
 
     @cherrypy.expose
     def authz_post(self, **kwargs):
@@ -210,13 +203,4 @@ class Main(object):
             elif not isinstance(resp, int):
                 return resp
 
-            try:
-                # return info.flow_list()
-                url = "{}display#{}".format(
-                    self.webenv['client_info']['base_url'],
-                    self.pick_grp(_conv.test_id))
-            except Exception as err:
-                logger.error(err)
-                raise cherrypy.HTTPError(message=str(err))
-            else:
-                raise cherrypy.HTTPRedirect(url)
+            self.opresult()
