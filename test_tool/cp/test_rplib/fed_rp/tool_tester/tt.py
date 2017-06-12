@@ -27,7 +27,12 @@ KEY_DEFS = [
 
 def fo_jb(jb, test_info):
     fjb = JWKSBundle('')
-    for ms in test_info['metadata_statements']:
+    try:
+        _vals = test_info['metadata_statements']
+    except KeyError:
+        _vals = test_info['metadata_statement_uris']
+
+    for ms in _vals:
         try:
             for fo in ms['federations']:
                 fjb[fo] = jb[fo]
@@ -38,6 +43,7 @@ def fo_jb(jb, test_info):
             except KeyError:
                 fo = ms['signer']
                 fjb[fo] = jb[fo]
+
     return fjb
 
 

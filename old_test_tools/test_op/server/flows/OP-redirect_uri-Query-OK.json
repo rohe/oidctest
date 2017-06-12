@@ -31,14 +31,14 @@
     },
     {
       "Registration": {
-        "redirect_uris_with_query_component": {
+        "redirect_uri_with_query_component": {
           "foo": "bar"
         }
       }
     },
     {
       "AsyncAuthn": {
-        "redirect_uris_with_query_component": {
+        "redirect_uri_with_query_component": {
           "foo": "bar"
         },
         "set_response_where": null
