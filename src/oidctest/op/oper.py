@@ -233,7 +233,7 @@ class AccessToken(SyncPostRequest):
             self.conv.entity.do_access_token_request,
             request_args=self.req_args, **self.op_args)
 
-        if isinstance(atr, ErrorResponse):
+        if atr is None or isinstance(atr, ErrorResponse):
             return atr
 
         try:
