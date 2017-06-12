@@ -41,6 +41,7 @@ from otest.check import get_id_tokens
 from otest.check import get_protocol_request
 from otest.check import get_protocol_response
 from otest.check import get_provider_info
+from otest.events import EV_HTTP_ARGS
 from otest.events import EV_HTTP_RESPONSE
 from otest.events import EV_PROTOCOL_REQUEST
 from otest.events import EV_PROTOCOL_RESPONSE
@@ -2292,7 +2293,19 @@ class CheckQueryPart(Error):
     """
 
     def _func(self, conv):
-        inst = get_protocol_response(conv, AuthorizationResponse)[0]
+        areq = get_protocol_request(conv, AuthorizationRequest)[0]
+        if areq['response_type'] == ['code']:
+            inst = get_protocol_response(conv, AuthorizationResponse)[0]
+        else:
+            inst = None
+            for _ev in conv.events.get(EV_HTTP_ARGS):
+                if _ev.ref == 'authz_cb':
+                    inst = _ev.data
+                    break
+            if inst is None:
+                self._status = ERROR
+                self._message = 'Query parameters missing'
+                return {}
 
         for key, val in list(self._kwargs.items()):
             try:

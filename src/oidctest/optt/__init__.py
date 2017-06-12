@@ -161,7 +161,7 @@ class Main(object):
                 except KeyError:
                     pass
                 else:
-                    _conv.events.store(EV_HTTP_ARGS, kwargs)
+                    _conv.events.store(EV_HTTP_ARGS, kwargs, ref='authz_cb')
                     _conv.query_component = kwargs
 
                 return self.info.opresult_fragment()
