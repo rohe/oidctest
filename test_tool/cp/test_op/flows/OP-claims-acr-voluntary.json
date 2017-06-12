@@ -43,9 +43,7 @@
   "desc": "Requesting ID Token with voluntary acr claim [Extra]",
   "assert": {
     "verify-claims": {
-      "id_token": {
-        "acr": null
-      }
+      "id_token": null
     },
     "verify-response": {
       "response_cls": [

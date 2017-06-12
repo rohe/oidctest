@@ -45,9 +45,7 @@
   ],
   "assert": {
     "verify-claims": {
-      "id_token": {
-        "auth_time": null
-      }
+      "id_token": null
     },
     "verify-response": {
       "response_cls": [
