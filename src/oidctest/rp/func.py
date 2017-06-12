@@ -123,6 +123,36 @@ def remove_grant(oper, arg):
     oper.conv.entity.grant = {}
 
 
+def conditional_execution(oper, arg):
+    """
+    Context: AccessToken/UserInfo
+    Action: If the condition is not fulfilled the operation will not be 
+    executed.
+
+    Example:
+        "conditional_execution":{
+          "return_type": ["CIT","CI","C","CT"]
+        }
+
+    """
+
+    for key, val in arg.items():
+        if key == 'profile':
+            try:
+                if oper.profile[0] not in val.split(','):
+                    oper.skip = True
+                    return
+            except AttributeError:
+                if oper.profile[0] not in val:
+                    oper.skip = True
+                    return
+
+        elif key == 'return_type':
+            if oper.profile[0] not in val:
+                oper.skip = True
+                return
+
+
 def factory(name):
     for fname, obj in inspect.getmembers(sys.modules[__name__]):
         if inspect.isfunction(obj):
