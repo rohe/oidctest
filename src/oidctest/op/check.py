@@ -38,6 +38,7 @@ from otest.check import ResponseInfo
 from otest.check import Warnings
 from otest.check import get_authorization_request
 from otest.check import get_id_tokens
+from otest.check import get_protocol_request
 from otest.check import get_protocol_response
 from otest.check import get_provider_info
 from otest.events import EV_HTTP_RESPONSE
@@ -1826,34 +1827,34 @@ class VerifySignedIdTokenHasKID(Error):
         return {}
 
 
-# class VerifySignedIdToken(Error):
-#     """
-#     Verifies that an ID Token is signed
-#     """
-#     cid = "verify-idtoken-is-signed"
-#     msg = "ID Token unsigned or signed with the wrong algorithm"
-#
-#     def _func(self, conv):
-#         res = get_id_tokens(conv)
-#         if not res:
-#             self._message = "No response to get the ID Token from"
-#             self._status = self.status
-#             return {}
-#
-#         idt = res[-1]
-#         try:
-#             assert idt.jws_header["alg"] == self._kwargs["alg"]
-#         except KeyError:
-#             try:
-#                 assert idt.jws_header["alg"] != "none"
-#             except AssertionError:
-#                 self._status = self.status
-#         except AssertionError:
-#             self._status = self.status
-#         else:
-#             self._message = "Signature algorithm='%s'" % idt.jws_header["alg"]
-#
-#         return {}
+class VerifySignedIdToken(Error):
+    """
+    Verifies that an ID Token is signed
+    """
+    cid = "verify-idtoken-is-signed"
+    msg = "ID Token unsigned or signed with the wrong algorithm"
+
+    def _func(self, conv):
+        res = get_id_tokens(conv)
+        if not res:
+            self._message = "No response to get the ID Token from"
+            self._status = self.status
+            return {}
+
+        idt = res[-1]
+        try:
+            assert idt.jws_header["alg"] == self._kwargs["alg"]
+        except KeyError:
+            try:
+                assert idt.jws_header["alg"] != "none"
+            except AssertionError:
+                self._status = self.status
+        except AssertionError:
+            self._status = self.status
+        else:
+            self._message = "Signature algorithm='%s'" % idt.jws_header["alg"]
+
+        return {}
 
 
 class VerifyNonce(Error):
@@ -1938,7 +1939,8 @@ class VerifySubValue(Error):
     msg = "Unexpected sub value"
 
     def _func(self, conv):
-        areq = get_authorization_request(conv, AuthorizationRequest)
+        # Use the last Authorization Request
+        areq = get_protocol_request(conv, AuthorizationRequest)[-1]
         try:
             sub = areq["claims"]["id_token"]["sub"]["value"]
         except KeyError:
