@@ -25,7 +25,7 @@ __author__ = 'roland'
 
 def set_webfinger_resource(oper, args):
     """
-    Context: WebFinger Query
+    Context: WebFinger
     Action: Specifies the webfinger resource. If the OP supports
     webfinger queries then the resource is set to the value of 'webfinger_url'
     or 'webfinger_email' from the test instance configuration.
@@ -145,7 +145,7 @@ def check_support(oper, args):
 
 def set_principal(oper, args):
     """
-    Context: webfinger
+    Context: WebFinger
     Action: Set principal using a specific parameter
     Example:
 
@@ -430,7 +430,7 @@ def multiple_return_uris(oper, args):
 
 def redirect_uri_with_query_component(oper, args):
     """
-    Context: Authorization request
+    Context: AsyncAuthn
     Action: Add a query component to the redirect_uri
     Example:
         redirect_uri_with_query_component:
@@ -474,7 +474,7 @@ def redirect_uris_with_fragment(oper, kwargs):
 
 def request_in_file(oper, kwargs):
     """
-    Context: AsyncAuth
+    Context: AsyncAuthn
     Action: Sets the operation argument 'base_path' to where the request 
      can be found
     Example:

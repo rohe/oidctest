@@ -715,6 +715,11 @@ class VerifyClaims(Error):
     :type userinfo: boolean
     :param id_token: Whether the method should look for the claims in the id_token
     :type id_token: boolean
+    
+    Example:
+        "verify-claims": {
+          "id_token": null
+        }
     """
 
     def _userinfo_claims(self, conv, req):
