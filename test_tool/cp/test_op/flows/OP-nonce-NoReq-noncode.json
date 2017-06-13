@@ -21,6 +21,7 @@
         "set_discovery_issuer": null
       }
     },
+    "Note",
     "Registration",
     {
       "AsyncAuthn": {
@@ -43,6 +44,7 @@
     "CT",
     "CIT"
   ],
+  "note": "This test should result in the OpenID Provider displaying an error message in your user agent. You should ignore the status of this test in the test tool, since it will be incomplete. You must submit a screen shot of the error shown as part of your certification application.",
   "assert": {
     "verify-response": {
       "response_cls": [
