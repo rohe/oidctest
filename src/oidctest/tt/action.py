@@ -30,7 +30,7 @@ HEADLINE = {
     "provider_info": ""
 }
 
-ball = '<img src="/static/Add_16x16.png" alt="Red Ball">'
+ball = '<button type="button" class="btn btn-warning"><span class="glyphicon glyphicon-plus"></span></button>'
 
 _cline = '{} <input type="radio" name="{}:{}" value="{}" {}>'
 
@@ -51,13 +51,13 @@ def do_line(grp, key, val, req=False):
                 [_cline.format('True', grp, key, 'True', ''),
                  _cline.format('False', grp, key, 'False', 'checked')])
 
-        return '<tr><th align="left">{}</th><td>{}</td><td>{}</td></tr>'.format(
+        return '<tr><th width="35%">{}</th><td>{}</td><td width="10%">{}</td></tr>'.format(
             key, _choice, _ball)
     else:
         return " ".join([
-            '<tr><th align="left">{}</th><td><input'.format(key),
+            '<tr><th width="35%">{}</th><td><input'.format(key),
             'type="text" name="{}:{}"'.format(grp, key),
-            'value="{}" class="str"></td><td>{}</td></tr>'.format(val, _ball)])
+            'value="{}" class="form-control"></td><td width="10%">{}</td></tr>'.format(val, _ball)])
 
 
 def comma_sep_list(key, val, multi):
@@ -68,14 +68,17 @@ def comma_sep_list(key, val, multi):
 
 
 def display_form(head_line, grp, dic, state, multi):
-    lines = ['<h3>{}</h3>'.format(head_line), '<table>']
+    lines = ['<table class="table table-hover table-bordered">']
+    if head_line:
+        lines.append('<thead><tr><th colspan="3" class="text-center info"><h3>{}</h3></th></tr></thead>'.format(head_line))
+    lines.append('<tbody>')        
     keys = list(dic.keys())
     keys.sort()
     if grp in state:
         for param in state[grp]['immutable']:
             val = comma_sep_list(param, dic[param], multi[grp])
             l = [
-                '<tr><th align="left">{}</th>'.format(param),
+                '<tr><th>{}</th>'.format(param),
                 '<td>{}</td><td>{}</td></tr>'.format(val, ball),
                 '<input type="hidden" name="{}:{}" value="{}"'.format(grp,
                                                                       param,
@@ -90,22 +93,23 @@ def display_form(head_line, grp, dic, state, multi):
     for key in keys:
         val = comma_sep_list(key, dic[key], multi[grp])
         lines.append(do_line(grp, key, val, False))
-    lines.append('</table>')
+    lines.append('</tbody></table>')
     return lines
 
 
 def display(dicts, state, multi, notes, action):
     lines = [
-        '<form action="{}" method="post">'.format(action)]
+        '<form class="col-md-10" action="{}" method="post">'.format(action)]
     for grp, info in dicts.items():
         lines.append('<br>')
         lines.extend(display_form(HEADLINE[grp], grp, info, state, multi))
     lines.append('<p>{}</p>'.format(notes))
     lines.append(
-        '<button type="submit" value="configure" class="button">Save & '
-        'Start</button>')
+        '<div class="btn-toolbar">'
+        '<button type="submit" value="configure" class="btn btn-primary">Save & Start</button>')
     lines.append(
-        '<button type="submit" value="abort" class="abort">Abort</button>')
+        '<button type="submit" value="abort" class="btn btn-default">Abort</button>'
+        '</div>')
     lines.append('</form>')
     return "\n".join(lines)
 
@@ -188,7 +192,7 @@ def update_config(conf, tool_params):
 
 class Action(object):
     def __init__(self, rest, tool_conf, html, entpath, ent_info_path,
-                 tool_params, app):
+                 tool_params, app, version):
         self.rest = rest
         self.tool_conf = tool_conf
         self.html = html
@@ -197,6 +201,7 @@ class Action(object):
         self.baseurl = ''
         self.app = app
         self.tool_params = tool_params
+        self.version = version
 
     @cherrypy.expose
     def index(self, iss, tag, ev, action):
@@ -244,10 +249,63 @@ class Action(object):
 
         action = "{}/run/{}/{}".format('', qp[0], qp[1])
         _msg = self.html['instance.html'].format(
-            display=display(dicts, state, multi, notes, action)
+            display=display(dicts, state, multi, notes, action),
+            version=self.version
         )
 
         return as_bytes(_msg)
+
+    @cherrypy.expose
+    def stop(self, iss, tag, ev):
+        logger.info('stop test tool')
+
+        uqp, qp = unquote_quote(iss, tag)
+        _key = self.app.assigned_ports.make_key(*uqp)
+        
+        # If already running - kill
+        try:
+            pid = isrunning(unquote_plus(iss), unquote_plus(tag))
+        except KeyError:
+            pass
+        else:
+            if pid:
+                #logger.info('kill {}'.format(pid))
+                #subprocess.call(['kill', str(pid)])
+                kill_process(pid)
+                try:
+                    del self.app.running_processes[_key]
+                except KeyError:
+                    pass
+
+        # redirect back to entity page
+        loc = '{}entity/{}'.format(self.rest.base_url, qp[0])
+        raise cherrypy.HTTPRedirect(loc)
+
+    @cherrypy.expose
+    def stop(self, iss, tag, ev):
+        logger.info('stop test tool')
+
+        uqp, qp = unquote_quote(iss, tag)
+        _key = self.app.assigned_ports.make_key(*uqp)
+        
+        # If already running - kill
+        try:
+            pid = isrunning(unquote_plus(iss), unquote_plus(tag))
+        except KeyError:
+            pass
+        else:
+            if pid:
+                #logger.info('kill {}'.format(pid))
+                #subprocess.call(['kill', str(pid)])
+                kill_process(pid)
+                try:
+                    del self.app.running_processes[_key]
+                except KeyError:
+                    pass
+
+        # redirect back to entity page
+        loc = '{}entity/{}'.format(self.rest.base_url, qp[0])
+        raise cherrypy.HTTPRedirect(loc)
 
     @cherrypy.expose
     def stop(self, iss, tag, ev):

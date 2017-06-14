@@ -1,29 +1,75 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 <head>
-    <title>OpenID Connect Provider Certification</title>
-    <link rel="stylesheet" type="text/css" href="/static/theme.css">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenID Connect Provider Certification</title>
+<link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/theme.css" rel="stylesheet">
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
-<div class="inp">
-    <p class="head">
-        This is a tool used for testing the compliance of an OpenID Connect
-        Provider with the OpenID Connect specifications.
-    </p>
-</div>
+<body>
 
-<p>
-<div class="left">
-    If you already have configured a test instance, but do not remember
-    where you can find it, look for it <a href="/entity">here</a>
-</div>
-</p>
-<p>
-<div class="right">
-    If you have not configured a test instance or you want to create
-    a new one different from the ones you already have.
-    <a href="/new">This is where you can do that.</a>
-</div>
-</p>
+	<div class="container" role="main">
+
+		<div class="page-header">
+			<h2>OpenID Connect Provider Certification</h2>
+		</div>
+
+		<div class="jumbotron">
+			<p>This is a tool for testing the compliance of an OpenID Connect
+				Provider with the OpenID Connect specifications.</p>
+		</div>
+
+		<table class="table table-bordered">
+
+			<tr>
+				<td width="13%"><a href="/entity"
+					class="btn btn-primary btn-block" role="button"><span
+						class="glyphicon glyphicon-list"></span>&nbsp;&nbsp;List</a></td>
+				<td style="vertical-align: middle;">If you already have
+					configured a test instance, but do not remember where you can find
+					it.</td>
+			</tr>
+
+			<tr>
+				<td><a href="/new" class="btn btn-primary btn-block"
+					role="button"><span class="glyphicon glyphicon-new-window"></span>&nbsp;&nbsp;New
+				</a></td>
+				<td style="vertical-align: middle;">If you have not configured
+					a test instance or you want to create a new one different from the
+					ones you already have.</td>
+			</tr>
+
+		</table>
+
+		<div id="footer" class="footer text-muted">
+			<hr />
+			<div class="pull-left">
+				<ul class="list-inline">
+					<li>(C) 2017 - <a href="http://openid.net/foundation/">OpenID
+							Foundation</a></li>
+					<li>E-mail: <a href="mailto:certification@openid.net">certification@openid.net</a></li>
+					<li>Issues: <a
+						href="https://github.com/openid-certification/oidctest/issues">Github</a>
+					<li>
+				</ul>
+			</div>
+			<div class="pull-right">
+				<ul class="list-inline">
+					<li>Version: {version}</li>
+				</ul>
+			</div>
+		</div>
+
+	</div>
+
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="/static/bootstrap/js/bootstrap.min.js"></script>
 </body>
 </html>

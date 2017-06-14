@@ -145,9 +145,10 @@ class Log(object):
 
 
 class OPLog(object):
-    def __init__(self, root, pre_html):
+    def __init__(self, root, pre_html, version):
         self.root = root
         self.pre_html = pre_html
+        self.version = version
 
     @cherrypy.expose
     def index(self, op_id='', tag='', profile='', test_id=''):
@@ -195,15 +196,17 @@ class OPLog(object):
                         'file</b></a></p>'.format(tar_url, tar_file))
 
                 response = _pre_html.format(
-                    info = '<h3>A list of test results that are saved on disc:</h3>',
+                    info = 'A list of test results that are saved on disc:',
                     list=display_log(op_id, item),
-                    actions='\n'.join(_acts)
+                    actions='\n'.join(_acts),
+                    version=self.version
                 )
             else:
                 response = _pre_html.format(
-                    info='<h3>A list of all testers registred on this server:</h3>',
+                    info='A list of all testers registered on this server:',
                     list=display_testers(item),
-                    actions=''
+                    actions='',
+                    version=self.version
                 )
 
             return response

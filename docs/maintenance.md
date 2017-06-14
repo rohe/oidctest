@@ -1,6 +1,6 @@
 # Operational Maintenance
 
-*Version 1.0 - March 20, 2017*
+*Version 1.0.1 - June 13, 2017*
 
 This document describes operational maintenance procedures for the OpenID Connect OP and RP certification environments
 that the OpenID Foundation provides. It lists important directory/file structures and the steps one would have to take
@@ -90,8 +90,9 @@ sudo oidc_setup.py /usr/local/src/oidctest oidf
 Restart RP test instance:
 ````
 cd /usr/local/oidf/oidc_cp_rplib
-./restart.sh
+./run.sh
 ````
+NB: the `run.sh` script will also kill the existing RP test instance
 
 Restart OP test instance:
 ````

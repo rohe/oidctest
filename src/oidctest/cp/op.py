@@ -289,29 +289,74 @@ class Claims(object):
                 cherrypy.response.headers["content-type"] = 'application/jwt'
                 return as_bytes(_info.to_jwt(key=jwt_key, algorithm="RS256"))
 
+HTML_PRE = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenID Connect Relying Party Certification</title>
+<link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/theme.css" rel="stylesheet">
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
 
-PRE_HTML = """<html>
-  <head>
-    <title>The OIDC RP library test documentation</title>
-    <link rel="stylesheet" type="text/css" href="/static/theme.css">
-  </head>
-  <body>"""
+    <div class="container" role="main">
 
-POST = """</body></html>"""
+        <div class="page-header">
+            <h2>OpenID Connect Relying Party Certification</h2>
+        </div>
+"""
 
+HTML_POST = """
+    </div>
+
+    <script
+        src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>
+"""
+
+HTML_FOOTER = """
+        <div id="footer" class="footer text-muted">
+            <hr />
+            <div class="pull-left">
+                <ul class="list-inline">
+                    <li>(C) 2017 - <a href="http://openid.net/foundation/">OpenID
+                            Foundation</a></li>
+                    <li>E-mail: <a href="mailto:certification@openid.net">certification@openid.net</a></li>
+                    <li>Issues: <a
+                        href="https://github.com/openid-certification/oidctest/issues">Github</a>
+                    <li>
+                </ul>
+            </div>
+            <div class="pull-right">
+                <ul class="list-inline">
+                    <li>Version: {}</li>
+                </ul>
+            </div>
+        </div>
+"""
 
 def choice(profiles):
     keys = list(profiles.keys())
     keys.sort()
 
     line = [
-        '<table>',
-        '<tr><th>Response type</th><th></th></tr>']
+        '<table class="table table-hover table-bordered" style="font-family:monospace;">',
+        ]
     for k in keys:
-        line.append('<tr><td>{}</td><td>'.format(k))
-        line.append('<input type="radio" name="profile" value="{}">'.format(
+        line.append('<tr>');
+        line.append('  <td width="80%">{}</td>'.format(k));
+        line.append('  <td class="text-center"><input type="radio" name="profile" value="{}"></td>'.format(
             profiles[k]))
-        line.append('</td></tr>')
+        line.append('</tr>');
     line.append('</table>')
     return '\n'.join(line)
 
@@ -335,19 +380,33 @@ class Root(object):
     @cherrypy.expose
     def index(self):
         response = [
-            PRE_HTML,
-            "<h1>Welcome to the OpenID Foundation RP library test site</h1>",
-            '<h2>Test tool version: {}</h2>'.format(self.version),
-            '<h3>Before you start testing please read the ',
-            '<a href="http://openid.net/certification/rp_testing/" '
-            'target="_blank">',
-            'how to use the RPtest </a>introduction guide</h3>',
-            '<h3>For a list of OIDC RP library tests per response_type chose '
-            'your preference:</h3>',
-            '<form action="list">',
+            HTML_PRE,
+            '<div class="jumbotron">',
+            '  <p>',
+            '    This is a tool for testing the compliance of an OpenID Connect Relying Party with the OpenID Connect specifications.',
+            '    Before you start testing please read the ',
+            '    <a href="https://openid.net/certification/rp_testing/" target="_blank">Conformance Testing for RPs</a> introduction guide.',
+            '  </p>',
+            '</div>',
+
+            '<div class="panel panel-primary">',
+            '  <div class="panel-heading">',
+            '    <h3 class="panel-title">Response Types</h3>',
+            '  </div>',
+            '  <div class="panel-body">'
+            '    <p>For a list of OIDC RP library tests per response_type choose your preference:</p>',
+            '    <form action="list" class="col-md-6">',
             choice(ABBR),
-            '<p></p><input type="submit" value="Submit"></form>',
-            POST
+            '        <div class="form-group">',
+            '            <button type="submit" class="btn btn-primary">Submit</button>',
+            '        </div>',
+            '    </form>',
+            '  </div>',
+            '</div>',
+
+            HTML_FOOTER.format(self.version),
+
+            HTML_POST
         ]
         return '\n'.join(response)
 
@@ -373,7 +432,7 @@ class Provider(Root):
         logger.info('ent:{}, vpath: {}'.format(ent, vpath))
 
         if vpath[0] == 'static':
-            return self
+            return vpath
 
         if len(vpath) >= 2:
             ev = init_events(cherrypy.request.path_info,

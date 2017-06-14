@@ -43,8 +43,7 @@ def test_list(args, grps):
     """
     Creates list of test descriptions
     """
-    line = [
-        '<table>',
+    line = ['<table class="table table-hover table-bordered table-condensed">',
         '<tr><th>Test ID</th><th>Description</th><th>Info</th></tr>']
 
     for pgrp in grps:
@@ -53,15 +52,70 @@ def test_list(args, grps):
             if pgrp == grp:
                 if h is False:
                     line.append(
-                        '<tr style><td colspan="3" class="center"><b>{}</b></td></tr>'.format(grp))
+                        '<tr style><td colspan="3" class="text-center info"><b>{}</b></td></tr>'.format(grp))
                     h = True
 
                 line.append(
-                    '<tr><td style="white-space:nowrap">{}</td><td>{}</td><td>{}</td></tr>'.format(
+                    '<tr><tH style="white-space:nowrap">{}</tH><td>{}</td><td>{}</td></tr>'.format(
                         tid, desc, result))
     line.append('</table>')
     return line
 
+
+HTML_PRE = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenID Connect Relying Party Certification</title>
+<link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/theme.css" rel="stylesheet">
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+    <div class="container" role="main">
+
+        <div class="page-header">
+            <h2>OpenID Connect Relying Party Certification</h2>
+        </div>
+"""
+
+HTML_POST = """
+    </div>
+
+    <script
+        src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>
+"""
+
+HTML_FOOTER = """
+        <div id="footer" class="footer text-muted">
+            <hr />
+            <div class="pull-left">
+                <ul class="list-inline">
+                    <li>(C) 2017 - <a href="http://openid.net/foundation/">OpenID
+                            Foundation</a></li>
+                    <li>E-mail: <a href="mailto:certification@openid.net">certification@openid.net</a></li>
+                    <li>Issues: <a
+                        href="https://github.com/openid-certification/oidctest/issues">Github</a>
+                    <li>
+                </ul>
+            </div>
+            <div class="pull-right">
+                <ul class="list-inline">
+                    <li>Version: {}</li>
+                </ul>
+            </div>
+        </div>
+"""
 
 class TestList(object):
     def __init__(self, fdir, links_file, headline, grps, version=''):
@@ -112,18 +166,32 @@ class TestList(object):
         hl = self.headline.format(EXP[profile])
 
         response = [
-            "<html><head>",
-            '<link rel="stylesheet" type="text/css" href="/static/theme.css">',
-            "<title>{}</title></head><body>".format(hl),
-            '<h1>{}</h1>'.format(hl),
-            '<h2>Test tool version: {}</h2>'.format(self.version),
-            '<h2>Mandatory to implement</h2>'
+            HTML_PRE,            
+            '<div class="panel panel-primary">',
+            '  <div class="panel-heading">',
+            '    <h3 class="panel-title">Mandatory</h3>',
+            '  </div>',
+            '  <div class="panel-body">'
         ]
 
         response.extend(test_list(mandatory, self.grps))
-        response.append('<h2>Optional</h2>')
+        response += [
+            '  </div>',
+            '</div>'
+            '<div class="panel panel-primary">',
+            '  <div class="panel-heading">',
+            '    <h3 class="panel-title">Optional</h3>',
+            '  </div>',
+            '  <div class="panel-body">',
+        ]
+        
         response.extend(test_list(optional, self.grps))
-        response.append('</body></head>')
+        response += [
+            '  </div>',
+            '</div>',
+            HTML_FOOTER.format(self.version),
+            HTML_POST
+        ]
 
         return as_bytes('\n'.join(response))
 

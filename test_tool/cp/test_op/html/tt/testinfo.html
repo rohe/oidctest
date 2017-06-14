@@ -1,19 +1,92 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenID Connect Provider Certification Test Result</title>
+<link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/theme.css" rel="stylesheet">
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
 
-<html>
-    <head>
-        <title>OIDC OP Test result</title>
-        <link rel="stylesheet" type="text/css" href="/static/theme.css">
-    </head>
-    <body>
-        <h2>Test info</h2>
-        {profile_output}
-        <hr>
-        {assertions}
-        <hr>
-        {trace_output}
-        <hr>
-        <h3>Result</h3>
-        {result}
-    </body>
+	<div class="container" role="main">
+
+		<div class="page-header">
+			<h2>OpenID Connect Provider Certification Test Result</h2>
+		</div>
+
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">Test Info</h3>
+			</div>
+			<div class="panel-body">
+
+				<p>{profile_output}</p>
+
+			</div>
+		</div>
+
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">Conditions</h3>
+			</div>
+			<div class="panel-body">
+
+				<pre><code>{assertions}</code></pre>
+
+			</div>
+		</div>
+
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">Trace Output</h3>
+			</div>
+			<div class="panel-body">
+
+				<p>{trace_output}</p>
+
+			</div>
+		</div>
+
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">Result</h3>
+			</div>
+			<div class="panel-body">
+
+				<p>{result}</p>
+
+			</div>
+		</div>
+
+		<div class="footer text-muted">
+			<hr />
+			<div class="pull-left">
+				<ul class="list-inline">
+					<li>(C) 2017 - <a href="http://openid.net/foundation/">OpenID
+							Foundation</a></li>
+					<li>E-mail: <a href="mailto:certification@openid.net">certification@openid.net</a></li>
+					<li>Issues: <a
+						href="https://github.com/openid-certification/oidctest/issues">Github</a>
+					<li>
+				</ul>
+			</div>
+			<div class="pull-right">
+				<ul class="list-inline">
+					<li>Version: {version}</li>
+				</ul>
+			</div>
+		</div>
+
+	</div>
+
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+</body>
 </html>

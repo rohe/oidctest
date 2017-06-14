@@ -1,16 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>OpenID Certification OP Test</title>
-    <link rel="stylesheet" type="text/css" href="/static/theme.css">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenID Connect Provider Certification</title>
+<link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/theme.css" rel="stylesheet">
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
 <body>
-    <h1>OpenID Certification OP Test</h1>
-    <h2>You can change the profile you are testing here:</h2>
-    <h3>Choose response_type:</h3>
-    <form action="/profile" method="POST">
-        {profile_form}
-        <p><input type="submit" value="Continue"></p>
-    </form>
+
+	<div class="container" role="main">
+
+		<div class="page-header">
+			<h2>OpenID Connect Provider Certification</h2>
+		</div>
+
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">Edit Configuration</h3>
+			</div>
+			<div class="panel-body">
+
+				<p>You can change the profile you are testing here.</p>
+
+				<p>Choose the Response Type:</p>
+
+				<form class="col-md-10" action="/profile" method="POST">
+
+					<p>{profile_form}</p>
+
+					<p>
+						<button type="submit" value="Continue" class="btn btn-primary">
+							<span class="glyphicon glyphicon-save"></span>&nbsp;Save
+						</button>
+					</p>
+				</form>
+
+			</div>
+		</div>
+
+		<div id="footer" class="footer text-muted">
+			<hr />
+			<div class="pull-left">
+				<ul class="list-inline">
+					<li>(C) 2017 - <a href="http://openid.net/foundation/">OpenID
+							Foundation</a></li>
+					<li>E-mail: <a href="mailto:certification@openid.net">certification@openid.net</a></li>
+					<li>Issues: <a
+						href="https://github.com/openid-certification/oidctest/issues">Github</a>
+					<li>
+				</ul>
+			</div>
+			<div class="pull-right">
+				<ul class="list-inline">
+					<li>Version: {version}</li>
+				</ul>
+			</div>
+		</div>
+
+	</div>
+
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="/static/bootstrap/js/bootstrap.min.js"></script>
 </body>
 </html>
