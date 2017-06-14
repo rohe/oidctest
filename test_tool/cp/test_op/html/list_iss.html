@@ -1,12 +1,67 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenID Connect Provider Certification</title>
+<link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/theme.css" rel="stylesheet">
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
 
-<html>
-  <head>
-    <title>This ia a list of all the registered Issuers</title>
-    <link rel="stylesheet" type="text/css" href="/static/theme.css">
-  </head>
-  <body>
-    <h1>A list of all the registered Issuers</h1>
-        {iss_table}
-  </body>
+	<div class="container" role="main">
+
+		<div class="page-header">
+			<div class="pull-left">
+				<h2>OpenID Connect Provider Certification</h2>
+			</div>
+			<div class="pull-right">
+				<a href="https://openid.net/certification"><img
+					class="img-responsive" src="/static/logo.png" /></a>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">Registered Issuers</h3>
+			</div>
+			<div class="panel-body">
+				<p>A list of all the registered Issuers</p>
+
+				<p>{iss_table}</p>
+
+			</div>
+		</div>
+
+		<div class="footer text-muted">
+			<hr />
+			<div class="pull-left">
+				<ul class="list-inline">
+					<li>(C) 2017 - <a href="https://openid.net/foundation">OpenID
+							Foundation</a></li>
+					<li>E-mail: <a href="mailto:certification@openid.net">certification@openid.net</a></li>
+					<li>Issues: <a
+						href="https://github.com/openid-certification/oidctest/issues">Github</a>
+					<li>
+				</ul>
+			</div>
+			<div class="pull-right">
+				<ul class="list-inline">
+					<li>Version: {version}</li>
+				</ul>
+			</div>
+		</div>
+
+	</div>
+
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+</body>
 </html>

@@ -10,7 +10,6 @@ from otest.proc import isrunning
 
 from oidctest.cp import init_events
 from oidctest.ass_port import AssignedPorts
-from oidctest.tt import BUT
 from oidctest.tt import unquote_quote
 
 logger = logging.getLogger(__name__)
@@ -18,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 def iss_table(base, issuers):
     issuers.sort()
-    line = ["<table>"]
+    line = ["<table class=\"table table-hover table-bordered\">"]
     for iss in issuers:
         _item = '<a href="{}/entity/{}">{}</a>'.format(base, iss,
                                                        unquote_plus(iss))
@@ -29,11 +28,11 @@ def iss_table(base, issuers):
 
 
 def item_table(qiss, items, active, assigned_ports, test_tool_base):
-    line = ["<table>", "<tr><th>Tag</th><th>Status</th><th>Actions</th></tr>"]
-    _stop = BUT.format('stop', 'stop')
-    _del = BUT.format('delete', 'delete')
-    _rst = BUT.format('restart', 'restart')
-    _cnf = BUT.format('configure', 'reconfigure')
+    line = ["<table class=\"table table-hover table-bordered\">", "<tr class=\"info\"><th>Tag</th><th>Status</th><th>Actions</th></tr>"]
+    _del = '<button class="btn btn-default" name="action" type="submit" value="delete"><span class="glyphicon glyphicon-remove"></span>&nbsp;Delete</button>'
+    _rst = '<button class="btn btn-default" name="action" type="submit" value="restart"><span class="glyphicon glyphicon-refresh"></span>&nbsp;Restart</button>'
+    _cnf = '<button class="btn btn-default" name="action" type="submit" value="configure"><span class="glyphicon glyphicon-edit"></span>&nbsp;Reconfigure</button>'
+    _stop = '<button class="btn btn-default" name="action" type="submit" value="stop"><span class="glyphicon glyphicon-stop"></span>&nbsp;&nbsp;Stop</button>'
 
     for item in items:
         
@@ -43,15 +42,15 @@ def item_table(qiss, items, active, assigned_ports, test_tool_base):
 
         _url = "/action/{}/{}".format(qiss, item)
         _action = '\n'.join([
-            '<form action="{}" method="get">'.format(_url), _rst, _stop,
+            '<form class="col-md-10" action="{}" method="get">'.format(_url), _rst, _stop,
             _cnf, _del])
         if active[item]:
-            _ball = '<img src="/static/green-ball-32.png" alt="Green">'
+            _ball = '<button type="button" class="btn btn-success" alt="Green"><span class="glyphicon glyphicon-ok-sign"></span></button>'
             inst = "<a href=\"{}\">{}</a>".format(_instance, item)
         else:
-            _ball = '<img src="/static/red-ball-32.png" alt="Red">'
+            _ball = '<button type="button" class="btn btn-danger" alt="Red"><span class="glyphicon glyphicon-minus-sign"></span></button>'
             inst = item;
-        line.append("<tr><td>{}</td><td>{}</td><td>{}</td></tr>".format(
+        line.append("<tr><td style=\"vertical-align: middle;\">{}</td><td class=\"text-center\">{}</td><td>{}</td></tr>".format(
             inst, _ball, _action))
         line.append('</form>')
 
@@ -60,13 +59,14 @@ def item_table(qiss, items, active, assigned_ports, test_tool_base):
 
 
 class Entity(object):
-    def __init__(self, entpath, prehtml, rest, assigned_ports, test_tool_base, backuppath='backup'):
+    def __init__(self, entpath, prehtml, rest, assigned_ports, test_tool_base, version, backuppath='backup'):
         self.entpath = entpath
         self.prehtml = prehtml
         self.rest = rest
         self.assigned_ports = assigned_ports
         self.test_tool_base = test_tool_base
         self.backup = backuppath
+        self.version = version
 
     @cherrypy.expose
     def index(self):
@@ -79,7 +79,9 @@ class Entity(object):
             pass
 
         _msg = self.prehtml['list_iss.html'].format(
-            iss_table=iss_table('', fils))
+            iss_table=iss_table('', fils),
+            version=self.version
+        )
         return as_bytes(_msg)
 
     @cherrypy.expose
@@ -97,7 +99,10 @@ class Entity(object):
 
         self.assigned_ports.load()
         _msg = self.prehtml['list_tag.html'].format(
-            item_table=item_table(qiss, fils, active, self.assigned_ports, self.test_tool_base), iss=iss)
+            item_table=item_table(qiss, fils, active, self.assigned_ports, self.test_tool_base),
+            iss=iss,
+            version=self.version
+        )
         return as_bytes(_msg)
 
     @cherrypy.expose

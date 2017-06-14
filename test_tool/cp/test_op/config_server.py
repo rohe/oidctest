@@ -2,6 +2,7 @@
 import importlib
 import logging
 import os
+import sys
 
 import cherrypy
 from fedoidc.file_system import FileSystem
@@ -29,6 +30,11 @@ logger.setLevel(logging.DEBUG)
 tool_params = ['acr_values', 'claims_locales', 'issuer',
                'login_hint', 'profile', 'ui_locales', 'webfinger_email',
                'webfinger_url', 'insecure', 'tag']
+
+def get_version():
+    sys.path.insert(0, ".")
+    vers = importlib.import_module('version')
+    return vers.VERSION
 
 if __name__ == '__main__':
     import argparse
@@ -103,26 +109,28 @@ if __name__ == '__main__':
     _assigned_ports = AssignedPorts('assigned_ports.json', _conf.PORT_MIN, _conf.PORT_MAX)
     _assigned_ports.load()
 
+    _vers = get_version()
+
     cherrypy.tree.mount(
-        Entity(_conf.ENT_PATH, _html, rest, _assigned_ports, _ttc.BASE), '/entity')
+        Entity(_conf.ENT_PATH, _html, rest, _assigned_ports, _ttc.BASE, version=_vers), '/entity')
     _app = Application(_conf.TEST_SCRIPT, _conf.FLOWDIR, rest,
                        _assigned_ports, _ttc.BASE, args.test_tool_conf,
                        args.htmldir)
     cherrypy.tree.mount(
         Action(rest, _ttc, _html, _conf.ENT_PATH, _conf.ENT_INFO, tool_params,
-               _app),
+               _app, version=_vers),
         '/action')
 
     log_root = os.path.join(folder, 'log')
     _tar = OPTar(log_root)
     cherrypy.tree.mount(_tar, '/mktar')
     cherrypy.tree.mount(_tar, '/backup')
-    cherrypy.tree.mount(OPLog(log_root, _html), '/log')
+    cherrypy.tree.mount(OPLog(log_root, _html, version=_vers), '/log')
 
     # Main
     test_tool_conf = args.test_tool_conf
     cherrypy.tree.mount(
-        Instance(rest, _base_url, test_tool_conf, _app, html=_html), '/',
+        Instance(rest, _base_url, test_tool_conf, _app, version=_vers, html=_html), '/',
         provider_config)
 
     # If HTTPS

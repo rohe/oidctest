@@ -29,9 +29,9 @@ before_install:
 
 install:
   - cd $TRAVIS_BUILD_DIR/..
-  - git clone https://github.com/openid-certification/oidc-provider-conformance-tests.git
+  - git clone https://github.com/zmartzone/oidc-provider-conformance-tests.git
   - cd oidc-provider-conformance-tests
-  - git checkout -b new-op origin/new-op
+  - git checkout -b bootstrap-squash origin/bootstrap-squash
   - npm install --production
   - cd $TRAVIS_BUILD_DIR/..
   - git clone https://github.com/openid-certification/openid-client-conformance-tests.git
