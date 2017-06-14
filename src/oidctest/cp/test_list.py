@@ -82,7 +82,14 @@ HTML_PRE = """
     <div class="container" role="main">
 
         <div class="page-header">
-            <h2>OpenID Connect Relying Party Certification</h2>
+            <div class="pull-left">
+                <h2>OpenID Connect Relying Party Certification</h2>
+            </div>
+            <div class="pull-right">
+                <a href="https://openid.net/certification"><img
+                    class="img-responsive" src="/static/logo.png" /></a>
+            </div>
+            <div class="clearfix"></div>
         </div>
 """
 
@@ -101,7 +108,7 @@ HTML_FOOTER = """
             <hr />
             <div class="pull-left">
                 <ul class="list-inline">
-                    <li>(C) 2017 - <a href="http://openid.net/foundation/">OpenID
+                    <li>(C) 2017 - <a href="https://openid.net/foundation">OpenID
                             Foundation</a></li>
                     <li>E-mail: <a href="mailto:certification@openid.net">certification@openid.net</a></li>
                     <li>Issues: <a
