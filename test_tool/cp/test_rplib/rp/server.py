@@ -110,7 +110,7 @@ if __name__ == '__main__':
 
     log_root = folder + '/log'
 
-    cherrypy.tree.mount(Log(log_root), '/log')
+    cherrypy.tree.mount(Log(log_root, version=_version), '/log')
     cherrypy.tree.mount(ClearLog(folder), '/clear')
     cherrypy.tree.mount(Tar(folder), '/mktar')
 
