@@ -24,10 +24,7 @@ RUN cd pyoidc &&  python3 setup.py install
 # TEMPORARY
 #
 
-#RUN git clone https://github.com/openid-certification/otest.git
-#RUN cd otest && python3 setup.py install && cd -
-RUN git clone https://github.com/zmartzone/otest.git
-RUN cd otest && git checkout -b bootstrap-squash origin/bootstrap-squash && cd -
+RUN git clone https://github.com/openid-certification/otest.git
 RUN cd otest && python3 setup.py install && cd -
 
 RUN git clone https://github.com/OpenIDC/fedoidc.git
