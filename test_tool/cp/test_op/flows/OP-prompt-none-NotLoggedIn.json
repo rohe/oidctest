@@ -19,7 +19,10 @@
       "AsyncAuthn": {
         "set_expect_error": {
           "error": [
-            "login_required"
+            "login_required",
+	        "interaction_required",
+    	    "session_selection_required",
+        	"consent_required"
           ],
           "stop": false
         },
