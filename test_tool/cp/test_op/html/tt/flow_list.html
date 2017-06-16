@@ -1,20 +1,97 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>OpenID Certification OP Tests</title>
-    <link rel="stylesheet" type="text/css" href="/static/theme.css">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenID Connect Provider Certification</title>
+<link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/theme.css" rel="stylesheet">
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
 <body>
-  <h1>OpenID Certification OP Tests</h1>
-  <h2>Test tool version: {version}</h2>
-  <em>Explanations of legends at <a href="#legends">end of page</a></em>
 
-  <h3>You are testing using: {display_profile}</h3>
-  If you want to change this you can do it <a href="/pedit">here</a>
+	<div class="container" role="main">
 
-  <h3>Chose the next test flow you want to run from this list: </h3>
-  {op_choice}
-  <h3>Legends</h3>
-  {legends}
+		<div class="page-header">
+			<div class="pull-left">
+				<h2>OpenID Connect Provider Certification</h2>
+			</div>
+			<div class="pull-right">
+				<a href="https://openid.net/certification"><img
+					class="img-responsive" src="/static/logo.png" /></a>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">Configuration</h3>
+			</div>
+			<div class="panel-body">
+
+				<p>{display_profile}</p>
+
+				<p>
+					If you want to change your setup you can do it <a href="/pedit">here</a>
+				</p>
+
+			</div>
+		</div>
+
+		<p>
+			<em>Explanations of legends at <a href="#legends">end of
+					page</a></em>
+		</p>
+
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">Certification Test List</h3>
+			</div>
+			<div class="panel-body">
+
+				<p>Choose the next test flow you want to run from this list:</p>
+
+				<p>{op_choice}</p>
+
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Legends</h3>
+			</div>
+			<div class="panel-body">
+				<p>{legends}</p>
+			</div>
+		</div>
+
+		<div class="footer text-muted">
+			<hr />
+			<div class="pull-left">
+				<ul class="list-inline">
+					<li>(C) 2017 - <a href="https://openid.net/foundation">OpenID
+							Foundation</a></li>
+					<li>E-mail: <a href="mailto:certification@openid.net">certification@openid.net</a></li>
+					<li>Issues: <a
+						href="https://github.com/openid-certification/oidctest/issues">Github</a>
+					<li>
+				</ul>
+			</div>
+			<div class="pull-right">
+				<ul class="list-inline">
+					<li>Version: {version}</li>
+				</ul>
+			</div>
+		</div>
+
+	</div>
+
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="/static/bootstrap/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -6,14 +6,74 @@ import time
 
 import cherrypy
 
-PRE_HTML = """<html>
-  <head>
-    <title>List of OIDC RP tests</title>
-    <link rel="stylesheet" type="text/css" href="/static/theme.css">
-  </head>
-  <body>"""
+PRE_HTML = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenID Connect Provider Certification</title>
+<link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/theme.css" rel="stylesheet">
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
 
-POST = """</body></html>"""
+    <div class="container" role="main">
+
+        <div class="page-header">
+            <div class="pull-left">
+                <h2>OpenID Connect Relying Party Certification</h2>
+            </div>
+            <div class="pull-right">
+                <a href="https://openid.net/certification"><img
+                    class="img-responsive" src="/static/logo.png" /></a>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">Relying Party Certification Test Logs</h3>
+            </div>
+            <div class="panel-body">
+"""
+
+POST_HTML = """
+            </div>
+        </div>
+
+        <div class="footer text-muted">
+            <hr />
+            <div class="pull-left">
+                <ul class="list-inline">
+                    <li>(C) 2017 - <a href="https://openid.net/foundation">OpenID
+                            Foundation</a></li>
+                    <li>E-mail: <a href="mailto:certification@openid.net">certification@openid.net</a></li>
+                    <li>Issues: <a
+                        href="https://github.com/openid-certification/oidctest/issues">Github</a>
+                    <li>
+                </ul>
+            </div>
+            <div class="pull-right">
+                <ul class="list-inline">
+                    <li>Version: {version}</li>
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <script
+        src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>
+"""
 
 
 def display_log(opid, logs):
@@ -87,8 +147,9 @@ def create_rp_tar_archive(wd, bid, backup=False):
 
 
 class Log(object):
-    def __init__(self, root):
+    def __init__(self, root, version=''):
         self.root = root
+        self.version = version
 
     @cherrypy.expose
     def index(self, op_id='', test_id=''):
@@ -116,9 +177,10 @@ class Log(object):
 
             response = [
                 PRE_HTML,
-                '<h1>OpenID Certification OP Test logs</h1>',
-                '<h3>A list of test results that are saved on disc:</h3>',
+                '<p>A list of test results that are saved on disc:</p>',
                 display_log(op_id, item)]
+
+            response.append('<hr />')
 
             if op_id:
                 cl_url = "/clear/{}".format(op_id)
@@ -130,6 +192,8 @@ class Log(object):
                 response.append(
                     '<p><a href="{}" download="{}"><b>Download gzipped tar '
                     'file</b></a></p>'.format(tar_url, tar_file))
+
+            response.append(POST_HTML.format(version=self.version))
 
             return '\n'.join(response)
 
@@ -145,9 +209,10 @@ class Log(object):
 
 
 class OPLog(object):
-    def __init__(self, root, pre_html):
+    def __init__(self, root, pre_html, version):
         self.root = root
         self.pre_html = pre_html
+        self.version = version
 
     @cherrypy.expose
     def index(self, op_id='', tag='', profile='', test_id=''):
@@ -195,15 +260,17 @@ class OPLog(object):
                         'file</b></a></p>'.format(tar_url, tar_file))
 
                 response = _pre_html.format(
-                    info = '<h3>A list of test results that are saved on disc:</h3>',
+                    info = 'A list of test results that are saved on disc:',
                     list=display_log(op_id, item),
-                    actions='\n'.join(_acts)
+                    actions='\n'.join(_acts),
+                    version=self.version
                 )
             else:
                 response = _pre_html.format(
-                    info='<h3>A list of all testers registred on this server:</h3>',
+                    info='A list of all testers registered on this server:',
                     list=display_testers(item),
-                    actions=''
+                    actions='',
+                    version=self.version
                 )
 
             return response

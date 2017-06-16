@@ -1,26 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>OpenID Connect OP Test Tool Configuration</title>
-    <link rel="stylesheet" type="text/css" href="/static/theme.css">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenID Connect Provider Certification</title>
+<link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/theme.css" rel="stylesheet">
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
 <body>
-<h2>OpenID Connect OP Testing</h2>
-<p>
-    On this page you are expected to configure your instance of the test tool
-</p>
-<p>
-    <img src="/static/Add_16x16.png" alt="Add"> means that parameter
-    <em>MUST</em> have a value.
-</p>
-<p>
-    Some parameters can take more then one value. The way to enter
-    multiple values is to separate the values with commas (',').
-</p>
-<p>
-<div class="inp">
-    {display}
-</div>
-</p>
+
+	<div class="container" role="main">
+
+		<div class="page-header">
+			<div class="pull-left">
+				<h2>OpenID Connect Provider Certification</h2>
+			</div>
+			<div class="pull-right">
+				<a href="https://openid.net/certification"><img
+					class="img-responsive" src="/static/logo.png" /></a>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">Edit Configuration</h3>
+			</div>
+			<div class="panel-body">
+				<p>On this page you are expected to configure your instance of
+					the test tool</p>
+				<p>Some parameters can take more then one value. The way to
+					enter multiple values is to separate the values with commas (',').
+				</p>
+				<p>
+					<button type="button" class="btn btn-warning">
+						<span class="glyphicon glyphicon-plus"></span>
+					</button>
+					&nbsp;means that parameter <em>MUST</em> have a value.
+				</p>
+
+				<p>{display}</p>
+
+			</div>
+		</div>
+
+		<div id="footer" class="footer text-muted">
+			<hr />
+			<div class="pull-left">
+				<ul class="list-inline">
+					<li>(C) 2017 - <a href="https://openid.net/foundation">OpenID
+							Foundation</a></li>
+					<li>E-mail: <a href="mailto:certification@openid.net">certification@openid.net</a></li>
+					<li>Issues: <a
+						href="https://github.com/openid-certification/oidctest/issues">Github</a>
+					<li>
+				</ul>
+			</div>
+			<div class="pull-right">
+				<ul class="list-inline">
+					<li>Version: {version}</li>
+				</ul>
+			</div>
+		</div>
+
+	</div>
+
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="/static/bootstrap/js/bootstrap.min.js"></script>
 </body>
 </html>

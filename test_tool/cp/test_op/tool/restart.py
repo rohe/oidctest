@@ -7,6 +7,8 @@ from oidctest.tt.rest import NoSuchFile
 from oidctest.tt.rest import REST
 from otest.proc import find_test_instances
 
+from oidctest.ass_port import AssignedPorts
+
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -21,8 +23,11 @@ _ttc = importlib.import_module(args.test_tool_conf)
 
 rest = REST(_conf.BASE_URL)  # Base URL just place holder
 
-_app = Application(_conf.TEST_SCRIPT, _conf.FLOWDIR, rest, _conf.PORT_MIN,
-                   _conf.PORT_MAX, _ttc.BASE, args.test_tool_conf, '')
+_assigned_ports = AssignedPorts('assigned_ports.json', _conf.PORT_MIN, _conf.PORT_MAX)
+_assigned_ports.load()
+
+_app = Application(_conf.TEST_SCRIPT, _conf.FLOWDIR, rest, _assigned_ports,
+                   _ttc.BASE, args.test_tool_conf, '')
 
 for pid, proc_info in find_test_instances('op_test_tool.py').items():
     if args.iss:

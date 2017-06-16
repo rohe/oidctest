@@ -1,72 +1,155 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>OpenID Certification OP Test Tool Configuration</title>
-    <link rel="stylesheet" type="text/css" href="/static/theme.css">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OpenID Connect Provider Certification</title>
+<link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/static/theme.css" rel="stylesheet">
+<!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 </head>
 <body>
-<!-- Main component for a primary marketing message or call to action -->
-<div class="inp">
-    <h2>OpenID Connect Provider Certification</h2>
-    <br>
 
-    <p>
-        This is a tool used for testing the compliance of an OpenID
-        Connect Provider with the
-        OpenID Connect specifications. In order to start testing you need
-        to configure a test
-        instance. Enter the issuer URL to the OpenID Connect Provider you
-        want to test.
-    </p>
-    <br>
-    <form action="/action/create">
-        <h3>Issuer URL (without .well-known):</h3>
-        <input type="text" name="iss">
-        <br>
-        <h3>An identifier of this specific configuration in the case that you
-            want to have more then one</h3>
-        <input type="text" name="tag" value="default">
-        <br>
-        <p>
-            Choose what your OP supports:
-        <table border="1">
-            <tr>
-                <th>WebFinger</th>
-                <td style="width:30px"><input
-                        type="checkbox" name="webfinger"></td>
-            </tr>
-            <tr>
-                <th>Dynamic Provider Information discovery</th>
-                <td><input type="checkbox" name="discover"></td>
-            </tr>
-            <tr>
-                <th>Dynamic Client Registration</th>
-                <td><input type="checkbox" name="register"></td>
-            </tr>
-        </table>
-        <br>
-        <h3>Choose a return type</h3>
-        <br>
-        <table broder="1">
-            <tr>
-                <th style="width:100px">Return type</th>
-                <td>
-                    <input type="radio" name="return_type" value="C"> Code <br>
-                    <input type="radio" name="return_type" value="I"> IdToken
-                    <br>
-                    <input type="radio" name="return_type" value="IT"> IdToken
-                    Token <br>
-                    <input type="radio" name="return_type" value="CI"> Code
-                    IdToken <br>
-                    <input type="radio" name="return_type" value="CT"> Code
-                    Token <br>
-                    <input type="radio" name="return_type" value="CIT"> Code
-                    IdToken Token
-                </td>
-            </tr>
-        </table>
-        <input type="submit" value="Submit">
-    </form>
-</div>
+	<div class="container" role="main">
+
+		<div class="page-header">
+			<div class="pull-left">
+				<h2>OpenID Connect Provider Certification</h2>
+			</div>
+			<div class="pull-right">
+				<a href="https://openid.net/certification"><img
+					class="img-responsive" src="/static/logo.png" /></a>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<h3 class="panel-title">New Configuration</h3>
+			</div>
+			<div class="panel-body">
+
+				<p>This is a tool used for testing the compliance of an OpenID
+					Connect Provider with the OpenID Connect specifications. In order
+					to start testing you need to configure a test instance. Enter the
+					issuer URL to the OpenID Connect Provider you want to test.</p>
+
+				<form action="/action/create" class="col-md-6">
+
+					<div class="form-group">
+						<label for="iss">Issuer</label>
+						<p>The "issuer" URL of your Provider (without .well-known):</p>
+						<input type="text" class="form-control" id="iss" name="iss">
+					</div>
+
+					<div class="form-group">
+						<label for="tag">Tag</label>
+						<p>An identifier of this specific configuration in the case
+							that you want to have more then one:</p>
+						<input type="text" class="form-control" id="tag" name="tag"
+							value="default">
+					</div>
+
+					<div class="form-group">
+						<label for="features">Features</label>
+						<p>Choose what capabilities your OP supports:</p>
+						<table class="table table-hover table-bordered">
+
+							<tr>
+								<td width="80%">WebFinger</td>
+								<td class="text-center"><input type="checkbox"
+									name="webfinger"></td>
+							</tr>
+							<tr>
+								<td>Dynamic Provider Information Discovery</td>
+								<td class="text-center"><input type="checkbox"
+									name="discover"></td>
+							</tr>
+							<tr>
+								<td>Dynamic Client Registration</td>
+								<td class="text-center"><input type="checkbox"
+									name="register"></td>
+							</tr>
+
+						</table>
+					</div>
+
+					<div class="form-group">
+						<label for="features">Response Type</label>
+						<p>Choose a Response Type to use with your Provider:</p>
+
+						<table class="table table-hover table-bordered"
+							style="font-family: monospace;">
+
+							<tr>
+								<td width="80%">code</td>
+								<td class="text-center"><input type="radio"
+									name="return_type" value="C"></td>
+							</tr>
+							<tr>
+								<td>id_token</td>
+								<td class="text-center"><input type="radio"
+									name="return_type" value="I"></td>
+							</tr>
+							<tr>
+								<td>id_token token</td>
+								<td class="text-center"><input type="radio"
+									name="return_type" value="IT"></td>
+							</tr>
+							<tr>
+								<td>code id_token</td>
+								<td class="text-center"><input type="radio"
+									name="return_type" value="CI"></td>
+							</tr>
+							<tr>
+								<td>code token</td>
+								<td class="text-center"><input type="radio"
+									name="return_type" value="CT"></td>
+							</tr>
+							<tr>
+								<td>code id_token token</td>
+								<td class="text-center"><input type="radio"
+									name="return_type" value="CIT"></td>
+							</tr>
+
+						</table>
+					</div>
+
+					<div class="form-group">
+						<button type="submit" class="btn btn-primary">Create</button>
+					</div>
+				</form>
+
+			</div>
+		</div>
+
+		<div class="footer text-muted">
+			<hr />
+			<div class="pull-left">
+				<ul class="list-inline">
+					<li>(C) 2017 - <a href="https://openid.net/foundation">OpenID
+							Foundation</a></li>
+					<li>E-mail: <a href="mailto:certification@openid.net">certification@openid.net</a></li>
+					<li>Issues: <a
+						href="https://github.com/openid-certification/oidctest/issues">Github</a>
+					<li>
+				</ul>
+			</div>
+			<div class="pull-right">
+				<ul class="list-inline">
+					<li>Version: {version}</li>
+				</ul>
+			</div>
+		</div>
+
+	</div>
+
+	<script
+		src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<script src="/static/bootstrap/js/bootstrap.min.js"></script>
 </body>
 </html>

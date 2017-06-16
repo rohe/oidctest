@@ -77,7 +77,7 @@ def collect_edit(**kwargs):
 
 
 class Instance(object):
-    def __init__(self, rest, baseurl, tool_conf, app, entpath='entities',
+    def __init__(self, rest, baseurl, tool_conf, app,  version, entpath='entities',
                  html=None):
         self.rest = rest
         self.baseurl = baseurl
@@ -85,6 +85,7 @@ class Instance(object):
         self.tool_conf = tool_conf
         self.html = html
         self.app = app
+        self.version = version
 
     def _cp_dispatch(self, vpath):
         # Only get here if vpath != None
@@ -103,11 +104,13 @@ class Instance(object):
     @cherrypy.expose
     def new(self):
         logger.info("New instance")
-        return self.html['new_iss.html']
+        return self.html['new_iss.html'].format(version=self.version)
+        #return self.html['new_iss.html']
 
     @cherrypy.expose
     def index(self):
-        return as_bytes(self.html['main.html'])
+        return as_bytes(self.html['main.html'].format(version=self.version))
+        #return as_bytes(self.html['main.html'])
 
     def store_edit(self, qp, **kwargs):
         _ent_conf = collect_edit(**kwargs)
