@@ -262,7 +262,7 @@ class RefreshToken(SyncPostRequest):
     def __init__(self, conv, inut, sh, **kwargs):
         super(RefreshToken, self).__init__(conv, inut, sh, **kwargs)
         self.op_args["state"] = conv.state
-        self.req_args["redirect_uri"] = conv.entity.redirect_uris[0]
+        # self.req_args["redirect_uri"] = conv.entity.redirect_uris[0]
 
     def run(self):
         res = self._run()
