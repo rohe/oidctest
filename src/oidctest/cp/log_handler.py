@@ -366,11 +366,12 @@ class OPTar(object):
         if not os.path.isdir(_src_dir):
             raise cherrypy.HTTPError(400, b'No such directory')
 
-        for item in os.listdir(_src_dir):
+        os.chdir(_src_dir)
+        for item in os.listdir('.'):
             if item.startswith("."):
                 continue
 
-            fn = os.path.join(_src_dir, item)
+            fn = os.path.join('.', item)
 
             if os.path.isfile(fn):
                 tar.add(fn)
