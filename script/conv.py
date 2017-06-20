@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import importlib
 import json
+import os
 import sys
 from urllib.parse import quote_plus
 
@@ -8,6 +9,7 @@ from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
 
 from oidctest.app_conf import REST
+from oidctest.ass_port import AssignedPorts
 
 
 def convert(conf):
@@ -118,8 +120,9 @@ def convert(conf):
 
 
 if __name__ == '__main__':
+    sys.path.insert(0, '.')
     rest = REST('', '../entities')
-    assigned_port = {}
+    assigned_port = AssignedPorts('../aasigned_ports', 60000, 64000)
     for fil in sys.argv[1:]:
         if fil.endswith('.py'):
             print(fil)
@@ -132,12 +135,17 @@ if __name__ == '__main__':
 
             if qiss.startswith('http'):
                 qtag = quote_plus(cnf['tool']['tag'])
-                rest.write(qiss, qtag, cnf)
+                fname = rest.entity_file_name(qiss, qtag)
                 _key = '{}:{}'.format(qiss, qtag)
-                assigned_port[_key] = port
+                if not os.path.isfile(fname):
+                    rest.write(qiss, qtag, cnf)
+                    try:
+                        _p = assigned_port[_key]
+                    except KeyError:
+                        assigned_port[_key] = port
+                    else:
+                        _p = assigned_port.register_port(qiss, qtag)
+                        print('{}/{} got other port {}->{}'.format(qiss, qtag,
+                                                                   port, _p))
             else:
                 print('skipped: {}'.format(fil))
-
-    fp = open('../assigned_ports.json', 'w')
-    fp.write(json.dumps(assigned_port))
-    fp.close()
