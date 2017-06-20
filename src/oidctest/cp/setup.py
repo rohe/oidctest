@@ -28,7 +28,7 @@ def main_setup(args, lookup=None):
             config.issuer = '{}{}/'.format(config.baseurl, args.path)
         else:
             config.issuer = '{}/{}/'.format(config.baseurl, args.path)
-    elif args.port:
+    elif args.port and args.port not in [80, 443]:
         if config.baseurl.endswith('/'):
             config.issuer = '{}:{}/'.format(config.baseurl[:-1], args.port)
         else:
@@ -155,10 +155,16 @@ def cb_setup(args, lookup=None):
         else:
             config.issuer = '{}/{}/'.format(config.baseurl, args.path)
     elif args.port:
-        if config.baseurl.endswith('/'):
-            config.issuer = '{}:{}/'.format(config.baseurl[:-1], args.port)
+        if args.port in [80, 443]:
+            if config.baseurl.endswith('/'):
+                config.issuer = config.baseurl
+            else:
+                config.issuer = '{}/'.format(config.baseurl)
         else:
-            config.issuer = '{}:{}/'.format(config.baseurl, args.port)
+            if config.baseurl.endswith('/'):
+                config.issuer = '{}:{}/'.format(config.baseurl[:-1], args.port)
+            else:
+                config.issuer = '{}:{}/'.format(config.baseurl, args.port)
 
     _baseurl = config.issuer
 
