@@ -11,8 +11,10 @@ from oidctest.cp.op_handler import write_jwks_uri
 
 
 class FedOPHandler(OPHandler):
-    def __init__(self, provider_cls, op_args, com_args, test_conf, **kwargs):
-        OPHandler.__init__(self, provider_cls, op_args, com_args, test_conf)
+    def __init__(self, provider_cls, op_args, com_args, test_conf, folder,
+                 **kwargs):
+        OPHandler.__init__(self, provider_cls, op_args, com_args, test_conf,
+                           folder)
         self.key_defs = kwargs['key_defs']
         self.signers = kwargs['signers']
 

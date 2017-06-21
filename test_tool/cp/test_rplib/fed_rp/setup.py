@@ -13,4 +13,5 @@ _liss.extend(list(config.IA.values()))
 _liss.extend(list(config.EO.values()))
 
 signer, keybundle = test_utils.setup(config.KEY_DEFS, config.TOOL_ISS, _liss,
-                                     config.SMS_DEF, config.OA, 'ms_dir')
+                                     'ms_path', config.SMS_DEF, 'ms_dir',
+                                     base_url=sys.argv[2])

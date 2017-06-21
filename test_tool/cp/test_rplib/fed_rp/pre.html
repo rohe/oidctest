@@ -25,11 +25,11 @@ If you can construct a metadata statement you can use this site to check if
 it was OK. To do this you do:
 
 <pre><code>
-    POST /verify HTTP/1.1
+    GET /verify?
+        iss=...
+        &ms=eyJraWQiOiJkMlk4a0tK...
+        &jwks=%7B%22keys%22%3A...
     Host: server.example.com
-    Content-Type: application/x-www-form-urlencoded
-
-    iss=...&ms=eyJraWQiOiJkMlk4a0tK...&jwks=%7B%22keys%22%3A...
 
 </code></pre>
 

@@ -3,6 +3,7 @@ import json
 import cherrypy
 from fedoidc import MetadataStatement
 from fedoidc.operator import Operator
+from fedoidc.signing_service import ServiceError
 from jwkest import as_bytes
 from jwkest import as_unicode
 from oic.exception import MessageException
@@ -56,7 +57,10 @@ class Sign(object):
                 message="Message verification error: {}".format(str(err)))
         else:
             _sign = self.signer[signer]
-            _jwt = _sign.create_signed_metadata_statement(_mds, context)
+            try:
+                _jwt = _sign.create_signed_metadata_statement(_mds, context)
+            except (KeyError, ServiceError) as err:
+                raise cherrypy.HTTPError(message=str(err))
             cherrypy.response.headers['Content-Type'] = 'application/jwt'
             return as_bytes(_jwt)
 
@@ -88,6 +92,9 @@ class FoKeys(object):
 
 
 class Verify(object):
+    def __init__(self):
+        self.foo = True
+
     @cherrypy.expose
     def index(self, iss, jwks, ms, **kwargs):
         _kj = KeyJar()
@@ -95,10 +102,10 @@ class Verify(object):
         op = Operator()
 
         try:
-            _ms = op.unpack_metadata_statement(jwt_ms=ms, keyjar=_kj,
+            _pi = op.unpack_metadata_statement(jwt_ms=ms, keyjar=_kj,
                                                cls=MetadataStatement)
-            response = json.dumps(_ms.to_dict(), sort_keys=True, indent=2,
-                                  separators=(',', ': '))
+            response = json.dumps(_pi.result.to_dict(), sort_keys=True,
+                                  indent=2, separators=(',', ': '))
             cherrypy.response.headers['Content-Type'] = 'text/plain'
             return as_bytes(response)
         except (RegistrationError, ParameterError, MissingSigningKey) as err:

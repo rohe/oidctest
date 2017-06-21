@@ -48,7 +48,7 @@ ms_0 = _fo_signer.pack_metadata_statement(req)
 _ia_signer = operator["https://bogus.example.org"]
 req = MetadataStatement(
     tos_uri='https://example.org/tos',
-    metadata_statements=[ms_0],
+    metadata_statements={fo: ms_0},
     signing_keys=_ia_signer.signing_keys_as_jwks()
 )
 
