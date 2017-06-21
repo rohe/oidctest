@@ -26,7 +26,7 @@ for entity, _keyjar in jb.items():
 
 name = 'https://bogus.example.org'
 
-_dir = os.path.join('ms_dir', quote_plus(name), 'discovery')
+_dir = os.path.join('ms_path', quote_plus(name), 'discovery')
 metadata_statements = FileSystem(_dir, key_conv={'to': quote_plus,
                                                  'from': unquote_plus})
 

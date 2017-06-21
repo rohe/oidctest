@@ -143,7 +143,7 @@ class Configuration(object):
             try:
                 resp = op.create_fed_providerinfo()
             except Exception as err:
-                raise cherrypy.HTTPError(message=as_bytes(str(err)))
+                raise cherrypy.HTTPError(message=as_bytes(err))
 
             cherrypy.response.headers['Content-Type'] = 'application/json'
             # return as_bytes(resp.message)

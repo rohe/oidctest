@@ -27,7 +27,7 @@ class FedOPHandler(OPHandler):
             _op.events = events
             if endpoint == '.well-known/openid-configuration':
                 init_keyjar(_op, self.op_args['keyjar'], self.com_args)
-                write_jwks_uri(_op, self.op_args)
+                write_jwks_uri(_op, self.op_args, self.folder)
         except KeyError:
             _op = self.setup_op(oper_id, test_id, self.com_args,
                                 self.op_args, self.test_conf, events)
@@ -60,7 +60,7 @@ class FedOPHandler(OPHandler):
             else:
                 setattr(op, key, val)
 
-        write_jwks_uri(op, op_arg)
+        write_jwks_uri(op, op_arg, self.folder)
 
         if op.baseurl.endswith("/"):
             div = ""

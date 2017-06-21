@@ -15,7 +15,7 @@ from jwkest.jwk import ECKey
 from jwkest.jwk import RSAKey
 from jwkest.jwk import SYMKey
 from oic import oic
-from oic.oauth2 import error
+from oic.oauth2 import error, Message
 from oic.oauth2 import error_response
 from oic.oic.message import AccessTokenRequest
 from oic.oic.message import ProviderConfigurationResponse
@@ -166,7 +166,7 @@ class Provider(provider.Provider):
         _response = provider.Provider.create_providerinfo(self, pcr_class,
                                                           setup)
         if self.ms_conf:
-            _sms = []
+            _sms = {}
             for spec in self.ms_conf:
                 self.federation_entity.signer = self.signers[spec['signer']]
                 try:
@@ -177,12 +177,12 @@ class Provider(provider.Provider):
                     except KeyError:
                         fos = []
 
-                _sms.append(
+                _sms.update(
                     self.create_signed_metadata_statement('discovery', fos=fos))
 
-            _response['metadata_statements'] = _sms
+            _response['metadata_statements'] = Message(**_sms)
         elif self.msu_conf:
-            _sms = []
+            _sms = {}
             for spec in self.ms_conf:
                 self.federation_entity.signer = self.signers[spec['signer']]
                 try:
@@ -193,10 +193,10 @@ class Provider(provider.Provider):
                     except KeyError:
                         fos = []
 
-                _sms.append(
+                _sms.update(
                     self.create_signed_metadata_statement('discovery', fos=fos))
 
-            _response['metadata_statements'] = _sms
+            _response['metadata_statements'] = Message(**_sms)
 
         return _response
 

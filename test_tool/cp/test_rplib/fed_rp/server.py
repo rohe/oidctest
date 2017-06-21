@@ -74,7 +74,8 @@ if __name__ == '__main__':
     folder = os.path.abspath(os.curdir)
     _flows = Flow(args.flowsdir, profile_handler=SimpleProfileHandler)
     op_handler = FedOPHandler(provider.Provider, _op_arg, _com_args, _flows,
-                              key_defs=fed_conf.KEY_DEFS, signers=signers)
+                              folder, key_defs=fed_conf.KEY_DEFS,
+                              signers=signers)
 
     cherrypy.tools.dumplog = cherrypy.Tool('before_finalize', dump_log)
 
