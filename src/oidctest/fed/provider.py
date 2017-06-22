@@ -175,7 +175,7 @@ class Provider(provider.Provider):
                     try:
                         fos = [spec['federation']]
                     except KeyError:
-                        fos = []
+                        fos = None
 
                 _sms.update(
                     self.create_signed_metadata_statement('discovery', fos=fos))
@@ -183,7 +183,7 @@ class Provider(provider.Provider):
             _response['metadata_statements'] = Message(**_sms)
         elif self.msu_conf:
             _sms = {}
-            for spec in self.ms_conf:
+            for spec in self.msu_conf:
                 self.federation_entity.signer = self.signers[spec['signer']]
                 try:
                     fos = spec['federations']
@@ -191,7 +191,7 @@ class Provider(provider.Provider):
                     try:
                         fos = [spec['federation']]
                     except KeyError:
-                        fos = []
+                        fos = None
 
                 _sms.update(
                     self.create_signed_metadata_statement('discovery', fos=fos))

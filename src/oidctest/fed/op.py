@@ -310,6 +310,20 @@ class Reset(object):
         return b'OK'
 
 
+class SMS(object):
+    def __init__(self, smsfs):
+        self.smsfs = smsfs
+
+    @cherrypy.expose
+    def index(self, item='', **kwargs):
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["GET"], origins='*',
+                allowed_headers=['Authorization', 'content-type'])
+        else:
+            return as_bytes(self.smsfs[item])
+
+
 MAIN_PAGE = '\n'.join([
             PRE_HTML,
             "<h1>Welcome to the GN4-JRA3-T3 OIDC Federation RP library test site</h1>",
@@ -341,7 +355,7 @@ class Root(object):
 class Provider(Root):
     _cp_config = {'request.error_response': handle_error}
 
-    def __init__(self, op_handler, flows, main_page=''):
+    def __init__(self, op_handler, flows, main_page='', smsfs=None):
         Root.__init__(self, main_page=main_page)
 
         self.op_handler = op_handler
@@ -353,6 +367,7 @@ class Provider(Root):
         self.userinfo = UserInfo()
         self.claims = Claims()
         self.reset = Reset(self.op_handler.com_args, self.op_handler.op_args)
+        self.smsd = SMS(smsfs)
 
     def _cp_dispatch(self, vpath):
         # Only get here if vpath != None
@@ -361,6 +376,10 @@ class Provider(Root):
 
         if vpath[0] == 'static':
             return self
+        elif vpath[0] == 'sms':
+            vpath.pop(0)
+            cherrypy.request.params['item'] = vpath.pop(0)
+            return self.smsd
 
         if len(vpath) >= 2:
             ev = init_events(cherrypy.request.path_info)

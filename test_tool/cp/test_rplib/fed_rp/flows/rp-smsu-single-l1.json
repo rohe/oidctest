@@ -3,8 +3,8 @@
   "short_description": "Can handle a single level 1 signed metadata statement using metadata_statement_uris",
   "metadata_statement_uris": [
     {
-      "federation": "https://swamid.sunet.se",
-      "signer": "https://sunet.se"
+      "federation": "https://www.feide.no",
+      "signer": "https://uninett.no"
     }
   ],
   "detailed_description": "Make a ${OPENID_PROVIDER_ISSUER_DISCOVERY} and interpret the ${SIGNED_METADATA_STATEMENT}. The response will contain a single <b>level 1</b> signed metadata",

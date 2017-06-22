@@ -9,6 +9,8 @@ from urllib.parse import unquote_plus
 
 import cherrypy
 from fedoidc.bundle import FSJWKSBundle
+from fedoidc.file_system import FileSystem
+from fedoidc.test_utils import MetaDataStore
 from oic.utils import webfinger
 from oic.utils.keyio import build_keyjar
 from otest.flow import Flow
@@ -64,7 +66,7 @@ if __name__ == '__main__':
     keybundle = FSJWKSBundle(fed_conf.TOOL_ISS, sig_keys, 'fo_jwks',
                              key_conv={'to': quote_plus, 'from': unquote_plus})
 
-    signers = create_signers(keybundle, 'ms_dir', fed_conf.SMS_DEF,
+    signers = create_signers(keybundle, 'ms_path', fed_conf.SMS_DEF,
                              fed_conf.FO.values())
 
     # signer, keybundle = test_utils.setup(fed_conf.KEY_DEFS, fed_conf.TOOL_ISS,
@@ -128,9 +130,10 @@ if __name__ == '__main__':
     _main_page = open('pre.html', 'r').read().replace('{base_url}',
                                                       _op_arg['baseurl'])
 
+    smsfs = MetaDataStore('ms_dir')
     # OIDC Providers
-    cherrypy.tree.mount(Provider(op_handler, _flows, _main_page), '/',
-                        provider_config)
+    pr = Provider(op_handler, _flows, _main_page, smsfs)
+    cherrypy.tree.mount(pr, '/', provider_config)
 
     #  ================= Federation specific stuff =========================
 

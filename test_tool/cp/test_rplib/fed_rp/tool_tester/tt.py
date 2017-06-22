@@ -53,7 +53,8 @@ def run_test(test_id, tool_url, tester, rp_fed_ent, jb):
     resp = requests.request('GET', _url, verify=False)
 
     rp_fed_ent.jwks_bundle = fo_jb(jb, _flows[test_id])
-    rp = Client(federation_entity=rp_fed_ent)
+    rp = Client(federation_entity=rp_fed_ent, verify_ssl=False)
+    rp_fed_ent.httpcli = rp
 
     # Will raise an exception if there is no metadata statement I can use
     try:
@@ -67,7 +68,7 @@ def run_test(test_id, tool_url, tester, rp_fed_ent, jb):
     # provider_federations will be set and will contain a dictionary
     # keyed on FO identifier
     if rp.provider_federations:
-        print(test_id, [p.iss for p in rp.provider_federations])
+        print(test_id, [p.fo for p in rp.provider_federations])
     else:  # Otherwise there should be exactly one metadata statement I can use
         print(test_id, rp.federation)
 
