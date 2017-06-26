@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-baseurl = "http://localhost"
+baseurl = "https://localhost:8080"
 
 keys = [
     {"type": "RSA", "key": "keys/pyoidc_enc", "use": ["enc"]},

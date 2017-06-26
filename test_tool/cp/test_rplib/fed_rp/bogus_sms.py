@@ -62,6 +62,6 @@ metadata_statements[fo] = ms_1
 _jb = JWKSBundle('https://op.sunet.se')
 _jb[_fo_signer.iss] = _fo_signer.signing_keys_as_jwks()
 
-uninett_op = Operator(iss='https://op.sunet.se', jwks_bundle=_jb)
-foo = uninett_op.unpack_metadata_statement(jwt_ms=ms_1)
-print(foo)
+# uninett_op = Operator(iss='https://op.sunet.se', jwks_bundle=_jb)
+# foo = uninett_op.unpack_metadata_statement(jwt_ms=ms_1)
+# print(foo)
