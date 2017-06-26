@@ -58,9 +58,11 @@ class Sign(object):
         else:
             _sign = self.signer[signer]
             try:
-                _jwt = _sign.create_signed_metadata_statement(_mds, context)
+                _resp = _sign.create_signed_metadata_statement(_mds, context)
             except (KeyError, ServiceError) as err:
                 raise cherrypy.HTTPError(message=str(err))
+            else:
+                _jwt = list(_resp.values())[0]
             cherrypy.response.headers['Content-Type'] = 'application/jwt'
             return as_bytes(_jwt)
 
