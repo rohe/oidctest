@@ -2395,7 +2395,7 @@ class AuthTimeCheck(Warnings):
         high = now + self._kwargs['skew']
 
         try:
-            _auth_time = idt["auth_time"]
+            _auth_time = int(idt["auth_time"])
         except KeyError:  # not having a auth_time is an error
             self._status = ERROR
             self._message = "There is no auth_time claim in the ID Token."
