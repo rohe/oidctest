@@ -7,7 +7,7 @@
     "CT",
     "CIT"
   ],
-  "behavior": "issi",
+  "behavior": ["issi"],
   "group": "ID Token",
   "claims": "normal",
   "capabilities": {

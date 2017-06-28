@@ -7,7 +7,7 @@
     "CT",
     "CIT"
   ],
-  "behavior": "itsub",
+  "behavior": ["itsub"],
   "group": "ID Token",
   "claims": "normal",
   "capabilities": {

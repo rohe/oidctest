@@ -101,7 +101,7 @@ class Server(oic.Server):
     def __init__(self, keyjar=None, ca_certs=None, verify_ssl=True):
         oic.Server.__init__(self, keyjar, ca_certs, verify_ssl)
 
-        self.behavior_type = {}
+        self.behavior_type = []
 
     def make_id_token(self, session, loa="2", issuer="",
                       alg="RS256", code=None, access_token=None,

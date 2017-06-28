@@ -4,7 +4,7 @@
     "DYN"
   ],
   "group": "Discovery",
-  "behavior": "isso",
+  "behavior": ["isso"],
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [

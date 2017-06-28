@@ -1,5 +1,5 @@
 {
-  "behavior": "rotenc",
+  "behavior": ["rotenc"],
   "group": "Key Rotation",
   "claims": "normal",
   "capabilities": {

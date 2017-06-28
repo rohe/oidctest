@@ -3,7 +3,7 @@
     "IT",
     "CIT"
   ],
-  "behavior": "ath",
+  "behavior": ["ath"],
   "group": "ID Token",
   "claims": "normal",
   "capabilities": {

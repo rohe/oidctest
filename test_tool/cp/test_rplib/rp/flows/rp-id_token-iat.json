@@ -7,7 +7,7 @@
     "CT",
     "CIT"
   ],
-  "behavior": "iat",
+  "behavior": ["iat"],
   "group": "ID Token",
   "claims": "normal",
   "capabilities": {

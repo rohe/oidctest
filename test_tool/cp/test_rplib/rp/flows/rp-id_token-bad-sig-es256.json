@@ -1,5 +1,5 @@
 {
-  "behavior": "idts",
+  "behavior": ["idts"],
   "group": "ID Token",
   "claims": "normal",
   "capabilities": {

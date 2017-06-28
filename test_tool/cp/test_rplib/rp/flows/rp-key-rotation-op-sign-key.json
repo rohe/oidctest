@@ -1,7 +1,7 @@
 {
   "MTI": ["CNF", "DYN"],
   "group": "Key Rotation",
-  "behavior": "rotsig",
+  "behavior": ["rotsig"],
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [

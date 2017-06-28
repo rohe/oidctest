@@ -3,7 +3,7 @@
     "IT",
     "CIT"
   ],
-  "behavior": "math",
+  "behavior": ["math"],
   "group": "ID Token",
   "claims": "normal",
   "capabilities": {

@@ -7,7 +7,7 @@
     "CT",
     "CIT"
   ],
-  "behavior": "nokid1jwks",
+  "behavior": ["nokid1jwks"],
   "group": "ID Token",
   "claims": "normal",
   "capabilities": {

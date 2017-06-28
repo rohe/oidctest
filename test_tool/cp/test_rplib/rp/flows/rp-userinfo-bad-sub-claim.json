@@ -7,7 +7,7 @@
     "CIT"
   ],
   "group": "UserInfo Endpoint",
-  "behavior": "uisub",
+  "behavior": ["uisub"],
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [
