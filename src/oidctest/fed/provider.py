@@ -98,7 +98,7 @@ class Server(oic.Server):
     def __init__(self, keyjar=None, ca_certs=None, verify_ssl=True):
         oic.Server.__init__(self, keyjar, ca_certs, verify_ssl)
 
-        self.behavior_type = {}
+        self.behavior_type = []
 
 
 class Provider(provider.Provider):
