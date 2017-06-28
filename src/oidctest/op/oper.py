@@ -323,7 +323,9 @@ class UserInfo(SyncGetRequest):
         response = self.catch_exception_and_error(
             self.conv.entity.do_user_info_request, **args)
 
-        if "_claim_sources" in response:
+        if response is None:
+            pass
+        elif "_claim_sources" in response:
             user_info = self.conv.entity.unpack_aggregated_claims(response)
             user_info = self.conv.entity.fetch_distributed_claims(user_info)
             self.conv.entity.userinfo = user_info
