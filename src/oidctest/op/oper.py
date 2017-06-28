@@ -29,6 +29,7 @@ from otest.aus.request import AsyncGetRequest
 from otest.aus.request import SyncGetRequest
 from otest.aus.request import SyncPostRequest
 from otest.aus.request import same_issuer
+from otest.check import get_id_tokens
 from otest.events import EV_EXCEPTION
 from otest.events import EV_NOOP
 from otest.events import EV_PROTOCOL_RESPONSE
@@ -55,21 +56,6 @@ def include(url, test_id):
             return url
 
     return "%s://%s/%s%s_/_/_/normal" % (p.scheme, p.netloc, test_id, p.path)
-
-
-def get_id_token(responses):
-    """
-    Find the id_tokens issued, last one first in the list
-    :param responses: A list of Response instance, text message tuples
-    :return: list of IdTokens instances
-    """
-    res = []
-    for resp, txt in responses:
-        try:
-            res.insert(0, resp["id_token"])
-        except KeyError:
-            pass
-    return res
 
 
 class Webfinger(Operation):
@@ -316,12 +302,17 @@ class UserInfo(SyncGetRequest):
         super(UserInfo, self).__init__(conv, inut, sh, **kwargs)
         self.op_args["state"] = conv.state
 
+    def do_user_info_request(self, **kwargs):
+        res = self.conv.entity.do_user_info_request(**kwargs)
+        self._verify_subject_identifier(res)
+        return res
+
     def run(self):
         args = self.op_args.copy()
         args.update(self.req_args)
 
-        response = self.catch_exception_and_error(
-            self.conv.entity.do_user_info_request, **args)
+        response = self.catch_exception_and_error(self.do_user_info_request,
+                                                  **args)
 
         if response is None:
             pass
@@ -335,10 +326,8 @@ class UserInfo(SyncGetRequest):
             self.conv.events.store(EV_PROTOCOL_RESPONSE, response)
             # return response
 
-    @staticmethod
-    def _verify_subject_identifier(client, user_info):
-        id_tokens = get_id_token(
-            client.conv.events.get_data(EV_PROTOCOL_RESPONSE))
+    def _verify_subject_identifier(self, user_info):
+        id_tokens = get_id_tokens(self.conv)
         if id_tokens:
             if user_info["sub"] != id_tokens[0]["sub"]:
                 msg = "user_info['sub'] != id_token['sub']: '{}!={}'".format(
