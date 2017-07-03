@@ -24,6 +24,12 @@ addons:
     - op_test
     - op
 
+notifications:
+  email:
+    - roland@catalogix.se
+    - hans.zandbelt@zmartzone.eu
+    - panva.ip@gmail.com
+    
 before_install:
   - docker-compose -f docker/docker-compose.yml up -d
 
