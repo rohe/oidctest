@@ -306,12 +306,16 @@ class ClearLog(object):
 
 
 class Tar(object):
-    def __init__(self, root):
+    def __init__(self, root, gzip=False):
         self.root = root  # The directory where the tar directory resides
+        self.gzip = gzip
 
     @cherrypy.expose
     def index(self, op_id=''):
-        cherrypy.response.headers['Content-Type'] = 'application/x-gzip'
+        if self.gzip:
+            cherrypy.response.headers['Content-Type'] = 'application/x-gzip'
+        else:
+            cherrypy.response.headers['Content-Type'] = 'application/x-tar'
         return create_rp_tar_archive(self.root, op_id, False)
 
     def _cp_dispatch(self, vpath):
@@ -322,12 +326,16 @@ class Tar(object):
 
 
 class OPTar(object):
-    def __init__(self, root):
+    def __init__(self, root, gzip=False):
         self.root = root
+        self.gzip = gzip
 
     @cherrypy.expose
     def index(self, op_id, tag, profile):
-        cherrypy.response.headers['Content-Type'] = 'application/x-gzip'
+        if self.gzip:
+            cherrypy.response.headers['Content-Type'] = 'application/x-gzip'
+        else:
+            cherrypy.response.headers['Content-Type'] = 'application/x-tar'
         return self.create_rp_tar_archive(op_id, tag, profile)
 
     def _cp_dispatch(self, vpath):
@@ -342,6 +350,16 @@ class OPTar(object):
             return self
 
         return vpath
+
+    def _gzip(self, tname, backup):
+        with open(tname, 'rb') as f_in:
+            with gzip.open('{}.gz'.format(tname), 'wb') as f_out:
+                shutil.copyfileobj(f_in, f_out)
+
+        if backup:  # Don't keep the tar file
+            os.unlink(tname)
+
+        return open('{}.gz'.format(tname), 'rb').read()
 
     def create_rp_tar_archive(self, op_id, tag, profile, backup=False):
         # links all the logfiles in log_root/<tester_id>/<test_id> to
@@ -377,19 +395,13 @@ class OPTar(object):
                 tar.add(fn)
         tar.close()
 
-        os.chdir(_target_dir)
-        # Now for gzipping the tar file
-        with open(tname, 'rb') as f_in:
-            with gzip.open('{}.gz'.format(tname), 'wb') as f_out:
-                shutil.copyfileobj(f_in, f_out)
-
-        if backup:  # Don't keep the tar file
-            os.unlink(tname)
-
-        _zipped = open('{}.gz'.format(tname), 'rb').read()
+        if self.gzip:
+            os.chdir(_target_dir)
+            res = self._gzip(tname, backup)
+        else:
+            res = open(tname, 'rb').read()
         os.chdir(self.root)
-
-        return _zipped
+        return res
 
     @cherrypy.expose
     def backup(self, op_id, tag, profile):
