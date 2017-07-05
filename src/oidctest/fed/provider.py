@@ -178,7 +178,7 @@ class Provider(provider.Provider):
                         fos = None
 
                 _sms.update(
-                    self.create_signed_metadata_statement('discovery', fos=fos))
+                    self.create_signed_provider_info('discovery', fos=fos))
 
             _response['metadata_statements'] = Message(**_sms)
         elif self.msu_conf:
@@ -194,9 +194,9 @@ class Provider(provider.Provider):
                         fos = None
 
                 _sms.update(
-                    self.create_signed_metadata_statement('discovery', fos=fos))
+                    self.create_signed_provider_info('discovery', fos=fos))
 
-            _response['metadata_statements'] = Message(**_sms)
+            _response = self.federation_entity.extend_with_ms(_response, _sms)
 
         return _response
 
