@@ -254,9 +254,9 @@ class OPLog(object):
                 _acts = []
                 if tag and profile:
                     tar_url = "/mktar/{}/{}/{}".format(op_id, tag, profile)
-                    tar_file = "{}.{}.{}.tar.gz".format(op_id, tag, profile)
+                    tar_file = "{}.{}.{}.tar".format(op_id, tag, profile)
                     _acts.append(
-                        '<p><a href="{}" download="{}"><b>Download gzipped tar '
+                        '<p><a href="{}" download="{}"><b>Download tar '
                         'file</b></a></p>'.format(tar_url, tar_file))
 
                 response = _pre_html.format(
@@ -306,16 +306,12 @@ class ClearLog(object):
 
 
 class Tar(object):
-    def __init__(self, root, gzip=False):
+    def __init__(self, root):
         self.root = root  # The directory where the tar directory resides
-        self.gzip = gzip
 
     @cherrypy.expose
     def index(self, op_id=''):
-        if self.gzip:
-            cherrypy.response.headers['Content-Type'] = 'application/x-gzip'
-        else:
-            cherrypy.response.headers['Content-Type'] = 'application/x-tar'
+        cherrypy.response.headers['Content-Type'] = 'application/x-gzip'
         return create_rp_tar_archive(self.root, op_id, False)
 
     def _cp_dispatch(self, vpath):
@@ -361,10 +357,14 @@ class OPTar(object):
 
         return open('{}.gz'.format(tname), 'rb').read()
 
-    def create_rp_tar_archive(self, op_id, tag, profile, backup=False):
+    def create_rp_tar_archive(self, op_id, tag, profile, backup=False,
+                              gzip=None):
         # links all the logfiles in log_root/<tester_id>/<test_id> to
         # tar_root/<tester_id>/<test_id>
         # mk_tardir('backup', userid)
+
+        if gzip is None:
+            gzip = self.gzip
 
         if backup:
             _target_dir = os.path.join(self.root, 'backup', op_id)
@@ -395,17 +395,18 @@ class OPTar(object):
                 tar.add(fn)
         tar.close()
 
-        if self.gzip:
-            os.chdir(_target_dir)
+        os.chdir(_target_dir)
+        if gzip:
             res = self._gzip(tname, backup)
         else:
             res = open(tname, 'rb').read()
+
         os.chdir(self.root)
         return res
 
     @cherrypy.expose
     def backup(self, op_id, tag, profile):
-        self.create_rp_tar_archive(op_id, tag, profile, True)
+        self.create_rp_tar_archive(op_id, tag, profile, True, True)
         return ''
 
 
