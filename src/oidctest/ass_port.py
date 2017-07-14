@@ -103,21 +103,15 @@ class AssignedPorts(object):
                 self._db[eid] = _port
             else:
                 pl = list(self._db.values())
-                pl.sort()
                 if not pl:
-                    _port = self.min
-                    self._db[eid] = _port
-                elif pl[0] != self.min:
                     _port = self.min
                     self._db[eid] = _port
                 else:
                     _port = self.min
-                    for p in pl:
-                        if p == _port:
-                            _port += 1
-                            continue
-                        else:
+                    while _port <= self.max:
+                        if not _port in pl:
                             break
+                        _port += 1
                     if _port > self.max:
                         raise OutOfRange('Out of ports')
                     self._db[eid] = _port
