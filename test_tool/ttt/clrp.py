@@ -167,7 +167,7 @@ if __name__ == '__main__':
             # The first item represents the return_type
             rtypes = []
             _use = from_profile(cargs.profile)
-            _use['return_type'] = _use['return_type'][0]
+            #_use['return_type'] = _use['return_type'][0]
             if match_usage(FLOWS[cargs.test_id], **_use):
                 rtypes.append(_use['return_type'])
             kwargs['tool_conf']['profile'] = cargs.profile
