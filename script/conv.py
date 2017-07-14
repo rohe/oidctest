@@ -121,7 +121,7 @@ def convert(conf):
 if __name__ == '__main__':
     sys.path.insert(0, '.')
     rest = REST('', '../entities')
-    old_rest = REST('', '../entities.old')
+    #old_rest = REST('', '../entities.old')
     assigned_port = AssignedPorts('../assigned_ports.json', 60000, 64000)
     for fil in sys.argv[1:]:
         if fil.endswith('.py'):
@@ -137,9 +137,9 @@ if __name__ == '__main__':
                 qtag = quote_plus(cnf['tool']['tag'])
                 fname = rest.entity_file_name(qiss, qtag)
                 _key = assigned_port.make_key(iss, cnf['tool']['tag'])
-                type, old_cnf = old_rest.read_conf(qiss, qtag)
-                if cnf != old_cnf:
-                    print(cnf, old_cnf)
+                # type, old_cnf = old_rest.read_conf(qiss, qtag)
+                # if cnf != old_cnf:
+                #     print(cnf, old_cnf)
                 if not os.path.isfile(fname):
                     rest.write(qiss, qtag, cnf)
                     try:
