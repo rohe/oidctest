@@ -4,6 +4,15 @@ from future.backports.urllib.parse import quote_plus
 
 from oidctest.ass_port import AssignedPorts, OutOfRange
 
+PORT_INFO = {
+  "https://idam-dev.metrosystems.net][default": 60016,
+  "https://connect.openid4.us/phpOp][default": 60015,
+  "https://ce-dev3.gluu.org][ce-dev3": 60000,
+  "https://zmartzone.eu][id_token_token": 60001,
+  "https://mytest.org][default": 60002,
+  "phpOp][testphp": 60003
+}
+
 
 def test_port():
     pmin = 60000
@@ -64,6 +73,10 @@ def find_duplicates(apfile):
 
 def test_port_ass():
     fname = 'assport2.json'
+    f = open(fname, 'w')
+    f.write(json.dumps(PORT_INFO))
+    f.close()
+
     dup = find_duplicates(fname)
 
     if dup:
