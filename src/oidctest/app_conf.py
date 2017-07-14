@@ -363,6 +363,24 @@ class REST(object):
             fp.write(ent_conf)
         fp.close()
 
+    def items(self):
+        """
+
+        :return: dictionary with issuer IDs as keys and tags as values
+        """
+        res = {}
+        for iss in os.listdir(self.entpath):
+            dname = os.path.join(self.entpath, iss)
+            if os.path.isdir(dname):
+                for tag in os.listdir(dname):
+                    fname = os.path.join(dname, tag)
+                    if os.path.isfile(fname):
+                        try:
+                            res[iss].append(tag)
+                        except KeyError:
+                            res[iss] = [tag]
+        return res
+
 
 class IO(object):
     def __init__(self, rest, environ, start_response, lookup, baseurl,
