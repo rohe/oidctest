@@ -18,10 +18,14 @@ pap.load()
 
 def new_port(iss, tag, proposal=0):
     _k = pap.make_key(iss, tag)
+    _p = 0
+    if proposal:
+        if proposal not in assigned_port.values():
+            _p = proposal
+        else:
+            print("!!!! Can't use proposed port")
 
-    if proposal and proposal not in assigned_port.values():
-        _p = proposal
-    else:
+    if not _p:
         try:
             _p = pap[_k]
         except KeyError:
@@ -82,6 +86,8 @@ for l in set(old_info.keys()).difference(set(present_info.keys())):
 print('-------')
 for l in rport:
     del_port(*l)
+    old.delete(*l)
+
 print('+++++++')
 for l in nport:
     # copy conf
