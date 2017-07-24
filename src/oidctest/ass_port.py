@@ -86,6 +86,22 @@ class AssignedPorts(object):
                 for key, val in json.loads(_ass).items():
                     self._db[key] = val
 
+    def next_free_port(self, prev=0):
+        if not prev:
+            prev = self.min
+        pl = list(self._db.values())
+        if not pl:
+            return prev
+        else:
+            _port = prev
+            while _port <= self.max:
+                if not _port in pl:
+                    break
+                _port += 1
+            if _port > self.max:
+                raise OutOfRange('Out of ports')
+        return _port
+
     def register_port(self, *args):
         """
         Get an assigned port. If no one is assigned, find the next available.
@@ -100,26 +116,8 @@ class AssignedPorts(object):
         except KeyError:
             if self._db == {}:
                 _port = self.min
-                self._db[eid] = _port
             else:
-                pl = list(self._db.values())
-                pl.sort()
-                if not pl:
-                    _port = self.min
-                    self._db[eid] = _port
-                elif pl[0] != self.min:
-                    _port = self.min
-                    self._db[eid] = _port
-                else:
-                    _port = self.min
-                    for p in pl:
-                        if p == _port:
-                            _port += 1
-                            continue
-                        else:
-                            break
-                    if _port > self.max:
-                        raise OutOfRange('Out of ports')
-                    self._db[eid] = _port
+                _port = self.next_free_port()
+            self._db[eid] = _port
             self.dump()
         return _port

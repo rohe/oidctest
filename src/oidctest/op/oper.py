@@ -16,7 +16,7 @@ from oic.exception import ParameterError
 from oic.oauth2 import ErrorResponse
 from oic.oauth2 import Message
 from oic.oauth2.util import JSON_ENCODED
-from oic.oic import ProviderConfigurationResponse
+from oic.oic import ProviderConfigurationResponse, OpenIDSchema
 from oic.oic import RegistrationResponse
 from oic.utils.keyio import KeyBundle
 from oic.utils.keyio import dump_jwks
@@ -304,7 +304,8 @@ class UserInfo(SyncGetRequest):
 
     def do_user_info_request(self, **kwargs):
         res = self.conv.entity.do_user_info_request(**kwargs)
-        self._verify_subject_identifier(res)
+        if isinstance(res, OpenIDSchema):
+            self._verify_subject_identifier(res)
         return res
 
     def run(self):

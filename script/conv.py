@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import importlib
-import json
 import os
 import sys
 from urllib.parse import quote_plus
@@ -122,7 +121,7 @@ def convert(conf):
 if __name__ == '__main__':
     sys.path.insert(0, '.')
     rest = REST('', '../entities')
-    assigned_port = AssignedPorts('../aasigned_ports', 60000, 64000)
+    assigned_port = AssignedPorts('../assigned_ports.json', 60000, 64000)
     for fil in sys.argv[1:]:
         if fil.endswith('.py'):
             print(fil)
@@ -133,10 +132,10 @@ if __name__ == '__main__':
                 iss = cnf['client']['provider_info']['issuer']
             qiss = quote_plus(iss.lower())
 
-            if qiss.startswith('http'):
+            if iss.startswith('http'):
                 qtag = quote_plus(cnf['tool']['tag'])
                 fname = rest.entity_file_name(qiss, qtag)
-                _key = '{}:{}'.format(qiss, qtag)
+                _key = assigned_port.make_key(iss, cnf['tool']['tag'])
                 if not os.path.isfile(fname):
                     rest.write(qiss, qtag, cnf)
                     try:

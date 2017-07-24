@@ -95,11 +95,16 @@ class Entity(object):
         except FileNotFoundError:
             return b"No such Issuer exists"
 
-        active = dict([(fil, isrunning(iss, fil)) for fil in fils])
+        active = dict()
+        tags = []
+        for fil in fils:
+            tag = unquote_plus(fil)
+            active[tag] = isrunning(iss, tag)
+            tags.append(tag)
 
         self.assigned_ports.load()
         _msg = self.prehtml['list_tag.html'].format(
-            item_table=item_table(qiss, fils, active, self.assigned_ports, self.test_tool_base),
+            item_table=item_table(qiss, tags, active, self.assigned_ports, self.test_tool_base),
             iss=iss,
             version=self.version
         )
