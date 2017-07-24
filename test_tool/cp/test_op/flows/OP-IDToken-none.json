@@ -14,11 +14,11 @@
     {
       "Registration": {
         "set_request_args": {
-          "id_token_signed_response_alg": "none",
-          "check_support": {
-            "ERROR": {
-              "id_token_signing_alg_values_supported": null
-            }
+          "id_token_signed_response_alg": "none"
+        },
+        "check_support": {
+          "ERROR": {
+            "id_token_signing_alg_values_supported": null
           }
         }
       }
