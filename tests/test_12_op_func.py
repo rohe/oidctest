@@ -449,7 +449,7 @@ def test_login_hint_with():
     args = None
     login_hint(oper, args)
 
-    assert oper.req_args["login_hint"] == 'diana@example.com'
+    assert oper.req_args["login_hint"] == 'diana'
 
 
 def test_login_hint_without():
