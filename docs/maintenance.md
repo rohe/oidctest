@@ -1,6 +1,6 @@
 # Operational Maintenance
 
-*Version 1.0.1 - June 13, 2017*
+*Version 1.1.0 - July 31, 2017*
 
 This document describes operational maintenance procedures for the OpenID Connect OP and RP certification environments
 that the OpenID Foundation provides. It lists important directory/file structures and the steps one would have to take
@@ -29,6 +29,8 @@ fedoidc
 otest
 oidctest
 ````
+
+For the OP there's also a custom `pyoidc` directory checked out that contains a patched release 0.10.0.
 
 ### Installation
 
@@ -73,6 +75,9 @@ Pulls down source code, needs deploy after that:
 cd /usr/local/src
 pullall.sh
 ````
+
+Note that these commands may result in "You are not currently on a branch" in case specific versions of dependencies are checked out.
+That is probably fine.
 
 ###### DEPLOY
 Deploys code into Python packages:
