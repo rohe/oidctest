@@ -256,8 +256,8 @@ def login_hint(oper, args):
     else:
         if hint is None:
             hint = _default
-        elif "@" not in hint:
-            hint = "%s@%s" % (hint, p.netloc)
+        # elif "@" not in hint:
+        #     hint = "%s@%s" % (hint, p.netloc)
 
     oper.req_args["login_hint"] = hint
 

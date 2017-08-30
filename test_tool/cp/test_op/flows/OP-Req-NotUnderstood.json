@@ -18,9 +18,7 @@
       "AsyncAuthn": {
         "set_response_where": null,
         "set_request_args": {
-          "ERROR": {
             "extra": "foobar"
-          }
         }
       }
     }

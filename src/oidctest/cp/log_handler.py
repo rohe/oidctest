@@ -135,15 +135,19 @@ def create_rp_tar_archive(wd, bid, backup=False):
 
     # Back to the tar/backup directory
     os.chdir(_dir)
-    with open(tname, 'rb') as f_in:
-        with gzip.open('{}.gz'.format(tname), 'wb') as f_out:
-            shutil.copyfileobj(f_in, f_out)
+    if backup:
+        with open(tname, 'rb') as f_in:
+            with gzip.open('{}.gz'.format(tname), 'wb') as f_out:
+                shutil.copyfileobj(f_in, f_out)
 
-    _zipped = open('{}.gz'.format(tname), 'rb').read()
+        _res = open('{}.gz'.format(tname), 'rb').read()
+    else:
+        _res = open(tname, 'rb').read()
+
     os.chdir(wd)
 
     # content='application/x-gzip'
-    return _zipped
+    return _res
 
 
 class Log(object):
@@ -185,12 +189,12 @@ class Log(object):
             if op_id:
                 cl_url = "/clear/{}".format(op_id)
                 tar_url = "/mktar/{}".format(op_id)
-                tar_file = "{}.tar.gz".format(op_id[1:])
+                tar_file = "{}.tar".format(op_id)
                 response.append(
                     '<p><a href="{}"><b>Clear all test logs</b></a></p>'.format(
                         cl_url))
                 response.append(
-                    '<p><a href="{}" download="{}"><b>Download gzipped tar '
+                    '<p><a href="{}" download="{}"><b>Download tar '
                     'file</b></a></p>'.format(tar_url, tar_file))
 
             response.append(POST_HTML.format(version=self.version))
