@@ -14,11 +14,13 @@
     {
       "Registration": {
         "set_request_args": {
-          "token_endpoint_auth_method": "private_key_jwt"
+          "token_endpoint_auth_method": "private_key_jwt",
+          "grant_types": ["authorization_code", "refresh_token"]}
         },
         "check_support": {
           "ERROR": {
-            "token_endpoint_auth_methods_supported": "private_key_jwt"
+            "token_endpoint_auth_methods_supported": "private_key_jwt",
+            "grant_types_supported": "refresh_token"
           }
         }
       }
