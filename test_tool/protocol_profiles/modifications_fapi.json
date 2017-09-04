@@ -1,0 +1,27 @@
+{
+  "sequence": [
+    "Webfinger",
+    "Discovery",
+    {
+      "Registration": {
+        "set_request_args": {
+          "request_object_signing_alg": "RS256"
+        },
+        "check_support": {
+          "WARNING": {
+            "request_parameter_supported": true,
+            "request_object_signing_alg_values_supported": "RS256"
+          }
+        }
+      }
+    },
+    {
+      "AsyncAuthn": {
+        "set_op_args": {
+          "request_object_signing_alg": "RS256",
+          "request_method": "request"
+        }
+      }
+    }
+  ]
+}
