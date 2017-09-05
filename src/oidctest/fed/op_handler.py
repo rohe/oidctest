@@ -1,7 +1,7 @@
 from fedoidc.entity import FederationEntity
 from oic.utils.keyio import build_keyjar
 from oic.utils.keyio import key_summary
-from oic.utils.sdb import SessionDB
+from oic.utils.sdb import create_session_db
 from otest.conversation import Conversation
 
 from oidctest import UnknownTestID
@@ -42,7 +42,8 @@ class FedOPHandler(OPHandler):
         if not _tc:
             raise UnknownTestID(test_id)
 
-        op = self.provider_cls(sdb=SessionDB(com_args["baseurl"]), **com_args)
+        _sdb = create_session_db(com_args["baseurl"], 'automover', '430X', {})
+        op = self.provider_cls(sdb=_sdb, **com_args)
         op.events = events
         op.oper_id = oper_id
         op.test_id = test_id

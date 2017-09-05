@@ -8,7 +8,7 @@ from oic.utils.authn.authn_context import AuthnBroker
 from oic.utils.authn.client import verify_client
 from oic.utils.authz import AuthzHandling
 from oic.utils.keyio import keyjar_init
-from oic.utils.sdb import SessionDB
+from oic.utils.sdb import create_session_db
 from oic.utils.userinfo import UserInfo
 
 from oidctest.endpoints import ENDPOINTS
@@ -129,7 +129,8 @@ def main_setup(args, lookup=None):
     # Add own keys for signing/encrypting JWTs
     try:
         # a throw-away OP used to do the initial key setup
-        _op = Provider(sdb=SessionDB(com_args["baseurl"]), **com_args)
+        _sdb = create_session_db(com_args["baseurl"], 'automover', '430X', {})
+        _op = Provider(sdb=_sdb, **com_args)
         jwks = keyjar_init(_op, config.keys)
     except KeyError:
         pass
@@ -265,7 +266,8 @@ def cb_setup(args, lookup=None):
     # Add own keys for signing/encrypting JWTs
     try:
         # a throw-away OP used to do the initial key setup
-        _op = Provider(sdb=SessionDB(com_args["baseurl"]), **com_args)
+        _sdb = create_session_db(com_args["baseurl"], 'automover', '430X', {})
+        _op = Provider(sdb=_sdb, **com_args)
         jwks = keyjar_init(_op, config.keys)
     except KeyError:
         pass
@@ -281,9 +283,11 @@ def cb_setup(args, lookup=None):
 
     return com_args, op_arg, config
 
+
 def multi_keys(com_args, key_conf):
     # a throw-away OP used to do the initial key setup
-    _op = Provider(sdb=SessionDB(com_args["baseurl"]), **com_args)
+    _sdb = create_session_db(com_args["baseurl"], 'automover', '430X', {})
+    _op = Provider(sdb=_sdb, **com_args)
     jwks = keyjar_init(_op, key_conf, "m%d")
 
     return {"jwks": jwks, "keys": key_conf}
