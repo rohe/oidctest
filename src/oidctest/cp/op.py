@@ -201,6 +201,7 @@ class Authorization(object):
         else:
             store_request(op, 'AuthorizationRequest')
             logger.debug('AuthorizationRequest: {}'.format(kwargs))
+            op.events.store(EV_REQUEST, kwargs)
             resp = op.authorization_endpoint(kwargs)
             return conv_response(op, resp)
 
