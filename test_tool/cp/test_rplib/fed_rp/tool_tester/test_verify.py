@@ -51,7 +51,7 @@ KEY_DEFS = [
 
 MS_DIR = 'ms_dir_10'
 fs = FileSystem(MS_DIR)
-fs.reset()
+fs.clear()
 
 if os.path.isdir('mds'):
     shutil.rmtree('mds')
