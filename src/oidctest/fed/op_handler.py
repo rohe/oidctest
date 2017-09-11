@@ -12,11 +12,12 @@ from oidctest.cp.op_handler import write_jwks_uri
 
 class FedOPHandler(OPHandler):
     def __init__(self, provider_cls, op_args, com_args, test_conf, folder,
-                 **kwargs):
+                 fo_bundle, **kwargs):
         OPHandler.__init__(self, provider_cls, op_args, com_args, test_conf,
                            folder)
         self.key_defs = kwargs['key_defs']
         self.signers = kwargs['signers']
+        self.fo_bundle = fo_bundle
 
     def get(self, oper_id, test_id, events, endpoint):
         # addr = get_client_address(environ)
@@ -74,7 +75,8 @@ class FedOPHandler(OPHandler):
         _kj = build_keyjar(self.key_defs)[1]
 
         op.federation_entity = FederationEntity(None, keyjar=_kj, iss=op.name,
-                                                signer=None)
+                                                signer=None,
+                                                fo_bundle=self.fo_bundle)
         op.federation_entity.httpcli = op
 
         try:
