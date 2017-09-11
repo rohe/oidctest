@@ -15,7 +15,7 @@
       "Registration": {
         "set_request_args": {
           "token_endpoint_auth_method": "private_key_jwt",
-          "grant_types": ["authorization_code", "refresh_token"]}
+          "grant_types": ["authorization_code", "refresh_token"]
         },
         "check_support": {
           "ERROR": {
