@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 import argparse
 import json
+import os
+from urllib.parse import urlencode
 
 import requests
 from fedoidc import ProviderConfigurationResponse
 from fedoidc.bundle import JWKSBundle
 from fedoidc.client import Client
 from fedoidc.entity import FederationEntity
+from fedoidc.signing_service import WebSigningService, Signer
 from oic.exception import ParameterError
 from oic.exception import RegistrationError
 from oic.utils.keyio import KeyJar
@@ -17,7 +20,7 @@ from requests.packages import urllib3
 urllib3.disable_warnings()
 
 # ----- config -------
-#tool_url = "https://agaton-sax.com:8080"
+# tool_url = "https://agaton-sax.com:8080"
 tool_url = "https://localhost:8080"
 tester = 'dummy'
 KEY_DEFS = [
@@ -47,13 +50,16 @@ def fo_jb(jb, test_info):
     return fjb
 
 
-def run_test(test_id, tool_url, tester, rp_fed_ent, jb):
+def run_test(test_id, tool_url, tester, rp_fed_ent, jb, sig):
     _iss = "{}/{}/{}".format(tool_url, tester, test_id)
     _url = "{}/{}".format(_iss, ".well-known/openid-configuration")
     resp = requests.request('GET', _url, verify=False)
 
     rp_fed_ent.jwks_bundle = fo_jb(jb, _flows[test_id])
     rp = Client(federation_entity=rp_fed_ent, verify_ssl=False)
+    rp.redirect_uris = ['https://localhost:666/authz_cb']
+    rp.fo_priority = ['https://swamid.sunet.se', 'https://edugain.com',
+                      'https://www.feide.no']
     rp_fed_ent.httpcli = rp
 
     # Will raise an exception if there is no metadata statement I can use
@@ -72,13 +78,30 @@ def run_test(test_id, tool_url, tester, rp_fed_ent, jb):
     else:  # Otherwise there should be exactly one metadata statement I can use
         print(test_id, rp.federation)
 
+    # Just pick a federation
+    rp.chose_provider_federation(_iss)
+
+    # Chose a signer of the registration request
+    # Now for registration
+    _sig = sig[rp.federation]
+    req = rp.create_registration_request()
+    _sms = _sig(req.to_dict())
+
+    rp_fed_ent.signer.metadata_statements['registration'][_sig.iss] = _sms
+
+    res = rp.register(rp.provider_info['registration_endpoint'],
+                      redirect_uris=rp.redirect_uris)
+
+    print(res)
+    print(rp.federation)
+
 # --------------------
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-f', dest='flowsdir', required=True)
 parser.add_argument('-k', dest='insecure', action='store_true')
 parser.add_argument('-t', dest='test_id')
-#parser.add_argument(dest="config")
+# parser.add_argument(dest="config")
 args = parser.parse_args()
 
 _flows = Flow(args.flowsdir, profile_handler=None)
@@ -104,14 +127,25 @@ jb.upload_signed_bundle(info['bundle'], kj)
 # like the keys at jwks_uri.
 _kj = build_keyjar(KEY_DEFS)[1]
 
+SIGNERS = ['https://swamid.sunet.se', 'https://edugain.com',
+           'https://www.feide.no']
+# A dictionary of web based signers
+sig = {}
+for iss in SIGNERS:
+    qp = urlencode({'signer': iss, 'context': 'registration'})
+    url = '{}/sign?{}'.format(tool_url, qp)
+    sig[iss] = WebSigningService(iss, url, jb.bundle[iss])
+
 # A federation aware RP includes a FederationEntity instance.
 # This is where it is instantiated
 rp_fed_ent = FederationEntity(None, keyjar=_kj, iss='https://sunet.se/rp',
-                              signer=None, fo_bundle=None)
+                              signer=Signer(None), fo_bundle=None)
+
+print(os.path.curdir)
 
 # And now for running the tests
 if args.test_id:
-    run_test(args.test_id, tool_url, tester, rp_fed_ent, jb)
+    run_test(args.test_id, tool_url, tester, rp_fed_ent, jb, sig)
 else:
     for test_id in tests:
-        run_test(test_id, tool_url, tester, rp_fed_ent, jb)
+        run_test(test_id, tool_url, tester, rp_fed_ent, jb, sig)
