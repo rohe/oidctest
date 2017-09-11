@@ -11,7 +11,6 @@ from oic.oauth2 import Message
 from otest.events import EV_FAULT
 from otest.events import EV_REQUEST
 from otest.events import EV_RESPONSE
-from otest.events import Events
 from otest.events import FailedOperation
 from otest.events import Operation
 from otest.flow import ABBR
@@ -352,6 +351,7 @@ HTML_FOOTER = """
         </div>
 """
 
+
 def choice(profiles):
     keys = list(profiles.keys())
     keys.sort()
@@ -360,11 +360,11 @@ def choice(profiles):
         '<table class="table table-hover table-bordered" style="font-family:monospace;">',
         ]
     for k in keys:
-        line.append('<tr>');
-        line.append('  <td width="80%">{}</td>'.format(k));
+        line.append('<tr>')
+        line.append('  <td width="80%">{}</td>'.format(k))
         line.append('  <td class="text-center"><input type="radio" name="profile" value="{}"></td>'.format(
             profiles[k]))
-        line.append('</tr>');
+        line.append('</tr>')
     line.append('</table>')
     return '\n'.join(line)
 
@@ -377,7 +377,7 @@ class Reset(object):
     @cherrypy.expose
     def index(self, op):
         init_keyjar(op, self.op_args['keyjar'], self.com_args)
-        write_jwks_uri(op, self.op_args)
+        write_jwks_uri(op, self.op_args, {})
         return b'OK'
 
 
