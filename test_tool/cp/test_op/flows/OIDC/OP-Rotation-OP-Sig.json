@@ -1,0 +1,38 @@
+{
+  "group": "Key Rotation",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "FetchKeys",
+    "Note",
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "FetchKeys"
+  ],
+  "usage": {
+    "discover": true,
+    "sig": true
+  },
+  "desc": "Can rotate OP signing keys",
+  "note": "Please make your OP rotate its signing keys now. If you are not able to cause the server to rotate the keys while running the test, then you will have to self-assert that your deployment can do OP signing key rotation as part of your certification application.",
+  "assert": {
+    "check-http-response": null,
+    "new-signing-keys": null
+  }
+}

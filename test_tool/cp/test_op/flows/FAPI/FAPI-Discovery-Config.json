@@ -1,0 +1,1 @@
+{"sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}], "usage": {"discover": true}, "group": "Discovery", "desc": "Publishes openid-configuration discovery information", "MTI": ["DYN", "CNF"], "assert": {"verify-op-endpoints-use-https": null, "verify-https-usage": {"endpoints": ["jwks_uri"]}, "check-http-response": null}}

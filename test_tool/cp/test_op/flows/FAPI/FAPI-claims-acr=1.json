@@ -1,0 +1,59 @@
+{
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    {
+      "Registration": {
+        "check_support": {
+          "WARNING": {
+            "request_object_signing_alg_values_supported": "RS256",
+            "request_parameter_supported": true
+          }
+        },
+        "set_request_args": {
+          "request_object_signing_alg": "RS256"
+        }
+      }
+    },
+    {
+      "AsyncAuthn": {
+        "essential_and_specific_acr_claim": "1",
+        "set_op_args": {
+          "request_object_signing_alg": "RS256",
+          "request_method": "request"
+        },
+        "set_response_where": null
+      }
+    },
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": [
+            "CIT",
+            "CI",
+            "C",
+            "CT"
+          ]
+        }
+      }
+    }
+  ],
+  "group": "claims Request Parameter",
+  "desc": "Requesting ID Token with essential specific acr claim [Extra]",
+  "usage": {
+    "extra": true
+  },
+  "assert": {
+    "verify-claims": {
+      "id_token": null
+    }
+  }
+}
