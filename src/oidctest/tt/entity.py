@@ -9,7 +9,6 @@ from otest.proc import find_test_instance
 from otest.proc import isrunning
 
 from oidctest.cp import init_events
-from oidctest.ass_port import AssignedPorts
 from oidctest.tt import unquote_quote
 
 logger = logging.getLogger(__name__)

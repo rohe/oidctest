@@ -6,7 +6,6 @@ import cherrypy
 from jwkest import as_bytes
 from oic.oauth2.message import list_serializer
 from oic.utils.http_util import Response
-from otest.proc import kill_process
 from otest.prof_util import abbr_return_type
 from otest.prof_util import do_discovery
 from otest.prof_util import do_registration
