@@ -29,7 +29,8 @@ HEADLINE = {
     "provider_info": ""
 }
 
-ball = '<button type="button" class="btn btn-warning"><span class="glyphicon glyphicon-plus"></span></button>'
+ball = '<button type="button" class="btn btn-warning"><span class="glyphicon ' \
+       'glyphicon-plus"></span></button>'
 
 _cline = '{} <input type="radio" name="{}:{}" value="{}" {}>'
 
@@ -56,7 +57,8 @@ def do_line(grp, key, val, req=False):
         return " ".join([
             '<tr><th width="35%">{}</th><td><input'.format(key),
             'type="text" name="{}:{}"'.format(grp, key),
-            'value="{}" class="form-control"></td><td width="10%">{}</td></tr>'.format(val, _ball)])
+            'value="{}" class="form-control"></td><td width="10%">{}</td></tr>'.format(
+                val, _ball)])
 
 
 def comma_sep_list(key, val, multi):
@@ -69,8 +71,10 @@ def comma_sep_list(key, val, multi):
 def display_form(head_line, grp, dic, state, multi):
     lines = ['<table class="table table-hover table-bordered">']
     if head_line:
-        lines.append('<thead><tr><th colspan="3" class="text-center info"><h3>{}</h3></th></tr></thead>'.format(head_line))
-    lines.append('<tbody>')        
+        lines.append(
+            '<thead><tr><th colspan="3" class="text-center info"><h3>{}</h3></th></tr></thead>'.format(
+                head_line))
+    lines.append('<tbody>')
     keys = list(dic.keys())
     keys.sort()
     if grp in state:
@@ -86,9 +90,15 @@ def display_form(head_line, grp, dic, state, multi):
             lines.append(''.join(l))
             keys.remove(param)
         for param in state[grp]['required']:
-            val = comma_sep_list(param, dic[param], multi[grp])
-            lines.append(do_line(grp, param, val, True))
-            keys.remove(param)
+            try:
+                _val = dic[param]
+            except KeyError:
+                lines.append(
+                      do_line(grp, param, '**MISSING REQUIRED VALUE**', True))
+            else:
+                val = comma_sep_list(param, _val, multi[grp])
+                lines.append(do_line(grp, param, val, True))
+                keys.remove(param)
     for key in keys:
         val = comma_sep_list(key, dic[key], multi[grp])
         lines.append(do_line(grp, key, val, False))
@@ -105,9 +115,11 @@ def display(dicts, state, multi, notes, action):
     lines.append('<p>{}</p>'.format(notes))
     lines.append(
         '<div class="btn-toolbar">'
-        '<button type="submit" value="configure" class="btn btn-primary">Save & Start</button>')
+        '<button type="submit" value="configure" class="btn btn-primary">Save '
+        '& Start</button>')
     lines.append(
-        '<button type="submit" value="abort" class="btn btn-default">Abort</button>'
+        '<button type="submit" value="abort" class="btn '
+        'btn-default">Abort</button>'
         '</div>')
     lines.append('</form>')
     return "\n".join(lines)
@@ -240,27 +252,32 @@ class Action(object):
         """
         logger.debug('update test tool configuration: {} {}'.format(iss, tag))
         uqp, qp = unquote_quote(iss, tag)
-        _format, _conf = self.rest.read_conf(qp[0], qp[1])
 
-        logger.info('config: {}'.format(_conf))
+        try:
+            _format, _conf = self.rest.read_conf(qp[0], qp[1])
+        except TypeError:
+            _msg = "No such test tool configuration"
+            logger.info(_msg)
+        else:
+            logger.info('config: {}'.format(_conf))
 
-        dicts, state, multi, notes = update_config(_conf, self.tool_params)
+            dicts, state, multi, notes = update_config(_conf, self.tool_params)
 
-        action = "{}/run/{}/{}".format('', qp[0], qp[1])
-        _msg = self.html['instance.html'].format(
-            display=display(dicts, state, multi, notes, action),
-            version=self.version
-        )
+            action = "{}/run/{}/{}".format('', qp[0], qp[1])
+            _msg = self.html['instance.html'].format(
+                display=display(dicts, state, multi, notes, action),
+                version=self.version
+            )
 
         return as_bytes(_msg)
 
     @cherrypy.expose
     def stop(self, iss, tag, ev):
-        logger.info('stop test tool')
+        logger.info('stop test tool: {} {}'.format(iss, tag))
 
         uqp, qp = unquote_quote(iss, tag)
         _key = self.app.assigned_ports.make_key(*uqp)
-        
+
         # If already running - kill
         try:
             pid = isrunning(unquote_plus(iss), unquote_plus(tag))
@@ -268,8 +285,8 @@ class Action(object):
             pass
         else:
             if pid:
-                #logger.info('kill {}'.format(pid))
-                #subprocess.call(['kill', str(pid)])
+                # logger.info('kill {}'.format(pid))
+                # subprocess.call(['kill', str(pid)])
                 kill_process(pid)
                 try:
                     del self.app.running_processes[_key]
@@ -282,7 +299,7 @@ class Action(object):
 
     @cherrypy.expose
     def delete(self, iss, tag, ev, pid=0):
-        logger.info('delete test tool configuration')
+        logger.info('delete test tool configuration: {} {}'.format(iss, tag))
         uqp, qp = unquote_quote(iss, tag)
         _key = self.app.assigned_ports.make_key(*uqp)
 
@@ -314,7 +331,7 @@ class Action(object):
         :param ev: 
         :return: 
         """
-        logging.info('restart test tool')
+        logger.info('restart test tool: {} {}'.format(iss, tag))
         uqp, qp = unquote_quote(iss, tag)
         url = self.app.run_test_instance(*qp)
 
@@ -335,11 +352,17 @@ class Action(object):
 
     @cherrypy.expose
     def create(self, **kwargs):
-        logging.info('create test tool configuration')
+        logger.info(
+            'create test tool configuration: {} {}'.format(kwargs['iss'],
+                                                           kwargs['tag']))
         # construct profile
-        profile = to_profile(kwargs)
+        try:
+            profile = to_profile(kwargs)
+        except KeyError as err:
+            logger.error(err)
+            return as_bytes('Sorry failed to create: {}'.format(err))
+
         _ent_conf = create_model(profile, ent_info_path=self.ent_info_path)
-        state = {}
 
         if not do_discovery(profile):
             _ent_conf['client']['provider_info']['issuer'] = kwargs['iss']
@@ -361,7 +384,7 @@ class Action(object):
         _ent_conf['tool']['profile'] = profile
 
         _ent_conf.update(from_profile(profile))
-        logging.info("Test tool config: {}".format(_ent_conf))
+        logger.info("Test tool config: {}".format(_ent_conf))
 
         self.rest.write(qp[0], qp[1], _ent_conf)
         # Do a redirect

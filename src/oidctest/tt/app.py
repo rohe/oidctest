@@ -82,7 +82,7 @@ class Application(object):
                 break
 
         if pid:
-            logger.info("process id: {}".format(pid))
+            logger.info("{} {} - process id: {}".format(iss, tag, pid))
             self.running_processes['{}:{}'.format(iss, tag)] = pid
             return url
         else:

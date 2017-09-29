@@ -1,7 +1,10 @@
 import json
 from urllib.parse import unquote_plus
 
+import logging
 from otest.proc import find_test_instances
+
+logger = logging.getLogger(__name__)
 
 
 class OutOfRange(Exception):
@@ -118,6 +121,7 @@ class AssignedPorts(object):
                 _port = self.min
             else:
                 _port = self.next_free_port()
+            logger.info('Assigned port {} for {}'.format(_port, eid))
             self._db[eid] = _port
             self.dump()
         return _port
