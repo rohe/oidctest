@@ -38,6 +38,7 @@ class AssignedPorts(object):
         if '%' in key:
             key = unquote_plus(key)
 
+        logger.info("Removed {}".format(key))
         del self._db[key]
         self.dump()
 
