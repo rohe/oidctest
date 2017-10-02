@@ -17,7 +17,7 @@ services:
 addons:
   apt:
     packages:
-      - google-chrome-beta
+      - google-chrome-stable
       - libnss3-tools
   hosts:
     - rp_test
@@ -55,7 +55,7 @@ before_script:
   - certutil -d sql:$HOME/.pki/nssdb -A -t TC -n op_test -i $TRAVIS_BUILD_DIR/docker/op_test/cert.pem
  
   # start a fresh new Chrome instance
-  - google-chrome-beta
+  - google-chrome-stable
         --user-data-dir=$(mktemp -d)
         --no-sandbox
         --no-first-run
