@@ -12,18 +12,6 @@ ENV SUBDIR ${SRCDIR}/${INSTDIR}/oidc_op
 
 WORKDIR ${SRCDIR}
 
-#
-# TEMPORARY
-#
-RUN git clone https://github.com/OpenIDC/pyoidc.git
-RUN cd pyoidc && git checkout tags/v0.10.0 -b temp-patch
-COPY docker/op_test/pyoidc.patch pyoidc.patch
-RUN cd pyoidc && patch -p1 < ../pyoidc.patch
-RUN cd pyoidc &&  python3 setup.py install
-#
-# TEMPORARY
-#
-
 RUN git clone https://github.com/openid-certification/otest.git
 RUN cd otest && python3 setup.py install && cd -
 
