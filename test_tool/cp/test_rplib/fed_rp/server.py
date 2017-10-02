@@ -9,7 +9,6 @@ from urllib.parse import unquote_plus
 
 import cherrypy
 from fedoidc.bundle import FSJWKSBundle
-from fedoidc.file_system import FileSystem
 from fedoidc.test_utils import MetaDataStore
 from oic.utils import webfinger
 from oic.utils.keyio import build_keyjar
@@ -25,7 +24,8 @@ from oidctest.fed.op import Provider
 from oidctest.fed.op import WebFinger
 from oidctest.fed.op_handler import FedOPHandler
 from oidctest.fed.setup import create_signers
-from oidctest.tt.fed import FoKeys, MDSUrl
+from oidctest.tt.fed import FoKeys
+from oidctest.tt.fed import MDSUrl
 from oidctest.tt.fed import Sign
 from oidctest.tt.fed import Verify
 from oidctest.tt.fed import Who

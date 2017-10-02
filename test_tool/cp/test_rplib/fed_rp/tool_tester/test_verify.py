@@ -16,7 +16,7 @@ from oic.utils.authn.user import UserAuthnMethod
 from oic.utils.authz import AuthzHandling
 from oic.utils.keyio import build_keyjar
 from fedoidc.file_system import FileSystem
-from oic.utils.sdb import SessionDB
+from oic.utils.sdb import create_session_db
 
 TOOL_ISS = 'https://localhost'
 
@@ -51,7 +51,7 @@ KEY_DEFS = [
 
 MS_DIR = 'ms_dir_10'
 fs = FileSystem(MS_DIR)
-fs.reset()
+fs.clear()
 
 if os.path.isdir('mds'):
     shutil.rmtree('mds')
@@ -91,7 +91,8 @@ SYMKEY = rndstr(16)  # symmetric key used to encrypt cookie info
 USERINFO = {}
 # ------------------------------------------------------------
 
-op = Provider(sunet_op, SessionDB(sunet_op), {},
+_sdb = create_session_db(sunet_op, 'automover', '430X', {})
+op = Provider(sunet_op, _sdb, {},
                    AUTHN_BROKER, USERINFO,
                    AUTHZ, client_authn=verify_client, symkey=SYMKEY,
                    federation_entity=fed_ent)

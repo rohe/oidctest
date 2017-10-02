@@ -3,7 +3,7 @@ import json
 import cherrypy
 from fedoidc import MetadataStatement
 from fedoidc.operator import Operator
-from fedoidc.signing_service import ServiceError
+from fedoidc.signing_service import SigningServiceError
 from jwkest import as_bytes
 from jwkest import as_unicode
 from oic.exception import MessageException
@@ -59,7 +59,7 @@ class Sign(object):
             _sign = self.signer[signer]
             try:
                 _resp = _sign.create_signed_metadata_statement(_mds, context)
-            except (KeyError, ServiceError) as err:
+            except (KeyError, SigningServiceError) as err:
                 raise cherrypy.HTTPError(message=str(err))
             else:
                 _jwt = list(_resp.values())[0]

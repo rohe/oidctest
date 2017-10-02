@@ -1367,7 +1367,9 @@ class CheckEncryptedUserInfo(Error):
         jwt = get_protocol_response(conv, OpenIDSchema)[0]
         try:
             assert jwt.jwe_header["alg"].startswith("RSA")
-        except AssertionError:
+        except KeyError: # No jwe_header or no 'alg' in header
+            self._status = self.status
+        except AssertionError:  # No RSA crypto used
             self._status = self.status
 
         return {}

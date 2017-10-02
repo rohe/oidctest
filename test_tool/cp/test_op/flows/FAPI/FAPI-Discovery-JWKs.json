@@ -1,0 +1,1 @@
+{"sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}], "usage": {"discover": true}, "group": "Discovery", "desc": "Keys in OP JWKs well formed", "MTI": ["DYN", "CNF"], "assert": {"check-http-response": null, "verify-base64url": {"err_status": 3}}}

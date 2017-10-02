@@ -1,7 +1,7 @@
 from fedoidc.entity import FederationEntity
 from oic.utils.keyio import build_keyjar
 from oic.utils.keyio import key_summary
-from oic.utils.sdb import SessionDB
+from oic.utils.sdb import create_session_db
 from otest.conversation import Conversation
 
 from oidctest import UnknownTestID
@@ -12,11 +12,12 @@ from oidctest.cp.op_handler import write_jwks_uri
 
 class FedOPHandler(OPHandler):
     def __init__(self, provider_cls, op_args, com_args, test_conf, folder,
-                 **kwargs):
+                 fo_bundle, **kwargs):
         OPHandler.__init__(self, provider_cls, op_args, com_args, test_conf,
                            folder)
         self.key_defs = kwargs['key_defs']
         self.signers = kwargs['signers']
+        self.fo_bundle = fo_bundle
 
     def get(self, oper_id, test_id, events, endpoint):
         # addr = get_client_address(environ)
@@ -42,7 +43,8 @@ class FedOPHandler(OPHandler):
         if not _tc:
             raise UnknownTestID(test_id)
 
-        op = self.provider_cls(sdb=SessionDB(com_args["baseurl"]), **com_args)
+        _sdb = create_session_db(com_args["baseurl"], 'automover', '430X', {})
+        op = self.provider_cls(sdb=_sdb, **com_args)
         op.events = events
         op.oper_id = oper_id
         op.test_id = test_id
@@ -73,7 +75,8 @@ class FedOPHandler(OPHandler):
         _kj = build_keyjar(self.key_defs)[1]
 
         op.federation_entity = FederationEntity(None, keyjar=_kj, iss=op.name,
-                                                signer=None)
+                                                signer=None,
+                                                fo_bundle=self.fo_bundle)
         op.federation_entity.httpcli = op
 
         try:
