@@ -171,7 +171,7 @@ def update_config(conf, tool_params):
     state = {
         'tool': {'immutable': ['issuer', 'tag', 'register', 'discover',
                                'webfinger'],
-                 'required': ['return_type']}}
+                 'required': ['return_type', 'contact_email']}}
 
     notes = ''
     if _spec['webfinger']:
