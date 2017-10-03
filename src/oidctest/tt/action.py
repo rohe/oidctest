@@ -355,6 +355,13 @@ class Action(object):
         logger.info(
             'create test tool configuration: {} {}'.format(kwargs['iss'],
                                                            kwargs['tag']))
+        
+        uqp, qp = unquote_quote(kwargs['iss'], kwargs['tag'])
+        if not uqp[0].startswith('https://') and not uqp[0].startswith('http://'):
+            err = 'issuer value must start with "https://" or "http://"'
+            logger.error(err)
+            return as_bytes('Sorry failed to create: {}'.format(err))
+        
         # construct profile
         try:
             profile = to_profile(kwargs)
@@ -378,7 +385,6 @@ class Action(object):
             _ent_conf['client']['registration_response'][
                 'redirect_uris'] = '{}:{}/authz_cb'.format(_base, _port)
 
-        uqp, qp = unquote_quote(kwargs['iss'], kwargs['tag'])
         _ent_conf['tool']['issuer'] = uqp[0]
         _ent_conf['tool']['tag'] = uqp[1]
         _ent_conf['tool']['profile'] = profile
