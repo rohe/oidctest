@@ -271,14 +271,10 @@ class Action(object):
 
         return as_bytes(_msg)
 
-    @cherrypy.expose
-    def stop(self, iss, tag, ev):
-        logger.info('stop test tool: {} {}'.format(iss, tag))
-
+    def kill(self, iss, tag, ev):
         uqp, qp = unquote_quote(iss, tag)
         _key = self.app.assigned_ports.make_key(*uqp)
-
-        # If already running - kill
+        
         try:
             pid = isrunning(unquote_plus(iss), unquote_plus(tag))
         except KeyError:
@@ -292,7 +288,14 @@ class Action(object):
                     del self.app.running_processes[_key]
                 except KeyError:
                     pass
+        
+    @cherrypy.expose
+    def stop(self, iss, tag, ev):
+        logger.info('stop test tool: {} {}'.format(iss, tag))
 
+        # If already running - kill
+        self.kill(iss, tag, ev)
+        
         # redirect back to entity page
         loc = '{}entity/{}'.format(self.rest.base_url, qp[0])
         raise cherrypy.HTTPRedirect(loc)
@@ -300,12 +303,12 @@ class Action(object):
     @cherrypy.expose
     def delete(self, iss, tag, ev, pid=0):
         logger.info('delete test tool configuration: {} {}'.format(iss, tag))
+        
+        # If already running - kill
+        self.kill(iss, tag, ev)
+        
         uqp, qp = unquote_quote(iss, tag)
         _key = self.app.assigned_ports.make_key(*uqp)
-
-        if pid:
-            kill_process(pid)
-            del self.app.running_processes[_key]
 
         os.unlink(os.path.join(self.entpath, *qp))
         # Remove issuer if out of tags
@@ -318,7 +321,7 @@ class Action(object):
             pass
 
         # redirect back to entity page
-        loc = '{}entity/{}'.format(self.rest.base_url, qp[0])
+        loc = '{}entity'.format(self.rest.base_url)
         raise cherrypy.HTTPRedirect(loc)
 
     @cherrypy.expose
