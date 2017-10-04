@@ -296,6 +296,8 @@ class Action(object):
         # If already running - kill
         self.kill(iss, tag, ev)
         
+        uqp, qp = unquote_quote(iss, tag)
+
         # redirect back to entity page
         loc = '{}entity/{}'.format(self.rest.base_url, qp[0])
         raise cherrypy.HTTPRedirect(loc)
