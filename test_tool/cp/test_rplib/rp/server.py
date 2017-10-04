@@ -15,6 +15,7 @@ from oidctest.cp.log_handler import Log
 from oidctest.cp.log_handler import Tar
 from oidctest.cp.op import Provider
 from oidctest.cp.op import WebFinger
+from oidctest.cp.op import RelyingParty
 from oidctest.cp.op_handler import OPHandler
 from oidctest.cp.setup import cb_setup
 from oidctest.cp.test_list import TestList
@@ -119,6 +120,8 @@ if __name__ == '__main__':
     cherrypy.tree.mount(ClearLog(folder), '/clear')
     cherrypy.tree.mount(Tar(folder), '/mktar')
 
+    cherrypy.tree.mount(RelyingParty(op_handler, version=_version), '/rp')
+    
     # OIDC Providers
     cherrypy.tree.mount(Provider(op_handler, _flows, version=_version),
                         '/', provider_config)

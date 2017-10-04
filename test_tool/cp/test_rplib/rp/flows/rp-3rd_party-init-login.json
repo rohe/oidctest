@@ -1,0 +1,18 @@
+{
+  "group": "3rd-Party Init SSO",
+  "claims": "normal",
+  "behavior": [ "initiate_login_uri" ],
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Supports initiation of the SSO flow from a 3rd-party.",
+  "detailed_description": "Exposes a ${THIRD_PARTY_INITIATED_LOGIN} endpoint that 3rd parties can use to start the SSO process. Initiated via: https://<rp_test_host>:<rp_test_port>/rp/<rp_id>/rp-3rd_party-init-login/<client_id>",
+  "expected_result": "A successful Authentication Request to the OP triggered by accessing the ${THIRD_PARTY_INITIATED_LOGIN} URL."
+}
