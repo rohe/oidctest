@@ -30,12 +30,14 @@ otest
 oidctest
 ````
 
-For the OP there's also a custom `pyoidc` directory checked out that contains a patched release 0.10.0.
+For the OP there's also a custom `pyoidc` directory checked out that contains a patched release 0.12.0.
 
 ### Installation
 
-NB: not needed on OP/RP machine itself anymore, see:  
-[https://github.com/rohe/oidctest/blob/master/INSTALL.md](https://github.com/rohe/oidctest/blob/master/INSTALL.md)
+NB: not needed on OP/RP machine itself anymore.
+
+See also the Docker instructions in the files in the "docker" subdirectory for a step-by-step walk-through
+for a new installation from scratch.
 
 Install:
 ````
