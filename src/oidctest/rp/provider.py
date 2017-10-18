@@ -342,6 +342,15 @@ class Provider(provider.Provider):
                         error="invalid_configuration_parameter",
                         descr="Non-HTTPS endpoint in '{}'".format(endp))
 
+        if not "contacts" in reg_req:
+            return error(
+                error="invalid_configuration_parameter",
+                descr="No \"contacts\" claim provided in registration request.")
+        elif not "@" in reg_req["contacts"][0]:
+            return error(
+                error="invalid_configuration_parameter",
+                descr="First address in \"contacts\" value in registration request is not a valid e-mail address.")
+
         _response = provider.Provider.registration_endpoint(self, request,
                                                             authn, **kwargs)
         self.events.store(EV_HTTP_RESPONSE, _response)
