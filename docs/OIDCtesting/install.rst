@@ -20,7 +20,7 @@ otest
 -----
 This you have to get from github::
 
-    $ git clone https://github.com/rohe/otest
+    $ git clone https://github.com/openid-certification/otest
     $ cd otest
     $ python setup.py install
 
@@ -36,7 +36,7 @@ oidctest
 --------
 Must be gotten from github::
 
-    $ git clone https://github.com/rohe/oidctest
+    $ git clone https://github.com/openid-certification/oidctest
     $ cd oidctest
     $ python setup.py install
 
