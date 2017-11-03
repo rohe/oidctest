@@ -326,6 +326,12 @@ class Provider(provider.Provider):
                 error="invalid_configuration_parameter",
                 descr="Invalid redirect_uri: {}".format(err))
 
+        if "initiate_login_uri" in self.behavior_type:
+            if not "initiate_login_uri" in reg_req:
+                return error(
+                    error="invalid_configuration_parameter",
+                    descr="No \"initiate_login_uri\" endpoint found in the Client Registration Request\"")
+
         # Do initial verification that all endpoints from the client uses
         #  https
         for endp in ["jwks_uri", "initiate_login_uri"]:
