@@ -24,6 +24,7 @@
     }
   ],
   "usage": {
+    "extra": true,
     "return_type": [
       "C", "I", "IT","CI", "CT", "CIT"
     ]
