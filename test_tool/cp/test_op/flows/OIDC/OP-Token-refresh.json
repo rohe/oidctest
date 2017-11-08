@@ -1,6 +1,7 @@
 {
   "group": "Access Token",
   "usage": {
+    "extra": true,
     "return_type": [
       "C",
       "CI",
