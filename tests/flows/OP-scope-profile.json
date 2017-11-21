@@ -1,7 +1,7 @@
 {
   "group": "scope Request Parameter",
   "usage": {},
-  "desc": "Scope requesting profile claims]",
+  "desc": "Scope requesting profile claims",
   "sequence": [
     {
       "Webfinger": {
