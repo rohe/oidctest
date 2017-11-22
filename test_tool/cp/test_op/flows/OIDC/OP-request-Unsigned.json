@@ -37,7 +37,7 @@
   "usage": {
     "register": true
   },
-  "desc": "Support request request parameter with unsigned request]",
+  "desc": "Support request request parameter with unsigned request",
   "assert": {
     "authn-response-or-error": {
       "error": [
