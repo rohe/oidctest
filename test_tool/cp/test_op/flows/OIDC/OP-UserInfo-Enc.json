@@ -15,8 +15,7 @@
       "Registration": {
         "set_request_args": {
           "userinfo_encrypted_response_enc": "A128CBC-HS256",
-          "userinfo_encrypted_response_alg": "RSA1_5",
-          "userinfo_signed_response_alg": null
+          "userinfo_encrypted_response_alg": "RSA1_5"
         },
         "check_support": {
           "ERROR": {
