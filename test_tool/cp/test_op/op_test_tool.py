@@ -206,7 +206,8 @@ if __name__ == '__main__':
     _tar = OPTar(folder)
     cherrypy.tree.mount(_tar, '/mktar')
     cherrypy.tree.mount(_tar, '/backup')
-    cherrypy.tree.mount(OPLog(log_root, _html, version=_vers), '/log')
+    cherrypy.tree.mount(OPLog(log_root, _html, version=_vers,
+                              iss=args.issuer, tag=args.tag), '/log')
 
     cherrypy.tree.mount(
         Main(tester, webenv['flow_state'], webenv, pick_grp), '/',

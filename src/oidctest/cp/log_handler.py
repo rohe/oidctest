@@ -5,6 +5,7 @@ import tarfile
 import time
 
 import cherrypy
+from otest.result import safe_url
 
 PRE_HTML = """
 <!DOCTYPE html>
@@ -213,10 +214,12 @@ class Log(object):
 
 
 class OPLog(object):
-    def __init__(self, root, pre_html, version):
+    def __init__(self, root, pre_html, version, iss, tag):
         self.root = root
         self.pre_html = pre_html
         self.version = version
+        self.iss = iss
+        self.tag = tag
 
     @cherrypy.expose
     def index(self, op_id='', tag='', profile='', test_id=''):
@@ -232,7 +235,7 @@ class OPLog(object):
         elif op_id:
             path = os.path.join(self.root, op_id)
         else:
-            path = self.root
+            path = os.path.join(self.root, safe_url(self.iss), self.tag)
 
         if os.path.isfile(path):
             cherrypy.response.headers['Content-Type'] = 'text/plain'
