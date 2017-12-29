@@ -218,7 +218,7 @@ class OPLog(object):
         self.root = root
         self.pre_html = pre_html
         self.version = version
-        self.iss = iss
+        self.iss = safe_url(iss)
         self.tag = tag
 
     @cherrypy.expose
@@ -233,9 +233,10 @@ class OPLog(object):
             path = os.path.join(self.root, op_id, tag)
             prefix = '{}/'.format(tag)
         elif op_id:
-            path = os.path.join(self.root, op_id, self.tag)
+            path = os.path.join(self.root, op_id)
         else:
-            path = os.path.join(self.root, safe_url(self.iss), self.tag)
+            path = os.path.join(self.root, self.iss, self.tag)
+            prefix = '{}/{}/'.format(self.iss, self.tag)
 
         if os.path.isfile(path):
             cherrypy.response.headers['Content-Type'] = 'text/plain'
@@ -281,10 +282,12 @@ class OPLog(object):
                 )
 
             return response
+        else:
+            raise cherrypy.HTTPError(400, 'Could not find what you asked for')
 
     def _cp_dispatch(self, vpath):
         if vpath:
-            cherrypy.request.params['op_id'] = vpath.pop(0)
+            cherrypy.request.params['op_id'] = vpath.pop(0)  # Test ID
         if vpath:
             cherrypy.request.params['tag'] = vpath.pop(0)  # Test ID
         if vpath:
