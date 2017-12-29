@@ -233,7 +233,7 @@ class OPLog(object):
             path = os.path.join(self.root, op_id, tag)
             prefix = '{}/'.format(tag)
         elif op_id:
-            path = os.path.join(self.root, op_id)
+            path = os.path.join(self.root, op_id, self.tag)
         else:
             path = os.path.join(self.root, safe_url(self.iss), self.tag)
 
