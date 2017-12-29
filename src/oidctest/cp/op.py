@@ -11,7 +11,6 @@ from oic.oauth2 import Message
 from otest.events import EV_FAULT
 from otest.events import EV_REQUEST
 from otest.events import EV_RESPONSE
-from otest.events import Events
 from otest.events import FailedOperation
 from otest.events import Operation
 from otest.flow import ABBR
@@ -352,6 +351,7 @@ HTML_FOOTER = """
         </div>
 """
 
+
 def choice(profiles):
     keys = list(profiles.keys())
     keys.sort()
@@ -360,11 +360,11 @@ def choice(profiles):
         '<table class="table table-hover table-bordered" style="font-family:monospace;">',
         ]
     for k in keys:
-        line.append('<tr>');
-        line.append('  <td width="80%">{}</td>'.format(k));
+        line.append('<tr>')
+        line.append('  <td width="80%">{}</td>'.format(k))
         line.append('  <td class="text-center"><input type="radio" name="profile" value="{}"></td>'.format(
             profiles[k]))
-        line.append('</tr>');
+        line.append('</tr>')
     line.append('</table>')
     return '\n'.join(line)
 
@@ -377,7 +377,7 @@ class Reset(object):
     @cherrypy.expose
     def index(self, op):
         init_keyjar(op, self.op_args['keyjar'], self.com_args)
-        write_jwks_uri(op, self.op_args)
+        write_jwks_uri(op, self.op_args, {})
         return b'OK'
 
 
@@ -484,3 +484,82 @@ class Provider(Root):
                         return self.configuration
 
         return self
+
+
+class RelyingPartyInstance(object):
+    
+    def rp_3rd_party_init_login(self, op, client_id):
+        if client_id in op.cdb:
+            if 'initiate_login_uri' in op.cdb[client_id]:
+                raise cherrypy.HTTPRedirect(op.cdb[client_id]['initiate_login_uri'])
+            else:
+                response = ['<pre>']
+                response.append("no 3rd-party initiated login URI found for  " + client_id)
+                response.append('</pre>')
+                return '\n'.join(response)
+        else:
+            raise cherrypy.HTTPError(404, "client_id " + client_id + " not found in client database!")            
+ 
+    @cherrypy.expose
+    @cherrypy_cors.tools.expose_public()
+    @cherrypy.tools.allow(
+        methods=["GET", "OPTIONS"])
+    def index(self, op, test_id, client_id):
+        if cherrypy.request.method == "OPTIONS":
+            logger.debug('Request headers: {}'.format(cherrypy.request.headers))
+            cherrypy_cors.preflight(
+                allowed_methods=["GET"],
+                allowed_headers=['Authorization', 'content-type'],
+                allow_credentials=True, origins='*'
+            )
+        else:
+            if test_id == "rp-3rd_party-init-login":
+                return self.rp_3rd_party_init_login(op, client_id)
+            raise cherrypy.HTTPError(404, "no test handler found for test id: " + test_id)
+
+class RelyingParty(object):
+    def __init__(self, op_handler, version=''):
+        self.version = version
+        self.op_handler = op_handler
+        self.instance = RelyingPartyInstance()
+
+    @cherrypy.expose
+    def index(self):
+        response = [
+            HTML_PRE,
+            '<div class="jumbotron">',
+            '  <p>',
+            '    Add the Relying Party instance identifier to the path....',
+            '  </p>',
+            '</div>',
+
+            HTML_FOOTER.format(self.version),
+
+            HTML_POST
+        ]
+        return '\n'.join(response)
+
+    def _cp_dispatch(self, vpath):
+        # Only get here if vpath != None
+        ent = cherrypy.request.remote.ip
+        logger.info('ent:{}, vpath: {}'.format(ent, vpath))
+        
+        if len(vpath) >= 1:
+            ev = init_events(cherrypy.request.path_info,
+                             'Test tool version:{}'.format(self.version))
+            # e.g https://rp_test:8080/rp/mod_auth_openidc/rp-3rd_party-init-login/OLtakKrycmtj
+            rp_id = vpath.pop(0)
+            test_id = vpath.pop(0)
+            client_id = vpath.pop(0)
+
+            endpoint = ''            
+                    
+            op = self.op_handler.get(rp_id, test_id, ev,
+                                     endpoint)[0]
+            cherrypy.request.params['op'] = op
+            cherrypy.request.params['test_id'] = test_id
+            cherrypy.request.params['client_id'] = client_id
+            
+            return self.instance            
+        else:
+            raise cherrypy.HTTPError(400, 'Unknown vpath stuffy')

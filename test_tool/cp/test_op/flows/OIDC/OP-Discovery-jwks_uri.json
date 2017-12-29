@@ -1,0 +1,28 @@
+{
+  "group": "Discovery",
+  "usage": {
+    "discover": true,
+    "sig": true
+  },
+  "desc": "Verify that jwks_uri is published",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    }
+  ],
+  "MTI": [
+    "DYN", "CNF"
+  ],
+  "assert": {
+    "bare-keys": null,
+    "providerinfo-has-jwks_uri": null,
+    "check-http-response": null
+  }
+}

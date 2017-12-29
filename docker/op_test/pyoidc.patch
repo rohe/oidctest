@@ -1,18 +1,5 @@
-diff --git a/src/oic/oic/__init__.py b/src/oic/oic/__init__.py
-index e51c775..722e69e 100644
---- a/src/oic/oic/__init__.py
-+++ b/src/oic/oic/__init__.py
-@@ -850,7 +850,7 @@ class Client(oauth2.Client):
-                 sformat = "jwt"
-         elif resp.status_code == 500:
-             raise PyoidcError("ERROR: Something went wrong: %s" % resp.text)
--        elif resp.status_code == 400:
-+        elif 400 <= resp.status_code < 500:
-             # the response text might be a OIDC message
-             try:
-                 res = ErrorResponse().from_json(resp.text)
 diff --git a/src/oic/utils/authn/client.py b/src/oic/utils/authn/client.py
-index 87a6688..6f2a941 100644
+index e3a1dbc..b0c464f 100644
 --- a/src/oic/utils/authn/client.py
 +++ b/src/oic/utils/authn/client.py
 @@ -45,6 +45,7 @@ def assertion_jwt(cli, keys, audience, algorithm, lifetime=600):
@@ -23,7 +10,7 @@ index 87a6688..6f2a941 100644
      return at.to_jwt(key=keys, algorithm=algorithm)
  
  
-@@ -309,14 +310,16 @@ class JWSAuthnMethod(ClientAuthnMethod):
+@@ -310,14 +311,16 @@ class JWSAuthnMethod(ClientAuthnMethod):
          # audience is the OP endpoint
          # audience = self.cli._endpoint(REQUEST2ENDPOINT[cis.type()])
          # OR OP identifier

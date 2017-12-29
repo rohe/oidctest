@@ -3,7 +3,7 @@ sudo: required
 language: node_js
 
 node_js:
-  - "7"
+  - "8"
   
 services:
   - docker
@@ -17,7 +17,7 @@ services:
 addons:
   apt:
     packages:
-      - google-chrome-beta
+      - google-chrome-stable
       - libnss3-tools
   hosts:
     - rp_test
@@ -31,7 +31,6 @@ install:
   - cd $TRAVIS_BUILD_DIR/..
   - git clone https://github.com/openid-certification/oidc-provider-conformance-tests.git
   - cd oidc-provider-conformance-tests
-  - git checkout -b new-op origin/new-op
   - npm install --production
   - cd $TRAVIS_BUILD_DIR/..
   - git clone https://github.com/openid-certification/openid-client-conformance-tests.git
@@ -49,7 +48,7 @@ before_script:
   - certutil -d sql:$HOME/.pki/nssdb -A -t TC -n op_test -i $TRAVIS_BUILD_DIR/docker/op_test/cert.pem
  
   # start a fresh new Chrome instance
-  - google-chrome-beta
+  - google-chrome-stable
         --user-data-dir=$(mktemp -d)
         --no-sandbox
         --no-first-run

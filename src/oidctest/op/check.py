@@ -1071,6 +1071,8 @@ class MultipleSignOn(Error):
         # verify that it is in fact two separate authentications
         try:
             assert idt[0]["auth_time"] != idt[1]["auth_time"]
+        except KeyError:
+            self._message = "No \"auth_time\" found in both ID tokens so it cannot be compared"
         except AssertionError:
             self._message = "Not two separate authentications!"
             try:

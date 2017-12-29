@@ -326,6 +326,12 @@ class Provider(provider.Provider):
                 error="invalid_configuration_parameter",
                 descr="Invalid redirect_uri: {}".format(err))
 
+        if "initiate_login_uri" in self.behavior_type:
+            if not "initiate_login_uri" in reg_req:
+                return error(
+                    error="invalid_configuration_parameter",
+                    descr="No \"initiate_login_uri\" endpoint found in the Client Registration Request\"")
+
         # Do initial verification that all endpoints from the client uses
         #  https
         for endp in ["jwks_uri", "initiate_login_uri"]:
@@ -341,6 +347,15 @@ class Provider(provider.Provider):
                     return error(
                         error="invalid_configuration_parameter",
                         descr="Non-HTTPS endpoint in '{}'".format(endp))
+
+        if not "contacts" in reg_req:
+            return error(
+                error="invalid_configuration_parameter",
+                descr="No \"contacts\" claim provided in registration request.")
+        elif not "@" in reg_req["contacts"][0]:
+            return error(
+                error="invalid_configuration_parameter",
+                descr="First address in \"contacts\" value in registration request is not a valid e-mail address.")
 
         _response = provider.Provider.registration_endpoint(self, request,
                                                             authn, **kwargs)

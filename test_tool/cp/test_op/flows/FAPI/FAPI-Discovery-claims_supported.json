@@ -1,0 +1,1 @@
+{"sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}], "usage": {"discover": true}, "group": "Discovery", "desc": "Verify that claims_supported is published", "MTI": ["DYN", "CNF"], "assert": {"providerinfo-has-claims_supported": null, "check-http-response": null}}

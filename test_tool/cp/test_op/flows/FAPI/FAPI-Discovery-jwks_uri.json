@@ -1,0 +1,1 @@
+{"sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}], "usage": {"discover": true, "sig": true}, "group": "Discovery", "desc": "Verify that jwks_uri is published", "MTI": ["DYN", "CNF"], "assert": {"bare-keys": null, "check-http-response": null, "providerinfo-has-jwks_uri": null}}

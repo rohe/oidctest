@@ -9,7 +9,6 @@ from otest.proc import find_test_instance
 from otest.proc import isrunning
 
 from oidctest.cp import init_events
-from oidctest.ass_port import AssignedPorts
 from oidctest.tt import unquote_quote
 
 logger = logging.getLogger(__name__)
@@ -35,9 +34,13 @@ def item_table(qiss, items, active, assigned_ports, test_tool_base):
     _stop = '<button class="btn btn-default" name="action" type="submit" value="stop"><span class="glyphicon glyphicon-stop"></span>&nbsp;&nbsp;Stop</button>'
 
     for item in items:
-        
         eid = assigned_ports.make_key(qiss, item)
-        _port = assigned_ports[eid]
+        try:
+            _port = assigned_ports[eid]
+        except KeyError:
+            logger.error('{} has no assigned port'.format(eid))
+            continue
+
         _instance = '{}:{}'.format(test_tool_base, _port)
 
         _url = "/action/{}/{}".format(qiss, item)
@@ -93,6 +96,7 @@ class Entity(object):
         try:
             fils = os.listdir(os.path.join(self.entpath, qiss))
         except FileNotFoundError:
+            logger.warning('No such Issuer exists')
             return b"No such Issuer exists"
 
         active = dict()
@@ -101,6 +105,8 @@ class Entity(object):
             tag = unquote_plus(fil)
             active[tag] = isrunning(iss, tag)
             tags.append(tag)
+
+        logger.info('tags: {}'.format(tags))
 
         self.assigned_ports.load()
         _msg = self.prehtml['list_tag.html'].format(
