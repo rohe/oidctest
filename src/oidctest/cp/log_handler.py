@@ -214,7 +214,7 @@ class Log(object):
 
 
 class OPLog(object):
-    def __init__(self, root, pre_html, version, iss, tag):
+    def __init__(self, root, pre_html, version, iss='', tag=''):
         self.root = root
         self.pre_html = pre_html
         self.version = version
@@ -235,8 +235,12 @@ class OPLog(object):
         elif op_id:
             path = os.path.join(self.root, op_id)
         else:
-            path = os.path.join(self.root, self.iss, self.tag)
-            prefix = '{}/{}/'.format(self.iss, self.tag)
+            if self.iss and self.tag:
+                path = os.path.join(self.root, self.iss, self.tag)
+                prefix = '{}/{}/'.format(self.iss, self.tag)
+            else:
+                path = self.root
+                prefix = ''
 
         if os.path.isfile(path):
             cherrypy.response.headers['Content-Type'] = 'text/plain'
