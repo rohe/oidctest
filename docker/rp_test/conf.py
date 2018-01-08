@@ -33,7 +33,8 @@ GRPS = [
     "Response Type and Response Mode", "claims Request Parameter",
     "request_uri Request Parameter", "scope Request Parameter",
     "nonce Request Parameter", "Client Authentication",
-    "ID Token", "Key Rotation", "Claims Types", "UserInfo Endpoint"
+    "ID Token", "Key Rotation", "Claims Types", "UserInfo Endpoint",
+    "3rd-Party Init SSO"
 ]
 
 #Only Username and password.
