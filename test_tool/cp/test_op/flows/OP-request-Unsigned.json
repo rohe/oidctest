@@ -14,7 +14,7 @@
     {
       "Registration": {
         "set_request_args": {
-          "request_object_signing_alg": null
+          "request_object_signing_alg": "none"
         },
         "check_support": {
           "WARNING": {
