@@ -140,7 +140,9 @@ class WebFinger(object):
         ev.store(EV_RESPONSE,
                  Operation('Webfinger', href=href, subj=resource, dummy=dummy))
         write_events(ev, op_id, test_id)
-        return self.srv.response(subj, href, dummy=dummy)
+        resp = self.srv.response(subj, href, dummy=dummy)
+        cherrypy.response.headers['Content-Type'] = 'application/jrd+json'
+        return resp
 
 
 class Configuration(object):
@@ -159,8 +161,8 @@ class Configuration(object):
         else:
             store_request(op, 'ProviderInfo')
             resp = op.providerinfo_endpoint()
-            # cherrypy.response.headers['Content-Type'] = 'application/json'
-            # return as_bytes(resp.message)
+            if resp.status < 300:
+                resp.headers['Content-Type'] = 'application/json'
             return conv_response(op, resp)
 
 
@@ -184,6 +186,8 @@ class Registration(object):
                                          'Missing Client registration body')
             logger.debug('request_body: {}'.format(_request))
             resp = op.registration_endpoint(as_unicode(_request))
+            if resp.status < 300:
+                resp.headers['Content-Type'] = 'application/json'
             return conv_response(op, resp)
 
 
@@ -225,6 +229,8 @@ class Token(object):
                 authn = None
             logger.debug('Authorization: {}'.format(authn))
             resp = op.token_endpoint(as_unicode(kwargs), authn, 'dict')
+            if resp.status < 300:
+                resp.headers['Content-Type'] = 'application/json'
             return conv_response(op, resp)
 
 
@@ -253,6 +259,8 @@ class UserInfo(object):
 
             #kwargs.update(args)
             resp = op.userinfo_endpoint(**args)
+            if resp.status < 300:
+                resp.headers['Content-Type'] = 'application/json'
             return conv_response(op, resp)
 
 
