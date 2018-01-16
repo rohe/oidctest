@@ -142,7 +142,7 @@ class WebFinger(object):
         write_events(ev, op_id, test_id)
         resp = self.srv.response(subj, href, dummy=dummy)
         cherrypy.response.headers['Content-Type'] = 'application/jrd+json'
-        return resp
+        return as_bytes(resp)
 
 
 class Configuration(object):
