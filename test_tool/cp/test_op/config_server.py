@@ -31,10 +31,12 @@ tool_params = ['acr_values', 'claims_locales', 'issuer',
                'login_hint', 'profile', 'ui_locales', 'webfinger_email',
                'webfinger_url', 'insecure', 'tag']
 
+
 def get_version():
     sys.path.insert(0, ".")
     vers = importlib.import_module('version')
     return vers.VERSION
+
 
 if __name__ == '__main__':
     import argparse
@@ -85,15 +87,17 @@ if __name__ == '__main__':
             'log.screen': True
         },
         '/favicon.ico':
-        {
-            'tools.staticfile.on': True,
-            'tools.staticfile.filename': os.path.join(folder, 'static/favicon.ico')
-        },
+            {
+                'tools.staticfile.on': True,
+                'tools.staticfile.filename': os.path.join(folder,
+                                                          'static/favicon.ico')
+            },
         '/robots.txt':
-        {
-            'tools.staticfile.on': True,
-            'tools.staticfile.filename': os.path.join(folder, 'static/robots.txt')
-        }
+            {
+                'tools.staticfile.on': True,
+                'tools.staticfile.filename': os.path.join(folder,
+                                                          'static/robots.txt')
+            }
     }
 
     if args.path:
@@ -111,13 +115,15 @@ if __name__ == '__main__':
 
     rest = REST(_base_url)
 
-    _assigned_ports = AssignedPorts('assigned_ports.json', _conf.PORT_MIN, _conf.PORT_MAX)
+    _assigned_ports = AssignedPorts('assigned_ports.json', _conf.PORT_MIN,
+                                    _conf.PORT_MAX)
     _assigned_ports.load()
 
     _vers = get_version()
 
     cherrypy.tree.mount(
-        Entity(_conf.ENT_PATH, _html, rest, _assigned_ports, _ttc.BASE, version=_vers), '/entity')
+        Entity(_conf.ENT_PATH, _html, rest, _assigned_ports, _ttc.BASE,
+               version=_vers), '/entity')
     _app = Application(_conf.TEST_SCRIPT, _conf.FLOWDIR, rest,
                        _assigned_ports, _ttc.BASE, args.test_tool_conf,
                        args.htmldir)
@@ -135,7 +141,8 @@ if __name__ == '__main__':
     # Main
     test_tool_conf = args.test_tool_conf
     cherrypy.tree.mount(
-        Instance(rest, _base_url, test_tool_conf, _app, version=_vers, html=_html), '/',
+        Instance(rest, _base_url, test_tool_conf, _app, version=_vers,
+                 html=_html), '/',
         provider_config)
 
     # If HTTPS
