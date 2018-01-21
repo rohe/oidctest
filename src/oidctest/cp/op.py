@@ -30,8 +30,21 @@ def handle_error():
     ]
 
 
+def status_code(status):
+    return int(status.split(' ')[0])
+
+
+def set_content_type(resp, content_type):
+    if ('Content-type', content_type) in resp.headers:
+        return
+
+    _headers = [h for h in resp.headers if h[0] != 'Content-type']
+    _headers.append(('Content-type', content_type))
+    resp,_headers = _headers
+
+
 def conv_response(op, resp):
-    _stat = int(resp.status.split(' ')[0])
+    _stat = status_code(resp.status)
     #  if self.mako_lookup and self.mako_template:
     #    argv["message"] = message
     #    mte = self.mako_lookup.get_template(self.mako_template)
@@ -161,8 +174,8 @@ class Configuration(object):
         else:
             store_request(op, 'ProviderInfo')
             resp = op.providerinfo_endpoint()
-            if resp.status < 300:
-                resp.headers['Content-Type'] = 'application/json'
+            if status_code(resp.status) < 300:
+                set_content_type(resp, 'application/json')
             return conv_response(op, resp)
 
 
@@ -186,8 +199,8 @@ class Registration(object):
                                          'Missing Client registration body')
             logger.debug('request_body: {}'.format(_request))
             resp = op.registration_endpoint(as_unicode(_request))
-            if resp.status < 300:
-                resp.headers['Content-Type'] = 'application/json'
+            if status_code(resp.status) < 300:
+                set_content_type(resp, 'application/json')
             return conv_response(op, resp)
 
 
@@ -229,8 +242,8 @@ class Token(object):
                 authn = None
             logger.debug('Authorization: {}'.format(authn))
             resp = op.token_endpoint(as_unicode(kwargs), authn, 'dict')
-            if resp.status < 300:
-                resp.headers['Content-Type'] = 'application/json'
+            if status_code(resp.status) < 300:
+                set_content_type(resp, 'application/json')
             return conv_response(op, resp)
 
 
@@ -259,8 +272,8 @@ class UserInfo(object):
 
             #kwargs.update(args)
             resp = op.userinfo_endpoint(**args)
-            if resp.status < 300:
-                resp.headers['Content-Type'] = 'application/json'
+            if status_code(resp.status) < 300:
+                set_content_type(resp, 'application/json')
             return conv_response(op, resp)
 
 
