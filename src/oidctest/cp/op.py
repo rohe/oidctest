@@ -40,7 +40,7 @@ def set_content_type(resp, content_type):
 
     _headers = [h for h in resp.headers if h[0] != 'Content-type']
     _headers.append(('Content-type', content_type))
-    resp,_headers = _headers
+    resp._headers = _headers
 
 
 def conv_response(op, resp):
