@@ -16,7 +16,7 @@ WORKDIR ${SRCDIR}
 # TEMPORARY
 #
 #ENV PYOIDC_VERSION=tags/v0.12.0
-ENV PYOIDC_VERSION=5a958a13eb9c5a3606818af4d23441f111f227b1
+ENV PYOIDC_VERSION=78ab48a4d0a5009075c25f3d721b618a7e2dd2d5
 RUN git clone https://github.com/OpenIDC/pyoidc.git
 RUN cd pyoidc && git fetch origin && git checkout ${PYOIDC_VERSION} -b temp
 RUN cd pyoidc &&  python3 setup.py install
