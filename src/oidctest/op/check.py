@@ -266,6 +266,23 @@ class CheckResponseType(CheckOPSupported):
 
         return True
 
+class VerifyIdTokenSigningAlgorithmIsSupported(Error):
+    """
+    Verify that required algorithms in id_token_signing_alg_values_supported
+    """
+    cid = "verify-id_token_signing-algorithm-is-supported"
+    msg = "Verify ID token signing algorithm is in id_token_signing_alg_values_supported"
+
+    def _func(self, conv):
+        _pi = get_provider_info(conv)
+        
+        for alg in self._kwargs['algs']:
+            if not alg in _pi["id_token_signing_alg_values_supported"]:
+                self._status = self.status
+                self._message = "required algorithm %s is not in the list of supported algorithms" % alg
+                break
+
+        return {}
 
 class CheckAcrSupport(CheckOPSupported):
     """
