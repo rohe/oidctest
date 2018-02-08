@@ -272,8 +272,8 @@ class UserInfo(object):
 
             #kwargs.update(args)
             resp = op.userinfo_endpoint(**args)
-            if status_code(resp.status) < 300:
-                set_content_type(resp, 'application/json')
+            #if status_code(resp.status) < 300:
+            #    set_content_type(resp, 'application/json')
             return conv_response(op, resp)
 
 
