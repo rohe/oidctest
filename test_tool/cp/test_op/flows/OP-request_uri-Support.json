@@ -13,7 +13,8 @@
     }
   ],
   "usage": {
-    "discover": true
+    "register": true,
+    "extra": true
   },
   "desc": "Support request_uri request parameter",
   "assert": {
