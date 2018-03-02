@@ -24,7 +24,7 @@
     }
   ],
   "usage": {
-    "extra": true,
+    "form_post": true,
     "return_type": [
       "C", "I", "IT","CI", "CT", "CIT"
     ]

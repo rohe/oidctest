@@ -22,6 +22,7 @@
   "assert": {
     "check-http-response": null,
     "verify-op-endpoints-use-https": null,
-    "verify-https-usage": {"endpoints": ["jwks_uri"]}
+    "verify-https-usage": {"endpoints": ["jwks_uri"]},
+    "verify-id_token_signing-algorithm-is-supported": { "algs": ["RS256"]}
   }
 }

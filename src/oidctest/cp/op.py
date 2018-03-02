@@ -40,7 +40,7 @@ def set_content_type(resp, content_type):
 
     _headers = [h for h in resp.headers if h[0] != 'Content-type']
     _headers.append(('Content-type', content_type))
-    resp,_headers = _headers
+    resp.headers = _headers
 
 
 def conv_response(op, resp):
@@ -272,8 +272,8 @@ class UserInfo(object):
 
             #kwargs.update(args)
             resp = op.userinfo_endpoint(**args)
-            if status_code(resp.status) < 300:
-                set_content_type(resp, 'application/json')
+            #if status_code(resp.status) < 300:
+            #    set_content_type(resp, 'application/json')
             return conv_response(op, resp)
 
 
