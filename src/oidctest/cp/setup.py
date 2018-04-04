@@ -7,6 +7,7 @@ import sys
 from oic.utils.authn.authn_context import AuthnBroker
 from oic.utils.authn.client import verify_client
 from oic.utils.authz import AuthzHandling
+from oic.utils.clientdb import BaseClientDatabase
 from oic.utils.keyio import keyjar_init
 from oic.utils.sdb import create_session_db
 from oic.utils.userinfo import UserInfo
@@ -18,6 +19,26 @@ from oidctest.rp.provider import Provider
 LOGGER = logging.getLogger(__name__)
 
 __author__ = 'roland'
+
+
+class InMemoryBCD(BaseClientDatabase):
+    def __init__(self):
+        self.db = {}
+
+    def __getitem__(self, item):
+        return self.db[item]
+
+    def __setitem__(self, key, value):
+        self.db[key] = value
+
+    def __delitem__(self, key):
+        del self.db[key]
+
+    def keys(self):
+        return self.db.keys()
+
+    def items(self):
+        return self.db.items()
 
 
 def main_setup(args, lookup=None):
@@ -51,7 +72,8 @@ def main_setup(args, lookup=None):
 
     # Client data base
     try:
-        com_args['cdb'] = shelve.open(config.CLIENT_DB, writeback=True)
+        com_args['cdb'] = InMemoryBCD()
+        #com_args['cdb'] = shelve.open(config.CLIENT_DB, writeback=True)
     except AttributeError:
         pass
 
@@ -188,7 +210,8 @@ def cb_setup(args, lookup=None):
 
     # Client data base
     try:
-        com_args['cdb'] = shelve.open(config.CLIENT_DB, writeback=True)
+        com_args['cdb'] = InMemoryBCD()
+        #com_args['cdb'] = shelve.open(config.CLIENT_DB, writeback=True)
     except AttributeError:
         pass
 
