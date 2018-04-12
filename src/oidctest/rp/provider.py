@@ -161,10 +161,11 @@ class Provider(provider.Provider):
                  **kwargs):
 
         provider.Provider.__init__(
-            self, name, sdb, cdb, authn_broker, userinfo, authz,
-            client_authn,
-            symkey, urlmap, ca_certs, keyjar, hostname, template_lookup,
-            template, verify_ssl, capabilities, client_cert=client_cert)
+            self, name, sdb, cdb, authn_broker, userinfo, authz, client_authn,
+            symkey=symkey, urlmap=urlmap, keyjar=keyjar, hostname=hostname,
+            template_lookup=template_lookup, template=template,
+            verify_ssl=verify_ssl, capabilities=capabilities,
+            client_cert=client_cert)
 
         self.claims_type = ["normal"]
         self.behavior_type = []
