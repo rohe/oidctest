@@ -12,6 +12,10 @@ ENV SUBDIR ${SRCDIR}/${INSTDIR}/oidc_cp_rplib
 
 WORKDIR ${SRCDIR}
 
+#ENV PYOIDC_VERSION=tags/v0.13.1
+RUN git clone https://github.com/OpenIDC/pyoidc.git
+RUN cd pyoidc && python3 setup.py install
+
 RUN git clone https://github.com/openid-certification/otest.git
 RUN cd otest && python3 setup.py install && cd -
 
