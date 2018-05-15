@@ -1,31 +1,27 @@
-diff --git a/src/oic/utils/authn/client.py b/src/oic/utils/authn/client.py
-index e3a1dbc..b0c464f 100644
---- a/src/oic/utils/authn/client.py
-+++ b/src/oic/utils/authn/client.py
-@@ -45,6 +45,7 @@ def assertion_jwt(cli, keys, audience, algorithm, lifetime=600):
-     at = AuthnToken(iss=cli.client_id, sub=cli.client_id,
-                     aud=audience, jti=rndstr(32),
-                     exp=_now + lifetime, iat=_now)
-+    logger.debug('AuthnToken: {}'.format(at.to_dict()))
-     return at.to_jwt(key=keys, algorithm=algorithm)
+diff --git a/src/oic/oic/__init__.py b/src/oic/oic/__init__.py
+index 3ac8f14..bd6677c 100644
+--- a/src/oic/oic/__init__.py
++++ b/src/oic/oic/__init__.py
+@@ -268,9 +268,12 @@ rt2gt = {
+ }
  
  
-@@ -310,14 +311,16 @@ class JWSAuthnMethod(ClientAuthnMethod):
-         # audience is the OP endpoint
-         # audience = self.cli._endpoint(REQUEST2ENDPOINT[cis.type()])
-         # OR OP identifier
--        audience = self.cli.provider_info['issuer']
-         algorithm = None
-         if kwargs['authn_endpoint'] in ['token', 'refresh']:
-             try:
-                 algorithm = self.cli.registration_info[
-                     'token_endpoint_auth_signing_alg']
-             except (KeyError, AttributeError):
--                pass
-+                pass 
-+            audience = self.cli.provider_info['token_endpoint']
-+        else:
-+            audience = self.cli.provider_info['issuer']
+-def response_types_to_grant_types(response_types):
++def response_types_to_grant_types(response_types, kwargs):
+     _res = set()
  
-         if not algorithm:
-             algorithm = self.choose_algorithm(**kwargs)
++    if 'grant_types' in kwargs:
++        _res.update(set(kwargs['grant_types']))
++
+     for response_type in response_types:
+         _rt = response_type.split(' ')
+         _rt.sort()
+@@ -1353,7 +1356,7 @@ class Client(oauth2.Client):
+ 
+         if 'response_types' in req:
+             req['grant_types'] = response_types_to_grant_types(
+-                req['response_types'])
++                req['response_types'], kwargs)
+ 
+         return req
+ 

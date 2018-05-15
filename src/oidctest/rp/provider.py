@@ -16,7 +16,6 @@ from jwkest.jwk import SYMKey
 from oic import oic
 from oic import rndstr
 from oic.oauth2 import Message
-from oic.oauth2 import error
 from oic.oauth2 import error_response
 from oic.oic import provider
 from oic.oic.message import AccessTokenRequest
@@ -323,13 +322,13 @@ class Provider(provider.Provider):
         try:
             provider.Provider.verify_redirect_uris(reg_req)
         except InvalidRedirectURIError as err:
-            return error(
+            return error_response(
                 error="invalid_configuration_parameter",
                 descr="Invalid redirect_uri: {}".format(err))
 
         if "initiate_login_uri" in self.behavior_type:
             if not "initiate_login_uri" in reg_req:
-                return error(
+                return error_response(
                     error="invalid_configuration_parameter",
                     descr="No \"initiate_login_uri\" endpoint found in the Client Registration Request\"")
 
@@ -345,16 +344,16 @@ class Provider(provider.Provider):
                 uris = [uris]
             for uri in uris:
                 if not uri.startswith("https://"):
-                    return error(
+                    return error_response(
                         error="invalid_configuration_parameter",
                         descr="Non-HTTPS endpoint in '{}'".format(endp))
 
         if not "contacts" in reg_req:
-            return error(
+            return error_response(
                 error="invalid_configuration_parameter",
                 descr="No \"contacts\" claim provided in registration request.")
         elif not "@" in reg_req["contacts"][0]:
-            return error(
+            return error_response(
                 error="invalid_configuration_parameter",
                 descr="First address in \"contacts\" value in registration request is not a valid e-mail address.")
 
@@ -389,7 +388,7 @@ class Provider(provider.Provider):
         try:
             _scope = _req["scope"]
         except KeyError:
-            return error(
+            return error_response(
                 error="incorrect_behavior",
                 descr="No scope parameter"
             )
@@ -397,7 +396,7 @@ class Provider(provider.Provider):
             # verify that openid is among the scopes
             _scopes = _scope.split(" ")
             if "openid" not in _scopes:
-                return error(
+                return error_response(
                     error="incorrect_behavior",
                     descr="Scope does not contain 'openid'"
                 )
@@ -423,7 +422,7 @@ class Provider(provider.Provider):
             try:
                 self._update_client_keys(client_id)
             except TestError:
-                return error(error="incorrect_behavior",
+                return error_response(error="incorrect_behavior",
                              descr="No change in client keys")
 
         if isinstance(request, dict):
@@ -475,19 +474,19 @@ class Provider(provider.Provider):
             logger.error(err)
             self.events.store(EV_EXCEPTION,
                               "Failed to verify client due to: {}".format(err))
-            return error(error="invalid_client", descr=err.args[0])
+            return error_response(error="invalid_client", descr=err.args[0])
         except Exception as err:
             logger.error(err)
             self.events.store(EV_EXCEPTION,
                               "Failed to verify client due to: %s" % err)
-            return error(error="invalid_client",
+            return error_response(error="invalid_client",
                          descr="Failed to verify client: {}".format(err))
 
         try:
             self._update_client_keys(client_id)
         except TestError:
             logger.error('No change in client keys')
-            return error(error="incorrect_behavior",
+            return error_response(error="incorrect_behavior",
                          descr="No change in client keys")
 
         _response = provider.Provider.token_endpoint(self, request,

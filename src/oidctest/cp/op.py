@@ -29,11 +29,6 @@ def handle_error():
         "<html><body>Sorry, an error occured</body></html>"
     ]
 
-
-def status_code(status):
-    return int(status.split(' ')[0])
-
-
 def set_content_type(resp, content_type):
     if ('Content-type', content_type) in resp.headers:
         return
@@ -44,7 +39,7 @@ def set_content_type(resp, content_type):
 
 
 def conv_response(op, resp):
-    _stat = status_code(resp.status)
+    _stat = resp.status_code
     #  if self.mako_lookup and self.mako_template:
     #    argv["message"] = message
     #    mte = self.mako_lookup.get_template(self.mako_template)
@@ -174,7 +169,7 @@ class Configuration(object):
         else:
             store_request(op, 'ProviderInfo')
             resp = op.providerinfo_endpoint()
-            if status_code(resp.status) < 300:
+            if resp.status_code < 300:
                 set_content_type(resp, 'application/json')
             return conv_response(op, resp)
 
@@ -199,7 +194,7 @@ class Registration(object):
                                          'Missing Client registration body')
             logger.debug('request_body: {}'.format(_request))
             resp = op.registration_endpoint(as_unicode(_request))
-            if status_code(resp.status) < 300:
+            if resp.status_code < 300:
                 set_content_type(resp, 'application/json')
             return conv_response(op, resp)
 
@@ -242,7 +237,7 @@ class Token(object):
                 authn = None
             logger.debug('Authorization: {}'.format(authn))
             resp = op.token_endpoint(as_unicode(kwargs), authn, 'dict')
-            if status_code(resp.status) < 300:
+            if resp.status_code < 300:
                 set_content_type(resp, 'application/json')
             return conv_response(op, resp)
 
@@ -272,7 +267,7 @@ class UserInfo(object):
 
             #kwargs.update(args)
             resp = op.userinfo_endpoint(**args)
-            #if status_code(resp.status) < 300:
+            #if resp.status_code < 300:
             #    set_content_type(resp, 'application/json')
             return conv_response(op, resp)
 
