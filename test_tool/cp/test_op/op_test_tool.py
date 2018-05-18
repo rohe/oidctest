@@ -7,7 +7,6 @@ import traceback
 from urllib.parse import quote_plus
 
 import cherrypy
-from fedoidc.file_system import FileSystem
 #from oic.oic import Client
 from oic.oic.message import factory as oic_message_factory
 from otest.aus.client import Factory

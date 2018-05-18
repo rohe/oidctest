@@ -5,11 +5,11 @@ import os
 import sys
 
 import cherrypy
-from fedoidc.file_system import FileSystem
 
 from oidctest.cp import dump_log
 from oidctest.cp.log_handler import OPLog
 from oidctest.cp.log_handler import OPTar
+from oidctest.file_system import FileSystem
 from oidctest.tt.action import Action
 from oidctest.tt.app import Application
 from oidctest.tt.entity import Entity

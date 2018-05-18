@@ -15,9 +15,6 @@ WORKDIR ${SRCDIR}
 RUN git clone https://github.com/openid-certification/otest.git
 RUN cd otest && python3 setup.py install && cd -
 
-RUN git clone https://github.com/OpenIDC/fedoidc.git
-RUN cd fedoidc && python3 setup.py install && cd -
-
 RUN mkdir oidctest
 COPY . ${SRCDIR}/oidctest/
 RUN cd oidctest && python3 setup.py install && cd -

@@ -120,23 +120,3 @@ def oidc_rplib_setup(distroot):
                    'link.json']:
         _file = os.path.join(_op_dir, _fname)
         copy_if_not_same(_file, _fname, overwrite=True)
-
-
-def fedoidc_rplib_setup(distroot):
-    for _dir in ['certs', 'keys', 'log', 'fo_jwks', 'ms_dir']:
-        if os.path.isdir(_dir) is False:
-            os.mkdir(_dir)
-
-    _op_dir = os.path.join(distroot, 'test_tool', 'cp', 'test_rplib', 'fed_rp')
-
-    for _dir in ['static', 'flows']:
-        _src = os.path.join(_op_dir, _dir)
-        if os.path.isdir(_dir):
-            shutil.rmtree(_dir)
-        shutil.copytree(_src, _dir)
-
-    for _fname in ['setup.py', 'example_conf.py', 'fed_conf_usage.py',
-                   'install.sh', 'links.json', 'pre.html',
-                   'server.py', 'example_run.sh', 'bogus_sms.py']:
-        _file = os.path.join(_op_dir, _fname)
-        copy_if_not_same(_file, _fname, overwrite=True)

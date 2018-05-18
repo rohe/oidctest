@@ -25,7 +25,6 @@ Main source directory:
 
 Dependencies are in the sub directories:
 ````
-fedoidc
 otest
 oidctest
 ````
