@@ -26,7 +26,6 @@
         "set_request_args": {
           "grant_types": [
             "authorization_code",
-            "implicit",
             "refresh_token"
           ]
         }
