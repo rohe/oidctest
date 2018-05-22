@@ -75,6 +75,7 @@ script:
   - npm run code+token
   - cd $TRAVIS_BUILD_DIR/../openid-client-conformance-tests
   - export ISSUER=https://rp_test:8080
+  - export NODE_TLS_REJECT_UNAUTHORIZED=0
   - npm run non-profile
   - npm run basic
   - npm run config
