@@ -100,8 +100,9 @@ class Client(oic.Client):
         if sformat == "json":
             res = _schema().from_json(txt=_txt)
         else:
+            verify = kwargs.get('verify', True)
             res = _schema().from_jwt(_txt, keyjar=self.keyjar,
-                                     sender=self.provider_info["issuer"])
+                                     sender=self.provider_info["issuer"], verify=verify)
 
         if 'error' in res:  # Error response
             res = UserInfoErrorResponse(**res.to_dict())
