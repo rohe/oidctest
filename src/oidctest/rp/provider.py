@@ -362,7 +362,7 @@ class Provider(provider.Provider):
         self.events.store(EV_HTTP_RESPONSE, _response)
         self.init_keys = []
         if "jwks_uri" in reg_req:
-            if _response.status == "200 OK":
+            if _response.status_code == 200:
                 # find the client id
                 req_resp = RegistrationResponse().from_json(
                     _response.message)
@@ -423,7 +423,7 @@ class Provider(provider.Provider):
                 self._update_client_keys(client_id)
             except TestError:
                 return error_response(error="incorrect_behavior",
-                             descr="No change in client keys")
+                                      descr="No change in client keys")
 
         if isinstance(request, dict):
             request = urlencode(request)
@@ -480,14 +480,14 @@ class Provider(provider.Provider):
             self.events.store(EV_EXCEPTION,
                               "Failed to verify client due to: %s" % err)
             return error_response(error="invalid_client",
-                         descr="Failed to verify client: {}".format(err))
+                                  descr="Failed to verify client: {}".format(err))
 
         try:
             self._update_client_keys(client_id)
         except TestError:
             logger.error('No change in client keys')
             return error_response(error="incorrect_behavior",
-                         descr="No change in client keys")
+                                  descr="No change in client keys")
 
         _response = provider.Provider.token_endpoint(self, request,
                                                      authn, dtype, **kwargs)

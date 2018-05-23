@@ -29,6 +29,7 @@ from oidctest.prof_util import ProfileHandler
 from oidctest.session import SessionHandler
 from oidctest.tool import WebTester
 from oidctest.tt.rest import REST
+from oidctest.file_system import FileSystem
 
 logger = logging.getLogger("")
 LOGFILE_NAME = 'op_test.log'

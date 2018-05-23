@@ -39,7 +39,9 @@ install:
 
 before_script:  
   # wait for docker containers to start up
-  - while ! curl -k https://op:4433 >/dev/null; do sleep 1; done
+  - while ! curl -k https://op:4433 >/dev/null; do sleep 2; done
+# no tlsv1.2 support in trusty: - while ! curl -v -k --tlsv1.2 https://rp_test:8080; do sleep 2; done
+  - while ! curl -k https://op_test:60000 >/dev/null; do sleep 2; done
  
   # make the SSL certs of the OP test tool and instance trusted for headless Chrome
   - mkdir -p $HOME/.pki/nssdb
@@ -73,6 +75,7 @@ script:
   - npm run code+token
   - cd $TRAVIS_BUILD_DIR/../openid-client-conformance-tests
   - export ISSUER=https://rp_test:8080
+  - export NODE_TLS_REJECT_UNAUTHORIZED=0
   - npm run non-profile
   - npm run basic
   - npm run config
