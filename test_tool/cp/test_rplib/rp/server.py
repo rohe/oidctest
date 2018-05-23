@@ -19,7 +19,6 @@ from oidctest.cp.op import RelyingParty
 from oidctest.cp.op_handler import OPHandler
 from oidctest.cp.setup import cb_setup
 from oidctest.cp.test_list import TestList
-from oidctest.tt.fed import Sign
 
 logger = logging.getLogger("")
 LOGFILE_NAME = 'rp_test.log'
@@ -121,7 +120,7 @@ if __name__ == '__main__':
     cherrypy.tree.mount(Tar(folder), '/mktar')
 
     cherrypy.tree.mount(RelyingParty(op_handler, version=_version), '/rp')
-    
+
     # OIDC Providers
     cherrypy.tree.mount(Provider(op_handler, _flows, version=_version),
                         '/', provider_config)
