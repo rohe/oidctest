@@ -44,7 +44,7 @@ addons:
 before_install:
   - git clone https://github.com/openid-certification/oidctest.git
   - cd oidctest
-  - git checkout stable-release-1.0.x
+  - git checkout stable-release-1.1.x
   - docker-compose -f docker/docker-compose.yml up -d
   - cd -
 

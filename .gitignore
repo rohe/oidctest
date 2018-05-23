@@ -65,3 +65,4 @@ accounting
 parse_log
 /.project
 /.pydevproject
+/.settings/
