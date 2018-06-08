@@ -58,12 +58,24 @@ class Main(object):
                 cherrypy.request.params['test_id'] = vpath[1]
                 return self.test_info
 
+    def display_exception(self, exception_trace=''):
+        """
+        So far only one known special response type
+
+        :param exception_trace:
+        :return: Bytes
+        """
+        cherrypy.response.headers['Content-Type'] = 'text/plain'
+        return as_bytes(exception_trace)
+
     @cherrypy.expose
     def run(self, test):
         resp = self.tester.run(test, **self.webenv)
         self.sh['session_info'] = self.info.session
 
-        if resp is False or resp is True:
+        if isinstance(resp, dict):
+            return self.display_exception(**resp)
+        elif resp is False or resp is True:
             pass
         elif isinstance(resp, list):
             return conv_response(self.sh.events, resp)
