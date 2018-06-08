@@ -1,6 +1,7 @@
 {
-  "group": "Response Type & Response Mode",
+  "group": "Response Mode",
   "sequence": [
+    "Note",
     {
       "Webfinger": {
         "set_webfinger_resource": null
@@ -39,7 +40,7 @@
       "C", "I", "IT","CI", "CT", "CIT"
     ]
   },
-  "desc": "Request that will fail response_mode=form_post",
+  "note": "This tests that error responses are also returned by response_mode=form_post by testing for a failed silent login with prompt=none. Please remove any cookies you may have received from the OpenID Provider before proceeding.",
   "assert": {
     "verify-error-response": {
       "error": [
