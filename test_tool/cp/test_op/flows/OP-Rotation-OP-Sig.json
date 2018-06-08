@@ -26,7 +26,7 @@
     "FetchKeys"
   ],
   "usage": {
-    "discover": true,
+    "register": true,
     "sig": true
   },
   "desc": "Can rotate OP signing keys",
