@@ -12,6 +12,9 @@ from otest.events import EV_HTTP_ARGS, EV_EXCEPTION, EV_FAULT
 
 logger = logging.getLogger(__name__)
 
+BANNER = "Something went seriously wrong, please tell us at " \
+         "certification@oidf.org"
+
 
 class Main(object):
     def __init__(self, tester, flows, webenv, pick_grp, **kwargs):
@@ -65,8 +68,10 @@ class Main(object):
         :param exception_trace:
         :return: Bytes
         """
+        txt = [80 * '*', '\n', BANNER, '\n', 80 * '*', '\n', '\n', '\n']
+        txt.extend(exception_trace)
         cherrypy.response.headers['Content-Type'] = 'text/plain'
-        return as_bytes(exception_trace)
+        return as_bytes(txt)
 
     @cherrypy.expose
     def run(self, test):
@@ -142,7 +147,6 @@ class Main(object):
         except KeyError as err:
             logger.error(err)
             raise CherryPyException(err)
-
 
     @cherrypy.expose
     def authz_cb(self, **kwargs):
