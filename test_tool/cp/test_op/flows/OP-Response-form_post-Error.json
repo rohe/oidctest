@@ -1,0 +1,54 @@
+{
+  "group": "Response Mode",
+  "sequence": [
+    "Note",
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_expect_error": {
+          "error": [
+            "login_required",
+	        "interaction_required",
+    	    "session_selection_required",
+        	"consent_required"
+          ],
+          "stop": false
+        },
+        "set_response_where": null,
+        "set_request_args": {
+          "response_mode": [
+            "form_post"
+          ],
+          "prompt": "none"
+        }
+      }
+    }
+  ],
+  "usage": {
+    "form_post": true,
+    "return_type": [
+      "C", "I", "IT","CI", "CT", "CIT"
+    ]
+  },
+  "note": "This tests that error responses are also returned by response_mode=form_post by testing for a failed silent login with prompt=none. Please remove any cookies you may have received from the OpenID Provider before proceeding.",
+  "assert": {
+    "verify-error-response": {
+      "error": [
+        "login_required",
+        "interaction_required",
+        "session_selection_required",
+        "consent_required"
+      ]
+    }
+  }
+}
