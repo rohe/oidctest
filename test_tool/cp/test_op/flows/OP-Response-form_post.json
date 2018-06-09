@@ -1,6 +1,7 @@
 {
   "group": "Response Mode",
   "sequence": [
+    "Note",
     {
       "Webfinger": {
         "set_webfinger_resource": null
