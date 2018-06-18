@@ -30,6 +30,7 @@
       "C", "I", "IT","CI", "CT", "CIT"
     ]
   },
+  "note": "This test verifies that an OP can respond using the form_post response type",
   "desc": "Request with response_mode=form_post",
   "assert": {
     "verify-authn-response": null

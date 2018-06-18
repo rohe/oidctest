@@ -18,9 +18,9 @@
         "set_expect_error": {
           "error": [
             "login_required",
-	        "interaction_required",
-    	    "session_selection_required",
-        	"consent_required"
+            "interaction_required",
+            "session_selection_required",
+            "consent_required"
           ],
           "stop": false
         },
@@ -37,10 +37,16 @@
   "usage": {
     "form_post": true,
     "return_type": [
-      "C", "I", "IT","CI", "CT", "CIT"
+      "C",
+      "I",
+      "IT",
+      "CI",
+      "CT",
+      "CIT"
     ]
   },
   "note": "This tests that error responses are also returned by response_mode=form_post by testing for a failed silent login with prompt=none. Please remove any cookies you may have received from the OpenID Provider before proceeding.",
+  "desc": "This tests that error responses are also returned by response_mode=form_post",
   "assert": {
     "verify-error-response": {
       "error": [
