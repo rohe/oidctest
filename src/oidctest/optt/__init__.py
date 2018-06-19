@@ -215,6 +215,8 @@ class Main(object):
 
         if resp is False or resp is True:
             pass
+        elif isinstance(resp, dict) and 'exception_trace' in resp:
+            return self.display_exception(**resp)
         elif not isinstance(resp, int):
             return resp
 
