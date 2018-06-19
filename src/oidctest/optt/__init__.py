@@ -4,11 +4,20 @@ import logging
 from cherrypy import CherryPyException
 from cherrypy import HTTPRedirect
 from jwkest import as_bytes
+from otest.result import Result
+
 from oidctest.tt import conv_response
 
-from otest import exception_trace, Break
+from otest import Break
+from otest import exception_trace
 from otest.check import CRITICAL
-from otest.events import EV_HTTP_ARGS, EV_EXCEPTION, EV_FAULT
+from otest.check import ERROR
+from otest.check import State
+from otest.events import EV_CONDITION
+from otest.events import EV_EXCEPTION
+from otest.events import EV_FAULT
+from otest.events import EV_HTTP_ARGS
+from otest.events import EV_RESPONSE
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +84,19 @@ class Main(object):
 
     @cherrypy.expose
     def run(self, test):
-        resp = self.tester.run(test, **self.webenv)
+        try:
+            resp = self.tester.run(test, **self.webenv)
+        except HTTPRedirect:
+            raise
+        except Exception as err:
+            test_id = list(self.flows.complete.keys())[0]
+            self.tester.conv.events.store(
+                EV_CONDITION,
+                State(test_id=test_id, status=ERROR, message=err,
+                      context='run'))
+            _trace = exception_trace('run', err, logger)
+            return self.display_exception(exception_trace=_trace)
+
         self.sh['session_info'] = self.info.session
 
         if isinstance(resp, dict):
@@ -151,6 +172,12 @@ class Main(object):
     @cherrypy.expose
     def authz_cb(self, **kwargs):
         _conv = self.sh["conv"]
+
+        if cherrypy.request.method == 'POST':
+            # You should only get query/fragment here
+            self.process_error('Wrong HTTP method. No POST to this endpoint',
+                             'authz_cb')
+
         try:
             response_mode = _conv.req.req_args["response_mode"]
         except KeyError:
@@ -158,20 +185,9 @@ class Main(object):
 
         # Check if fragment encoded
         if response_mode == ["form_post"]:
-            pass
+            self.process_error("Expected form_post, didn't get it", 'authz_cb')
         else:
-            try:
-                response_type = _conv.req.req_args["response_type"]
-            except KeyError:
-                response_type = [""]
-
-            if response_type == [""]:  # expect anything
-                if cherrypy.request.params:
-                    kwargs = cherrypy.request.params
-                else:
-                    return self.info.opresult_fragment()
-            elif response_type != ["code"]:
-                # but what if it's all returned as a query anyway ?
+            if _conv.req.req_args["response_type"] != ["code"]:
                 try:
                     kwargs = cherrypy.request.params
                 except KeyError:
@@ -181,6 +197,8 @@ class Main(object):
                     _conv.query_component = kwargs
 
                 return self.info.opresult_fragment()
+
+        _conv.events.store(EV_RESPONSE, 'Response URL with query part')
 
         try:
             resp = self.tester.async_response(self.webenv["conf"],
@@ -202,9 +220,44 @@ class Main(object):
 
         self.opresult()
 
+    def process_error(self, msg, context):
+        test_id = list(self.flows.complete.keys())[0]
+        self.tester.conv.events.store(
+            EV_CONDITION,
+            State(test_id=test_id, status=ERROR, message=msg,
+                  context=context))
+        res = Result(self.sh, self.flows.profile_handler)
+        self.tester.store_result(res)
+        self.opresult()
+
     @cherrypy.expose
     def authz_post(self, **kwargs):
         _conv = self.sh["conv"]
+
+        if cherrypy.request.method != 'POST':
+            return self.process_error('Wrong HTTP method used', 'authz_post')
+
+        # Can get here 2 ways, either directly if form_post is used or
+        # indirectly if fragment encoding
+        try:
+            response_mode = _conv.req.req_args["response_mode"]
+        except KeyError:
+            response_mode = ''
+
+        if response_mode != ['form_post']: # MUST be fragment
+            response_type = _conv.req.req_args["response_type"]
+            if response_type != ["code"]:
+                if 'fragment' in kwargs:  # everything OK
+                    self.tester.conv.events.store(EV_RESPONSE,
+                                                  'URL with fragment')
+                else:
+                    return self.process_error('Expected URL with fragment part',
+                                            'authz_post')
+            else:
+                return self.process_error('Expected URL with query part',
+                                        'authz_post')
+        else:
+            self.tester.conv.events.store(EV_RESPONSE, 'Form post')
 
         try:
             resp = self.tester.async_response(self.webenv["conf"],
