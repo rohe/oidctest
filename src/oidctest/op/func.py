@@ -176,6 +176,16 @@ def static_jwk(oper, args):
     oper.req_args["jwks"] = _client.keyjar.export_jwks("")
 
 
+def set_redirect_uri(oper, args):
+    _base = get_base(oper.conv.entity.base_url)
+    oper.req_args["redirect_uri"] = "%s%s" % (_base, args)
+
+
+def set_redirect_uris(oper, args):
+    _base = get_base(oper.conv.entity.base_url)
+    oper.req_args["redirect_uris"] = ["%s%s" % (_base, a) for a in args]
+
+
 def store_sector_redirect_uris(oper, args):
     """
     Context: Registration
