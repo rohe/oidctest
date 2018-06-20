@@ -29,7 +29,7 @@ def expected_response_mode(conv):
     try:
         response_mode = conv.req.req_args["response_mode"]
     except KeyError:
-        if conv.req.req_args["response_type"] == ['code']:
+        if conv.req.req_args["response_type"] == [''] or conv.req.req_args["response_type"] == ['code']:
             response_mode = 'query'
         else:
             response_mode = 'fragment'
