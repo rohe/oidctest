@@ -4,25 +4,44 @@ import logging
 from cherrypy import CherryPyException
 from cherrypy import HTTPRedirect
 from jwkest import as_bytes
-from otest.result import Result
-
-from oidctest.tt import conv_response
-
 from otest import Break
 from otest import exception_trace
 from otest.check import CRITICAL
 from otest.check import ERROR
+from otest.check import OK
 from otest.check import State
 from otest.events import EV_CONDITION
 from otest.events import EV_EXCEPTION
 from otest.events import EV_FAULT
 from otest.events import EV_HTTP_ARGS
 from otest.events import EV_RESPONSE
+from otest.result import Result
+
+from oidctest.tt import conv_response
 
 logger = logging.getLogger(__name__)
 
 BANNER = "Something went seriously wrong, please tell us at " \
          "certification@oidf.org"
+
+
+def expected_response_mode(conv):
+    try:
+        response_mode = conv.req.req_args["response_mode"]
+    except KeyError:
+        if conv.req.req_args["response_type"] == ['code']:
+            response_mode = 'query'
+        else:
+            response_mode = 'fragment'
+    else:
+        if isinstance(response_mode, list):
+            if len(response_mode):
+                response_mode = response_mode[0]
+            else:
+                raise ValueError(
+                    'Unknown response_mode value: {}'.format(response_mode))
+
+    return response_mode
 
 
 class Main(object):
@@ -169,39 +188,46 @@ class Main(object):
             logger.error(err)
             raise CherryPyException(err)
 
+    def process_error(self, msg, context):
+        test_id = list(self.flows.complete.keys())[0]
+        self.tester.conv.events.store(
+            EV_CONDITION,
+            State(test_id=test_id, status=ERROR, message=msg,
+                  context=context))
+        self.tester.conv.events.store(EV_CONDITION, State('Done', status=OK))
+        res = Result(self.sh, self.flows.profile_handler)
+        self.tester.store_result(res)
+        logger.error('Encountered: {} in "{}"'.format(msg, context))
+        self.opresult()
+
     @cherrypy.expose
+    # @cherrypy.tools.allow(methods=["GET"])
     def authz_cb(self, **kwargs):
+        if cherrypy.request.method != 'GET':
+            # You should only get query/fragment here using GET
+            return self.process_error(
+                'Wrong HTTP method used expected GET got "{}"'.format(
+                    cherrypy.request.method), 'authz_cb')
+
         _conv = self.sh["conv"]
-
-        if cherrypy.request.method == 'POST':
-            # You should only get query/fragment here
-            self.process_error('Wrong HTTP method. No POST to this endpoint',
-                               'authz_cb')
-
         try:
-            response_mode = _conv.req.req_args["response_mode"]
-        except KeyError:
-            response_mode = ""
+            _response_mode = expected_response_mode(_conv)
+        except ValueError as err:
+            return self.process_error(err, 'authz_cb')
 
-        try:
-            response_type = _conv.req.req_args["response_type"]
-        except KeyError:
-            response_type = [""]
+        if _response_mode == "form_post":
+            return self.process_error("Expected form_post, didn't get it",
+                                      'authz_cb')
+        elif _response_mode == 'fragment':
+            try:
+                kwargs = cherrypy.request.params
+            except KeyError:
+                pass
+            else:
+                _conv.events.store(EV_HTTP_ARGS, kwargs, ref='authz_cb')
+                _conv.query_component = kwargs
 
-        # Check if fragment encoded
-        if response_mode == ["form_post"]:
-            self.process_error("Expected form_post, didn't get it", 'authz_cb')
-        else:
-            if response_type != [""] and response_type != ["code"]:
-                try:
-                    kwargs = cherrypy.request.params
-                except KeyError:
-                    pass
-                else:
-                    _conv.events.store(EV_HTTP_ARGS, kwargs, ref='authz_cb')
-                    _conv.query_component = kwargs
-
-                return self.info.opresult_fragment()
+            return self.info.opresult_fragment()
 
         _conv.events.store(EV_RESPONSE, 'Response URL with query part')
 
@@ -216,7 +242,8 @@ class Main(object):
         except Exception as err:
             _conv.events.store(EV_FAULT, err)
             self.tester.store_result()
-            resp = False
+            _trace = exception_trace('authz_cb', err, logger)
+            return self.display_exception(exception_trace=_trace)
 
         if resp is False or resp is True:
             pass
@@ -227,42 +254,38 @@ class Main(object):
 
         self.opresult()
 
-    def process_error(self, msg, context):
-        test_id = list(self.flows.complete.keys())[0]
-        self.tester.conv.events.store(
-            EV_CONDITION,
-            State(test_id=test_id, status=ERROR, message=msg,
-                  context=context))
-        res = Result(self.sh, self.flows.profile_handler)
-        self.tester.store_result(res)
-        self.opresult()
-
     @cherrypy.expose
+    # @cherrypy.tools.allow(methods=["POST"])
     def authz_post(self, **kwargs):
-        _conv = self.sh["conv"]
-
         if cherrypy.request.method != 'POST':
-            return self.process_error('Wrong HTTP method used', 'authz_post')
+            return self.process_error(
+                'Wrong HTTP method used expected POST got "{}"'.format(
+                    cherrypy.request.method),
+                'authz_post')
+
+        _conv = self.sh["conv"]
+        try:
+            _response_mode = expected_response_mode(_conv)
+        except ValueError as err:
+            return self.process_error(err, 'authz_cb')
 
         # Can get here 2 ways, either directly if form_post is used or
         # indirectly if fragment encoding
-        try:
-            response_mode = _conv.req.req_args["response_mode"]
-        except KeyError:
-            response_mode = ''
-
-        if response_mode != ['form_post']:  # MUST be fragment
-            response_type = _conv.req.req_args["response_type"]
-            if response_type != ["code"]:
-                if 'fragment' in kwargs:  # everything OK
-                    self.tester.conv.events.store(EV_RESPONSE,
-                                                  'URL with fragment')
-                else:
-                    return self.process_error('Expected URL with fragment part',
-                                              'authz_post')
+        if _response_mode == 'query':  # should not be here at all
+            if 'fragment' in kwargs:
+                return self.process_error(
+                    'Expected URL with query part got fragment', 'authz_post')
             else:
-                return self.process_error('Expected URL with query part',
-                                          'authz_post')
+                return self.process_error(
+                    'Expected URL with query part got form_post', 'authz_post')
+        elif _response_mode == 'fragment':
+            if 'fragment' in kwargs:  # everything OK
+                self.tester.conv.events.store(EV_RESPONSE,
+                                              'URL with fragment')
+            else:
+                return self.process_error(
+                    'Expected URL with fragment part got form_post',
+                    'authz_post')
         else:
             self.tester.conv.events.store(EV_RESPONSE, 'Form post')
 
@@ -272,7 +295,9 @@ class Main(object):
         except cherrypy.HTTPRedirect:
             raise
         except Exception as err:
-            return self.info.err_response("authz_cb", err)
+            _trace = exception_trace('authz_post', err, logger)
+            return self.display_exception(exception_trace=_trace)
+            # return self.info.err_response("authz_cb", err)
         else:
             if resp is False or resp is True:
                 pass
