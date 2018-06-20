@@ -176,18 +176,23 @@ class Main(object):
         if cherrypy.request.method == 'POST':
             # You should only get query/fragment here
             self.process_error('Wrong HTTP method. No POST to this endpoint',
-                             'authz_cb')
+                               'authz_cb')
 
         try:
             response_mode = _conv.req.req_args["response_mode"]
         except KeyError:
             response_mode = ""
 
+        try:
+            response_type = _conv.req.req_args["response_type"]
+        except KeyError:
+            response_type = [""]
+
         # Check if fragment encoded
         if response_mode == ["form_post"]:
             self.process_error("Expected form_post, didn't get it", 'authz_cb')
         else:
-            if _conv.req.req_args["response_type"] != ["code"]:
+            if response_type != [""] and response_type != ["code"]:
                 try:
                     kwargs = cherrypy.request.params
                 except KeyError:
@@ -246,7 +251,7 @@ class Main(object):
         except KeyError:
             response_mode = ''
 
-        if response_mode != ['form_post']: # MUST be fragment
+        if response_mode != ['form_post']:  # MUST be fragment
             response_type = _conv.req.req_args["response_type"]
             if response_type != ["code"]:
                 if 'fragment' in kwargs:  # everything OK
@@ -254,10 +259,10 @@ class Main(object):
                                                   'URL with fragment')
                 else:
                     return self.process_error('Expected URL with fragment part',
-                                            'authz_post')
+                                              'authz_post')
             else:
                 return self.process_error('Expected URL with query part',
-                                        'authz_post')
+                                          'authz_post')
         else:
             self.tester.conv.events.store(EV_RESPONSE, 'Form post')
 
