@@ -1,6 +1,6 @@
-import cherrypy
 import logging
 
+import cherrypy
 from cherrypy import CherryPyException
 from cherrypy import HTTPRedirect
 from jwkest import as_bytes
@@ -189,12 +189,12 @@ class Main(object):
             raise CherryPyException(err)
 
     def process_error(self, msg, context):
-        test_id = list(self.flows.complete.keys())[0]
+        # test_id = list(self.flows.complete.keys())[0]
+        self.tester.conv.events.store(EV_RESPONSE, msg)
         self.tester.conv.events.store(
-            EV_CONDITION,
-            State(test_id=test_id, status=ERROR, message=msg,
-                  context=context))
-        self.tester.conv.events.store(EV_CONDITION, State('Done', status=OK))
+            EV_FAULT, State(context,status=ERROR,
+                                message='Error in {}'.format(context)))
+        #self.tester.conv.events.store(EV_CONDITION, State('Done', status=OK))
         res = Result(self.sh, self.flows.profile_handler)
         self.tester.store_result(res)
         logger.error('Encountered: {} in "{}"'.format(msg, context))
@@ -206,7 +206,8 @@ class Main(object):
         if cherrypy.request.method != 'GET':
             # You should only get query/fragment here using GET
             return self.process_error(
-                'Wrong HTTP method used expected GET got "{}"'.format(
+                'Wrong HTTP method used expected GET got "{}". Could be that '
+                'I got a form_post to the wrong redirect_uri'.format(
                     cherrypy.request.method), 'authz_cb')
 
         _conv = self.sh["conv"]
@@ -228,6 +229,11 @@ class Main(object):
                 _conv.query_component = kwargs
 
             return self.info.opresult_fragment()
+
+        if kwargs == {}:  # This should never be the case
+            return self.process_error(
+                'Got empty response could be I got something fragment '
+                'encoded. Expected query response mode', 'authz_cb')
 
         _conv.events.store(EV_RESPONSE, 'Response URL with query part')
 
