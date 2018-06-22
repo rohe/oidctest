@@ -36,273 +36,275 @@ ball = '<button type="button" class="btn btn-warning"><span class="glyphicon ' \
 _cline = '{} <input type="radio" name="{}:{}" value="{}" {}>'
 
 _info = '<button type="button" class="btn btn-info" data-toggle="tooltip" title="{}"><span class="glyphicon ' \
-       'glyphicon-info-sign"></span></button>'
+    'glyphicon-info-sign"></span></button>'
 
 TOOLTIPS = {
     'tool:return_type': {
-        'type' :"space separated string",
-        'desc' : "The response type that the test suite will use in the authentication request.",
+        'type': "space separated string",
+        'desc': "The response type that the test suite will use in the authentication request.",
         'example': "code id_token"
     },
     'tool:claims_locales': {
-        'type' :"space separated list",
-        'desc' : "End-User's preferred languages and scripts for Claims being returned, represented as a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference.",
+        'type': "space separated list",
+        'desc': "End-User's preferred languages and scripts for Claims being returned, represented as a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference.",
         'example': "fr-CA fr en"
     },
     'tool:contact_email': {
-        'type' :"string",
-        'desc' : "E-mail address on which the tester can be contacted.",
+        'type': "string",
+        'desc': "E-mail address on which the tester can be contacted.",
         'example': "director@oidf.org"
     },
     'tool:enc': {
-        'type' :"JSON boolean",
-        'desc' : "Enable tests that check support for encryption.",
+        'type': "JSON boolean",
+        'desc': "Enable tests that check support for encryption.",
         'example': "true"
     },
     'tool:extra': {
-        'type' :"JSON boolean",
-        'desc' : "Enable tests that are extra, not required for certification.",
+        'type': "JSON boolean",
+        'desc': "Enable tests that are extra, not required for certification.",
         'example': "true"
     },
     'tool:form_post': {
-        'type' :"JSON boolean",
-        'desc' : "Enable tests that check support for the form_post response mode.",
+        'type': "JSON boolean",
+        'desc': "Enable tests that check support for the form_post response mode. Make sure to register https://<host>:<port>/authz_post as redirect URI when enabled!.",
         'example': "true"
     },
     'tool:insecure': {
-        'type' :"JSON boolean",
-        'desc' : "Enable support for OPs that don't run on https",
+        'type': "JSON boolean",
+        'desc': "Enable support for OPs that don't run on https",
         'example': "true"
     },
     'tool:login_hint': {
-        'type' :"string",
-        'desc' : "Hint to the Authorization Server about the login identifier the End-User might use to log in (if necessary). ",
+        'type': "string",
+        'desc': "Hint to the Authorization Server about the login identifier the End-User might use to log in (if necessary). ",
         'example': "john@example.org"
     },
     'tool:none': {
-        'type' :"JSON boolean",
-        'desc' : "Enable tests that check support for the \"none\" signature algorithm in the id_token.",
+        'type': "JSON boolean",
+        'desc': "Enable tests that check support for the \"none\" signature algorithm in the id_token.",
         'example': "true"
     },
     'tool:sig': {
-        'type' :"JSON boolean",
-        'desc' : "Enable tests that check support for signatures (other than in id_token) such as private key authentication, key rotation, signed userinfo responses, request URIs etc.",
+        'type': "JSON boolean",
+        'desc': "Enable tests that check support for signatures (other than in id_token) such as private key authentication, key rotation, signed userinfo responses, request URIs etc.",
         'example': "true"
     },
     'tool:webfinger_email': {
-        'type' :"string",
-        'desc' : "The e-mail address that the test suite will use in the webfinger request when performing OP discovery",
+        'type': "string",
+        'desc': "The e-mail address that the test suite will use in the webfinger request when performing OP discovery",
         'example': "john@example.org"
     },
     'tool:webfinger_url': {
-        'type' :"string",
-        'desc' : "The URL that the test suite will use in the webfinger request when performing OP discovery",
+        'type': "string",
+        'desc': "The URL that the test suite will use in the webfinger request when performing OP discovery",
         'example': "https://example.com/joe"
     },
     'tool:acr_values': {
-        'type' : "Space-separated string",
-        'desc' : "Requested Authentication Context Class Reference values. Space-separated string that specifies the acr values that the Authorization Server is being requested to use for processing this Authentication Request, with the values appearing in order of preference.",
-        'example' : "1 2"
+        'type': "Space-separated string",
+        'desc': "Requested Authentication Context Class Reference values. Space-separated string that specifies the acr values that the Authorization Server is being requested to use for processing this Authentication Request, with the values appearing in order of preference.",
+        'example': "1 2"
     },
     'tool:ui_locales': {
-        'type' : "Space-separated list",
-        'desc' : "End-User's preferred languages and scripts for the user interface, represented as a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference.",
-        'example' : "fr-CA fr en"
+        'type': "Space-separated list",
+        'desc': "End-User's preferred languages and scripts for the user interface, represented as a space-separated list of BCP47 [RFC5646] language tag values, ordered by preference.",
+        'example': "fr-CA fr en"
     },
     'registration_response:redirect_uris': {
-        'type' :"string",
-        'desc' : "Redirection URI value used by the test suite.",
-        'example': ""
+        'type': "string",
+        'desc': "Redirection URI value used by the test suite. Make sure to register /authz_post when form_post is enabled!",
+        'example': "One or more of: https://<host>:<port>[/authz_cb | /authz_post]"
     },
     'registration_response:client_id': {
-        'type' :"string",
-        'desc' : " Unique Client Identifier used by the test suite as registered at the OP",
+        'type': "string",
+        'desc': " Unique Client Identifier used by the test suite as registered at the OP",
         'example': "myclient"
     },
     'registration_response:client_secret': {
-        'type' :"string",
-        'desc' : "Client Secret used by the test suite as registered at the OP",
+        'type': "string",
+        'desc': "Client Secret used by the test suite as registered at the OP",
         'example': "mysecret"
     },
     'registration_response:application_type': {
-        'type' :"string",
-        'desc' : "Kind of the application. The default, if omitted, is web. The defined values are native or web.",
+        'type': "string",
+        'desc': "Kind of the application. The default, if omitted, is web. The defined values are native or web.",
         'example': "web"
     },
     'registration_response:client_id_issued_at': {
-        'type' :"JSON number",
-        'desc' : " Time at which the Client Identifier was issued. Its value is a JSON number representing the number of seconds from 1970-01-01T0:0:0Z as measured in UTC until the date/time",
+        'type': "JSON number",
+        'desc': " Time at which the Client Identifier was issued. Its value is a JSON number representing the number of seconds from 1970-01-01T0:0:0Z as measured in UTC until the date/time",
         'example': "1518533447"
     },
     'registration_response:client_name': {
-        'type' :"string",
-        'desc' : "Name of the Client to be presented to the End-User.",
+        'type': "string",
+        'desc': "Name of the Client to be presented to the End-User.",
         'example': "My Client"
     },
     'registration_response:client_secret_expires_at': {
-        'type' :"JSON number",
-        'desc' : "Time at which the client_secret will expire or 0 if it will not expire. Its value is a JSON number representing the number of seconds from 1970-01-01T0:0:0Z as measured in UTC until the date/time.",
+        'type': "JSON number",
+        'desc': "Time at which the client_secret will expire or 0 if it will not expire. Its value is a JSON number representing the number of seconds from 1970-01-01T0:0:0Z as measured in UTC until the date/time.",
         'example': "1518533447"
     },
     'registration_response:client_uri': {
-        'type' :"string",
-        'desc' : "URL of the home page of the Client. The value of this field MUST point to a valid Web page.",
+        'type': "string",
+        'desc': "URL of the home page of the Client. The value of this field MUST point to a valid Web page.",
         'example': "https://example.org/client"
     },
     'registration_response:contacts': {
-        'type' :"JSON array or comma-separated list of strings",
-        'desc' : "Array of e-mail addresses of people responsible for this Client.",
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "Array of e-mail addresses of people responsible for this Client.",
         'example': "director@oidf.org"
     },
     'registration_response:default_acr_values': {
-        'type' :"JSON array or comma-separated list of strings",
-        'desc' : "Default requested Authentication Context Class Reference values. Array of strings that specifies the default acr values that the OP is being requested to use for processing requests from this Client, with the values appearing in order of preference.",
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "Default requested Authentication Context Class Reference values. Array of strings that specifies the default acr values that the OP is being requested to use for processing requests from this Client, with the values appearing in order of preference.",
         'example': "1, 2"
     },
     'registration_response:default_max_age': {
-        'type' :"JSON number",
-        'desc' : "Default Maximum Authentication Age. Specifies that the End-User MUST be actively authenticated if the End-User was authenticated longer ago than the specified number of seconds. ",
+        'type': "JSON number",
+        'desc': "Default Maximum Authentication Age. Specifies that the End-User MUST be actively authenticated if the End-User was authenticated longer ago than the specified number of seconds. ",
         'example': "1800"
     },
     'registration_response:grant_types': {
-        'type' :"JSON array or comma-separated list of strings",
-        'desc' : " JSON array containing a list of the OAuth 2.0 Grant Types that the Client is declaring that it will restrict itself to using.",
+        'type': "JSON array or comma-separated list of strings",
+        'desc': " JSON array containing a list of the OAuth 2.0 Grant Types that the Client is declaring that it will restrict itself to using.",
         'example': "authorization_code, implicit, refresh_token"
     },
     'registration_response:id_token_encrypted_response_alg': {
-        'type' :"string",
-        'desc' : "JWE alg algorithm [JWA] REQUIRED for encrypting the ID Token issued to this Client",
+        'type': "string",
+        'desc': "JWE alg algorithm [JWA] REQUIRED for encrypting the ID Token issued to this Client",
         'example': "RSA1_5"
     },
     'registration_response:id_token_encrypted_response_enc': {
-        'type' :"string",
-        'desc' : "JWE enc algorithm [JWA] REQUIRED for encrypting the ID Token issued to this Client.",
+        'type': "string",
+        'desc': "JWE enc algorithm [JWA] REQUIRED for encrypting the ID Token issued to this Client.",
         'example': "A128CBC-HS256"
     },
     'registration_response:id_token_signed_response_alg': {
-        'type' :"string",
-        'desc' : "JWS alg algorithm [JWA] REQUIRED for signing the ID Token issued to this Client.",
+        'type': "string",
+        'desc': "JWS alg algorithm [JWA] REQUIRED for signing the ID Token issued to this Client.",
         'example': "RS256"
     },
     'registration_response:initiate_login_uri': {
-        'type' :"string",
-        'desc' : "URI using the https scheme that a third party can use to initiate a login by the RP",
+        'type': "string",
+        'desc': "URI using the https scheme that a third party can use to initiate a login by the RP",
         'example': "https://example.org/login"
     },
     'registration_response:jwks': {
-        'type' :"JSON object",
-        'desc' : "Client's JSON Web Key Set [JWK] document, passed by value. ",
+        'type': "JSON object",
+        'desc': "Client's JSON Web Key Set [JWK] document, passed by value. ",
         'example': '{ "keys": [ {"kty":"RSA", "n": "blabla", "e": "AQAB", "kid", "1", "alg": "RS256" } ] }'
     },
     'registration_response:jwks_uri': {
-        'type' :"string",
-        'desc' : "URL for the Client's JSON Web Key Set [JWK] document.",
+        'type': "string",
+        'desc': "URL for the Client's JSON Web Key Set [JWK] document.",
         'example': "https://example.org/jwks"
     },
     'registration_response:logo_uri': {
-        'type' :"string",
-        'desc' : "URL that references a logo for the Client application. If present, the server SHOULD display this image to the End-User during approval. ",
+        'type': "string",
+        'desc': "URL that references a logo for the Client application. If present, the server SHOULD display this image to the End-User during approval. ",
         'example': "https://example.org/logo.png"
     },
     'registration_response:policy_uri': {
-        'type' :"string",
-        'desc' : "URL that the Relying Party Client provides to the End-User to read about the how the profile data will be used.",
+        'type': "string",
+        'desc': "URL that the Relying Party Client provides to the End-User to read about the how the profile data will be used.",
         'example': "https://example.org/policy.html"
     },
     'registration_response:post_logout_redirect_uris': {
-        'type' :"JSON array or comma-separated list of strings",
-        'desc' : " Array of URLs supplied by the RP to which it MAY request that the End-User's User Agent be redirected using the post_logout_redirect_uri parameter after a logout has been performed.",
+        'type': "JSON array or comma-separated list of strings",
+        'desc': " Array of URLs supplied by the RP to which it MAY request that the End-User's User Agent be redirected using the post_logout_redirect_uri parameter after a logout has been performed.",
         'example': "https://example.org/loggedout.html"
     },
     'registration_response:registration_access_token': {
-        'type' :"string",
-        'desc' : "Registration Access Token that can be used at the Client Configuration Endpoint to perform subsequent operations upon the Client registration.",
+        'type': "string",
+        'desc': "Registration Access Token that can be used at the Client Configuration Endpoint to perform subsequent operations upon the Client registration.",
         'example': "QERQADFDAS"
     },
     'registration_response:registration_client_uri': {
-        'type' :"string",
-        'desc' : "Location of the Client Configuration Endpoint where the Registration Access Token can be used to perform subsequent operations upon the resulting Client registration. ",
+        'type': "string",
+        'desc': "Location of the Client Configuration Endpoint where the Registration Access Token can be used to perform subsequent operations upon the resulting Client registration. ",
         'example': "https://op.example.org/oidc/client/manage"
     },
     'registration_response:request_object_encryption_alg': {
-        'type' :"string",
-        'desc' : " JWE [JWE] alg algorithm [JWA] the RP is declaring that it may use for encrypting Request Objects sent to the OP.",
+        'type': "string",
+        'desc': " JWE [JWE] alg algorithm [JWA] the RP is declaring that it may use for encrypting Request Objects sent to the OP.",
         'example': "RSA1_5"
     },
     'registration_response:request_object_encryption_enc': {
-        'type' :"string",
-        'desc' : "JWE enc algorithm [JWA] the RP is declaring that it may use for encrypting Request Objects sent to the OP.",
+        'type': "string",
+        'desc': "JWE enc algorithm [JWA] the RP is declaring that it may use for encrypting Request Objects sent to the OP.",
         'example': "A128CBC-HS256"
     },
     'registration_response:request_object_signing_alg': {
-        'type' :"string",
-        'desc' : " JWS [JWS] alg algorithm [JWA] that MUST be used for signing Request Objects sent to the OP.",
+        'type': "string",
+        'desc': " JWS [JWS] alg algorithm [JWA] that MUST be used for signing Request Objects sent to the OP.",
         'example': "RS256"
     },
     'registration_response:request_uris': {
-        'type' :"JSON array or comma-separated list of strings",
-        'desc' : "Array of request_uri values that are pre-registered by the RP for use at the OP. Servers MAY cache the contents of the files referenced by these URIs and not retrieve them at the time they are used in a request. ",
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "Array of request_uri values that are pre-registered by the RP for use at the OP. Servers MAY cache the contents of the files referenced by these URIs and not retrieve them at the time they are used in a request. ",
         'example': "https://example.org/request_uri"
     },
     'registration_response:require_auth_time': {
-        'type' :"JSON boolean",
-        'desc' : "Boolean value specifying whether the auth_time Claim in the ID Token is REQUIRED.",
+        'type': "JSON boolean",
+        'desc': "Boolean value specifying whether the auth_time Claim in the ID Token is REQUIRED.",
         'example': "true"
     },
     'registration_response:response_types': {
-        'type' :"JSON array or comma-separated list of strings",
-        'desc' : 'JSON array containing a list of the OAuth 2.0 response_type values that the Client is declaring that it will restrict itself to using. If omitted, the default is that the Client will use only the code Response Type',
+        'type': "JSON array or comma-separated list of strings",
+        'desc': 'JSON array containing a list of the OAuth 2.0 response_type values that the Client is declaring that it will restrict itself to using. If omitted, the default is that the Client will use only the code Response Type',
         'example': 'code, code id_token'
     },
     'registration_response:sector_identifier_uri': {
-        'type' :"string",
-        'desc' : "URL using the https scheme to be used in calculating Pseudonymous Identifiers by the OP. The URL references a file with a single JSON array of redirect_uri values.",
+        'type': "string",
+        'desc': "URL using the https scheme to be used in calculating Pseudonymous Identifiers by the OP. The URL references a file with a single JSON array of redirect_uri values.",
         'example': "https://other.example.net/file_of_redirect_uris.json"
     },
     'registration_response:subject_type': {
-        'type' :"string",
-        'desc' : "subject_type requested for responses to this Client. Valid types include pairwise and public.",
+        'type': "string",
+        'desc': "subject_type requested for responses to this Client. Valid types include pairwise and public.",
         'example': "pairwise"
     },
     'registration_response:token_endpoint_auth_method': {
-        'type' :"string",
-        'desc' : "Requested Client Authentication method for the Token Endpoint. The options are client_secret_post, client_secret_basic, client_secret_jwt, private_key_jwt, and none.",
+        'type': "string",
+        'desc': "Requested Client Authentication method for the Token Endpoint. The options are client_secret_post, client_secret_basic, client_secret_jwt, private_key_jwt, and none.",
         'example': "client_secret_post"
     },
     'registration_response:token_endpoint_auth_signing_alg': {
-        'type' :"string",
-        'desc' : ". JWS [JWS] alg algorithm [JWA] that MUST be used for signing the JWT [JWT] used to authenticate the Client at the Token Endpoint for the private_key_jwt and client_secret_jwt authentication methods. ",
+        'type': "string",
+        'desc': ". JWS [JWS] alg algorithm [JWA] that MUST be used for signing the JWT [JWT] used to authenticate the Client at the Token Endpoint for the private_key_jwt and client_secret_jwt authentication methods. ",
         'example': "RS256"
     },
     'registration_response:tos_uri': {
-        'type' :"string",
-        'desc' : "URL that the Relying Party Client provides to the End-User to read about the Relying Party's terms of service. ",
+        'type': "string",
+        'desc': "URL that the Relying Party Client provides to the End-User to read about the Relying Party's terms of service. ",
         'example': "https://example.org/tos"
     },
     'registration_response:userinfo_encrypted_response_alg': {
-        'type' :"string",
-        'desc' : " JWE [JWE] alg algorithm [JWA] REQUIRED for encrypting UserInfo Responses.",
+        'type': "string",
+        'desc': " JWE [JWE] alg algorithm [JWA] REQUIRED for encrypting UserInfo Responses.",
         'example': "RSA1_5"
     },
     'registration_response:userinfo_encrypted_response_enc': {
-        'type' :"string",
-        'desc' : " JWE enc algorithm [JWA] REQUIRED for encrypting UserInfo Responses.",
+        'type': "string",
+        'desc': " JWE enc algorithm [JWA] REQUIRED for encrypting UserInfo Responses.",
         'example': "A128CBC-HS256"
     },
     'registration_response:userinfo_signed_response_alg': {
-        'type' :"string",
-        'desc' : " JWS alg algorithm [JWA] REQUIRED for signing UserInfo Responses. If this is specified, the response will be JWT [JWT] serialized, and signed using JWS. The default, if omitted, is for the UserInfo Response to return the Claims as a UTF-8 encoded JSON object using the application/json content-type.",
+        'type': "string",
+        'desc': " JWS alg algorithm [JWA] REQUIRED for signing UserInfo Responses. If this is specified, the response will be JWT [JWT] serialized, and signed using JWS. The default, if omitted, is for the UserInfo Response to return the Claims as a UTF-8 encoded JSON object using the application/json content-type.",
         'example': "RS256"
     }
 }
 
+
 def get_tooltip_button(key):
     text = ""
     if key in TOOLTIPS:
-        tip = TOOLTIPS[key];
+        tip = TOOLTIPS[key]
         text = "[{}] {} Example: {}".format(tip['type'], tip['desc'], tip['example'])
         text = _info.format(escape(text))
     return text
+
 
 def do_line(grp, key, val, req=False):
     if req:
@@ -350,8 +352,9 @@ def display_form(head_line, grp, dic, state, multi):
         for param in state[grp]['immutable']:
             val = comma_sep_list(param, dic[param], multi[grp])
             l = [
-                '<tr><th>{}</th>'.format(param),
-                '<td>{}</td><td>{}</td></tr>'.format(val, ball),
+                '<tr><th width="35%">{}</th>'.format(param),
+                '<td>{}</td><td width="10%">{}</td><td width="10%">{}</td></tr>'.format(
+                    val, ball, get_tooltip_button('{}:{}'.format(grp, param))),
                 '<input type="hidden" name="{}:{}" value="{}"'.format(grp,
                                                                       param,
                                                                       val)
@@ -363,7 +366,7 @@ def display_form(head_line, grp, dic, state, multi):
                 _val = dic[param]
             except KeyError:
                 lines.append(
-                      do_line(grp, param, '**MISSING REQUIRED VALUE**', True))
+                    do_line(grp, param, '**MISSING REQUIRED VALUE**', True))
             else:
                 val = comma_sep_list(param, _val, multi[grp])
                 lines.append(do_line(grp, param, val, True))
@@ -512,7 +515,7 @@ class Action(object):
     def update(self, iss, tag, ev=None, **kwargs):
         """
         Displays interface for updating configuration
-        
+
         :param iss: Issuer ID 
         :param tag: tag
         :param ev: Event instance
@@ -543,7 +546,7 @@ class Action(object):
     def kill(self, iss, tag, ev):
         uqp, qp = unquote_quote(iss, tag)
         _key = self.app.assigned_ports.make_key(*uqp)
-        
+
         try:
             pid = isrunning(unquote_plus(iss), unquote_plus(tag))
         except KeyError:
@@ -557,14 +560,14 @@ class Action(object):
                     del self.app.running_processes[_key]
                 except KeyError:
                     pass
-        
+
     @cherrypy.expose
     def stop(self, iss, tag, ev):
         logger.info('stop test tool: {} {}'.format(iss, tag))
 
         # If already running - kill
         self.kill(iss, tag, ev)
-        
+
         uqp, qp = unquote_quote(iss, tag)
 
         # redirect back to entity page
@@ -574,10 +577,10 @@ class Action(object):
     @cherrypy.expose
     def delete(self, iss, tag, ev, pid=0):
         logger.info('delete test tool configuration: {} {}'.format(iss, tag))
-        
+
         # If already running - kill
         self.kill(iss, tag, ev)
-        
+
         uqp, qp = unquote_quote(iss, tag)
         _key = self.app.assigned_ports.make_key(*uqp)
 
@@ -599,7 +602,7 @@ class Action(object):
     def restart(self, iss, tag, ev):
         """
         Restart a test instance
-        
+
         :param iss: 
         :param tag: 
         :param ev: 
@@ -629,13 +632,13 @@ class Action(object):
         logger.info(
             'create test tool configuration: {} {}'.format(kwargs['iss'],
                                                            kwargs['tag']))
-        
+
         uqp, qp = unquote_quote(kwargs['iss'], kwargs['tag'])
         if not uqp[0].startswith('https://') and not uqp[0].startswith('http://'):
             err = 'issuer value must start with "https://" or "http://"'
             logger.error(err)
             return as_bytes('Sorry failed to create: {}'.format(err))
-        
+
         # construct profile
         try:
             profile = to_profile(kwargs)
@@ -657,7 +660,7 @@ class Action(object):
             else:
                 _base = self.app.test_tool_base
             _ent_conf['client']['registration_response'][
-                'redirect_uris'] = '{}:{}/authz_cb'.format(_base, _port)
+                'redirect_uris'] = '[ "{}:{}/authz_cb", "{}:{}/authz_post" ]'.format(_base, _port, _base, _port)
 
         _ent_conf['tool']['issuer'] = uqp[0]
         _ent_conf['tool']['tag'] = uqp[1]
