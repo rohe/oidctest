@@ -329,7 +329,7 @@ def do_line(grp, key, val, req=False):
             '<tr><th width="35%">{}</th><td><input'.format(key),
             'type="text" name="{}:{}"'.format(grp, key),
             'value="{}" class="form-control"></td><td width="10%">{}</td><td width="10%">{}</td></tr>'.format(
-                val, _ball, get_tooltip_button('{}:{}'.format(grp, key)))])
+                escape(val), _ball, get_tooltip_button('{}:{}'.format(grp, key)))])
 
 
 def comma_sep_list(key, val, multi):
@@ -351,6 +351,8 @@ def display_form(head_line, grp, dic, state, multi):
     if grp in state:
         for param in state[grp]['immutable']:
             val = comma_sep_list(param, dic[param], multi[grp])
+            if not (val is False or val is True):
+                val = escape(val)
             l = [
                 '<tr><th width="35%">{}</th>'.format(param),
                 '<td>{}</td><td width="10%">{}</td><td width="10%">{}</td></tr>'.format(
