@@ -293,6 +293,186 @@ TOOLTIPS = {
         'type': "string",
         'desc': " JWS alg algorithm [JWA] REQUIRED for signing UserInfo Responses. If this is specified, the response will be JWT [JWT] serialized, and signed using JWS. The default, if omitted, is for the UserInfo Response to return the Claims as a UTF-8 encoded JSON object using the application/json content-type.",
         'example': "RS256"
+    },
+    'provider_info:authorization_endpoint': {
+        'type': "string",
+        'desc': "URL of the OP's OAuth 2.0 Authorization Endpoin",
+        'example': "https://example.org/authorization"
+    },
+    'provider_info:jwks_uri': {
+        'type': "string",
+        'desc': "URL of the OP's JSON Web Key Set document.",
+        'example': "https://example.org/jwks"
+    },
+    'provider_info:response_types_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "Array containing a list of the OAuth 2.0 response_type values that this OP supports.",
+        'example': "code, id_token"
+    },
+    'provider_info:subject_types_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "JSON array containing a list of the Subject Identifier types that this OP supports. Valid types include pairwise and public.",
+        'example': "pairwise, public"
+    },
+    'provider_info:id_token_signing_alg_values_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for the ID Token to encode the Claims in a JWT.",
+        'example': "RS256"
+    },
+    'provider_info:token_endpoint': {
+        'type': "string",
+        'desc': "URL of the OP's OAuth 2.0 Token Endpoint.",
+        'example': "https://example.org/token"
+    },
+    'provider_info:acr_values_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': " JSON array containing a list of the Authentication Context Class References that this OP supports.",
+        'example': "low, high"
+    },
+    'provider_info:check_session_iframe': {
+        'type': "string",
+        'desc': "URL of an OP iframe that supports cross-origin communications for session state information with the RP Client, using the HTML5 postMessage API.",
+        'example': "https://example.org/check_session"
+    },
+    'provider_info:claim_types_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "JSON array containing a list of the Claim Types that the OpenID Provider supports.",
+        'example': "normal, aggregated, distributed"
+    },
+    'provider_info:claims_locales_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "Languages and scripts supported for values in Claims being returned, represented as a JSON array of BCP47 [RFC5646] language tag values.",
+        'example': "en-US, de-DE"
+    },
+    'provider_info:claims_parameter_supported': {
+        'type': "JSON boolean",
+        'desc': "Boolean value specifying whether the OP supports use of the claims parameter.",
+        'example': "true"
+    },
+    'provider_info:claims_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': " JSON array containing a list of the Claim Names of the Claims that the OpenID Provider MAY be able to supply values for",
+        'example': "email, phone"
+    },
+    'provider_info:display_values_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "JSON array containing a list of the display parameter values that the OpenID Provider supports.",
+        'example': "page, popup"
+    },
+    'provider_info:end_session_endpoint': {
+        'type': "string",
+        'desc': "URL at the OP to which an RP can perform a redirect to request that the End-User be logged out at the OP.",
+        'example': "https://example.org/end_session"
+    },
+    'provider_info:grant_types_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "JSON array containing a list of the OAuth 2.0 Grant Type values that this OP supports.",
+        'example': "authorization_code, implicit"
+    },
+    'provider_info:id_token_encryption_alg_values_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "JSON array containing a list of the JWE encryption algorithms (alg values) supported by the OP for the ID Token to encode the Claims in a JWT.",
+        'example': "RSA1_5, A128KW"
+    },
+    'provider_info:id_token_encryption_enc_values_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "JSON array containing a list of the JWE encryption algorithms (enc values) supported by the OP for the ID Token to encode the Claims in a JWT.",
+        'example': "A128CBC-HS256, A128GCM"
+    },
+    'provider_info:op_policy_uri': {
+        'type': "string",
+        'desc': "URL that the OpenID Provider provides to the person registering the Client to read about the OP's requirements on how the Relying Party can use the data provided by the OP.",
+        'example': "https://example.org/policy"
+    },
+    'provider_info:op_tos_uri': {
+        'type': "string",
+        'desc': "URL that the OpenID Provider provides to the person registering the Client to read about OpenID Provider's terms of service.",
+        'example': "https://example.org/tos"
+    },
+    'provider_info:registration_endpoint': {
+        'type': "string",
+        'desc': " URL of the OP's Dynamic Client Registration Endpoint ",
+        'example': "https://example.org/register"
+    },
+    'provider_info:request_object_encryption_alg_values_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "JSON array containing a list of the JWE encryption algorithms (enc values) supported by the OP for Request Objects.",
+        'example': "RSA1_5, A128KW"
+    },
+    'provider_info:request_object_encryption_enc_values_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "JSON array containing a list of the JWE encryption algorithms (enc values) supported by the OP for Request Objects.",
+        'example': "A128CBC-HS256, A128GCM"
+    },
+    'provider_info:request_object_signing_alg_values_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "JSON array containing a list of the JWS signing algorithms (alg values) supported by the OP for Request Objects.",
+        'example': "none, RS256, ES256"
+    },
+    'provider_info:request_parameter_supported': {
+        'type': "JSON boolean",
+        'desc': "Boolean value specifying whether the OP supports use of the request parameter.",
+        'example': "true"
+    },
+    'provider_info:request_uri_parameter_supported': {
+        'type': "JSON boolean",
+        'desc': "Boolean value specifying whether the OP supports use of the request_uri parameter.",
+        'example': "true"
+    },
+    'provider_info:require_request_uri_registration': {
+        'type': "JSON boolean",
+        'desc': "Boolean value specifying whether the OP requires any request_uri values used to be pre-registered using the request_uris registration parameter.",
+        'example': "true"
+    },
+    'provider_info:response_modes_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "SON array containing a list of the OAuth 2.0 response_mode values that this OP supports.",
+        'example': "query, fragment"
+    },
+    'provider_info:scopes_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "JSON array containing a list of the OAuth 2.0 [RFC6749] scope values that this server supports.",
+        'example': '["openid", "profile", "email", "address", "phone", "offline_access"]'
+    },
+    'provider_info:service_documentation': {
+        'type': "string",
+        'desc': "URL of a page containing human-readable information that developers might want or need to know when using the OpenID Provider.",
+        'example': "https://example.org/doc.html"
+    },
+    'provider_info:token_endpoint_auth_methods_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "JSON array containing a list of Client Authentication methods supported by this Token Endpoint. ",
+        'example': "client_secret_basic, private_key_jwt"
+    },
+    'provider_info:token_endpoint_auth_signing_alg_values_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "JSON array containing a list of the JWS signing algorithms (alg values) supported by the Token Endpoint for the signature on the JWT [JWT] used to authenticate the Client at the Token Endpoint.",
+        'example': "RS256, ES256"
+    },
+    'provider_info:ui_locales_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "Languages and scripts supported for the user interface, represented as a JSON array of BCP47 [RFC5646] language tag values.",
+        'example': '["en-US", "en-GB", "en-CA", "fr-FR", "fr-CA"]'
+    },
+    'provider_info:userinfo_encryption_alg_values_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "JSON array containing a list of the JWE [JWE] encryption algorithms (alg values) [JWA] supported by the UserInfo Endpoint to encode the Claims in a JWT.",
+        'example': '["RSA1_5", "A128KW"]'
+    },
+    'provider_info:userinfo_encryption_enc_values_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "JSON array containing a list of the JWE encryption algorithms (enc values) [JWA] supported by the UserInfo Endpoint to encode the Claims in a JWT.",
+        'example': '["A128CBC-HS256", "A128GCM"]'
+    },
+    'provider_info:userinfo_endpoint': {
+        'type': "string",
+        'desc': "URL of the OP's UserInfo Endpoint.",
+        'example': "https://example.org/userinfo"
+    },
+    'provider_info:userinfo_signing_alg_values_supported': {
+        'type': "JSON array or comma-separated list of strings",
+        'desc': "JSON array containing a list of the JWS [JWS] signing algorithms (alg values) [JWA] supported by the UserInfo Endpoint to encode the Claims in a JWT.",
+        'example': "RS256, ES256, HS256"
     }
 }
 
