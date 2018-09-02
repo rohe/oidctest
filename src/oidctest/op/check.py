@@ -17,7 +17,6 @@ from oic.oic.message import factory as msg_factory
 from oic.oic.message import SCOPE2CLAIMS
 from oic.oic.message import AuthorizationRequest
 from oic.oic.message import AuthorizationResponse
-from oic.oic.message import AccessTokenResponse
 from oic.oic.message import IdToken
 from oic.oic.message import OpenIDSchema
 from oic.utils import time_util
@@ -267,7 +266,6 @@ class CheckResponseType(CheckOPSupported):
 
         return True
 
-
 class VerifyIdTokenSigningAlgorithmIsSupported(Error):
     """
     Verify that required algorithms in id_token_signing_alg_values_supported
@@ -277,7 +275,7 @@ class VerifyIdTokenSigningAlgorithmIsSupported(Error):
 
     def _func(self, conv):
         _pi = get_provider_info(conv)
-
+        
         for alg in self._kwargs['algs']:
             if not alg in _pi["id_token_signing_alg_values_supported"]:
                 self._status = self.status
@@ -285,7 +283,6 @@ class VerifyIdTokenSigningAlgorithmIsSupported(Error):
                 break
 
         return {}
-
 
 class CheckAcrSupport(CheckOPSupported):
     """
@@ -1013,22 +1010,16 @@ class VerifyAccessTokenResponse(Error):
     Checks the Access Token response
     """
     cid = "verify-access-token-response"
+    section = "http://openid.bitbucket.org/" + \
+              "openid-connect-messages-1_0.html#access_token_response"
 
     def _func(self, conv=None):
-
-        resp = get_protocol_response(conv, AccessTokenResponse)
-        if not resp:
-            resp = get_protocol_response(conv, AuthorizationResponse)
-        if resp and len(resp) > 0:
-            resp = resp[0]
+        resp = get_protocol_response(conv, message.AccessTokenResponse)[0]
 
         # This specification further constrains that only Bearer Tokens [OAuth
         # .Bearer] are issued at the Token Endpoint. The OAuth 2.0 response
         # parameter "token_type" MUST be set to "Bearer".
-        if not "token_type" in resp:
-            self._message = "token_type parameter must be present in the access token response"
-            self._status = self.status
-        elif resp["token_type"].lower() != "bearer":
+        if "token_type" in resp and resp["token_type"].lower() != "bearer":
             self._message = "token_type has to be 'Bearer'"
             self._status = self.status
 
@@ -1036,13 +1027,13 @@ class VerifyAccessTokenResponse(Error):
         # parameters MUST be included in the response if the grant_type is
         # authorization_code and the Authorization Request scope parameter
         # contained openid: id_token
-        #cis = conv.cis[-1]
-        # if cis["grant_type"] == "authorization_code":
-        #    req = get_authorization_request(conv, AuthorizationRequest)
-        #    if "openid" in req["scope"]:
-        #        if "id_token" not in resp:
-        #            self._message = "ID Token has to be present"
-        #            self._status = self.status
+        cis = conv.cis[-1]
+        if cis["grant_type"] == "authorization_code":
+            req = get_authorization_request(conv, AuthorizationRequest)
+            if "openid" in req["scope"]:
+                if "id_token" not in resp:
+                    self._message = "ID Token has to be present"
+                    self._status = self.status
 
         return {}
 
@@ -1395,7 +1386,7 @@ class CheckEncryptedUserInfo(Error):
         jwt = get_protocol_response(conv, OpenIDSchema)[0]
         try:
             assert jwt.jwe_header["alg"].startswith("RSA")
-        except KeyError:  # No jwe_header or no 'alg' in header
+        except KeyError: # No jwe_header or no 'alg' in header
             self._status = self.status
         except AssertionError:  # No RSA crypto used
             self._status = self.status
@@ -1724,7 +1715,6 @@ class VerifyHTTPSUsage(Error):
     :param endpoints: Which OP endpoints that should be checked
     :type endpoints: list of strings
     """
-
     def _func(self, conv):
         _pi = get_provider_info(conv)
         _not_https = []
