@@ -1,0 +1,17 @@
+{
+  "group": "Response Type and Response Mode",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Can consume an authentication response error with response_mode='form_post'",
+  "detailed_description": "Make an authentication request with the ${RESPONSE_MODE} set to ${FORM_POST} and consume the error that is sent in POST parameters.",
+  "expected_result": "HTML form post error response processed, resulting in an error screen shown to the users."
+}
