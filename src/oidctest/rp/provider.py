@@ -445,7 +445,7 @@ class Provider(provider.Provider):
         if isinstance(request, dict):
             request = urlencode(request)
 
-        if "none" in _req["prompt"]:
+        if "max_age" in _req and _req["max_age"] == "0" and "prompt" in _req and _req["prompt"] == "none":
             aresp = {
                 "error": "login_required",
                 "state": _req['state']
