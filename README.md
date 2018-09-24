@@ -49,5 +49,5 @@ before_install:
   - cd -
 
 script:
-  - <test commands that point your software to https://op_test:6000 or https://rp_test:8080/<rp_id>>
+  - <test commands that point your software to https://op_test:60000 or https://rp_test:8080/<rp_id>>
 ````
