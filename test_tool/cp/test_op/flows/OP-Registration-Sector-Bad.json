@@ -23,6 +23,9 @@
             "https://example.com/op"
           ]
         },
+        "set_request_args": {
+          "subject_type": "pairwise"
+        },
         "expect_exception": "RegistrationError"
       }
     }
