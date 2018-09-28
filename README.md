@@ -13,6 +13,7 @@ Docker
 Whilst official self-certification happens at the service provided by the OIDF you can locally
 spin up the same services to test your OpenID Connect implementation using Docker as described below.
 ````
+git checkout stable-release-1.1.x
 docker-compose -f docker/docker-compose.yml up
 ````
 that will run the OP and RP test suite and an actual OP in a docker-compose setting.
@@ -49,5 +50,5 @@ before_install:
   - cd -
 
 script:
-  - <test commands that point your software to https://op_test:6000 or https://rp_test:8080/<rp_id>>
+  - <test commands that point your software to https://op_test:60000 or https://rp_test:8080/<rp_id>>
 ````
