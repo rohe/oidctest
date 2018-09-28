@@ -26,6 +26,7 @@ from oic.oic.provider import FailedAuthentication
 from oic.oic.provider import InvalidRedirectURIError
 from oic.utils.keyio import key_summary
 from oic.utils.keyio import keyjar_init
+from oic.utils.http_util import Response
 from otest.events import EV_EXCEPTION
 from otest.events import EV_FAULT
 from otest.events import EV_HTTP_RESPONSE
@@ -372,6 +373,22 @@ class Provider(provider.Provider):
 
         return _response
 
+    def response_mode(self, areq, fragment_enc, **kwargs):
+        resp_mode = areq["response_mode"]
+        if resp_mode == "form_post":
+            context = {
+                'action': kwargs['redirect_uri'],
+                'inputs': kwargs['aresp'],
+            }
+            return Response(self.template_renderer('form_post', context), headers=kwargs["headers"])
+        elif resp_mode == 'fragment' and not fragment_enc:
+            # Can't be done
+            raise InvalidRequest("wrong response_mode")
+        elif resp_mode == 'query' and fragment_enc:
+            # Can't be done
+            raise InvalidRequest("wrong response_mode")
+        return None
+
     def authorization_endpoint(self, request="", cookie=None, **kwargs):
         if isinstance(request, dict):
             _req = request
@@ -428,9 +445,19 @@ class Provider(provider.Provider):
         if isinstance(request, dict):
             request = urlencode(request)
 
-        _response = provider.Provider.authorization_endpoint(self, request,
-                                                             cookie,
-                                                             **kwargs)
+        if "max_age" in _req and _req["max_age"] == "0" and "prompt" in _req and _req["prompt"] == "none":
+            aresp = {
+                "error": "login_required",
+                "state": _req['state']
+            }
+            return self.response_mode(_req, False,
+                                      aresp=aresp,
+                                      redirect_uri=_req['redirect_uri'],
+                                      headers={})
+        else:
+            _response = provider.Provider.authorization_endpoint(self, request,
+                                                                 cookie,
+                                                                 **kwargs)
 
         if "rotenc" in self.behavior_type:  # Rollover encryption keys
             rsa_key = RSAKey(kid="rotated_rsa_{}".format(time.time()),
