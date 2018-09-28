@@ -1,8 +1,10 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 MAINTAINER hans.zandbelt@oidf.org
 
 RUN apt-get clean && apt-get --fix-missing update
+ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y git ntp curl
+RUN apt-get update && apt-get install -y gnupg
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 RUN apt-get update && apt-get install -y nodejs apache2
 

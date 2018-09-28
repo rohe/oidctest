@@ -1,9 +1,10 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 MAINTAINER hans.zandbelt@oidf.org
 
 RUN apt-get clean && apt-get --fix-missing update
 RUN apt-get update && apt-get install -y python3-pip
 RUN apt-get update && apt-get install -y build-essential libssl-dev libffi-dev python3-dev
+ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y git ntp psmisc python3-pytest
 
 ENV SRCDIR /usr/local/src
