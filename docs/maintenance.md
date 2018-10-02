@@ -1,6 +1,6 @@
 # Operational Maintenance
 
-*Version 2.0.0 - June 20, 2018*
+*Version 2.1.0 - October 2, 2018*
 
 This document describes operational maintenance procedures for the OpenID Connect OP and RP certification environments
 that the OpenID Foundation provides. It lists important directory/file structures and the steps one would have to take
@@ -96,24 +96,22 @@ sudo service apache2 restart
 
 ##### Overview
 
-- merge/rebase upstream repositories for rohe/oidctest and rohe/otest into openid-certification/oidctest and openid-certification/otest
-- wait for CI on oidctest/master to finish succesfully, possibly also change openid-certification/oidc-provider-conformance tests and openid-certification/openid-client-conformance-tests based on upstream changes
-- merge oidctest/master into oidctest/stable-release-1.1.x and adapt version numbers and changelog
-  test_tool/cp/test_op/version.py and test_tool/cp/test_rplib/rp/version.py
-- deploy on rp/op according to the steps in the docker/op_test and docker/rp_test files
+1. merge/rebase upstream repositories for `rohe/oidctest` and `rohe/otest` into `openid-certification/oidctest` and `openid-certification/otest` respectively
+1. possibly also update `openid-certification/oidc-provider-conformance-tests` and `openid-certification/openid-client-conformance-tests` based on upstream changes
+1. wait for Travis CI on `oidctest/master` to finish successfully
+1. merge `oidctest/master` into `oidctest/stable-release-1.1.x` whilst adapting version numbers and `ChangeLog`
+1. deploy on OP/RP production servers according to the steps in the `docker/op_test` and `docker/rp_test` files
 
 ##### Notes
-- pull requests for oidctest and otest go via the upstream repositories in the rohe organization
-- review the commits in the upstream repositories so we know what to expect...
+- official `oidctest` and `otest` are living in the `openid-certification` organization, upstream repositories are in the `rohe` organization
+- pull requests for `oidctest` and `otest` go via their corresponding upstream repositories in the `rohe` organization
+- review the commits in the upstream repositories before merging/rebasing to `openid-certification` so we know what to expect
 - manage versions of `oidctest`, `otest` and all of its dependencies, most notably `pyoidc`
-- official oidctest and otest are living in the openid-certification organization, upstream repositories are in the rohe organization
-- try to do releases only with official versions of oidctest, otest and pyoidc; as an exeception it may be necessary to checkout a specific commit version of pyoidc
-- branches in openid-certification/oidctest: `master` and `stable-release-1.1.x`
-- Docker files in `stable-release-1.1.x` are leading
-- oidctest version number 1.x.x relates to a OP 2.x.x version and an RP 1.x.x version: upgrading OP (or RP) would increase
-  the oidctest version/tag number but not necessarily lead to a new RP (resp. OP) release!
-- otest -> release
-- oidctest -> merge-prepare-commit and then adapt version numbers
+- aim for releasing only with released and packaged versions of `oidctest`, `otest` and `pyoidc`; as an exception it may be necessary to checkout a specific commit version of `pyoidc`
+- branches in `openid-certification/oidctest` are `master`, deployed (as much as needed) on the test environment (`new-op` and `new-rp`) and `stable-release-1.1.x`, (always) deployed on the production environment (`op` and `rp`)
+- Docker files in `stable-release-1.1.x` are leading for the installation/deployment process/steps
+- `oidctest` version number `1.x.x` relates to a specific OP `2.x.x` version and a specific RP `1.x.x` version and it binds those two together; upgrading OP (or RP respectively) would increase the `oidctest` `1.x.x` version/tag number but not necessarily lead to also a new RP (resp. OP) release
+- `otest` releases are managed by git tag in the `openid-certification/otest` repository (i.e. not from upstream)
 
 #### Prerequisites
 
@@ -123,66 +121,53 @@ Local git setup.
 
 ```
 $ cd ~/projects/otest && git remote -v
-origin	https://github.com/zmartzone/otest.git (fetch)
-origin	https://github.com/zmartzone/otest.git (push)
-stable	https://github.com/openid-certification/otest.git (fetch)
-stable	https://github.com/openid-certification/otest.git (push)
+origin	https://github.com/openid-certification/otest.git (fetch)
+origin	https://github.com/openid-certification/otest.git (push)
 upstream	https://github.com/rohe/otest.git (fetch)
 upstream	https://github.com/rohe/otest.git (push)
 
 $ cd ~/projects/otest && git branch -v
-* master        52dd5c5 Merge pull request #5 from panva/patch-2
-  stable-master 0abf696 Merge branch 'master' of https://github.com/openid-certification/otest into stable-master
+* master 4e06be0 Merge pull request #8 from zmartzone/profile-sig-default-true
 ```
 
 ##### oidc-provider-conformance-tests
 
 ```
 $ cd ~/projects/oidc-provider-conformance-tests && git remote -v
-origin	https://github.com/zmartzone/oidc-provider-conformance-tests.git (fetch)
-origin	https://github.com/zmartzone/oidc-provider-conformance-tests.git (push)
-stable	https://github.com/openid-certification/oidc-provider-conformance-tests.git (fetch)
-stable	https://github.com/openid-certification/oidc-provider-conformance-tests.git (push)
-upstream	https://github.com/panva/oidc-provider-conformance-tests (fetch)
-upstream	https://github.com/panva/oidc-provider-conformance-tests (push)
+origin	https://github.com/openid-certification/oidc-provider-conformance-tests.git (fetch)
+origin	https://github.com/openid-certification/oidc-provider-conformance-tests.git (push)
+upstream	https://github.com/panva/oidc-provider-conformance-tests.git (fetch)
+upstream	https://github.com/panva/oidc-provider-conformance-tests.git (push)
 
 $ cd ~/projects/oidc-provider-conformance-tests && git branch -v
-  master        e28a354 allow for local docker testing
-* stable-master e626a2d Merge branch 'master' of https://github.com/openid-certification/oidc-provider-conformance-tests into stable-master
+* master c450cdb allow for local docker testing
 ```
 
 ##### openid-client-conformance-tests
 
 ```
 $ cd ~/projects/openid-client-conformance-tests && git remote -v
-origin	https://github.com/zmartzone/openid-client-conformance-tests.git (fetch)
-origin	https://github.com/zmartzone/openid-client-conformance-tests.git (push)
-stable	https://github.com/openid-certification/openid-client-conformance-tests.git (fetch)
-stable	https://github.com/openid-certification/openid-client-conformance-tests.git (push)
+origin	https://github.com/openid-certification/openid-client-conformance-tests.git (fetch)
+origin	https://github.com/openid-certification/openid-client-conformance-tests.git (push)
 upstream	https://github.com/panva/openid-client-conformance-tests.git (fetch)
 upstream	https://github.com/panva/openid-client-conformance-tests.git (push)
 
 $ cd ~/projects/openid-client-conformance-tests && git branch -v
-* master        2e85a25 Update README.md
-  stable-master 2e85a25 Update README.md
+* master de34004 include response_type checks
 ```
 
 ##### oidctest
 
 ```
 $ cd ~/projects/oidctest && git remote -v
-origin	https://github.com/zmartzone/oidctest.git (fetch)
-origin	https://github.com/zmartzone/oidctest.git (push)
-stable	https://github.com/openid-certification/oidctest.git (fetch)
-stable	https://github.com/openid-certification/oidctest.git (push)
+origin	https://github.com/openid-certification/oidctest.git (fetch)
+origin	https://github.com/openid-certification/oidctest.git (push)
 upstream	https://github.com/rohe/oidctest.git (fetch)
 upstream	https://github.com/rohe/oidctest.git (push)
 
 $ cd ~/projects/oidctest && git branch -v
-* master                             ebebbec Merge pull request #95 from zmartzone/update-dev-version-number-display-on-test
-  stable-master                      ebebbec Merge pull request #95 from zmartzone/update-dev-version-number-display-on-test
-  stable-release-1.0.x               93fa4fb remove obsolete pyoidc patch
-  stable-release-1.1.x               8f84592 release OP 2.1.0 and RP 1.1.0
+* master                         557d113 Merge pull request #112 from zmartzone/master
+  stable-release-1.1.x           deb2351 release OP 2.1.5 and RP 1.1.4
 ```
 
 #### Steps
@@ -194,24 +179,12 @@ cd ~/projects/otest
 git fetch upstream
 
 git checkout master
-git rebase upstream/master
+git merge upstream/master
 git push
-
-git checkout stable-master
-git rebase upstream/master
-git push stable HEAD:master
 ```
 
-Possibly release a new otest version if changes were applied from upstream.
-
-```
-vi src/otest/__init__.py
-<edit version number in there>
-git commit -m" tag <version>" .
-git push stable HEAD:master
-```
-
-Release `v<version>` from the master branch in the openid-certification/otest via the web GUI.
+Possibly release a new `otest` version if changes were applied from upstream via:  
+[https://github.com/openid-certification/otest/releases](https://github.com/openid-certification/otest/releases)
 Add release notes by looking at the commits since last release.
 
 
@@ -224,14 +197,14 @@ git fetch upstream
 git checkout master
 git merge upstream/master
 git push
-
-git checkout stable-master
-git rebase upstream/master
-git push stable HEAD:master
 ```
 
-If needed, release `v<version>` from the master branch in the openid-certification/oidc-provider-conformance-tests via the web GUI.
+TODO: or rebase and force push?
+
+Possibly release a new `oidc-provider-conformance-tests` version if changes were applied from upstream via:  
+[https://github.com/openid-certification/oidc-provider-conformance-tests/releases](https://github.com/openid-certification/oidc-provider-conformance-tests/releases)
 Add release notes by looking at the commits since last release.
+
 
 ##### openid-client-conformance-tests
 
@@ -242,14 +215,12 @@ git fetch upstream
 git checkout master
 git merge upstream/master
 git push
-
-git checkout stable-master
-git rebase upstream/master
-git push stable HEAD:master
 ```
 
-If needed, release `v<version>` from the master branch in the openid-certification/openid-client-conformance-tests via the web GUI.
+Possibly release a new `oidc-provider-conformance-tests` version if changes were applied from upstream via:  
+[https://github.com/openid-certification/openid-client-conformance-tests/releases](https://github.com/openid-certification/openid-client-conformance-tests/releases)
 Add release notes by looking at the commits since last release.
+
 
 ##### oidctest
 
@@ -258,46 +229,58 @@ cd ~/projects/oidctest
 git fetch upstream
 
 git checkout master
-git rebase upstream/master
-git push
-
-git checkout stable-master
 git merge upstream/master
-git push stable HEAD:master
+git push
 ```
 
 ###### DO WITH MERGE TOOL - MERGE BUT DON'T COMMIT YET - AND UPDATE VERSION NUMBER, UPDATE CHANGELOG, UPDATE DOCKER FILES
 
 ```
 git checkout stable-release-1.1.x
-git merge stable-master --no-commit
+git merge master --no-commit
 
 # document changes compared to last release based on the commit history/diff
 vi ChangeLog
 
 # if a new version of otest was released, change versions of otest in Docker envs
+#  ENV VERSION_OTEST   tags/v0.7.x
 vi docker/op_test/Dockerfile
+#  ENV VERSION_OTEST   tags/v0.7.x
 vi docker/rp_test/Dockerfile
 
-# we may also need an update of the OP software node-oidc-provider used in the CI process if a new version was released and it impacts us
-vi docker/op/Dockerfile
-
 # change versions of oidc-provider-conformance-tests and/or openid-client-conformance-tests
-# in the `install:` section
+# in the `install:` section of .travis.yml if new versions have been released
+#  - cd oidc-provider-conformance-tests
+#  - git checkout tags/v2.0.x
+# and:
+#  - cd openid-client-conformance-tests
+#  - git checkout tags/v1.0.x 
 vi .travis.yml
 
-# if new version of RP suite is required
+# we may also need an update of the OP software node-oidc-provider used in the CI process if a new version was released and it impacts Travis CI, in that case edit:
+#   ENV VERSION_NODE_OP   tags/v4.0.x
+# in:
+vi docker/op/Dockerfile
+
+# if new version of OP suite is required
+#  VERSION = '2.1.x'
 vi test_tool/cp/test_op/version.py
 # if new version of RP suite is required
+#  VERSION = '1.1.x'
 vi test_tool/cp/test_rplib/rp/version.py
 
 
-# probably do the release commit with an editor/IDE to record changes in commit message (basically copy new ChangeLog entry)
-git commit -m "release v<version" .
+# probably do the release commit with an editor/IDE to record changes in commit message (basically copy the ChangeLog additions):
+git commit -m "release OP <2.1.x> and/or RP <1.1.x>" .
 git push
 ```
 
 Tag a new release ON THE STABLE-RELEASE branch!! The tag name is not really that important but it binds together OP and RP versions.
+
+Release a new `oidctest` version via:  
+[https://github.com/openid-certification/oidctest/releases](https://github.com/openid-certification/oidctest/releases)
+Add release notes by copying the ChangeLog additions.
+Again: Tag a new release ON THE STABLE-RELEASE branch!!
 
 ### Deployment
 These are the actual commands one would give to update the code/configuration and make it available in the production environment.
