@@ -1,1 +1,0 @@
-{"sequence": [{"Webfinger": {"set_principal": {"param": "webfinger_url"}}}], "group": "Discovery", "desc": "Can discover identifiers using URL syntax [Dynamic]", "usage": {"webfinger": true, "extra": true}}

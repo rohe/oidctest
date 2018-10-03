@@ -1,1 +1,0 @@
-{"sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}], "usage": {"register": true, "discover": true}, "group": "Dynamic Client Registration", "desc": "Verify that registration_endpoint is published", "MTI": ["DYN"], "assert": {"verify-op-has-registration-endpoint": null}}
