@@ -448,8 +448,10 @@ class Provider(provider.Provider):
         if "max_age" in _req and _req["max_age"] == "0" and "prompt" in _req and _req["prompt"] == "none":
             aresp = {
                 "error": "login_required",
-                "state": _req['state']
             }
+            if "state" in _req:
+                aresp['state'] = _req["state"]
+
             return self.response_mode(_req, False,
                                       aresp=aresp,
                                       redirect_uri=_req['redirect_uri'],
