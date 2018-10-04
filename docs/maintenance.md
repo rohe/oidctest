@@ -195,11 +195,9 @@ cd ~/projects/oidc-provider-conformance-tests
 git fetch upstream
 
 git checkout master
-git merge upstream/master
-git push
+git rebase upstream/master
+git push origin master -f
 ```
-
-TODO: or rebase and force push?
 
 Possibly release a new `oidc-provider-conformance-tests` version if changes were applied from upstream via:  
 [https://github.com/openid-certification/oidc-provider-conformance-tests/releases](https://github.com/openid-certification/oidc-provider-conformance-tests/releases)
