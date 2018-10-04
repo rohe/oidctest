@@ -266,6 +266,7 @@ class CheckResponseType(CheckOPSupported):
 
         return True
 
+
 class VerifyIdTokenSigningAlgorithmIsSupported(Error):
     """
     Verify that required algorithms in id_token_signing_alg_values_supported
@@ -275,7 +276,7 @@ class VerifyIdTokenSigningAlgorithmIsSupported(Error):
 
     def _func(self, conv):
         _pi = get_provider_info(conv)
-        
+
         for alg in self._kwargs['algs']:
             if not alg in _pi["id_token_signing_alg_values_supported"]:
                 self._status = self.status
@@ -283,6 +284,7 @@ class VerifyIdTokenSigningAlgorithmIsSupported(Error):
                 break
 
         return {}
+
 
 class CheckAcrSupport(CheckOPSupported):
     """
@@ -1386,7 +1388,7 @@ class CheckEncryptedUserInfo(Error):
         jwt = get_protocol_response(conv, OpenIDSchema)[0]
         try:
             assert jwt.jwe_header["alg"].startswith("RSA")
-        except KeyError: # No jwe_header or no 'alg' in header
+        except KeyError:  # No jwe_header or no 'alg' in header
             self._status = self.status
         except AssertionError:  # No RSA crypto used
             self._status = self.status
@@ -1514,12 +1516,15 @@ class CheckIdTokenNonce(Error):
         except KeyError:
             pass
         else:
-            idt = get_id_tokens(conv)[-1]
-
             try:
-                assert _nonce == idt["nonce"]
-            except (AssertionError, KeyError):
-                self._status = self.status
+                idt = get_id_tokens(conv)[-1]
+            except IndexError:
+                pass
+            else:
+                try:
+                    assert _nonce == idt["nonce"]
+                except (AssertionError, KeyError):
+                    self._status = self.status
 
         return {}
 
@@ -1715,6 +1720,7 @@ class VerifyHTTPSUsage(Error):
     :param endpoints: Which OP endpoints that should be checked
     :type endpoints: list of strings
     """
+
     def _func(self, conv):
         _pi = get_provider_info(conv)
         _not_https = []
