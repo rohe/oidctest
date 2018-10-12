@@ -9,7 +9,7 @@ CA_BUNDLE = None
 VERIFY_SSL = False
 
 # Make sure BASE starts with https if TLS = True
-BASE = 'https://op_test'
+BASE = 'https://op-test'
 
 ENT_PATH = 'entities'
 ENT_INFO = 'entity_info'
