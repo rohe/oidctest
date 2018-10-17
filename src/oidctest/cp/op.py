@@ -563,7 +563,7 @@ class RelyingParty(object):
         if len(vpath) >= 1:
             ev = init_events(cherrypy.request.path_info,
                              'Test tool version:{}'.format(self.version))
-            # e.g https://rp_test:8080/rp/mod_auth_openidc/rp-3rd_party-init-login/OLtakKrycmtj
+            # e.g https://rp-test:8080/rp/mod_auth_openidc/rp-3rd_party-init-login/OLtakKrycmtj
             rp_id = vpath.pop(0)
             test_id = vpath.pop(0)
             client_id = vpath.pop(0)
