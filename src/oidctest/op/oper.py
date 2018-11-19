@@ -26,14 +26,12 @@ from oic.utils.keyio import rsa_init
 from otest import RequirementsNotMet
 from otest import Unknown
 from otest.aus.operation import Operation
-from otest.aus.request import AsyncGetRequest
+from otest.aus.request import AsyncGetRequest, display_jwx_headers
 from otest.aus.request import SyncGetRequest
 from otest.aus.request import SyncPostRequest
 from otest.aus.request import same_issuer
 from otest.check import get_id_tokens
 from otest.events import EV_EXCEPTION
-from otest.events import EV_JWE_HEADER
-from otest.events import EV_JWS_HEADER
 from otest.events import EV_NOOP
 from otest.events import EV_PROTOCOL_RESPONSE
 from otest.events import EV_REQUEST
@@ -518,25 +516,6 @@ class RefreshAccessToken(SyncPostRequest):
 
 class Cache(Operation):
     pass
-
-
-def display_jwx_headers(atr, conv):
-    try:
-        _jws_header = atr["id_token"].jws_header
-    except (KeyError, AttributeError):
-        pass
-    else:
-        if _jws_header:
-            conv.events.store(EV_JWS_HEADER, "{}".format(_jws_header))
-
-    try:
-        _jwe_header = atr['id_token'].jwe_header
-    except KeyError:
-        pass
-    else:
-        if _jwe_header:
-            conv.events.store(EV_JWE_HEADER, "{}".format(_jwe_header))
-
 
 
 def factory(name):
