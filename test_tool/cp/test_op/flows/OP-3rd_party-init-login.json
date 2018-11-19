@@ -1,0 +1,34 @@
+{
+  "xgroup": "3rd-Party Init SSO",
+  "group": "Dynamic Client Registration",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    {
+      "Registration": {
+        "set_uri": [
+          "initiate_login_uri",
+          "/start-3rd-party-initiated-sso"
+        ]
+      }
+    },
+    "ReadRegistration"
+  ],
+  "usage": {
+    "register": true,
+    "extra": true
+  },
+  "desc": "Supports initiation of the SSO flow from a 3rd-party.",
+  "assert": {
+    "check-http-response": null,
+    "verify-https-usage": {"endpoints": ["initiate_login_uri"]}
+  }
+}

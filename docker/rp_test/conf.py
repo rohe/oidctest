@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-baseurl = "https://rp_test"
+baseurl = "https://rp-test"
 
 keys = [
     {"type": "RSA", "key": "keys/pyoidc_enc", "use": ["enc"]},

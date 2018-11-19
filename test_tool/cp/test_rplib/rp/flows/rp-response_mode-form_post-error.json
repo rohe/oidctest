@@ -1,0 +1,17 @@
+{
+  "group": "Response Type and Response Mode",
+  "claims": "normal",
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Can consume an authentication error response with response_mode='form_post'",
+  "detailed_description": "Construct and send an Authentication Request with ${RESPONSE_MODE} set to ${FORM_POST}, max_age=0 and prompt=none which results in the test suite returning an error because the requested conditions cannot be met.",
+  "expected_result": "The HTML form post authorization error response is consumed, resulting in an error screen shown to the user."
+}

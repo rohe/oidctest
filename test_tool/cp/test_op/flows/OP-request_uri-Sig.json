@@ -17,8 +17,10 @@
           "request_object_signing_alg": "RS256"
         },
         "check_support": {
+          "ERROR": {
+            "request_uri_parameter_supported": true
+          },
           "WARNING": {
-            "request_uri_parameter_supported": true,
             "request_object_signing_alg_values_supported": "RS256"
           }
         }

@@ -1,8 +1,10 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 MAINTAINER hans.zandbelt@oidf.org
 
 RUN apt-get clean && apt-get --fix-missing update
+ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y git ntp curl
+RUN apt-get update && apt-get install -y gnupg
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
 RUN apt-get update && apt-get install -y nodejs apache2
 
@@ -12,7 +14,7 @@ ENV SUBDIR ${SRCDIR}/${INSTDIR}
 
 WORKDIR ${SRCDIR}
 
-ENV VERSION_NODE_OP   tags/v3.0.1
+ENV VERSION_NODE_OP   tags/v4.0.3
 
 RUN git clone https://github.com/panva/node-oidc-provider.git
 RUN cd node-oidc-provider && git checkout ${VERSION_NODE_OP} && cd -

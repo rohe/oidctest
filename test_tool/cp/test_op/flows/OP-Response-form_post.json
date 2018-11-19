@@ -1,7 +1,6 @@
 {
   "group": "Response Mode",
   "sequence": [
-    "Note",
     {
       "Webfinger": {
         "set_webfinger_resource": null
@@ -12,10 +11,15 @@
         "set_discovery_issuer": null
       }
     },
-    "Registration",
+    {
+      "Registration": {
+        "set_redirect_uris": ["authz_post"]
+      }
+    },
     {
       "AsyncAuthn": {
         "set_response_where": null,
+        "set_redirect_uri": "authz_post",
         "set_request_args": {
           "response_mode": [
             "form_post"
@@ -27,10 +31,14 @@
   "usage": {
     "form_post": true,
     "return_type": [
-      "C", "I", "IT","CI", "CT", "CIT"
+      "C",
+      "I",
+      "IT",
+      "CI",
+      "CT",
+      "CIT"
     ]
   },
-  "note": "This test verifies that an OP can respond using the form_post response type",
   "desc": "Request with response_mode=form_post",
   "assert": {
     "verify-authn-response": null

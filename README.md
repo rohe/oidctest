@@ -13,17 +13,18 @@ Docker
 Whilst official self-certification happens at the service provided by the OIDF you can locally
 spin up the same services to test your OpenID Connect implementation using Docker as described below.
 ````
+git checkout stable-release-1.1.x
 docker-compose -f docker/docker-compose.yml up
 ````
 that will run the OP and RP test suite and an actual OP in a docker-compose setting.
 Then add the following entries to your `/etc/hosts` file:
 ````
-127.0.0.1 op_test op rp_test
+127.0.0.1 op-test op rp-test
 ````
-You can then access [https://op_test:60000](https://op_test:60000) for OP testing in the same way as you'd go to https://op.certification.openid.net:60000 
+You can then access [https://op-test:60000](https://op-test:60000) for OP testing in the same way as you'd go to https://op.certification.openid.net:60000 
 
-Alternatively you can use [https://rp_test:8080](https://rp_test:8080) for RP testing in the same way as you'd use https://rp.certification.openid.net:8080
-i.e. by pointing your RP Client to the issuer `https://rp_test:8080/<rp_id>` using Dynamic Client Registration.
+Alternatively you can use [https://rp-test:8080](https://rp-test:8080) for RP testing in the same way as you'd use https://rp.certification.openid.net:8080
+i.e. by pointing your RP Client to the issuer `https://rp-test:8080/<rp_id>` using Dynamic Client Registration.
 
 Travis CI
 ---------
@@ -37,8 +38,8 @@ services:
 
 addons:
   hosts:
-    - op_test
-    - rp_test
+    - op-test
+    - rp-test
     - op
 
 before_install:
@@ -49,5 +50,5 @@ before_install:
   - cd -
 
 script:
-  - <test commands that point your software to https://op_test:6000 or https://rp_test:8080/<rp_id>>
+  - <test commands that point your software to https://op-test:60000 or https://rp-test:8080/<rp_id>>
 ````

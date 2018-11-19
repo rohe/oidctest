@@ -20,7 +20,10 @@ def conv_response(events, resp):
     if not isinstance(resp, Response):
         return resp
 
-    _stat = resp._status_code
+    try:
+        _stat = resp._status_code
+    except AttributeError: # For backward compatibility
+        _stat = int(resp._status.split(' ')[0])
 
     if _stat < 300:
         events.store(EV_RESPONSE, resp.message)
