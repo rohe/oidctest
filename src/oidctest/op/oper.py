@@ -16,7 +16,8 @@ from oic.exception import ParameterError
 from oic.oauth2 import ErrorResponse
 from oic.oauth2 import Message
 from oic.oauth2.util import JSON_ENCODED
-from oic.oic import ProviderConfigurationResponse, OpenIDSchema
+from oic.oic import OpenIDSchema
+from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
 from oic.utils.keyio import KeyBundle
 from oic.utils.keyio import dump_jwks
@@ -31,6 +32,8 @@ from otest.aus.request import SyncPostRequest
 from otest.aus.request import same_issuer
 from otest.check import get_id_tokens
 from otest.events import EV_EXCEPTION
+from otest.events import EV_JWE_HEADER
+from otest.events import EV_JWS_HEADER
 from otest.events import EV_NOOP
 from otest.events import EV_PROTOCOL_RESPONSE
 from otest.events import EV_REQUEST
@@ -106,7 +109,7 @@ class Discovery(Operation):
             self.conv.events.store(EV_NOOP, "Dynamic discovery")
             self.conv.entity.provider_info = ProviderConfigurationResponse(
                 **self.conv.entity_config["provider_info"]
-            )
+                )
 
     def op_setup(self):
         # if self.dynamic:
@@ -222,15 +225,17 @@ class AccessToken(SyncPostRequest):
         if atr is None or isinstance(atr, ErrorResponse):
             return atr
 
+        display_jwx_headers(atr, self.conv)
+
         try:
-            _jws_alg = atr["id_token"].jws_header["alg"]
+            _jws_alg = atr["id_token"].jws_header['alg']
         except (KeyError, AttributeError):
             pass
         else:
             if _jws_alg == "none":
                 pass
             elif "kid" not in atr[
-                "id_token"].jws_header and not _jws_alg == "HS256":
+                    "id_token"].jws_header and _jws_alg != "HS256":
                 keys = self.conv.entity.keyjar.keys_by_alg_and_usage(
                     self.conv.info["issuer"], _jws_alg, "ver")
                 if len(keys) > 1:
@@ -267,7 +272,7 @@ class RefreshToken(SyncPostRequest):
             except KeyError:
                 for am in _ent.client_authn_method.keys():
                     if am in _ent.provider_info[
-                        'token_endpoint_auth_methods_supported']:
+                            'token_endpoint_auth_methods_supported']:
                         self.op_args['authn_method'] = am
                         break
 
@@ -279,6 +284,8 @@ class RefreshToken(SyncPostRequest):
         atr = self.catch_exception_and_error(
             self.conv.entity.do_access_token_refresh,
             request_args=self.req_args, **self.op_args)
+
+        display_jwx_headers(atr, self.conv)
 
         try:
             _jws_alg = atr["id_token"].jws_header["alg"]
@@ -487,16 +494,20 @@ class RotateKeys(Operation):
 class RotateSigKeys(RotateKeys):
     def __init__(self, conv, inut, sh, **kwargs):
         RotateKeys.__init__(self, conv, inut, sh, **kwargs)
-        self.new_key = {"type": "RSA", "key": "./keys/second_sig.key",
-                        "use": ["sig"]}
+        self.new_key = {
+            "type": "RSA", "key": "./keys/second_sig.key",
+            "use": ["sig"]
+        }
         self.kid_template = "sig%d"
 
 
 class RotateEncKeys(RotateKeys):
     def __init__(self, conv, inut, sh, **kwargs):
         RotateKeys.__init__(self, conv, inut, sh, **kwargs)
-        self.new_key = {"type": "RSA", "key": "./keys/second_enc.key",
-                        "use": ["enc"]}
+        self.new_key = {
+            "type": "RSA", "key": "./keys/second_enc.key",
+            "use": ["enc"]
+        }
         self.kid_template = "enc%d"
 
 
@@ -507,6 +518,25 @@ class RefreshAccessToken(SyncPostRequest):
 
 class Cache(Operation):
     pass
+
+
+def display_jwx_headers(atr, conv):
+    try:
+        _jws_header = atr["id_token"].jws_header
+    except (KeyError, AttributeError):
+        pass
+    else:
+        if _jws_header:
+            conv.events.store(EV_JWS_HEADER, "{}".format(_jws_header))
+
+    try:
+        _jwe_header = atr['id_token'].jwe_header
+    except KeyError:
+        pass
+    else:
+        if _jwe_header:
+            conv.events.store(EV_JWE_HEADER, "{}".format(_jwe_header))
+
 
 
 def factory(name):

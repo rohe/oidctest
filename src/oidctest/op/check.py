@@ -13,7 +13,7 @@ from oic.exception import MessageException
 from oic.oauth2 import message
 from oic.oauth2.message import ErrorResponse
 from oic.oic.message import factory as msg_factory
-#from oic.oic import claims_match
+# from oic.oic import claims_match
 from oic.oic.message import SCOPE2CLAIMS
 from oic.oic.message import AuthorizationRequest
 from oic.oic.message import AuthorizationResponse
@@ -54,7 +54,6 @@ from oidctest.regalg import REGISTERED_JWE_alg_ALGORITHMS
 from oidctest.regalg import REGISTERED_JWE_enc_ALGORITHMS
 
 __author__ = 'rohe0002'
-
 
 logger = logging.getLogger(__name__)
 
@@ -272,15 +271,17 @@ class VerifyIdTokenSigningAlgorithmIsSupported(Error):
     Verify that required algorithms in id_token_signing_alg_values_supported
     """
     cid = "verify-id_token_signing-algorithm-is-supported"
-    msg = "Verify ID token signing algorithm is in id_token_signing_alg_values_supported"
+    msg = "Verify ID token signing algorithm is in " \
+          "id_token_signing_alg_values_supported"
 
     def _func(self, conv):
         _pi = get_provider_info(conv)
 
         for alg in self._kwargs['algs']:
-            if not alg in _pi["id_token_signing_alg_values_supported"]:
+            if alg not in _pi["id_token_signing_alg_values_supported"]:
                 self._status = self.status
-                self._message = "required algorithm %s is not in the list of supported algorithms" % alg
+                self._message = "required algorithm %s is not in the list of " \
+                                "supported algorithms" % alg
                 break
 
         return {}
@@ -700,7 +701,7 @@ class LoginRequired(Error):
 
 class InteractionNeeded(CriticalError):
     """
-    A Webpage was displayed for which no known interaction is defined.
+    A Web page was displayed for which no known interaction is defined.
     """
     cid = "interaction-needed"
     msg = "Unexpected page"
@@ -713,7 +714,7 @@ class InteractionNeeded(CriticalError):
 
 class InteractionCheck(CriticalError):
     """
-    A Webpage was displayed for which no known interaction is defined.
+    A Web page was displayed for which no known interaction is defined.
     """
     cid = "interaction-check"
 
@@ -732,9 +733,11 @@ class VerifyClaims(Error):
     cid = "verify-claims"
     msg = "Claims received do not match those requested"
     doc = """
-    :param userinfo: Whether the method should look for the claims in the user info
+    :param userinfo: Whether the method should look for the claims in the 
+    user info
     :type userinfo: boolean
-    :param id_token: Whether the method should look for the claims in the id_token
+    :param id_token: Whether the method should look for the claims in the 
+    id_token
     :type id_token: boolean
     
     Example:
@@ -807,8 +810,9 @@ class VerifyClaims(Error):
         if missing or extra or mm:
             self._message = msg
             self._status = WARNING
-            return {"returned claims": list(inst.keys()),
-                    "expected claims": list(userinfo_claims.keys())}
+            return {
+                "returned claims": list(inst.keys()),
+                "expected claims": list(userinfo_claims.keys())}
 
         return {}
 
@@ -850,8 +854,9 @@ class VerifyClaims(Error):
 
                 self._message = msg
                 self._status = WARNING
-                return {"returned claims": list(_idt.keys()),
-                        "required claims": list(claims.keys())}
+                return {
+                    "returned claims": list(_idt.keys()),
+                    "required claims": list(claims.keys())}
 
         return {}
 
@@ -1091,7 +1096,8 @@ class MultipleSignOn(Error):
         try:
             assert idt[0]["auth_time"] != idt[1]["auth_time"]
         except KeyError:
-            self._message = "No \"auth_time\" found in both ID tokens so it cannot be compared"
+            self._message = "No \"auth_time\" found in both ID tokens so it " \
+                            "cannot be compared"
         except AssertionError:
             self._message = "Not two separate authentications!"
             try:
@@ -1869,18 +1875,19 @@ class VerifySignedIdToken(Error):
             self._status = self.status
             return {}
 
-        idt = res[-1]
+        used_alg = res[-1].jws_header["alg"]  # The last ID Token I got
+
         try:
-            assert idt.jws_header["alg"] == self._kwargs["alg"]
+            expected_alg = self._kwargs["alg"]
         except KeyError:
+            self._message = "Signature algorithm='%s'".format(used_alg)
+        else:
             try:
-                assert idt.jws_header["alg"] != "none"
+                assert used_alg == expected_alg
             except AssertionError:
                 self._status = self.status
-        except AssertionError:
-            self._status = self.status
-        else:
-            self._message = "Signature algorithm='%s'" % idt.jws_header["alg"]
+            else:
+                self._message = "Signature algorithm='%s'".format(used_alg)
 
         return {}
 
@@ -1984,8 +1991,9 @@ class VerifySubValue(Error):
                 else:
                     try:
                         _sub = _ic['sub']
-                    except:
-                        self._message = 'No claims request for "sub" in id_token'
+                    except KeyError:
+                        self._message = 'No claims request for "sub" in ' \
+                                        'id_token'
                     else:
                         self._message = 'Faulty claims request'
             self._status = self.status
