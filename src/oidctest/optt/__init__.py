@@ -6,14 +6,20 @@ from cherrypy import HTTPRedirect
 from jwkest import as_bytes
 from oidctest.tt import conv_response
 
-from otest import exception_trace, Break
+from otest import exception_trace
+from otest import Break
 from otest.check import CRITICAL
-from otest.events import EV_HTTP_ARGS, EV_EXCEPTION, EV_FAULT
+from otest.events import EV_EXCEPTION
+from otest.events import EV_HTTP_ARGS
+from otest.events import EV_FAULT
 
 logger = logging.getLogger(__name__)
 
-BANNER = "Something went seriously wrong, please tell us at " \
-         "certification@oidf.org"
+BANNER = """
+Something went wrong! If you know or suspect you know why, then try to
+fix it. If you have no idea, then please tell us at certification@oidf.org
+and we will help you figure it out.
+"""
 
 
 class Main(object):
