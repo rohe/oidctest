@@ -1,0 +1,49 @@
+{
+  "group": "ID Token",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null
+      }
+    },
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": [
+            "CIT",
+            "CI",
+            "C",
+            "CT"
+          ]
+        }
+      }
+    }
+  ],
+  "usage": {
+    "sig": true,
+    "register": true,
+    "extra": true
+  },
+  "desc": "Symmetric ID Token signature with any signing algorithm [Extra]",
+  "assert": {
+    "verify-idtoken-is-signed": {
+    },
+    "verify-response": {
+      "response_cls": [
+        "AccessTokenResponse",
+        "AuthorizationResponse"
+      ]
+    }
+  }
+}
