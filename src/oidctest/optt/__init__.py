@@ -302,3 +302,30 @@ class Main(object):
                 return resp
 
             self.opresult()
+
+    @cherrypy.expose
+    def logout(self, **kwargs):
+        _conv = self.sh['conv']
+
+        _conv.events.store(EV_RESPONSE, kwargs, ref='logout')
+        # continue with next operation in the sequence
+        index = self.sh["index"]
+        index += 1
+        try:
+            resp = self.tester.run_flow(self.sh["testid"], index=index)
+        except cherrypy.HTTPRedirect:
+            raise
+        except Break:
+            resp = False
+            self.tester.store_result()
+        except Exception as err:
+            _conv.events.store(EV_FAULT, err)
+            self.tester.store_result()
+            resp = False
+
+        if resp is False or resp is True:
+            pass
+        elif not isinstance(resp, int):
+            return resp
+
+        self.opresult()

@@ -7,6 +7,8 @@ import json
 import os
 import sys
 
+from oic import rndstr
+
 from otest import ConfigurationError
 from otest.check import ERROR
 from otest.check import STATUSCODE_TRANSL
@@ -584,6 +586,18 @@ def set_state(oper, arg):
     """
 
     oper.op_args['state'] = oper.conv.state
+
+
+def set_post_logout_redirect_uri(oper, arg):
+    ent = oper.conv.entity
+    oper.req_args["post_logout_redirect_uri"] = ent.registration_info[
+        'post_logout_redirect_uris'][0]
+
+
+def set_end_session_state(oper, arg):
+    _state = rndstr(32)
+    oper.conv.end_session_state = _state
+    oper.req_args["state"] = _state
 
 
 def factory(name):

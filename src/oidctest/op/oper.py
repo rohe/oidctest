@@ -19,6 +19,7 @@ from oic.oauth2.util import JSON_ENCODED
 from oic.oic import OpenIDSchema
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
+from oic.utils.http_util import Redirect
 from oic.utils.keyio import KeyBundle
 from oic.utils.keyio import dump_jwks
 from oic.utils.keyio import ec_init
@@ -26,14 +27,17 @@ from oic.utils.keyio import rsa_init
 from otest import RequirementsNotMet
 from otest import Unknown
 from otest.aus.operation import Operation
-from otest.aus.request import AsyncGetRequest, display_jwx_headers
+from otest.aus.request import display_jwx_headers
+from otest.aus.request import same_issuer
+from otest.aus.request import AsyncGetRequest
+from otest.aus.request import AsyncRequest
 from otest.aus.request import SyncGetRequest
 from otest.aus.request import SyncPostRequest
-from otest.aus.request import same_issuer
 from otest.check import get_id_tokens
 from otest.events import EV_EXCEPTION
 from otest.events import EV_NOOP
 from otest.events import EV_PROTOCOL_RESPONSE
+from otest.events import EV_REDIRECT_URL
 from otest.events import EV_REQUEST
 from otest.events import EV_RESPONSE
 from otest.events import OUTGOING
@@ -516,6 +520,47 @@ class RefreshAccessToken(SyncPostRequest):
 
 class Cache(Operation):
     pass
+
+
+class EndSession(AsyncRequest):
+    response_cls = "EndSessionResponse"
+    request_cls = "EndSessionRequest"
+    method = 'GET'
+
+    def __init__(self, conv, inut, sh, **kwargs):
+        super(EndSession, self).__init__(conv, inut, sh, **kwargs)
+        self.op_args["endpoint"] = conv.entity.provider_info[
+            "end_session_endpoint"]
+
+    def op_setup(self):
+        self.op_args['prop'] = 'id_token_hint'
+
+    def run(self):
+        _client = self.conv.entity
+
+        url, body, ht_args, csi = _client.request_info(
+            self.request, method=self.method, request_args=self.req_args,
+            lax=True, **self.op_args)
+
+        if 'add_state' in self.op_args:
+            _state = rndstr(32)
+            self.conv.end_session_state = _state
+            part = urlparse(url)
+            if part.query:
+                _query = '{}&{}'.format(part.query, 'state={}'.format(_state))
+                url = '{}://{}{}?{}'.format(part.scheme, part.netloc,
+                                            part.path, _query)
+            else:
+                _query = 'state={}'.format(_state)
+                url = '{}://{}{}?{}'.format(part.scheme, part.netloc,
+                                            part.path, _query)
+            csi['state'] = _state
+
+        self.csi = csi
+
+        self.conv.events.store(EV_REDIRECT_URL, url,
+                               sender=self.__class__.__name__)
+        return Redirect(str(url))
 
 
 def factory(name):
