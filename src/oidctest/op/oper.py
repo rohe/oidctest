@@ -9,7 +9,9 @@ import sys
 import time
 
 from Cryptodome.PublicKey import RSA
+
 from jwkest.jwk import RSAKey
+
 from oic import rndstr
 from oic.exception import IssuerMismatch
 from oic.exception import ParameterError
@@ -26,7 +28,8 @@ from oic.utils.keyio import rsa_init
 from otest import RequirementsNotMet
 from otest import Unknown
 from otest.aus.operation import Operation
-from otest.aus.request import AsyncGetRequest, display_jwx_headers
+from otest.aus.request import display_jwx_headers
+from otest.aus.request import AsyncGetRequest
 from otest.aus.request import SyncGetRequest
 from otest.aus.request import SyncPostRequest
 from otest.aus.request import same_issuer
@@ -106,8 +109,7 @@ class Discovery(Operation):
         else:
             self.conv.events.store(EV_NOOP, "Dynamic discovery")
             self.conv.entity.provider_info = ProviderConfigurationResponse(
-                **self.conv.entity_config["provider_info"]
-                )
+                **self.conv.entity_config["provider_info"])
 
     def op_setup(self):
         # if self.dynamic:
@@ -223,7 +225,12 @@ class AccessToken(SyncPostRequest):
         if atr is None or isinstance(atr, ErrorResponse):
             return atr
 
-        display_jwx_headers(atr, self.conv)
+        try:
+            msg = atr['id_token']
+        except KeyError:
+            pass
+        else:
+            display_jwx_headers(msg, self.conv)
 
         try:
             _jws_alg = atr["id_token"].jws_header['alg']
@@ -283,7 +290,12 @@ class RefreshToken(SyncPostRequest):
             self.conv.entity.do_access_token_refresh,
             request_args=self.req_args, **self.op_args)
 
-        display_jwx_headers(atr, self.conv)
+        try:
+            msg = atr['id_token']
+        except KeyError:
+            pass
+        else:
+            display_jwx_headers(msg, self.conv)
 
         try:
             _jws_alg = atr["id_token"].jws_header["alg"]
@@ -330,7 +342,9 @@ class UserInfo(SyncGetRequest):
         else:
             self.conv.entity.userinfo = response
             self.conv.events.store(EV_PROTOCOL_RESPONSE, response)
-            # return response
+
+        display_jwx_headers(response, self.conv)
+
 
     def _verify_subject_identifier(self, user_info):
         id_tokens = get_id_tokens(self.conv)

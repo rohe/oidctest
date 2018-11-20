@@ -7,6 +7,8 @@ import json
 import os
 import sys
 
+from oic.oic import PREFERENCE2PROVIDER
+
 from otest import ConfigurationError
 from otest.check import ERROR
 from otest.check import STATUSCODE_TRANSL
@@ -239,8 +241,8 @@ def id_token_hint(oper, args):
 
     """
     res = get_signed_id_tokens(oper.conv)
-
-    oper.req_args["id_token_hint"] = res[0]
+    if res:
+        oper.req_args["id_token_hint"] = res[0]
 
 
 def login_hint(oper, args):
@@ -584,6 +586,12 @@ def set_state(oper, arg):
     """
 
     oper.op_args['state'] = oper.conv.state
+
+
+def register(oper, arg):
+    for a in arg:
+        oper.req_args[a] = oper.conv.entity.provider_info[
+            PREFERENCE2PROVIDER[a]][0]
 
 
 def factory(name):
