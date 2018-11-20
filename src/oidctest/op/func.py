@@ -8,6 +8,8 @@ import os
 import six
 import sys
 
+from oic import rndstr
+
 from oic.oic import PREFERENCE2PROVIDER
 
 from otest import ConfigurationError
@@ -599,7 +601,7 @@ def register(oper, arg):
 def set_client_authn_method(oper, arg):
     _entity = oper.conv.entity
     try:
-        _method = _entity.behaviour["token_endpoint_auth_method"]        
+        _method = _entity.behaviour["token_endpoint_auth_method"]
     except KeyError:
         try:
             if _entity.provider_info["token_endpoint_auth_methods_supported"] :
@@ -607,12 +609,24 @@ def set_client_authn_method(oper, arg):
                     if sam in CLIENT_AUTHN_METHOD:
                         #use the first mutually supported method
                         _method=sam
-                        break                
+                        break
         except KeyError:  # Go with default
             _method = 'client_secret_basic'
-    
-        
+
+
     oper.op_args['authn_method'] = _method
+
+
+def set_post_logout_redirect_uri(oper, arg):
+    ent = oper.conv.entity
+    oper.req_args["post_logout_redirect_uri"] = ent.registration_info[
+        'post_logout_redirect_uris'][0]
+
+
+def set_end_session_state(oper, arg):
+    _state = rndstr(32)
+    oper.conv.end_session_state = _state
+    oper.req_args["state"] = _state
 
 
 def factory(name):
