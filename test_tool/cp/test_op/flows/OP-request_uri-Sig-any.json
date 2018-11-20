@@ -1,0 +1,38 @@
+{
+  "group": "request_uri Request Parameter",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null,
+        "set_op_args": {
+          "local_dir": "export",
+          "request_method": "file"
+        },
+        "request_in_file": null
+      }
+    }
+  ],
+  "usage": {
+    "sig": true,
+    "register": true
+  },
+  "desc": "Support request_uri request parameter with signed request",
+  "assert": {
+    "authn-response-or-error": {
+      "error": [
+        "request_uri_not_supported"
+      ]
+    }
+  }
+}

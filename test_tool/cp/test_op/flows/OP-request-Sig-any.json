@@ -1,0 +1,37 @@
+{
+  "group": "request Request Parameter",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null,
+        "set_op_args": {
+          "request_method": "request"
+        }
+      }
+    }
+  ],
+  "usage": {
+    "sig": true,
+    "register": true,
+    "extra": true
+  },
+  "desc": "Support request request parameter with signed request",
+  "assert": {
+    "authn-response-or-error": {
+      "error": [
+        "request_not_supported"
+      ]
+    }
+  }
+}
