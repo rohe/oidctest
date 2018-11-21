@@ -594,6 +594,20 @@ def register(oper, arg):
             PREFERENCE2PROVIDER[a]][0]
 
 
+def set_client_authn_method(oper, arg):
+    _entity = oper.conv.entity
+    try:
+        _method = _entity.behaviour["token_endpoint_auth_method"]
+    except KeyError:
+        try:
+            _method = _entity.provider_info[
+                "token_endpoint_auth_methods_supported"][0]
+        except KeyError:  # Go with default
+            _method = 'client_secret_basic'
+
+    oper.op_args['authn_method'] = _method
+
+
 def factory(name):
     for fname, obj in inspect.getmembers(sys.modules[__name__]):
         if inspect.isfunction(obj):
