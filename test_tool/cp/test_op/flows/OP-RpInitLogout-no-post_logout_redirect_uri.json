@@ -1,5 +1,5 @@
 {
-  "group": "End Session",
+  "group": "RP Initiated Logout",
   "usage": {
     "extra": true,
     "return_type": [
@@ -9,7 +9,7 @@
       "CIT"
     ]
   },
-  "desc": "To end a Session. The IdToken hint contains an issuer that is not the OP",
+  "desc": "Uses RP initiated logout to end a Session at the OP. The request has no post_logout_redirect_uri",
   "sequence": [
     {
       "Webfinger": {
@@ -51,7 +51,6 @@
     },
     {
       "EndSession": {
-        "set_post_logout_redirect_uri": null,
         "id_token_hint": null
       }
     },
