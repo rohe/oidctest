@@ -1,5 +1,5 @@
 {
-  "group": "End Session",
+  "group": "RP Initiated Logout",
   "usage": {
     "extra": true,
     "return_type": [
@@ -9,7 +9,7 @@
       "CIT"
     ]
   },
-  "desc": "To end a Session",
+  "desc": "Uses RP initiated logout to end a Session at the OP. The request has post_logout_redirect_uri and an incorrect id_token_hint",
   "sequence": [
     {
       "Webfinger": {
@@ -52,10 +52,7 @@
     {
       "EndSession": {
         "set_post_logout_redirect_uri": null,
-        "set_op_args": {
-          "add_state": true
-        },
-        "id_token_hint": null
+        "modified_idtoken_hint": null
       }
     },
     {
