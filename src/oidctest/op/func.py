@@ -1,5 +1,6 @@
 from future.backports.urllib.parse import urlencode
 from future.backports.urllib.parse import urlparse
+from jwkest import b64e, as_bytes, as_unicode
 from past.types import basestring
 
 import inspect
@@ -11,6 +12,8 @@ import sys
 from oic import rndstr
 
 from oic.oic import PREFERENCE2PROVIDER
+
+from jwkest.jws import factory as jws_factory
 
 from otest import ConfigurationError
 from otest.check import ERROR
@@ -386,7 +389,8 @@ def essential_and_specific_acr_claim(oper, args):
                                 "acr_values_supported", args)
 
     oper.req_args["claims"] = {
-        "id_token": {"acr": {"value": _acrs[0], 'essential': True}}}
+        "id_token": {"acr": {"value": _acrs[0], 'essential': True}}
+    }
 
 
 def sub_claims(oper, args):
@@ -613,20 +617,66 @@ def set_client_authn_method(oper, arg):
         except KeyError:  # Go with default
             _method = 'client_secret_basic'
 
-
     oper.op_args['authn_method'] = _method
 
 
 def set_post_logout_redirect_uri(oper, arg):
+    """
+    Context: EndSession
+    Action: Sets the 'post_logout_redirect_uri' argument
+    Usage Example:
+        "set_post_logout_redirect_uri": null
+    """
     ent = oper.conv.entity
     oper.req_args["post_logout_redirect_uri"] = ent.registration_info[
         'post_logout_redirect_uris'][0]
 
 
 def set_end_session_state(oper, arg):
+    """
+    Context: EndSession
+    Action: Sets the 'state' argument in a end_session request. Note that this
+        'state' variable has nothing to do with the authn 'state'
+    Usage Example:
+        "set_end_session_state": null
+    """
     _state = rndstr(32)
     oper.conv.end_session_state = _state
     oper.req_args["state"] = _state
+
+
+# def create_idtoken_hint_other_issuer(oper, arg):
+#     """
+#     Context: EndSession
+#     Action: Sets the 'id_token_hint' argument in a end_session request.
+#         The value of the argument is a correct signed JWT but not the one
+#         that should have been used.
+#     Usage Example:
+#         "create_idtoken_hint_other_issuer": null
+#     """
+#     res = get_signed_id_tokens(oper.conv)
+#     if res:
+#
+#     _jwt = JWT()
+#     _ith = _jwt.pack()
+#     oper.req_args["state"] = _ith
+
+
+def modified_idtoken_hint(oper, arg):
+    """
+    Context: EndSession
+    Action: Sets the 'id_token_hint' argument in a end_session request.
+        The value of the argument is a incorrect signed JWT.
+    Usage Example:
+        "create_idtoken_hint_other_issuer": null
+    """
+    res = get_signed_id_tokens(oper.conv)
+    if res:
+        _jws = jws_factory(res[-1])
+
+        header = as_unicode(b64e(as_bytes(json.dumps({'alg': 'none'}))))
+        oper.req_args["id_token_hint"] = '.'.join(
+            [header, as_unicode(_jws.jwt.b64part[1]), ''])
 
 
 def factory(name):
