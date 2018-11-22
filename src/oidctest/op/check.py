@@ -2543,6 +2543,12 @@ class VerifyRequiredClaims(Error):
         missing = []
         for cls, claims in self._kwargs.items():
             res = get_protocol_response(conv, msg_factory(cls))
+            if res:
+                res = res[-1]
+            else:
+                missing.append(cls)
+                continue
+
             for claim in claims:
                 if claim not in res:
                     missing.append('{}.{}'.format(cls, claim))
