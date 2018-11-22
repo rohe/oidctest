@@ -1,0 +1,29 @@
+{
+  "group": "End Session",
+  "usage": {
+    "discover": true
+  },
+  "desc": "Checks End session related openid-configuration discovery information",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    }
+  ],
+  "MTI": [],
+  "assert": {
+    "verify-op-endpoints-use-https": null,
+    "verify-required-claims": {
+      "ProviderConfigurationResponse": [
+        "check_session_iframe",
+        "end_session_endpoint"
+      ]
+    }
+  }
+}
