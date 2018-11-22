@@ -9,7 +9,7 @@
       "CIT"
     ]
   },
-  "desc": "To end a Session. With 'state' and post_logout_redirect_uri",
+  "desc": "To end a Session. With post_logout_redirect_uri and id_token_hint.",
   "sequence": [
     {
       "Webfinger": {
@@ -43,11 +43,16 @@
       }
     },
     {
+      "AccessToken": {
+        "conditional_execution":{
+          "return_type": ["CIT","CI","C","CT"]
+        }
+      }
+    },
+    {
       "EndSession": {
         "set_post_logout_redirect_uri": null,
-        "set_op_args": {
-          "add_state": true
-        }
+        "id_token_hint": null
       }
     },
     {
@@ -55,13 +60,6 @@
         "set_response_where": null,
         "set_request_args": {
           "prompt": "none"
-        },
-        "set_expect_error": {
-          "error": [
-            "login_required",
-            "interaction_required"
-          ],
-          "stop": false
         }
       }
     }

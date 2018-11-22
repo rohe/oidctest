@@ -2531,6 +2531,27 @@ class Got(Error):
         return {}
 
 
+class VerifyRequiredClaims(Error):
+    """
+    Verify that required claims are actually present
+    """
+    cid = 'verify-required-claims'
+    _msg_pat = "The following required claims where missing: {}"
+
+    def _func(self, conv):
+
+        missing = []
+        for cls, claims in self._kwargs.items():
+            res = get_protocol_response(conv, msg_factory(cls))
+            for claim in claims:
+                if claim not in res:
+                    missing.append('{}.{}'.format(cls, claim))
+        if missing:
+            self._status = ERROR
+            self._message = self._msg_pat.format(missing)
+        return {}
+
+
 def factory(cid):
     for name, obj in inspect.getmembers(sys.modules[__name__]):
         if inspect.isclass(obj) and issubclass(obj, Check):
