@@ -10,6 +10,7 @@ import re
 import subprocess
 import sys
 import time
+import shlex
 
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
@@ -627,9 +628,14 @@ class Application(object):
 
     def run_test_instance(self, iss, tag):
         _port = self.assigned_ports.register_port(iss, tag)
-        args = [self.test_script, "-i", unquote_plus(iss), "-t",
-                unquote_plus(tag), "-p", str(_port), "-M", self.mako_dir,
-                "-f", self.flowdir]
+        
+        args = [self.test_script]
+        args.extend(["-i", shlex.quote(unquote_plus(iss))])
+        args.extend(["-t", shlex.quote(unquote_plus(tag))])        
+        args.extend(["-p", str(_port)])
+        args.extend(["-M", self.mako_dir])
+        args.extend(["-f", self.flowdir])
+
         if self.path2port:
             args.extend(["-m", self.path2port])
             ppmap = read_path2port_map(self.path2port)
@@ -662,10 +668,12 @@ class Application(object):
 
         # Now get it running
         args.append('&')
-        logger.info("Test tool command: {}".format(" ".join(args)))
-        # spawn independent process
-        os.system(" ".join(args))
+        cmd = " ".join(args)
+        logger.info("Test tool command: {}".format(cmd))
 
+        # spawn independent process
+        os.system(cmd)
+        
         pid = 0
         for i in range(0,10):
             time.sleep(1)

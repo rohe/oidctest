@@ -2,6 +2,7 @@ import logging
 import os
 import subprocess
 import time
+import shlex
 from urllib.parse import unquote_plus
 
 from oic.utils.http_util import ServiceError
@@ -29,9 +30,14 @@ class Application(object):
 
     def run_test_instance(self, iss, tag):
         _port = self.assigned_ports.register_port(iss, tag)
-        args = [self.test_script, "-i", '"{}"'.format(unquote_plus(iss)), "-t",
-                '"{}"'.format(unquote_plus(tag)), "-p", str(_port), "-f",
-                self.flowdir, '-s']
+        
+        args = [self.test_script]
+        args.extend(["-i", shlex.quote(unquote_plus(iss))])
+        args.extend(["-t", shlex.quote(unquote_plus(tag))])        
+        args.extend(["-p", str(_port)])
+        args.extend(["-f", self.flowdir])
+        args.append("-s")
+        
         if self.path2port:
             args.extend(["-m", self.path2port])
             ppmap = read_path2port_map(self.path2port)
@@ -69,10 +75,11 @@ class Application(object):
 
         # Now get it running
         args.append('&')
-        logger.info("Test tool command: {}".format(" ".join(args)))
+        cmd = " ".join(args)
+        logger.info("Test tool command: {}".format(cmd))
 
         # spawn independent process, leaping blindly here
-        os.system(" ".join(args))
+        os.system(cmd)
 
         pid = 0
         for i in range(0, 10):
