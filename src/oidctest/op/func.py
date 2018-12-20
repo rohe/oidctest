@@ -21,6 +21,7 @@ from otest.prof_util import return_type
 from otest.result import get_issuer
 
 from oidctest.op.check import get_id_tokens
+from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 
 __author__ = 'roland'
 
@@ -597,14 +598,17 @@ def register(oper, arg):
 def set_client_authn_method(oper, arg):
     _entity = oper.conv.entity
     try:
-        _method = _entity.behaviour["token_endpoint_auth_method"]
+        _method = _entity.behaviour["token_endpoint_auth_method"]        
     except KeyError:
         try:
             _method = _entity.provider_info[
                 "token_endpoint_auth_methods_supported"][0]
+            #generate a key error if client authn method is not supported by pyoidc
+            CLIENT_AUTHN_METHOD[_method]
         except KeyError:  # Go with default
             _method = 'client_secret_basic'
-
+    
+        
     oper.op_args['authn_method'] = _method
 
 
