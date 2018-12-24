@@ -41,6 +41,7 @@ from otest.events import EV_REQUEST
 from otest.events import EV_RESPONSE
 from otest.events import OUTGOING
 from otest.prof_util import RESPONSE
+from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 
 __author__ = 'roland'
 
@@ -144,6 +145,12 @@ class Registration(Operation):
                 "registration_endpoint"]
             if self.conv.entity.jwks_uri:
                 self.req_args['jwks_uri'] = self.conv.entity.jwks_uri
+            #use the first mutually supported authentication method
+            if self.conv.entity.provider_info["token_endpoint_auth_methods_supported"]:
+                for sam in self.conv.entity.provider_info["token_endpoint_auth_methods_supported"]:
+                    if sam in CLIENT_AUTHN_METHOD:
+                        self.req_args['token_endpoint_auth_method']=sam
+                        break                
 
     def map_profile(self, profile_map):
         try:
@@ -217,6 +224,18 @@ class AccessToken(SyncPostRequest):
             EV_REQUEST,
             "op_args: {}, req_args: {}".format(self.op_args, self.req_args),
             direction=OUTGOING)
+        
+        if 'authn_method' not in self.op_args:
+            _ent = self.conv.entity
+            try:
+                #use the registered authn method
+                self.op_args['authn_method'] = _ent.registration_response['token_endpoint_auth_method']
+            except KeyError:
+                #use the first mutually supported authn method
+                for am in _ent.client_authn_method.keys():
+                    if am in _ent.provider_info['token_endpoint_auth_methods_supported']:
+                        self.op_args['authn_method'] = am
+                        break
 
         atr = self.catch_exception_and_error(
             self.conv.entity.do_access_token_request,
