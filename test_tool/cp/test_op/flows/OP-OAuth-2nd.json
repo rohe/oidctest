@@ -12,6 +12,7 @@
   "reference": "https://tools.ietf.org/html/rfc6749#section-5.2",
   "note": "This test should result in the OpenID Provider returning an error message.",
   "assert": {
+    "check-http-error-response":{},
     "verify-response": {
       "response_cls": [
         "ErrorResponse"
