@@ -11,6 +11,7 @@
   "desc": "Trying to use authorization code twice should result in an error",
   "reference": "http://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-4.1",
   "assert": {
+    "check-http-error-response":{},  
     "verify-response": {
       "response_cls": [
         "ErrorResponse"

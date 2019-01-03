@@ -44,6 +44,7 @@
     }
   ],
   "assert": {
+    "check-http-error-response":{},
     "verify-response": {
       "response_cls": [
         "ErrorResponse"

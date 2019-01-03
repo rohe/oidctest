@@ -41,6 +41,7 @@ from otest.events import EV_REQUEST
 from otest.events import EV_RESPONSE
 from otest.events import OUTGOING
 from otest.prof_util import RESPONSE
+from oic.oauth2.exception import HttpError
 
 __author__ = 'roland'
 
@@ -217,11 +218,13 @@ class AccessToken(SyncPostRequest):
             EV_REQUEST,
             "op_args: {}, req_args: {}".format(self.op_args, self.req_args),
             direction=OUTGOING)
-
-        atr = self.catch_exception_and_error(
-            self.conv.entity.do_access_token_request,
-            request_args=self.req_args, **self.op_args)
-
+        try:
+            atr = self.catch_exception_and_error(
+                self.conv.entity.do_access_token_request,
+                request_args=self.req_args, **self.op_args)
+        except HttpError:
+            return None
+        
         if atr is None or isinstance(atr, ErrorResponse):
             return atr
 

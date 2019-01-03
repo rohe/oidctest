@@ -44,6 +44,7 @@
   "reference": "http://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-4.1",
   "note": "A 30 second delay is added between the first and the second use of the authorization code.",
   "assert": {
+    "check-http-error-response":{},  
     "verify-response": {
       "response_cls": [
         "ErrorResponse"
