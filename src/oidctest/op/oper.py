@@ -224,7 +224,7 @@ class AccessToken(SyncPostRequest):
             EV_REQUEST,
             "op_args: {}, req_args: {}".format(self.op_args, self.req_args),
             direction=OUTGOING)
-        
+
         if 'authn_method' not in self.op_args:
             _ent = self.conv.entity
             try:
