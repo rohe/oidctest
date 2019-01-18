@@ -601,10 +601,12 @@ def set_client_authn_method(oper, arg):
         _method = _entity.behaviour["token_endpoint_auth_method"]        
     except KeyError:
         try:
-            _method = _entity.provider_info[
-                "token_endpoint_auth_methods_supported"][0]
-            #generate a key error if client authn method is not supported by pyoidc
-            CLIENT_AUTHN_METHOD[_method]
+            if _entity.provider_info["token_endpoint_auth_methods_supported"] :
+                for sam in _entity.provider_info["token_endpoint_auth_methods_supported"]:
+                    if sam in CLIENT_AUTHN_METHOD:
+                        #use the first mutually supported method
+                        _method=sam
+                        break                
         except KeyError:  # Go with default
             _method = 'client_secret_basic'
     

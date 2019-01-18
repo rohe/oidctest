@@ -13,6 +13,11 @@
     },
     {
       "Registration": {
+        "check_support": {
+          "ERROR": {
+            "token_endpoint_auth_methods_supported": "private_key_jwt"
+          }
+        },
         "set_request_args": {
           "token_endpoint_auth_method": "private_key_jwt"
         }
