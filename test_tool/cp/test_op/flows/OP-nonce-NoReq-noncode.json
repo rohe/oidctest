@@ -8,7 +8,7 @@
       "CIT"
     ]
   },
-  "desc": "Reject requests without nonce unless using the code flow",
+  "desc": "Reject requests without nonce unless using the 'code' or 'code token' flow",
   "sequence": [
     {
       "Webfinger": {
@@ -40,10 +40,9 @@
     "I",
     "IT",
     "CI",
-    "CT",
     "CIT"
   ],
-  "note": "This test should result in the OpenID Provider displaying an error message in your user agent. You should ignore the status of this test in the test tool, since it will be incomplete. You must submit a screen shot of the error shown as part of your certification application.",
+  "note": "There are two acceptable outcomes: (1) returning an error response to the RP or (2) returning an error message to the End-User. In case (2), you must submit a screen shot of the error shown as part of your certification application.",
   "assert": {
     "verify-response": {
       "response_cls": [
