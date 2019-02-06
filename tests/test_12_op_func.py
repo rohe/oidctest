@@ -78,6 +78,20 @@ def test_check_support():
     assert oper.fail is True
 
 
+def test_check_support_strings():
+    _info = setup_conv()
+    _info['conv'].entity.provider_info[
+        'token_endpoint_auth_methods_supported'] = ["private_key_jwt"]
+    _info['conv'].entity.provider_info.__class__.c_param['token_endpoint_auth_methods_supported'] = (str, None)
+
+    oper = AsyncAuthn(_info['conv'], _info['io'], None)
+
+    check_support(oper, {"WARNING": {
+        "token_endpoint_auth_methods_supported": "private_key_jwt"}})
+    assert oper.fail is False
+    assert len(oper.conv.events) == 1
+
+
 def test_check_config():
     _info = setup_conv()
     # set tool_config

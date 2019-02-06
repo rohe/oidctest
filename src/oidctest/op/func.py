@@ -5,6 +5,7 @@ from past.types import basestring
 import inspect
 import json
 import os
+import six
 import sys
 
 from oic.oic import PREFERENCE2PROVIDER
@@ -121,18 +122,18 @@ def check_support(oper, args):
                 missing = []
                 if isinstance(val, list):
                     for v in val:
-                        if typ == bool or typ == basestring or typ == int:
-                            if v != pinfo:
-                                missing.append(v)
-                        elif typ == [basestring]:
+                        if isinstance(typ, list) and issubclass(typ[0], (six.string_types, basestring)):
                             if v not in pinfo:
                                 missing.append(v)
+                        elif issubclass(typ, (bool, int, six.string_types, basestring)):
+                            if v != pinfo:
+                                missing.append(v)
                 else:
-                    if typ == bool or typ == basestring or typ == int:
-                        if val != pinfo:
-                            missing = val
-                    elif typ == [basestring]:
+                    if isinstance(typ, list) and issubclass(typ[0], (six.string_types, basestring)):
                         if val not in pinfo:
+                            missing = val
+                    elif issubclass(typ, (bool, int, six.string_types, basestring)):
+                        if val != pinfo:
                             missing = val
 
                 if missing:
