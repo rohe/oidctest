@@ -76,6 +76,15 @@ class Client(oic.Client):
                 sformat = "jwt"
         elif resp.status_code == 500:
             raise PyoidcError("ERROR: Something went wrong: %s" % resp.text)
+        elif resp.status_code == 401:
+            try:
+                res = ErrorResponse().from_json(resp.text)
+            except Exception:
+                res = ErrorResponse().from_json('{"error":"401 Unauthorized", "error_description":"Server returned a 401 Unauthorized without a body"}')
+
+            self.store_response(res, resp.text)
+            return res
+                 
         elif 400 <= resp.status_code < 500:
             # the response text might be a OIDC message
             try:
