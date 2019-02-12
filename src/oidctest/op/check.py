@@ -1716,6 +1716,71 @@ class VerifyOPEndpointsUseHTTPS(Error):
         return {}
 
 
+class VerifySessionMetadata(Error):
+    """
+    Verify that the following claims appear in the provider discovery metadata:
+    check_session_iframe
+    end_session_endpoint
+    """
+    cid = "verify-session-metadata"
+    msg = "Required claims missing"
+
+    def _func(self, conv):
+        m = []
+        _pi = get_provider_info(conv)
+        for claim in ['check_session_iframe', 'end_session_endpoint']:
+            if claim not in _pi:
+                self._status = self.status
+                m.append(claim)
+
+        if m:
+            self._message = 'These following required claims are missing: {}'.format(m)
+
+        return {}
+
+
+class VerifyFrontChannelMetadata(Error):
+    """
+    Verify that the following claims appear in the provider discovery metadata:
+    """
+    cid = "verify-front-channel-metadata"
+    msg = "Claim missing or defined to be False"
+
+    def _func(self, conv):
+        _pi = get_provider_info(conv)
+        for claim in ['frontchannel_logout_supported']:
+            if claim not in _pi:
+                self._status = self.status
+            elif not _pi[claim]:
+                self._status = self.status
+
+        if self._status == self.status:
+            self._message = 'Front channel logout not supported'
+
+        return {}
+
+
+class VerifyBackChannelMetadata(Error):
+    """
+    Verify that the following claims appear in the provider discovery metadata:
+    """
+    cid = "verify-back-channel-metadata"
+    msg = "Claim missing or defined to be False"
+
+    def _func(self, conv):
+        _pi = get_provider_info(conv)
+        for claim in ['backchannel_logout_supported']:
+            if claim not in _pi:
+                self._status = self.status
+            elif not _pi[claim]:
+                self._status = self.status
+
+        if self._status == self.status:
+            self._message = 'Back channel logout not supported'
+
+        return {}
+
+
 class VerifyHTTPSUsage(Error):
     """
     Verify that specific endpoints uses https
