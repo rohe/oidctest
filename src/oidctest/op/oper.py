@@ -331,7 +331,7 @@ class RefreshToken(SyncPostRequest):
             if _jws_alg == "none":
                 pass
             elif "kid" not in atr[
-                "id_token"].jws_header and not _jws_alg == "HS256":
+                    "id_token"].jws_header and not _jws_alg == "HS256":
                 keys = self.conv.entity.keyjar.keys_by_alg_and_usage(
                     self.conv.info["issuer"], _jws_alg, "ver")
                 if len(keys) > 1:
