@@ -15,6 +15,7 @@ from jwkest.jwk import RSAKey
 from jwkest.jwk import SYMKey
 from oic import oic
 from oic import rndstr
+from oic.exception import InvalidRequest
 from oic.oauth2 import Message
 from oic.oauth2 import error_response
 from oic.oic import provider
@@ -27,6 +28,7 @@ from oic.oic.provider import InvalidRedirectURIError
 from oic.utils.keyio import key_summary
 from oic.utils.keyio import keyjar_init
 from oic.utils.http_util import Response
+from oic.utils.http_util import SeeOther
 from otest.events import EV_EXCEPTION
 from otest.events import EV_FAULT
 from otest.events import EV_HTTP_RESPONSE
@@ -380,7 +382,8 @@ class Provider(provider.Provider):
                 'action': kwargs['redirect_uri'],
                 'inputs': kwargs['aresp'],
             }
-            return Response(self.template_renderer('form_post', context), headers=kwargs["headers"])
+            return Response(self.template_renderer('form_post', context),
+                            headers=kwargs["headers"])
         elif resp_mode == 'fragment' and not fragment_enc:
             # Can't be done
             raise InvalidRequest("wrong response_mode")
@@ -598,3 +601,27 @@ class Provider(provider.Provider):
         self.server.keyjar = item
 
     keyjar = property(_get_keyjar, _set_keyjar)
+
+    def end_session_endpoint(self, request="", cookie=None, **kwargs):
+        _response = provider.Provider.end_session_endpoint(self, request,
+                                                           cookie, **kwargs)
+
+        if isinstance(_response, SeeOther):
+            _path, _query = _response.message.split('?')
+            if _query: # Can not change a query part that's not there
+                _kwa = parse_qs(_query)
+                if 'state' in _kwa:
+                    if 'ost' in self.behavior_type:
+                        while True:
+                            _state = rndstr(32)
+                            if _state != _kwa['state']:
+                                _kwa['state'] = _state
+                                break
+                    elif 'nst' in self.behavior_type:
+                        del _kwa['state']
+                if _kwa:
+                    _response.message = "{}?{}".format(_path, urlencode(_kwa))
+                else:
+                    _response.message = _path
+
+        return _response
