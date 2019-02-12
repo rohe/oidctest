@@ -305,6 +305,27 @@ class Claims(object):
                 cherrypy.response.headers["content-type"] = 'application/jwt'
                 return as_bytes(_info.to_jwt(key=jwt_key, algorithm="RS256"))
 
+
+class EndSession(object):
+    @cherrypy.expose
+    @cherrypy_cors.tools.expose_public()
+    @cherrypy.tools.allow(
+        methods=["GET", "OPTIONS"])
+    def index(self, op, **kwargs):
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["GET"], origins='*',
+                allowed_headers=['Authorization', 'content-type'])
+        else:
+            store_request(op, 'EndSessionRequest')
+            logger.debug('EndSessionRequest: {}'.format(kwargs))
+            op.events.store(EV_REQUEST, kwargs)
+            cookie = cherrypy.request.cookie
+            _info = Message(**kwargs)
+            resp = op.end_session_endpoint(_info.to_urlencoded(), cookie=cookie)
+            return conv_response(op, resp)
+
+
 HTML_PRE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -448,6 +469,7 @@ class Provider(Root):
         self.token = Token()
         self.userinfo = UserInfo()
         self.claims = Claims()
+        self.end_session = EndSession()
         self.reset = Reset(self.op_handler.com_args, self.op_handler.op_args)
 
     def _cp_dispatch(self, vpath):
@@ -487,6 +509,8 @@ class Provider(Root):
                         return self.claims
                     elif endpoint == 'reset':
                         return self.reset
+                    elif endpoint == 'end_session':
+                        return self.end_session
                     else:  # Shouldn't be any other
                         raise cherrypy.NotFound()
                 if len(vpath) == 2:
