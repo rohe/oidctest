@@ -1,0 +1,25 @@
+{
+  "group": "Session",
+  "usage": {
+    "discover": true
+  },
+  "desc": "Publishes openid-configuration discovery information",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    }
+  ],
+  "MTI": [
+    "DYN", "CNF"
+  ],
+  "assert": {
+    "verify-session-metadata": null
+  }
+}
