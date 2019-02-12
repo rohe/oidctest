@@ -9,12 +9,10 @@ import os
 import six
 import sys
 
-from oic import rndstr
-
-from oic.oic import PREFERENCE2PROVIDER
-
 from jwkest.jws import factory as jws_factory
-
+from oic import rndstr
+from oic.oic import PREFERENCE2PROVIDER
+from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 from otest import ConfigurationError
 from otest.check import ERROR
 from otest.check import STATUSCODE_TRANSL
@@ -25,6 +23,7 @@ from otest.func import SetUpError
 from otest.func import get_base
 from otest.prof_util import return_type
 from otest.result import get_issuer
+from past.types import basestring
 
 from oidctest.op.check import get_id_tokens
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
@@ -632,6 +631,36 @@ def set_post_logout_redirect_uri(oper, arg):
         'post_logout_redirect_uris'][0]
 
 
+def register_signing_arg(oper, arg):
+    """
+    Context: ClientRegistration
+    Action: Registers a signing algorithm that the provider supports
+    Example:
+        "register_signing_arg": "id_token"
+
+    """
+    map = {
+        'id_token': 'id_token_signed_response_alg',
+        'userinfo': 'userinfo_signed_response_alg',
+        'request_object': 'request_object_signing_alg',
+        'token_endpoint': 'token_endpoint_auth_signing_alg'
+    }
+
+    _pinfo = oper.conv.entity.provider_info
+    _pref = oper.conv.entity.pref
+
+    # What the provider can do
+    _algs = _pinfo[PREFERENCE2PROVIDER[map[arg]]]
+
+    oper.op_args[map[arg]] = _algs[0]
+
+
+def register(oper, arg):
+    for a in arg:
+        oper.req_args[a] = oper.conv.entity.provider_info[
+            PREFERENCE2PROVIDER[a]][0]
+
+
 def set_end_session_state(oper, arg):
     """
     Context: EndSession
@@ -643,6 +672,23 @@ def set_end_session_state(oper, arg):
     _state = rndstr(32)
     oper.conv.end_session_state = _state
     oper.req_args["state"] = _state
+
+
+def set_client_authn_method(oper, arg):
+    _entity = oper.conv.entity
+    try:
+        _method = _entity.behaviour["token_endpoint_auth_method"]
+    except KeyError:
+        try:
+            _method = _entity.provider_info[
+                "token_endpoint_auth_methods_supported"][0]
+            # generate a key error if client authn method is not supported by
+            # pyoidc
+            CLIENT_AUTHN_METHOD[_method]
+        except KeyError:  # Go with default
+            _method = 'client_secret_basic'
+
+    oper.op_args['authn_method'] = _method
 
 
 # def create_idtoken_hint_other_issuer(oper, arg):
