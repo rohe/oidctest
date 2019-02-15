@@ -79,15 +79,15 @@ class Client(oic.Client):
         elif resp.status_code == 401:
             try:                 
                 www_auth_header=resp.headers["WWW-Authenticate"]
-                res = ErrorResponse(error="invalid_token", 
+                res = ErrorResponse(error="invalid_token",
                                     error_description="Server returned 401 Unauthorized. WWW-Authenticate header:{}".format(www_auth_header))                
             except KeyError:
                 #no www-authenticate header. https://tools.ietf.org/html/rfc6750#section-3 reads: 
                 #the resource server MUST include the HTTP "WWW-Authenticate" response header field         
-                res = ErrorResponse(error="invalid_token", 
-                                    error_description="Server returned 401 Unauthorized without a WWW-Authenticate header which is required as per https://tools.ietf.org/html/rfc6750#section-3")                    
+                res = ErrorResponse(error="invalid_token",
+                                    error_description="Server returned 401 Unauthorized without a WWW-Authenticate header which is required as per https://tools.ietf.org/html/rfc6750#section-3")
             self.store_response(res, resp.text)
-            return res                 
+            return res
         elif 400 <= resp.status_code < 500:
             # the response text might be a OIDC message
             try:
