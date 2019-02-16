@@ -1,6 +1,3 @@
-from future.backports.urllib.parse import urlencode
-from future.backports.urllib.parse import urlparse
-
 import inspect
 import json
 import os
@@ -16,6 +13,8 @@ from oic import rndstr
 from oic.oic import PREFERENCE2PROVIDER
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 
+from future.backports.urllib.parse import urlencode
+from future.backports.urllib.parse import urlparse
 from otest import ConfigurationError
 from otest.check import ERROR
 from otest.check import STATUSCODE_TRANSL
@@ -26,6 +25,7 @@ from otest.func import SetUpError
 from otest.func import get_base
 from otest.prof_util import return_type
 from otest.result import get_issuer
+from past.types import basestring
 
 from oidctest.op.check import get_id_tokens
 
@@ -594,30 +594,6 @@ def set_state(oper, arg):
     """
 
     oper.op_args['state'] = oper.conv.state
-
-
-def register(oper, arg):
-    for a in arg:
-        oper.req_args[a] = oper.conv.entity.provider_info[
-            PREFERENCE2PROVIDER[a]][0]
-
-
-def set_client_authn_method(oper, arg):
-    _entity = oper.conv.entity
-    try:
-        _method = _entity.behaviour["token_endpoint_auth_method"]
-    except KeyError:
-        try:
-            if _entity.provider_info["token_endpoint_auth_methods_supported"] :
-                for sam in _entity.provider_info["token_endpoint_auth_methods_supported"]:
-                    if sam in CLIENT_AUTHN_METHOD:
-                        #use the first mutually supported method
-                        _method=sam
-                        break
-        except KeyError:  # Go with default
-            _method = 'client_secret_basic'
-
-    oper.op_args['authn_method'] = _method
 
 
 def set_post_logout_redirect_uri(oper, arg):

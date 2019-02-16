@@ -30,11 +30,11 @@ from otest import RequirementsNotMet
 from otest import Unknown
 from otest.aus.operation import Operation
 from otest.aus.request import display_jwx_headers
+from otest.aus.request import same_issuer
 from otest.aus.request import AsyncGetRequest
 from otest.aus.request import AsyncRequest
 from otest.aus.request import SyncGetRequest
 from otest.aus.request import SyncPostRequest
-from otest.aus.request import same_issuer
 from otest.check import get_id_tokens
 from otest.events import EV_EXCEPTION
 from otest.events import EV_NOOP
