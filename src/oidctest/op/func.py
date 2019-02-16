@@ -1,18 +1,21 @@
 from future.backports.urllib.parse import urlencode
 from future.backports.urllib.parse import urlparse
-from jwkest import b64e, as_bytes, as_unicode
-from past.types import basestring
 
 import inspect
 import json
 import os
 import six
 import sys
+from past.types import basestring
 
+from jwkest import as_bytes
+from jwkest import as_unicode
+from jwkest import b64e
 from jwkest.jws import factory as jws_factory
 from oic import rndstr
 from oic.oic import PREFERENCE2PROVIDER
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
+
 from otest import ConfigurationError
 from otest.check import ERROR
 from otest.check import STATUSCODE_TRANSL
@@ -23,10 +26,8 @@ from otest.func import SetUpError
 from otest.func import get_base
 from otest.prof_util import return_type
 from otest.result import get_issuer
-from past.types import basestring
 
 from oidctest.op.check import get_id_tokens
-from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 
 __author__ = 'roland'
 
