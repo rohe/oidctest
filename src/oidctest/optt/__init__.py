@@ -4,6 +4,7 @@ import cherrypy
 from cherrypy import CherryPyException
 from cherrypy import HTTPRedirect
 from jwkest import as_bytes
+from jwkest import as_unicode
 from otest import Break
 from otest import exception_trace
 from otest.check import CRITICAL
@@ -28,7 +29,8 @@ def expected_response_mode(conv):
     try:
         response_mode = conv.req.req_args["response_mode"]
     except KeyError:
-        if conv.req.req_args["response_type"] == [''] or conv.req.req_args["response_type"] == ['code']:
+        if conv.req.req_args["response_type"] == [''] or conv.req.req_args[
+            "response_type"] == ['code']:
             response_mode = 'query'
         else:
             response_mode = 'fragment'
@@ -107,7 +109,7 @@ class Main(object):
         except HTTPRedirect:
             raise
         except Exception as err:
-            #test_id = list(self.flows.complete.keys())[0]
+            # test_id = list(self.flows.complete.keys())[0]
             _trace = exception_trace('run', err, logger)
             self.tester.conv.events.store(EV_FAULT, _trace)
             return self.display_exception(exception_trace=_trace)
@@ -303,29 +305,47 @@ class Main(object):
 
             self.opresult()
 
-    @cherrypy.expose
-    def logout(self, **kwargs):
+    def _endpoint(self, ref, request=None, **kwargs):
         _conv = self.sh['conv']
 
-        _conv.events.store(EV_RESPONSE, kwargs, ref='logout')
         # continue with next operation in the sequence
-        index = self.sh["index"]
-        index += 1
+        self.sh["index"] += 1
         try:
-            resp = self.tester.run_flow(self.sh["testid"], index=index)
+            resp = self.tester.handle_request(request, kwargs)
         except cherrypy.HTTPRedirect:
             raise
         except Break:
             resp = False
             self.tester.store_result()
         except Exception as err:
-            _conv.events.store(EV_FAULT, err)
+            _trace = exception_trace(ref, err, logger)
+            _conv.events.store(EV_FAULT, _trace)
             self.tester.store_result()
-            resp = False
+            return self.display_exception(exception_trace=_trace)
 
         if resp is False or resp is True:
             pass
+        elif isinstance(resp, dict) and 'exception_trace' in resp:
+            return self.display_exception(**resp)
         elif not isinstance(resp, int):
             return resp
 
         self.opresult()
+
+    @cherrypy.expose
+    def logout(self, **kwargs): # post_logout_redirect_uri
+        return self._endpoint(ref='logout', **kwargs)
+
+    @cherrypy.expose
+    def backchannel_logout(self, **kwargs):
+        if cherrypy.request.process_request_body is True:
+            _request = as_unicode(cherrypy.request.body.read())
+            return self._endpoint(ref='backchannel_logout',
+                                  request=_request)
+        else:
+            raise cherrypy.HTTPError(
+                400, 'Missing Back channel Logout request body')
+
+    @cherrypy.expose
+    def frontchannel_logout(self, **kwargs):
+        return self._endpoint(ref='frontchannel_logout', **kwargs)
