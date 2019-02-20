@@ -702,6 +702,12 @@ def modified_idtoken_hint(oper, arg):
             [header, as_unicode(_jws.jwt.b64part[1]), ''])
 
 
+def set_backchannel_logout_uri(oper, args):
+    _base = get_base(oper.conv.entity.base_url)
+    oper.req_args['backchannel_logout_uri'] = "{}{}".format(
+        _base, "backchannel_logout")
+
+
 def factory(name):
     for fname, obj in inspect.getmembers(sys.modules[__name__]):
         if inspect.isfunction(obj):
