@@ -350,5 +350,5 @@ class Main(object):
     def frontchannel_logout(self, **kwargs):
         return self._endpoint(ref='frontchannel_logout', **kwargs)
 
-    @cherrypy.expose
-    def session_iframe(self):
+    # @cherrypy.expose
+    # def session_iframe(self):
