@@ -716,8 +716,24 @@ class FrontChannelLogout(EndPoint):
     request_where = "url"  # otherwise 'body'
     request_type = "urlencoded"
 
-    def act_on_request(self):
-        pass
+    def parse_request(self, message_factory, request=None,
+                      request_args=None):
+
+        req = self.deserialize(message_factory, request, request_args)
+
+        try:
+            sm_id = req['sid']
+        except KeyError:
+            raise MessageException('No session ID in request')
+        else:
+            try:
+                return self.conv.entity.smid2sid[sm_id]
+            except KeyError:
+                raise ValueError('Unknown session ID in request')
+
+    def act_on_request(self, state):
+        del self.conv.entity.grant[state]
+        return "OK"
 
 
 class PostLogout(EndPoint):
@@ -737,6 +753,24 @@ class PostLogout(EndPoint):
             _sid = self.conv.entity.logout_state2state[logout_state]
 
         return None
+
+
+class DisplayIframes(Notice):
+    pre_html = "iframes.html"
+
+    def op_setup(self):
+        pass
+
+    def args(self):
+        return {
+            "next": link("{}continue?path={}&index={}".format(
+                self.conv.entity.base_url, self.test_id, self.sh["index"])),
+            "back": link(self.conv.entity.base_url),
+            "note": self.message,
+            "base": link(self.conv.entity.base_url),
+            'header': "OpenID Certification OP Test",
+            'title': self.test_id
+        }
 
 
 def factory(name):

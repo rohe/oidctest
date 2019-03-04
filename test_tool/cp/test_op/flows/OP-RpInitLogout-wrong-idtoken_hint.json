@@ -52,6 +52,10 @@
     {
       "EndSession": {
         "set_post_logout_redirect_uri": null,
+        "set_state": null,
+        "set_op_args": {
+          "add_state": true
+        },
         "modified_idtoken_hint": null
       }
     },

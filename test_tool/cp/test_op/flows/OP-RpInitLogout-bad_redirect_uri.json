@@ -57,6 +57,7 @@
         "id_token_hint": null
       }
     },
+    "PostLogout",
     {
       "AsyncAuthn": {
         "set_response_where": null,

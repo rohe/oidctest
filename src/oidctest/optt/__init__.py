@@ -30,7 +30,7 @@ def expected_response_mode(conv):
         response_mode = conv.req.req_args["response_mode"]
     except KeyError:
         if conv.req.req_args["response_type"] == [''] or conv.req.req_args[
-            "response_type"] == ['code']:
+                "response_type"] == ['code']:
             response_mode = 'query'
         else:
             response_mode = 'fragment'
@@ -349,3 +349,6 @@ class Main(object):
     @cherrypy.expose
     def frontchannel_logout(self, **kwargs):
         return self._endpoint(ref='frontchannel_logout', **kwargs)
+
+    @cherrypy.expose
+    def session_iframe(self):

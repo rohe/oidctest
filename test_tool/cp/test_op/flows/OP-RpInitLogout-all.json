@@ -52,12 +52,14 @@
     {
       "EndSession": {
         "set_post_logout_redirect_uri": null,
+        "set_state": null,
         "set_op_args": {
           "add_state": true
         },
         "id_token_hint": null
       }
     },
+    "PostLogout",
     {
       "AsyncAuthn": {
         "set_response_where": null,

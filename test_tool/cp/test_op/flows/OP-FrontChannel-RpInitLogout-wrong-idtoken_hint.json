@@ -1,5 +1,5 @@
 {
-  "group": "RP Initiated Logout",
+  "group": "Front Channel Logout - RP Initiated",
   "usage": {
     "extra": true,
     "return_type": [
@@ -9,7 +9,7 @@
       "CIT"
     ]
   },
-  "desc": "Uses RP initiated logout to end a Session at the OP. The request has no post_logout_redirect_uri",
+  "desc": "Uses RP initiated logout to end a Session at the OP. The request has post_logout_redirect_uri and an incorrect id_token_hint",
   "sequence": [
     {
       "Webfinger": {
@@ -26,8 +26,10 @@
         "set_request_args": {
           "grant_types": [
             "authorization_code"
-          ]
-        }
+          ],
+          "backchannel_logout_session_required": true
+        },
+        "set_backchannel_logout_uri": null
       }
     },
     {
@@ -51,19 +53,17 @@
     },
     {
       "EndSession": {
+        "set_post_logout_redirect_uri": null,
         "set_state": null,
         "set_op_args": {
           "add_state": true
         },
-        "id_token_hint": null
-      }
-    },
-    "PostLogout",
-    {
-      "AsyncAuthn": {
-        "set_response_where": null,
-        "set_request_args": {
-          "prompt": "none"
+        "modified_idtoken_hint": null,
+        "set_expect_error": {
+          "error": [
+            "invalid_request"
+          ],
+          "stop": false
         }
       }
     }

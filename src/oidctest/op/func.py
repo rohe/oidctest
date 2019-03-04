@@ -3,6 +3,8 @@ import json
 import os
 import six
 import sys
+
+from jwkest.jwt import JWT
 from past.types import basestring
 
 from jwkest import as_bytes
@@ -10,7 +12,7 @@ from jwkest import as_unicode
 from jwkest import b64e
 from jwkest.jws import factory as jws_factory
 from oic import rndstr
-from oic.oic import PREFERENCE2PROVIDER
+from oic.oic import PREFERENCE2PROVIDER, IdToken
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 
 from future.backports.urllib.parse import urlencode
@@ -508,6 +510,22 @@ def redirect_uris_with_fragment(oper, kwargs):
     oper.req_args["redirect_uris"] = [ru]
 
 
+def post_logout_redirect_uri_with_query_component(oper, args):
+    """
+    Context: AsyncAuthn
+    Action: Add a query component to the post_logout_redirect_uri
+    Example:
+        post_logout_redirect_uri_with_query_component:
+            foo: bar
+
+    :param oper: An Operation Instance
+    :param kwargs: Values to build the query part from
+    """
+    ru = oper.conv.entity.registration_info['post_logout_redirect_uris'][0]
+    ru += "?%s" % urlencode(args)
+    oper.req_args.update({"post_logout_redirect_uri": [ru]})
+
+
 def request_in_file(oper, kwargs):
     """
     Context: AsyncAuthn
@@ -661,28 +679,26 @@ def set_client_authn_method(oper, arg):
                 "token_endpoint_auth_methods_supported"][0]
             # generate a key error if client authn method is not supported by
             # pyoidc
-            CLIENT_AUTHN_METHOD[_method]
+            m = CLIENT_AUTHN_METHOD[_method]
         except KeyError:  # Go with default
             _method = 'client_secret_basic'
 
     oper.op_args['authn_method'] = _method
 
 
-# def create_idtoken_hint_other_issuer(oper, arg):
-#     """
-#     Context: EndSession
-#     Action: Sets the 'id_token_hint' argument in a end_session request.
-#         The value of the argument is a correct signed JWT but not the one
-#         that should have been used.
-#     Usage Example:
-#         "create_idtoken_hint_other_issuer": null
-#     """
-#     res = get_signed_id_tokens(oper.conv)
-#     if res:
-#
-#     _jwt = JWT()
-#     _ith = _jwt.pack()
-#     oper.req_args["state"] = _ith
+def create_idtoken_hint_other_issuer(oper, arg):
+    """
+    Context: EndSession
+    Action: Sets the 'id_token_hint' argument in a end_session request.
+        The value of the argument is a correct signed JWT but not the one
+        that should have been used.
+    Usage Example:
+        "create_idtoken_hint_other_issuer": null
+    """
+    idt = IdToken()
+    keys = oper.conv.entity.key_jar.get_signing_key('rsa')
+    _jwt = idt.to_jwt(keys, 'RS256')
+    oper.req_args["id_token_hint"] = _jwt
 
 
 def modified_idtoken_hint(oper, arg):
@@ -706,6 +722,12 @@ def set_backchannel_logout_uri(oper, args):
     _base = get_base(oper.conv.entity.base_url)
     oper.req_args['backchannel_logout_uri'] = "{}{}".format(
         _base, "backchannel_logout")
+
+
+def set_frontchannel_logout_uri(oper, args):
+    _base = get_base(oper.conv.entity.base_url)
+    oper.req_args['frontchannel_logout_uri'] = "{}{}".format(
+        _base, "frontchannel_logout")
 
 
 def factory(name):
