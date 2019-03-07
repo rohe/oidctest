@@ -9,7 +9,7 @@
       "CIT"
     ]
   },
-  "desc": "Uses RP initiated logout to end a Session at the OP. The request has post_logout_redirect_uri and an incorrect id_token_hint",
+  "desc": "Uses RP initiated logout to end a Session at the OP. The request has post_logout_redirect_uri and an id_token_hint from somewhere else",
   "sequence": [
     {
       "Webfinger": {
@@ -54,11 +54,11 @@
     {
       "EndSession": {
         "set_post_logout_redirect_uri": null,
-        "set_state": null,
+        "set_req_args_state": null,
         "set_op_args": {
           "add_state": true
         },
-        "create_idtoken_hint_other_issuer": null,
+        "create_idtoken_hint_other_issuer": {"sub": "SubjectID"},
         "set_expect_error": {
           "error": [
             "invalid_request"

@@ -5,6 +5,7 @@ import six
 import sys
 
 from jwkest.jwt import JWT
+from oic.utils.time_util import time_sans_frac
 from past.types import basestring
 
 from jwkest import as_bytes
@@ -614,6 +615,19 @@ def set_state(oper, arg):
     oper.op_args['state'] = oper.conv.state
 
 
+def set_req_args_state(oper, arg):
+    """
+    Context: RefreshAccessToken
+    Action: Sets the operation argument 'state' to what has been used
+    previously in the session.
+    Example:
+        "set_state": null
+
+    """
+
+    oper.req_args['state'] = oper.conv.state
+
+
 def set_post_logout_redirect_uri(oper, arg):
     """
     Context: EndSession
@@ -695,8 +709,12 @@ def create_idtoken_hint_other_issuer(oper, arg):
     Usage Example:
         "create_idtoken_hint_other_issuer": null
     """
-    idt = IdToken()
-    keys = oper.conv.entity.key_jar.get_signing_key('rsa')
+    iss = oper.conv.entity.client_id
+    op = oper.conv.entity.provider_info['issuer']
+    iat = time_sans_frac()
+    exp = iat+3600
+    idt = IdToken(iss=iss, aud=[op], iat=iat, exp=exp, **arg)
+    keys = oper.conv.entity.keyjar.get_signing_key('rsa')
     _jwt = idt.to_jwt(keys, 'RS256')
     oper.req_args["id_token_hint"] = _jwt
 

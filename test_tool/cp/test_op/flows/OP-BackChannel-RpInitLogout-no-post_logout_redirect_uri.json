@@ -58,7 +58,7 @@
     },
     {
       "EndSession": {
-        "set_state": null,
+        "set_req_args_state": null,
         "set_op_args": {
           "add_state": true
         },

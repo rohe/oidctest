@@ -1,8 +1,5 @@
-import copy
-
-from future.backports.urllib.parse import urlparse
-
 import builtins
+import copy
 import inspect
 import json
 import logging
@@ -11,13 +8,14 @@ import sys
 import time
 
 from Cryptodome.PublicKey import RSA
-
+from future.backports.urllib.parse import parse_qs
+from future.backports.urllib.parse import urlencode
+from future.backports.urllib.parse import urlparse
 from jwkest.jwk import RSAKey
-
 from oic import rndstr
+from oic.exception import IssuerMismatch
 from oic.exception import MessageException
 from oic.exception import NotForMe
-from oic.exception import IssuerMismatch
 from oic.exception import ParameterError
 from oic.oauth2 import ErrorResponse
 from oic.oauth2 import Message
@@ -27,6 +25,7 @@ from oic.oauth2.util import URL_ENCODED
 from oic.oic import OpenIDSchema
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
+from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 from oic.utils.http_util import Redirect
 from oic.utils.keyio import KeyBundle
 from oic.utils.keyio import dump_jwks
@@ -35,13 +34,13 @@ from oic.utils.keyio import rsa_init
 from otest import RequirementsNotMet
 from otest import Unknown
 from otest.aus.operation import Operation
-from otest.aus.request import display_jwx_headers
-from otest.aus.request import same_issuer
 from otest.aus.request import AsyncGetRequest
 from otest.aus.request import AsyncRequest
 from otest.aus.request import Request
 from otest.aus.request import SyncGetRequest
 from otest.aus.request import SyncPostRequest
+from otest.aus.request import display_jwx_headers
+from otest.aus.request import same_issuer
 from otest.check import get_id_tokens
 from otest.events import EV_EXCEPTION
 from otest.events import EV_FAULT
@@ -52,8 +51,9 @@ from otest.events import EV_REDIRECT_URL
 from otest.events import EV_REQUEST
 from otest.events import EV_RESPONSE
 from otest.events import OUTGOING
+from otest.operation import Notice
+from otest.operation import link
 from otest.prof_util import RESPONSE
-from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 
 __author__ = 'roland'
 
@@ -157,11 +157,13 @@ class Registration(Operation):
                 "registration_endpoint"]
             if self.conv.entity.jwks_uri:
                 self.req_args['jwks_uri'] = self.conv.entity.jwks_uri
-            #use the first mutually supported authentication method
-            if self.conv.entity.provider_info["token_endpoint_auth_methods_supported"]:
-                for sam in self.conv.entity.provider_info["token_endpoint_auth_methods_supported"]:
+            # use the first mutually supported authentication method
+            if self.conv.entity.provider_info[
+                "token_endpoint_auth_methods_supported"]:
+                for sam in self.conv.entity.provider_info[
+                    "token_endpoint_auth_methods_supported"]:
                     if sam in CLIENT_AUTHN_METHOD:
-                        self.req_args['token_endpoint_auth_method']=sam
+                        self.req_args['token_endpoint_auth_method'] = sam
                         break
 
     def map_profile(self, profile_map):
@@ -240,12 +242,14 @@ class AccessToken(SyncPostRequest):
         if 'authn_method' not in self.op_args:
             _ent = self.conv.entity
             try:
-                #use the registered authn method
-                self.op_args['authn_method'] = _ent.registration_response['token_endpoint_auth_method']
+                # use the registered authn method
+                self.op_args['authn_method'] = _ent.registration_response[
+                    'token_endpoint_auth_method']
             except KeyError:
-                #use the first mutually supported authn method
+                # use the first mutually supported authn method
                 for am in _ent.client_authn_method.keys():
-                    if am in _ent.provider_info['token_endpoint_auth_methods_supported']:
+                    if am in _ent.provider_info[
+                        'token_endpoint_auth_methods_supported']:
                         self.op_args['authn_method'] = am
                         break
 
@@ -318,7 +322,7 @@ class RefreshToken(SyncPostRequest):
             except KeyError:
                 for am in _ent.client_authn_method.keys():
                     if am in _ent.provider_info[
-                            'token_endpoint_auth_methods_supported']:
+                        'token_endpoint_auth_methods_supported']:
                         self.op_args['authn_method'] = am
                         break
 
@@ -346,7 +350,7 @@ class RefreshToken(SyncPostRequest):
             if _jws_alg == "none":
                 pass
             elif "kid" not in atr[
-                    "id_token"].jws_header and not _jws_alg == "HS256":
+                "id_token"].jws_header and not _jws_alg == "HS256":
                 keys = self.conv.entity.keyjar.keys_by_alg_and_usage(
                     self.conv.info["issuer"], _jws_alg, "ver")
                 if len(keys) > 1:
@@ -385,7 +389,6 @@ class UserInfo(SyncGetRequest):
             self.conv.events.store(EV_PROTOCOL_RESPONSE, response)
 
         display_jwx_headers(response, self.conv)
-
 
     def _verify_subject_identifier(self, user_info):
         id_tokens = get_id_tokens(self.conv)
@@ -591,13 +594,23 @@ class EndSession(AsyncRequest):
 
         if 'add_state' in self.op_args:
             _state = rndstr(32)
-            _client.logout_state2state[_state] = self.op_args['state']
+            _req_state = self.req_args['state']
+            _client.logout_state2state[_state] = _req_state
             self.conv.end_session_state = _state
-            self.op_args['state'] = _state
+            self.op_args['state'] = _req_state
+            self.req_args['state'] = _state
 
         url, body, ht_args, csi = _client.request_info(
             self.request, method=self.method, request_args=self.req_args,
             lax=True, **self.op_args)
+
+        if 'remove_id_token_hint' in self.op_args:
+            del csi['id_token_hint']
+            head, tail = url.split('?')
+            _qs = parse_qs(tail)
+            del _qs['id_token_hint']
+            _qs = {k: v[0] for k, v in _qs.items()}
+            url = '{}?{}'.format(head, urlencode(_qs))
 
         self.csi = csi
 
@@ -668,7 +681,6 @@ class EndPoint(Request):
         logger.info("Parsed request: %s" % req.to_dict())
         self.conv.events.store(EV_PROTOCOL_REQUEST, req, ref=ev_index,
                                receiver=self.__class__.__name__)
-
 
         return req
 
