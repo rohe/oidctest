@@ -108,11 +108,9 @@ class Server(oic.Server):
     def make_id_token(self, session, loa="2", issuer="",
                       alg="RS256", code=None, access_token=None,
                       user_info=None, auth_time=0, exp=None, extra_claims=None):
-        idt = oic.Server.make_id_token(self, session, loa, issuer, alg,
-                                       code,
+        idt = oic.Server.make_id_token(self, session, loa, issuer, alg, code,
                                        access_token, user_info, auth_time,
-                                       exp,
-                                       extra_claims)
+                                       exp, extra_claims)
 
         if "ath" in self.behavior_type:  # modify the at_hash if available
             try:
@@ -160,14 +158,14 @@ class Provider(provider.Provider):
                  client_authn, symkey, urlmap=None, ca_certs="", keyjar=None,
                  hostname="", template_lookup=None, template=None,
                  verify_ssl=True, capabilities=None, client_cert=None,
-                 **kwargs):
+                 logout_path='', **kwargs):
 
         provider.Provider.__init__(
             self, name, sdb, cdb, authn_broker, userinfo, authz, client_authn,
             symkey=symkey, urlmap=urlmap, keyjar=keyjar, hostname=hostname,
             template_lookup=template_lookup, template=template,
             verify_ssl=verify_ssl, capabilities=capabilities,
-            client_cert=client_cert)
+            client_cert=client_cert, logout_path=logout_path)
 
         self.claims_type = ["normal"]
         self.behavior_type = []
@@ -605,23 +603,5 @@ class Provider(provider.Provider):
     def end_session_endpoint(self, request="", cookie=None, **kwargs):
         _response = provider.Provider.end_session_endpoint(self, request,
                                                            cookie, **kwargs)
-
-        if isinstance(_response, SeeOther):
-            _path, _query = _response.message.split('?')
-            if _query: # Can not change a query part that's not there
-                _kwa = parse_qs(_query)
-                if 'state' in _kwa:
-                    if 'ost' in self.behavior_type:
-                        while True:
-                            _state = rndstr(32)
-                            if _state != _kwa['state']:
-                                _kwa['state'] = _state
-                                break
-                    elif 'nst' in self.behavior_type:
-                        del _kwa['state']
-                if _kwa:
-                    _response.message = "{}?{}".format(_path, urlencode(_kwa))
-                else:
-                    _response.message = _path
-
         return _response
+
