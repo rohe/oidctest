@@ -264,6 +264,11 @@ def cb_setup(args, lookup=None):
         print("Can't access client certificate and/or client secret")
         exit(-1)
 
+    try:
+        com_args['logout_path'] = config.LOGOUT_PATH
+    except AttributeError:
+        pass
+
     op_arg = {}
 
     try:
@@ -292,6 +297,9 @@ def cb_setup(args, lookup=None):
         _sdb = create_session_db(com_args["baseurl"], 'automover', '430X', {})
         _op = Provider(sdb=_sdb, **com_args)
         jwks = keyjar_init(_op, config.keys)
+        # Add keys under the issuer ID
+        _bj = _op.keyjar.export_jwks(True, '')
+        _op.keyjar.import_jwks(_bj, _op.baseurl)
     except KeyError:
         pass
     else:
