@@ -29,6 +29,7 @@ def handle_error():
         "<html><body>Sorry, an error occured</body></html>"
     ]
 
+
 def set_content_type(resp, content_type):
     if ('Content-type', content_type) in resp.headers:
         return
@@ -323,7 +324,89 @@ class EndSession(object):
             cookie = cherrypy.request.cookie
             _info = Message(**kwargs)
             resp = op.end_session_endpoint(_info.to_urlencoded(), cookie=cookie)
+            # Normally the user would here be confronted with a logout
+            # verification page. We skip that and assumes she said yes.
+
+            # _info = op.unpack_signed_jwt(resp['sjwt'])
+            # try:
+            #     _iframes = op.do_verified_logout(alla=True, **_info)
+            # except Exception as err:
+            #     logger.exception(err)
+            #     raise cherrypy.HTTPError(message=err)
+
             return conv_response(op, resp)
+
+
+LOGOUT_HTML_HEAD = """
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <title>Logout</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <style>
+    iframe{visibility:hidden;position:absolute;left:0;top:0;height:0;width:0;border:none}
+  </style>
+</head>
+"""
+LOGOUT_HTML_BODY = """
+<body>
+  <script>
+    var loaded = 0;
+    var iframes = {size};
+    function redirect() {
+      window.location.replace("{postLogoutRedirectUri}");
+    }
+    function frameOnLoad() {
+      loaded += 1;
+      if (loaded === iframes) {
+        redirect();
+      }
+    }
+    Array.prototype.slice.call(document.querySelectorAll('iframe')).forEach(function (element) {
+      element.onload = frameOnLoad;
+    });
+    setTimeout(redirect, {timeout});
+  </script>
+  {frames}
+</body>
+</html>
+"""
+
+
+class Logout(object):
+    @cherrypy.expose
+    @cherrypy_cors.tools.expose_public()
+    @cherrypy.tools.allow(
+        methods=["OPTIONS", "POST", "GET"])
+    def index(self, op, **kwargs):
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["POST", "GET"], origins='*',
+                allowed_headers=['Authorization', 'content-type'])
+        else:
+            store_request(op, 'Logout')
+            logger.debug('LogoutRequest: {}'.format(kwargs))
+            op.events.store(EV_REQUEST, kwargs)
+
+            # Normally the user would here be confronted with a logout
+            # verification page. We skip that and assumes she said yes.
+
+            _info = op.unpack_signed_jwt(kwargs['sjwt'])
+            logger.debug("SJWT unpacked: {}".format(_info))
+            try:
+                _iframes = op.do_verified_logout(alla=True, **_info)
+            except Exception as err:
+                logger.exception(err)
+                raise cherrypy.HTTPError(message=err)
+
+            _body = LOGOUT_HTML_BODY.replace('{size}', str(len(_iframes)))
+            _body = _body.replace('{frames}',''.join(_iframes))
+            _body = _body.replace('{timeout}', '10')
+            _body = _body.replace('{postLogoutRedirectUri}',
+                                  _info['redirect_uri'])
+
+            return as_bytes("\n".join([LOGOUT_HTML_HEAD, _body]))
 
 
 HTML_PRE = """
@@ -470,6 +553,7 @@ class Provider(Root):
         self.userinfo = UserInfo()
         self.claims = Claims()
         self.end_session = EndSession()
+        self.logout = Logout()
         self.reset = Reset(self.op_handler.com_args, self.op_handler.op_args)
 
     def _cp_dispatch(self, vpath):
@@ -511,6 +595,8 @@ class Provider(Root):
                         return self.reset
                     elif endpoint == 'end_session':
                         return self.end_session
+                    elif endpoint == 'logout':
+                        return self.logout
                     else:  # Shouldn't be any other
                         raise cherrypy.NotFound()
                 if len(vpath) == 2:
