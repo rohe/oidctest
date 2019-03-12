@@ -5,6 +5,7 @@ import os
 
 import cherrypy
 import sys
+
 from oic.utils import webfinger
 from otest.flow import Flow
 from otest.prof_util import SimpleProfileHandler
@@ -102,10 +103,8 @@ if __name__ == '__main__':
     }
 
     # WebFinger
-    webfinger_config = {
-        '/': {'base_url': _op_arg['baseurl']}}
-    cherrypy.tree.mount(WebFinger(webfinger.WebFinger(),
-                                  version=_version),
+    webfinger_config = {'/': {'base_url': _op_arg['baseurl']}}
+    cherrypy.tree.mount(WebFinger(webfinger.WebFinger(), version=_version),
                         '/.well-known/webfinger', webfinger_config)
 
     # test list
