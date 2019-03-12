@@ -3,7 +3,7 @@ import os
 
 BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "static"))
 
-baseurl = "https://localhost"
+baseurl = "https://192.168.1.109"
 
 keys = [
     {"type": "RSA", "key": "keys/pyoidc_enc", "use": ["enc"]},
@@ -36,7 +36,7 @@ GRPS = [
     "request_uri Request Parameter", "scope Request Parameter",
     "nonce Request Parameter", "Client Authentication",
     "ID Token", "Key Rotation", "Claims Types", "UserInfo Endpoint",
-    "3rd-Party Init SSO"
+    "3rd-Party Init SSO", "RP Initiated BackChannel Logout"
 ]
 
 # Only Username and password.
@@ -55,6 +55,11 @@ SERVER_KEY = "certs/server.key"
 CA_BUNDLE = None
 
 CLIENT_DB = "clients"
+
+# This is where a user should be involved but we skip that and go directly
+# to logout
+LOGOUT_PATH = 'logout'
+
 
 # =======  SIMPLE DATABASE ==============
 
