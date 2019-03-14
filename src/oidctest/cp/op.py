@@ -1,3 +1,5 @@
+from http.cookies import SimpleCookie
+
 from future.backports.urllib.parse import urlparse
 
 import logging
@@ -41,19 +43,21 @@ def set_content_type(resp, content_type):
 
 def conv_response(op, resp):
     _stat = resp.status_code
-    #  if self.mako_lookup and self.mako_template:
-    #    argv["message"] = message
-    #    mte = self.mako_lookup.get_template(self.mako_template)
-    #    return [mte.render(**argv)]
+    for typ, val in resp.headers:
+        if typ == 'Set-Cookie':
+            cherrypy.response.cookie.load(val)
+
     if _stat < 300:
         op.events.store(EV_RESPONSE, resp.message)
         cherrypy.response.status = _stat
         for key, val in resp.headers:
+            if key == 'Set-Cookie':
+                continue
             cherrypy.response.headers[key] = val
         return as_bytes(resp.message)
     elif 300 <= _stat < 400:
         op.events.store('Redirect', resp.message)
-        raise cherrypy.HTTPRedirect(resp.message, status=_stat)
+        raise cherrypy.HTTPRedirect(resp.message, status=302)
     else:
         logger.debug("Error - Status:{}, message:{}".format(_stat, resp.message))
         op.events.store(EV_FAULT, resp.message)
