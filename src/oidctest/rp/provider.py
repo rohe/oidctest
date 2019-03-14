@@ -716,6 +716,11 @@ class Provider(provider.Provider):
 
         return back_channel_logout_uri, sjwt
 
-    def do_front_channel_logout_iframe(c_info, iss, sid):
-        res = do_front_channel_logout_iframe(c_info, iss, sid)
-        return res
+    def do_front_channel_logout_iframe(self, c_info, iss, sid):
+        if 'wrong_issuer' in self.behavior_type:
+            iss = self.other
+        if 'wrong_sid' in self.behavior_type:
+            sid = 'another_sid'
+
+        _iframe = do_front_channel_logout_iframe(c_info, iss, sid)
+        return _iframe
