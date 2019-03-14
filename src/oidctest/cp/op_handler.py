@@ -101,6 +101,9 @@ class OPHandler(object):
             else:
                 setattr(op, key, val)
 
+        if not op.cookie_path:
+            op.cookie_path = '/'
+
         write_jwks_uri(op, op_arg, self.folder)
 
         if op.baseurl.endswith("/"):
