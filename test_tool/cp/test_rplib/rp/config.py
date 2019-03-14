@@ -45,8 +45,14 @@ AUTHENTICATION = {
     "NoAuthn": {"ACR": "PASSWORD", "WEIGHT": 1, "user": "diana"}
 }
 
-COOKIENAME = 'pyoic'
-COOKIETTL = 4 * 60  # 4 hours
+COOKIE = {
+    #    'domain': '192.168.1.109'
+    'name': 'pyoic',
+    'ttl': 4 * 60  # 4 hours
+}
+
+SSO_TTL = 2*60
+
 SYM_KEY = "SoLittleTime,Got"
 
 SERVER_CERT = "certs/server.crt"
