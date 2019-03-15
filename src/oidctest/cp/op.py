@@ -10,6 +10,7 @@ from cherrypy import url
 from jwkest import as_bytes
 from jwkest import as_unicode
 from oic.oauth2 import Message
+from otest.events import EV_ENDPOINT
 from otest.events import EV_FAULT
 from otest.events import EV_REQUEST
 from otest.events import EV_RESPONSE
@@ -324,7 +325,7 @@ class EndSession(object):
         else:
             store_request(op, 'EndSessionRequest')
             logger.debug('EndSessionRequest: {}'.format(kwargs))
-            op.events.store(EV_REQUEST, kwargs)
+            # op.events.store(EV_REQUEST, kwargs)
             cookie = cherrypy.request.cookie
             _info = Message(**kwargs)
             resp = op.end_session_endpoint(_info.to_urlencoded(), cookie=cookie)
@@ -406,7 +407,7 @@ class Logout(object):
 
             _body = LOGOUT_HTML_BODY.replace('{size}', str(len(_iframes)))
             _body = _body.replace('{frames}',''.join(_iframes))
-            _body = _body.replace('{timeout}', '10')
+            _body = _body.replace('{timeout}', '30')
             _body = _body.replace('{postLogoutRedirectUri}',
                                   _info['redirect_uri'])
 
@@ -584,6 +585,7 @@ class Provider(Root):
                 if len(vpath) == 1:
                     endpoint = vpath.pop(0)
                     op = self.op_handler.get(oper_id, test_id, ev, endpoint)[0]
+                    op.events.store(EV_ENDPOINT, endpoint)
                     cherrypy.request.params['op'] = op
                     if endpoint == 'registration':
                         return self.registration
@@ -646,6 +648,7 @@ class RelyingPartyInstance(object):
             if test_id == "rp-3rd_party-init-login":
                 return self.rp_3rd_party_init_login(op, client_id)
             raise cherrypy.HTTPError(404, "no test handler found for test id: " + test_id)
+
 
 class RelyingParty(object):
     def __init__(self, op_handler, version=''):

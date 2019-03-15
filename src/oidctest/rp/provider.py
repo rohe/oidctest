@@ -649,8 +649,6 @@ class Provider(provider.Provider):
     keyjar = property(_get_keyjar, _set_keyjar)
 
     def end_session_endpoint(self, request="", cookie=None, **kwargs):
-        self.events.store(EV_PROTOCOL_REQUEST,
-                          'End session request: {}'.format(request))
         return provider.Provider.end_session_endpoint(self, request, cookie,
                                                       **kwargs)
 
