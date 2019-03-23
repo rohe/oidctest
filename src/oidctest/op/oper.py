@@ -1,8 +1,5 @@
-import copy
-
-from future.backports.urllib.parse import urlparse
-
 import builtins
+import copy
 import inspect
 import json
 import logging
@@ -11,13 +8,13 @@ import sys
 import time
 
 from Cryptodome.PublicKey import RSA
-
+from future.backports.urllib.parse import urlparse
+from jwkest import as_bytes
 from jwkest.jwk import RSAKey
-
 from oic import rndstr
+from oic.exception import IssuerMismatch
 from oic.exception import MessageException
 from oic.exception import NotForMe
-from oic.exception import IssuerMismatch
 from oic.exception import ParameterError
 from oic.oauth2 import ErrorResponse
 from oic.oauth2 import Message
@@ -27,6 +24,7 @@ from oic.oauth2.util import URL_ENCODED
 from oic.oic import OpenIDSchema
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
+from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 from oic.utils.http_util import Redirect
 from oic.utils.keyio import KeyBundle
 from oic.utils.keyio import dump_jwks
@@ -35,13 +33,13 @@ from oic.utils.keyio import rsa_init
 from otest import RequirementsNotMet
 from otest import Unknown
 from otest.aus.operation import Operation
-from otest.aus.request import display_jwx_headers
-from otest.aus.request import same_issuer
 from otest.aus.request import AsyncGetRequest
 from otest.aus.request import AsyncRequest
 from otest.aus.request import Request
 from otest.aus.request import SyncGetRequest
 from otest.aus.request import SyncPostRequest
+from otest.aus.request import display_jwx_headers
+from otest.aus.request import same_issuer
 from otest.check import get_id_tokens
 from otest.events import EV_EXCEPTION
 from otest.events import EV_FAULT
@@ -52,8 +50,9 @@ from otest.events import EV_REDIRECT_URL
 from otest.events import EV_REQUEST
 from otest.events import EV_RESPONSE
 from otest.events import OUTGOING
+from otest.operation import Note
+from otest.operation import Notice
 from otest.prof_util import RESPONSE
-from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 
 __author__ = 'roland'
 
@@ -755,22 +754,64 @@ class PostLogout(EndPoint):
         return None
 
 
-class DisplayIframes(Notice):
-    pre_html = "iframes.html"
+class LogoutPage(Note):
+    pre_html = "opresult.html"
+    response_cls = "EndSessionResponse"
+    request_cls = "EndSessionRequest"
+    method = 'GET'
+
+    def __init__(self, conv, inut, sh, **kwargs):
+        super(LogoutPage, self).__init__(conv, inut, sh, **kwargs)
+        self.csi = None
+        self.request = self.conv.msg_factory(self.request_cls)
+        self.response = self.conv.msg_factory(self.response_cls)
+        self.op_args["endpoint"] = conv.entity.provider_info[
+            "end_session_endpoint"]
+
+    def op_setup(self):
+        pass
+
+    def args(self):
+        _client = self.conv.entity
+
+        if 'add_state' in self.op_args:
+            _state = rndstr(32)
+            _client.logout_state2state[_state] = self.op_args['state']
+            self.conv.end_session_state = _state
+            self.req_args['state'] = _state
+
+        url, body, ht_args, csi = _client.request_info(
+            self.request, method=self.method, request_args=self.req_args,
+            lax=True, **self.op_args)
+
+        self.csi = csi
+
+        self.conv.events.store(EV_REDIRECT_URL, url,
+                               sender=self.__class__.__name__)
+
+        return {
+            'check_session_iframe': self.conv.entity.provider_info[
+                'check_session_iframe'],
+            'logout_url': str(url)}
+
+    def __call__(self, *args, **kwargs):
+        _msg = self.inut.pre_html[self.pre_html]
+        kwargs = self.args()
+        for param in ['check_session_iframe', 'logout_url']:
+            _msg = _msg.replace('{{{}}}'.format(param), kwargs[param])
+        return as_bytes(_msg)
+
+
+class AfterLogout(Notice):
+    pre_html = "after_logout.html"
 
     def op_setup(self):
         pass
 
     def args(self):
         return {
-            "next": link("{}continue?path={}&index={}".format(
-                self.conv.entity.base_url, self.test_id, self.sh["index"])),
-            "back": link(self.conv.entity.base_url),
-            "note": self.message,
-            "base": link(self.conv.entity.base_url),
-            'header': "OpenID Certification OP Test",
-            'title': self.test_id
-        }
+            'check_session_iframe': self.conv.entity.provider_info[
+                'check_session_iframe']}
 
 
 def factory(name):
