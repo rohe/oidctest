@@ -5,9 +5,11 @@ from cherrypy import CherryPyException
 from cherrypy import HTTPRedirect
 from jwkest import as_bytes
 from jwkest import as_unicode
+from oic.oic import AuthorizationResponse
 from otest import Break
 from otest import exception_trace
 from otest.check import CRITICAL
+from otest.check import get_protocol_response
 from otest.events import EV_EXCEPTION
 from otest.events import EV_FAULT
 from otest.events import EV_HTTP_ARGS
@@ -333,7 +335,9 @@ class Main(object):
         self.opresult()
 
     @cherrypy.expose
-    def logout(self, **kwargs): # post_logout_redirect_uri
+    def logout(self, **kwargs):  # post_logout_redirect_uri
+        _state = self.tester.conv.entity.logout_state2state[kwargs['state']]
+        msg = self.tester.inut.pre_html['after_logout.html']
         return self._endpoint(ref='logout', **kwargs)
 
     @cherrypy.expose
@@ -350,5 +354,25 @@ class Main(object):
     def frontchannel_logout(self, **kwargs):
         return self._endpoint(ref='frontchannel_logout', **kwargs)
 
-    # @cherrypy.expose
-    # def session_iframe(self):
+    @cherrypy.expose
+    def session_change(self, **kwargs):
+        return
+
+    @cherrypy.expose
+    def session_iframe(self):
+        _conv = self.tester.conv
+        _entity = _conv.entity
+
+        _msg = self.tester.inut.pre_html['rp_session_iframe.mako']
+        # client_id
+        _msg = _msg.replace("{client_id}", _entity.client_id)
+        # session_state, get it from the Authorization response
+        inst = get_protocol_response(_conv, AuthorizationResponse)
+        _msg = _msg.replace("{session_state}", inst[0]['session_state'])
+        # issuer
+        _msg = _msg.replace("{issuer}", _entity.provider_info['issuer'])
+        # session_change_url
+        _msg = _msg.replace("{session_change_url}",
+                       self.info.conf.SESSION_CHANGE_URL)
+
+        return as_bytes(_msg)
