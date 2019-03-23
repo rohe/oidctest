@@ -63,6 +63,8 @@ class OPHandler(object):
                     write_jwks_uri(_op, _op_args, self.folder)
                 else:
                     init_keyjar(_op, self.op_args['keyjar'], self.com_args)
+                    _kj = _op.keyjar.export_jwks(True, '')
+                    _op.keyjar.import_jwks(_kj, _op.name)
                     write_jwks_uri(_op, self.op_args, self.folder)
         except KeyError:
             if test_id in ['rp-id_token-kid-absent-multiple-jwks']:
@@ -99,6 +101,9 @@ class OPHandler(object):
             else:
                 setattr(op, key, val)
 
+        if not op.cookie_path:
+            op.cookie_path = '/'
+
         write_jwks_uri(op, op_arg, self.folder)
 
         if op.baseurl.endswith("/"):
@@ -108,6 +113,11 @@ class OPHandler(object):
 
         op.name = op.baseurl = "{}{}{}/{}".format(op.baseurl, div, oper_id,
                                                   test_id)
+
+        op.logout_verify_url = '{}/{}'.format(op.name, op.logout_path)
+
+        _kj = op.keyjar.export_jwks(True, '')
+        op.keyjar.import_jwks(_kj, op.name)
 
         _tc = test_conf[test_id]
         if not _tc:

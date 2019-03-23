@@ -53,9 +53,10 @@
     },
     {
       "EndSession": {
-        "set_state": null,
+        "set_req_args_state": null,
         "set_op_args": {
-          "add_state": true
+          "add_state": true,
+          "remove_id_token_hint": true
         }
       }
     },

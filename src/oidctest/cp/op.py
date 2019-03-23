@@ -1,3 +1,5 @@
+from http.cookies import SimpleCookie
+
 from future.backports.urllib.parse import urlparse
 
 import logging
@@ -8,6 +10,7 @@ from cherrypy import url
 from jwkest import as_bytes
 from jwkest import as_unicode
 from oic.oauth2 import Message
+from otest.events import EV_ENDPOINT
 from otest.events import EV_FAULT
 from otest.events import EV_REQUEST
 from otest.events import EV_RESPONSE
@@ -29,6 +32,7 @@ def handle_error():
         "<html><body>Sorry, an error occured</body></html>"
     ]
 
+
 def set_content_type(resp, content_type):
     if ('Content-type', content_type) in resp.headers:
         return
@@ -40,19 +44,21 @@ def set_content_type(resp, content_type):
 
 def conv_response(op, resp):
     _stat = resp.status_code
-    #  if self.mako_lookup and self.mako_template:
-    #    argv["message"] = message
-    #    mte = self.mako_lookup.get_template(self.mako_template)
-    #    return [mte.render(**argv)]
+    for typ, val in resp.headers:
+        if typ == 'Set-Cookie':
+            cherrypy.response.cookie.load(val)
+
     if _stat < 300:
         op.events.store(EV_RESPONSE, resp.message)
         cherrypy.response.status = _stat
         for key, val in resp.headers:
+            if key == 'Set-Cookie':
+                continue
             cherrypy.response.headers[key] = val
         return as_bytes(resp.message)
     elif 300 <= _stat < 400:
         op.events.store('Redirect', resp.message)
-        raise cherrypy.HTTPRedirect(resp.message, status=_stat)
+        raise cherrypy.HTTPRedirect(resp.message, status=302)
     else:
         logger.debug("Error - Status:{}, message:{}".format(_stat, resp.message))
         op.events.store(EV_FAULT, resp.message)
@@ -319,11 +325,93 @@ class EndSession(object):
         else:
             store_request(op, 'EndSessionRequest')
             logger.debug('EndSessionRequest: {}'.format(kwargs))
-            op.events.store(EV_REQUEST, kwargs)
+            # op.events.store(EV_REQUEST, kwargs)
             cookie = cherrypy.request.cookie
             _info = Message(**kwargs)
             resp = op.end_session_endpoint(_info.to_urlencoded(), cookie=cookie)
+            # Normally the user would here be confronted with a logout
+            # verification page. We skip that and assumes she said yes.
+
+            # _info = op.unpack_signed_jwt(resp['sjwt'])
+            # try:
+            #     _iframes = op.do_verified_logout(alla=True, **_info)
+            # except Exception as err:
+            #     logger.exception(err)
+            #     raise cherrypy.HTTPError(message=err)
+
             return conv_response(op, resp)
+
+
+LOGOUT_HTML_HEAD = """
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <title>Logout</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <style>
+    iframe{visibility:hidden;position:absolute;left:0;top:0;height:0;width:0;border:none}
+  </style>
+</head>
+"""
+LOGOUT_HTML_BODY = """
+<body>
+  <script>
+    var loaded = 0;
+    var iframes = {size};
+    function redirect() {
+      window.location.replace("{postLogoutRedirectUri}");
+    }
+    function frameOnLoad() {
+      loaded += 1;
+      if (loaded === iframes) {
+        redirect();
+      }
+    }
+    Array.prototype.slice.call(document.querySelectorAll('iframe')).forEach(function (element) {
+      element.onload = frameOnLoad;
+    });
+    setTimeout(redirect, {timeout});
+  </script>
+  {frames}
+</body>
+</html>
+"""
+
+
+class Logout(object):
+    @cherrypy.expose
+    @cherrypy_cors.tools.expose_public()
+    @cherrypy.tools.allow(
+        methods=["OPTIONS", "POST", "GET"])
+    def index(self, op, **kwargs):
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["POST", "GET"], origins='*',
+                allowed_headers=['Authorization', 'content-type'])
+        else:
+            store_request(op, 'Logout')
+            logger.debug('LogoutRequest: {}'.format(kwargs))
+            op.events.store(EV_REQUEST, kwargs)
+
+            # Normally the user would here be confronted with a logout
+            # verification page. We skip that and assumes she said yes.
+
+            _info = op.unpack_signed_jwt(kwargs['sjwt'])
+            logger.debug("SJWT unpacked: {}".format(_info))
+            try:
+                _iframes = op.do_verified_logout(alla=True, **_info)
+            except Exception as err:
+                logger.exception(err)
+                raise cherrypy.HTTPError(message=err)
+
+            _body = LOGOUT_HTML_BODY.replace('{size}', str(len(_iframes)))
+            _body = _body.replace('{frames}',''.join(_iframes))
+            _body = _body.replace('{timeout}', '30')
+            _body = _body.replace('{postLogoutRedirectUri}',
+                                  _info['redirect_uri'])
+
+            return as_bytes("\n".join([LOGOUT_HTML_HEAD, _body]))
 
 
 HTML_PRE = """
@@ -470,6 +558,7 @@ class Provider(Root):
         self.userinfo = UserInfo()
         self.claims = Claims()
         self.end_session = EndSession()
+        self.logout = Logout()
         self.reset = Reset(self.op_handler.com_args, self.op_handler.op_args)
 
     def _cp_dispatch(self, vpath):
@@ -496,6 +585,7 @@ class Provider(Root):
                 if len(vpath) == 1:
                     endpoint = vpath.pop(0)
                     op = self.op_handler.get(oper_id, test_id, ev, endpoint)[0]
+                    op.events.store(EV_ENDPOINT, endpoint)
                     cherrypy.request.params['op'] = op
                     if endpoint == 'registration':
                         return self.registration
@@ -511,6 +601,8 @@ class Provider(Root):
                         return self.reset
                     elif endpoint == 'end_session':
                         return self.end_session
+                    elif endpoint == 'logout':
+                        return self.logout
                     else:  # Shouldn't be any other
                         raise cherrypy.NotFound()
                 if len(vpath) == 2:
@@ -556,6 +648,7 @@ class RelyingPartyInstance(object):
             if test_id == "rp-3rd_party-init-login":
                 return self.rp_3rd_party_init_login(op, client_id)
             raise cherrypy.HTTPError(404, "no test handler found for test id: " + test_id)
+
 
 class RelyingParty(object):
     def __init__(self, op_handler, version=''):

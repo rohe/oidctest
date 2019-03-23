@@ -1,5 +1,10 @@
-import builtins
 import copy
+
+from future.backports.urllib.parse import parse_qs
+from future.backports.urllib.parse import urlencode
+from future.backports.urllib.parse import urlparse
+
+import builtins
 import inspect
 import json
 import logging
@@ -156,11 +161,13 @@ class Registration(Operation):
                 "registration_endpoint"]
             if self.conv.entity.jwks_uri:
                 self.req_args['jwks_uri'] = self.conv.entity.jwks_uri
-            #use the first mutually supported authentication method
-            if self.conv.entity.provider_info["token_endpoint_auth_methods_supported"]:
-                for sam in self.conv.entity.provider_info["token_endpoint_auth_methods_supported"]:
+            # use the first mutually supported authentication method
+            if self.conv.entity.provider_info[
+                "token_endpoint_auth_methods_supported"]:
+                for sam in self.conv.entity.provider_info[
+                    "token_endpoint_auth_methods_supported"]:
                     if sam in CLIENT_AUTHN_METHOD:
-                        self.req_args['token_endpoint_auth_method']=sam
+                        self.req_args['token_endpoint_auth_method'] = sam
                         break
 
     def map_profile(self, profile_map):
@@ -239,12 +246,14 @@ class AccessToken(SyncPostRequest):
         if 'authn_method' not in self.op_args:
             _ent = self.conv.entity
             try:
-                #use the registered authn method
-                self.op_args['authn_method'] = _ent.registration_response['token_endpoint_auth_method']
+                # use the registered authn method
+                self.op_args['authn_method'] = _ent.registration_response[
+                    'token_endpoint_auth_method']
             except KeyError:
-                #use the first mutually supported authn method
+                # use the first mutually supported authn method
                 for am in _ent.client_authn_method.keys():
-                    if am in _ent.provider_info['token_endpoint_auth_methods_supported']:
+                    if am in _ent.provider_info[
+                        'token_endpoint_auth_methods_supported']:
                         self.op_args['authn_method'] = am
                         break
 
@@ -317,7 +326,7 @@ class RefreshToken(SyncPostRequest):
             except KeyError:
                 for am in _ent.client_authn_method.keys():
                     if am in _ent.provider_info[
-                            'token_endpoint_auth_methods_supported']:
+                        'token_endpoint_auth_methods_supported']:
                         self.op_args['authn_method'] = am
                         break
 
@@ -384,7 +393,6 @@ class UserInfo(SyncGetRequest):
             self.conv.events.store(EV_PROTOCOL_RESPONSE, response)
 
         display_jwx_headers(response, self.conv)
-
 
     def _verify_subject_identifier(self, user_info):
         id_tokens = get_id_tokens(self.conv)
@@ -598,6 +606,14 @@ class EndSession(AsyncRequest):
             self.request, method=self.method, request_args=self.req_args,
             lax=True, **self.op_args)
 
+        if 'remove_id_token_hint' in self.op_args:
+            del csi['id_token_hint']
+            head, tail = url.split('?')
+            _qs = parse_qs(tail)
+            del _qs['id_token_hint']
+            _qs = {k: v[0] for k, v in _qs.items()}
+            url = '{}?{}'.format(head, urlencode(_qs))
+
         self.csi = csi
 
         self.conv.events.store(EV_REDIRECT_URL, url,
@@ -667,7 +683,6 @@ class EndPoint(Request):
         logger.info("Parsed request: %s" % req.to_dict())
         self.conv.events.store(EV_PROTOCOL_REQUEST, req, ref=ev_index,
                                receiver=self.__class__.__name__)
-
 
         return req
 

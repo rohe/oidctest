@@ -9,7 +9,7 @@
       "CIT"
     ]
   },
-  "desc": "Uses RP initiated logout to end a Session at the OP. The request has post_logout_redirect_uri and an incorrect id_token_hint",
+  "desc": "Uses RP initiated logout to end a Session at the OP. The request has post_logout_redirect_uri and an id_token_hint from somewhere else",
   "sequence": [
     {
       "Webfinger": {
@@ -27,9 +27,9 @@
           "grant_types": [
             "authorization_code"
           ],
-          "backchannel_logout_session_required": true
+          "frontchannel_logout_session_required": true
         },
-        "set_backchannel_logout_uri": null
+        "set_frontchannel_logout_uri": null
       }
     },
     {
@@ -54,11 +54,11 @@
     {
       "EndSession": {
         "set_post_logout_redirect_uri": null,
-        "set_state": null,
+        "set_req_args_state": null,
         "set_op_args": {
           "add_state": true
         },
-        "modified_idtoken_hint": null,
+        "create_idtoken_hint_other_issuer": {"sub": "SubjectID"},
         "set_expect_error": {
           "error": [
             "invalid_request"
