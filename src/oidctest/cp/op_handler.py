@@ -36,13 +36,15 @@ def init_keyjar(op, kj, com_args):
 
 
 class OPHandler(object):
-    def __init__(self, provider_cls, op_args, com_args, test_conf, folder):
+    def __init__(self, provider_cls, op_args, com_args, test_conf, folder,
+                 check_session_iframe=''):
         self.provider_cls = provider_cls
         self.op_args = op_args
         self.com_args = com_args
         self.test_conf = test_conf  # elsewhere called flows
         self.folder = folder
         self.op = {}
+        self.check_session_iframe = check_session_iframe
 
     def get(self, oper_id, test_id, events, endpoint):
         # addr = get_client_address(environ)
@@ -79,6 +81,10 @@ class OPHandler(object):
             else:
                 _op = self.setup_op(oper_id, test_id, self.com_args,
                                     self.op_args, self.test_conf, events)
+                if test_id.startswith('rp-init-logout'):
+                    _csi = self.check_session_iframe.replace(
+                        '<PATH>', '{}/{}'.format(oper_id, test_id))
+                    _op.capabilities['check_session_iframe'] = _csi
             _op.conv = Conversation(test_id, _op, None)
             _op.orig_keys = key_summary(_op.keyjar, '').split(', ')
             self.op[key] = _op

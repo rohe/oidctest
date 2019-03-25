@@ -58,8 +58,14 @@ if __name__ == '__main__':
     folder = os.path.abspath(os.curdir)
     _flowsdir = os.path.normpath(os.path.join(folder, args.flowsdir))
     _flows = Flow(_flowsdir, profile_handler=SimpleProfileHandler)
-    op_handler = OPHandler(provider.Provider, _op_arg, _com_args, _flows,
-                           folder)
+    try:
+        csi = config.CHECK_SESSION_IFRAME
+    except AttributeError:
+        op_handler = OPHandler(provider.Provider, _op_arg, _com_args, _flows,
+                               folder)
+    else:
+        op_handler = OPHandler(provider.Provider, _op_arg, _com_args, _flows,
+                               folder, csi.format(args.port))
 
     cherrypy.tools.dumplog = cherrypy.Tool('before_finalize', dump_log)
 
@@ -67,7 +73,7 @@ if __name__ == '__main__':
         {'environment': 'production',
          'log.error_file': 'site.log',
          'tools.trailing_slash.on': False,
-         'server.socket_host': '0.0.0.0',
+         'server.socket_host': '192.168.1.109',
          'log.screen': True,
          'tools.sessions.on': True,
          'tools.encode.on': True,

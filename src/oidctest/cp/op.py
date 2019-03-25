@@ -1,3 +1,4 @@
+import json
 from http.cookies import SimpleCookie
 
 from future.backports.urllib.parse import urlparse
@@ -312,6 +313,32 @@ class Claims(object):
                 return as_bytes(_info.to_jwt(key=jwt_key, algorithm="RS256"))
 
 
+class CheckSessionIframe(object):
+    @cherrypy.expose
+    @cherrypy_cors.tools.expose_public()
+    @cherrypy.tools.allow(
+        methods=["GET", "OPTIONS", "POST"])
+    def index(self, op, **kwargs):
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["GET", "POST"], origins='*',
+                allowed_headers=['Authorization', 'content-type'])
+        else:
+            store_request(op, 'CheckSessionIframe')
+            logger.debug('CheckSessionIframe: {}'.format(kwargs))
+            if cherrypy.request.method == "POST":
+                _req = cherrypy.request.body.read()
+                kwargs = json.loads(as_unicode(_req))
+                # will contain client_id and origin
+                if kwargs['client_id'] not in op.cdb:
+                    return b'error'
+                # Should have some intelligent check for origin
+                return b'ok'
+            else:
+                doc = open('templates/check_session_iframe.html').read()
+                return as_bytes(doc)
+
+
 class EndSession(object):
     @cherrypy.expose
     @cherrypy_cors.tools.expose_public()
@@ -330,14 +357,7 @@ class EndSession(object):
             _info = Message(**kwargs)
             resp = op.end_session_endpoint(_info.to_urlencoded(), cookie=cookie)
             # Normally the user would here be confronted with a logout
-            # verification page. We skip that and assumes she said yes.
-
-            # _info = op.unpack_signed_jwt(resp['sjwt'])
-            # try:
-            #     _iframes = op.do_verified_logout(alla=True, **_info)
-            # except Exception as err:
-            #     logger.exception(err)
-            #     raise cherrypy.HTTPError(message=err)
+            # verification page. We skip that and just assumes she said yes.
 
             return conv_response(op, resp)
 
@@ -400,16 +420,29 @@ class Logout(object):
             _info = op.unpack_signed_jwt(kwargs['sjwt'])
             logger.debug("SJWT unpacked: {}".format(_info))
             try:
-                _iframes = op.do_verified_logout(alla=True, **_info)
+                res = op.do_verified_logout(alla=True, **_info)
             except Exception as err:
                 logger.exception(err)
                 raise cherrypy.HTTPError(message=err)
+
+            try:
+                _iframes = res['iframe']
+            except KeyError:
+                _iframes = []
 
             _body = LOGOUT_HTML_BODY.replace('{size}', str(len(_iframes)))
             _body = _body.replace('{frames}',''.join(_iframes))
             _body = _body.replace('{timeout}', '30')
             _body = _body.replace('{postLogoutRedirectUri}',
                                   _info['redirect_uri'])
+
+            try:
+                cookies = res['cookie']
+            except KeyError:
+                pass
+            else:
+                for tag, val in cookies:
+                    cherrypy.response.cookie.load(val)
 
             return as_bytes("\n".join([LOGOUT_HTML_HEAD, _body]))
 
@@ -560,6 +593,7 @@ class Provider(Root):
         self.end_session = EndSession()
         self.logout = Logout()
         self.reset = Reset(self.op_handler.com_args, self.op_handler.op_args)
+        self.check_session_iframe = CheckSessionIframe()
 
     def _cp_dispatch(self, vpath):
         # Only get here if vpath != None
@@ -603,6 +637,8 @@ class Provider(Root):
                         return self.end_session
                     elif endpoint == 'logout':
                         return self.logout
+                    elif endpoint == 'check_session_iframe':
+                        return self.check_session_iframe
                     else:  # Shouldn't be any other
                         raise cherrypy.NotFound()
                 if len(vpath) == 2:

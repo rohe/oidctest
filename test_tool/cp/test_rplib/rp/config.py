@@ -66,6 +66,7 @@ CLIENT_DB = "clients"
 # to logout
 LOGOUT_PATH = 'logout'
 
+CHECK_SESSION_IFRAME = "{}:{{}}/<PATH>/check_session_iframe".format(baseurl)
 
 # =======  SIMPLE DATABASE ==============
 
