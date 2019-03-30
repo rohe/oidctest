@@ -12,8 +12,8 @@ import sys
 import time
 import shlex
 
-from oic.oic import ProviderConfigurationResponse
-from oic.oic import RegistrationResponse
+from oic.oic.message import ProviderConfigurationResponse
+from oic.oic.message import RegistrationResponse
 from oic.utils.http_util import BadRequest
 from oic.utils.http_util import Created
 from oic.utils.http_util import NotFound
