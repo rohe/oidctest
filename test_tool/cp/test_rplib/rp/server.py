@@ -73,7 +73,7 @@ if __name__ == '__main__':
         {'environment': 'production',
          'log.error_file': 'site.log',
          'tools.trailing_slash.on': False,
-         'server.socket_host': '192.168.1.109',
+         'server.socket_host': '0.0.0.0',
          'log.screen': True,
          'tools.sessions.on': True,
          'tools.encode.on': True,
