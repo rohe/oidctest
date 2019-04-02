@@ -253,7 +253,7 @@ class AccessToken(SyncPostRequest):
                 # use the first mutually supported authn method
                 for am in _ent.client_authn_method.keys():
                     if am in _ent.provider_info[
-                        'token_endpoint_auth_methods_supported']:
+                            'token_endpoint_auth_methods_supported']:
                         self.op_args['authn_method'] = am
                         break
 
@@ -326,7 +326,7 @@ class RefreshToken(SyncPostRequest):
             except KeyError:
                 for am in _ent.client_authn_method.keys():
                     if am in _ent.provider_info[
-                        'token_endpoint_auth_methods_supported']:
+                            'token_endpoint_auth_methods_supported']:
                         self.op_args['authn_method'] = am
                         break
 
@@ -675,10 +675,10 @@ class EndPoint(Request):
             req.verify(**kwargs)
         except (MessageException, ValueError, NotForMe) as err:
             self.conv.events.store(EV_FAULT, err)
-            return _inut.err_response("run_sequence", err)
+            raise
         except Exception as err:
             logger.exception(err)
-            return _inut.err_response("run_sequence", err)
+            raise
 
         logger.info("Parsed request: %s" % req.to_dict())
         self.conv.events.store(EV_PROTOCOL_REQUEST, req, ref=ev_index,
@@ -706,6 +706,9 @@ class BackChannelLogout(EndPoint):
 
         req = self.deserialize(message_factory, request, request_args,
                                **kwargs)
+
+        if isinstance(req, str):
+            return req
 
         # Find the state value
 
