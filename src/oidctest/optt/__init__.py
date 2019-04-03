@@ -350,6 +350,10 @@ class Main(object):
                                       request=_request)
             else:
                 _request_args = cherrypy.request.params
+                if not _request_args:
+                    raise cherrypy.HTTPError(
+                        400, 'Missing Back channel Logout request body')
+
                 logger.info('back_channel logout request_args: {}'.format(
                     _request_args))
                 return self._endpoint(ref='backchannel_logout',
