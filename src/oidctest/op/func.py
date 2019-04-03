@@ -1,23 +1,21 @@
 import inspect
 import json
 import os
-import six
 import sys
 
-from jwkest.jwt import JWT
-from oic.utils.time_util import time_sans_frac
-from past.types import basestring
-
+import six
+from future.backports.urllib.parse import urlencode
+from future.backports.urllib.parse import urlparse
 from jwkest import as_bytes
 from jwkest import as_unicode
 from jwkest import b64e
 from jwkest.jws import factory as jws_factory
 from oic import rndstr
-from oic.oic import PREFERENCE2PROVIDER, IdToken
+from oic.oic import IdToken
+from oic.oic import PREFERENCE2PROVIDER
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
-
-from future.backports.urllib.parse import urlencode
-from future.backports.urllib.parse import urlparse
+from oic.utils.time_util import time_sans_frac
+from oidctest.op.check import get_id_tokens
 from otest import ConfigurationError
 from otest.check import ERROR
 from otest.check import STATUSCODE_TRANSL
@@ -29,8 +27,6 @@ from otest.func import get_base
 from otest.prof_util import return_type
 from otest.result import get_issuer
 from past.types import basestring
-
-from oidctest.op.check import get_id_tokens
 
 __author__ = 'roland'
 

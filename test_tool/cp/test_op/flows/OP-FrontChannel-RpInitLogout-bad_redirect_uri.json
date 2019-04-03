@@ -29,7 +29,7 @@
           ],
           "frontchannel_logout_session_required": true
         },
-        "set_fronthannel_logout_uri": null
+        "set_frontchannel_logout_uri": null
       }
     },
     {
