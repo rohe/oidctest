@@ -344,9 +344,16 @@ class Main(object):
     def backchannel_logout(self, **kwargs):
         if cherrypy.request.process_request_body is True:
             _request = as_unicode(cherrypy.request.body.read())
-            logger.info('back_channel logout request: {}'.format(_request))
-            return self._endpoint(ref='backchannel_logout',
-                                  request=_request)
+            if _request:
+                logger.info('back_channel logout request: {}'.format(_request))
+                return self._endpoint(ref='backchannel_logout',
+                                      request=_request)
+            else:
+                _request_args = cherrypy.request.params
+                logger.info('back_channel logout request_args: {}'.format(
+                    _request_args))
+                return self._endpoint(ref='backchannel_logout',
+                                      request_args=_request_args)
         else:
             raise cherrypy.HTTPError(
                 400, 'Missing Back channel Logout request body')

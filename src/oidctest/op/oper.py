@@ -660,6 +660,9 @@ class EndPoint(Request):
 
         req_cls = message_factory(self.request_cls)
 
+        logger.debug('msg: {}'.format(msg))
+        logger.debug('msg_args: {}'.format(msg_args))
+
         if msg:
             ev_index = self.conv.events.store(EV_REQUEST, msg,
                                               receiver=self.__class__.__name__)
