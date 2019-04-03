@@ -10,6 +10,7 @@
     ]
   },
   "desc": "Uses RP initiated logout to end a Session at the OP. The request has post_logout_redirect_uri and an id_token_hint from somewhere else",
+  "note": "This test should result in the OpenID Provider displaying an error message in your user agent. You should ignore the status of this test in the test tool, since it will be incomplete. You must submit a screen shot of the error shown as part of your certification application.",
   "sequence": [
     {
       "Webfinger": {
@@ -51,6 +52,7 @@
         }
       }
     },
+    "Note",
     {
       "EndSession": {
         "set_post_logout_redirect_uri": null,
