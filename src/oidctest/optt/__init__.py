@@ -336,12 +336,14 @@ class Main(object):
 
     @cherrypy.expose
     def logout(self, **kwargs):  # post_logout_redirect_uri
+        logger.debug('Post logout: {}'.format(kwargs))
         _state = self.tester.conv.entity.logout_state2state[kwargs['state']]
-        msg = self.tester.inut.pre_html['after_logout.html']
+        # msg = self.tester.inut.pre_html['after_logout.html']
         return self._endpoint(ref='logout', **kwargs)
 
     @cherrypy.expose
     def backchannel_logout(self, **kwargs):
+        logger.debug('Back channel logout: {}'.format(kwargs))
         if cherrypy.request.process_request_body is True:
             _request = as_unicode(cherrypy.request.body.read())
             if _request:
@@ -364,10 +366,12 @@ class Main(object):
 
     @cherrypy.expose
     def frontchannel_logout(self, **kwargs):
+        logger.debug('Front channel logout: {}'.format(kwargs))
         return self._endpoint(ref='frontchannel_logout', **kwargs)
 
     @cherrypy.expose
     def session_change(self, **kwargs):
+        logger.debug('Session change: {}'.format(kwargs))
         return
 
     @cherrypy.expose
