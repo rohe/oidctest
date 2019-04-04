@@ -313,7 +313,7 @@ class Main(object):
         # continue with next operation in the sequence
         self.sh["index"] += 1
         try:
-            resp = self.tester.handle_request(request, kwargs)
+            resp = self.tester.handle_request(request, **kwargs)
         except cherrypy.HTTPRedirect:
             raise
         except Break:
