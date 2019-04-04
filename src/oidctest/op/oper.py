@@ -643,7 +643,8 @@ class EndPoint(Request):
         # self.request = self.conv.msg_factory(self.request_cls)
         # self.response = self.conv.msg_factory(self.request_cls)
 
-    def handle_request(self, message_factory, request=None, request_args=None):
+    def handle_request(self, message_factory, request=None, request_args=None,
+                       **kwargs):
         logger.info("Request: {}".format(request))
 
         _info = self.parse_request(message_factory, request, request_args)
