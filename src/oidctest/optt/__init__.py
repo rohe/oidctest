@@ -337,8 +337,6 @@ class Main(object):
     @cherrypy.expose
     def logout(self, **kwargs):  # post_logout_redirect_uri
         logger.debug('Post logout: {}'.format(kwargs))
-        # _state = self.tester.conv.entity.logout_state2state[kwargs['state']]
-        # msg = self.tester.inut.pre_html['after_logout.html']
         return self._endpoint(ref='logout', **kwargs)
 
     @cherrypy.expose
