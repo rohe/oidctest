@@ -162,9 +162,9 @@ class Registration(Operation):
                 self.req_args['jwks_uri'] = self.conv.entity.jwks_uri
             # use the first mutually supported authentication method
             if self.conv.entity.provider_info[
-                "token_endpoint_auth_methods_supported"]:
-                for sam in self.conv.entity.provider_info[
                     "token_endpoint_auth_methods_supported"]:
+                for sam in self.conv.entity.provider_info[
+                        "token_endpoint_auth_methods_supported"]:
                     if sam in CLIENT_AUTHN_METHOD:
                         self.req_args['token_endpoint_auth_method'] = sam
                         break
@@ -713,8 +713,11 @@ class BackChannelLogout(EndPoint):
             'keyjar': _cli.keyjar
         }
 
-        req = self.deserialize(message_factory, request, request_args,
-                               **kwargs)
+        try:
+            req = self.deserialize(message_factory, request, request_args,
+                                   **kwargs)
+        except NotForMe:  # just ignore
+            return ''
 
         if isinstance(req, str):
             return req
@@ -746,7 +749,10 @@ class FrontChannelLogout(EndPoint):
     def parse_request(self, message_factory, request=None,
                       request_args=None):
 
-        req = self.deserialize(message_factory, request, request_args)
+        try:
+            req = self.deserialize(message_factory, request, request_args)
+        except NotForMe:
+            return ''
 
         try:
             sm_id = req['sid']
