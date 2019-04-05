@@ -599,10 +599,12 @@ class EndSession(AsyncRequest):
         if 'add_state' in self.op_args:
             _state = rndstr(32)
             _client.logout_state2state[_state] = self.req_args['state']
+            self.op_args['state'] = self.req_args['state']
             self.conv.end_session_state = _state
             self.req_args['state'] = _state
 
-        logger.debug('req_args_ {}'.format(self.req_args))
+        logger.debug('req_args {}'.format(self.req_args))
+        logger.debug('op_args {}'.format(self.op_args))
 
         url, body, ht_args, csi = _client.request_info(
             self.request, method=self.method, request_args=self.req_args,
