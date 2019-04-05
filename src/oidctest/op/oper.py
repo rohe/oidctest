@@ -2,7 +2,6 @@ import copy
 
 from future.backports.urllib.parse import parse_qs
 from future.backports.urllib.parse import urlencode
-from future.backports.urllib.parse import urlparse
 
 import builtins
 import inspect
