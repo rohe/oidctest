@@ -602,6 +602,8 @@ class EndSession(AsyncRequest):
             self.conv.end_session_state = _state
             self.req_args['state'] = _state
 
+        logger.debug('req_args_ {}'.format(self.req_args))
+
         url, body, ht_args, csi = _client.request_info(
             self.request, method=self.method, request_args=self.req_args,
             lax=True, **self.op_args)

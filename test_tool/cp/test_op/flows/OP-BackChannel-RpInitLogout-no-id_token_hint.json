@@ -9,7 +9,7 @@
       "CIT"
     ]
   },
-  "desc": "Uses RP initiated logout to end a Session at the OP. The request has state and post_logout_redirect_uri",
+  "desc": "Uses RP initiated logout to end a Session at the OP. The request is missing id_token_hint",
   "note": "This test should result in the OpenID Provider displaying an error message in your user agent. You should ignore the status of this test in the test tool, since it will be incomplete. You must submit a screen shot of the error shown as part of your certification application.",
   "sequence": [
     {
