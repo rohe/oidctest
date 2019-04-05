@@ -655,7 +655,7 @@ class EndPoint(Request):
             _info = self.parse_request(message_factory, request, request_args)
             return self.act_on_request(_info)
         else:
-            return "OK"
+            return self.act_on_request()
 
     def act_on_request(self, *arg):
         raise NotImplemented()
@@ -732,8 +732,9 @@ class BackChannelLogout(EndPoint):
             except KeyError:
                 raise ValueError('Unknown session ID in logout token')
 
-    def act_on_request(self, state):
-        del self.conv.entity.grant[state]
+    def act_on_request(self, state=''):
+        if state:
+            del self.conv.entity.grant[state]
         return "OK"
 
 
@@ -758,8 +759,9 @@ class FrontChannelLogout(EndPoint):
             except KeyError:
                 raise ValueError('Unknown session ID in request')
 
-    def act_on_request(self, state):
-        del self.conv.entity.grant[state]
+    def act_on_request(self, state=''):
+        if state:
+            del self.conv.entity.grant[state]
         return "OK"
 
 
@@ -775,11 +777,11 @@ class PostLogout(EndPoint):
             logger.debug('Missing "state"')
             return ''
 
-    def act_on_request(self, logout_state):
+    def act_on_request(self, logout_state=''):
         if logout_state:
             _sid = self.conv.entity.logout_state2state[logout_state]
 
-        return None
+        return True
 
 
 class LogoutPage(Note):
