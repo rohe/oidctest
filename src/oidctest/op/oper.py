@@ -651,9 +651,11 @@ class EndPoint(Request):
                        **kwargs):
         logger.info("Request: {}".format(request))
 
-        _info = self.parse_request(message_factory, request, request_args)
-
-        return self.act_on_request(_info)
+        if request or request_args:
+            _info = self.parse_request(message_factory, request, request_args)
+            return self.act_on_request(_info)
+        else:
+            return "OK"
 
     def act_on_request(self, *arg):
         raise NotImplemented()
