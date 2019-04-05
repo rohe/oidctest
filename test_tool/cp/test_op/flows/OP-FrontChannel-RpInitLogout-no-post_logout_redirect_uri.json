@@ -27,9 +27,9 @@
           "grant_types": [
             "authorization_code"
           ],
-          "backchannel_logout_session_required": true
+          "frontchannel_logout_session_required": true
         },
-        "set_backchannel_logout_uri": null
+        "set_frontchannel_logout_uri": null
       }
     },
     {
