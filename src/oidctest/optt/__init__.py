@@ -337,7 +337,10 @@ class Main(object):
     @cherrypy.expose
     def logout(self, **kwargs):  # post_logout_redirect_uri
         logger.debug('Post logout: {}'.format(kwargs))
-        return self._endpoint(ref='logout', **kwargs)
+        if kwargs:
+            return self._endpoint(ref='logout', request_args=kwargs)
+        else:
+            return self._endpoint(ref='logout')
 
     @cherrypy.expose
     def backchannel_logout(self, **kwargs):
