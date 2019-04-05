@@ -786,7 +786,7 @@ class PostLogout(EndPoint):
         if logout_state:
             _sid = self.conv.entity.logout_state2state[logout_state]
 
-        return True
+        return ''
 
 
 class LogoutPage(Note):
