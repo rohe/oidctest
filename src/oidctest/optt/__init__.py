@@ -5,6 +5,7 @@ from cherrypy import CherryPyException
 from cherrypy import HTTPRedirect
 from jwkest import as_bytes
 from jwkest import as_unicode
+from oic.oauth2 import Message
 from oic.oic import AuthorizationResponse
 from otest import Break
 from otest import exception_trace
@@ -349,7 +350,11 @@ class Main(object):
             _request = as_unicode(cherrypy.request.body.read())
             if _request:
                 logger.info('back_channel logout request: {}'.format(_request))
-                return self._endpoint(ref='backchannel_logout',
+                if kwargs['entity_id'] != self.tester.conv.entity.entity_id:
+                    logger.debug('Not for me ')
+                    return 'OK'
+                else:
+                    return self._endpoint(ref='backchannel_logout',
                                       request=_request)
             else:
                 _request_args = cherrypy.request.params
@@ -359,8 +364,12 @@ class Main(object):
 
                 logger.info('back_channel logout request_args: {}'.format(
                     _request_args))
-                return self._endpoint(ref='backchannel_logout',
-                                      request_args=_request_args)
+                if kwargs['entity_id'] != self.tester.conv.entity.entity_id:
+                    logger.debug('Not for me ')
+                    return 'OK'
+                else:
+                    return self._endpoint(ref='backchannel_logout',
+                                          request_args=_request_args)
         else:
             raise cherrypy.HTTPError(
                 400, 'Missing Back channel Logout request body')
