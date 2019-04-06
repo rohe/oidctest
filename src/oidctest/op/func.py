@@ -734,14 +734,18 @@ def modified_idtoken_hint(oper, arg):
 
 def set_backchannel_logout_uri(oper, args):
     _base = get_base(oper.conv.entity.base_url)
-    oper.req_args['backchannel_logout_uri'] = "{}{}".format(
-        _base, "backchannel_logout")
+    entity_id = rndstr(24)
+    oper.conv.entity.entity_id = entity_id
+    oper.req_args['backchannel_logout_uri'] = "{}{}?entity_id={}".format(
+        _base, "backchannel_logout", entity_id)
 
 
 def set_frontchannel_logout_uri(oper, args):
     _base = get_base(oper.conv.entity.base_url)
-    oper.req_args['frontchannel_logout_uri'] = "{}{}".format(
-        _base, "frontchannel_logout")
+    entity_id = rndstr(24)
+    oper.conv.entity.entity_id = entity_id
+    oper.req_args['frontchannel_logout_uri'] = "{}{}?entity_id={}".format(
+        _base, "frontchannel_logout", entity_id)
 
 
 def factory(name):
