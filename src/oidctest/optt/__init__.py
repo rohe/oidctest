@@ -377,7 +377,11 @@ class Main(object):
     @cherrypy.expose
     def frontchannel_logout(self, **kwargs):
         logger.debug('Front channel logout: {}'.format(kwargs))
-        return self._endpoint(ref='frontchannel_logout', **kwargs)
+        if kwargs['entity_id'] != self.tester.conv.entity.entity_id:
+            logger.debug('Not for me')
+            return 'OK'
+        else:
+            return self._endpoint(ref='frontchannel_logout', **kwargs)
 
     @cherrypy.expose
     def session_change(self, **kwargs):
