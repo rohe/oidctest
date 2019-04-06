@@ -9,7 +9,8 @@
       "CIT"
     ]
   },
-  "desc": "Uses RP initiated logout to end a Session at the OP. The request only a state claim",
+  "desc": "Uses RP initiated logout to end a Session at the OP.",
+  "note": "After the logout you should end up at an OP page stating thet you have been logged out. You must submit a screen shot of the final logout page",
   "sequence": [
     {
       "Webfinger": {
@@ -51,6 +52,7 @@
         }
       }
     },
+    "Note",
     {
       "EndSession": {
         "set_req_args_state": null,
@@ -61,7 +63,6 @@
       }
     },
     "BackChannelLogout",
-    "PostLogout",
     {
       "AsyncAuthn": {
         "set_response_where": null,
