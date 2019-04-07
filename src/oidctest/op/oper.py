@@ -18,9 +18,9 @@ from oic.exception import ParameterError
 from oic.oauth2 import ErrorResponse
 from oic.oauth2 import Message
 from oic.oauth2.util import JSON_ENCODED
-from oic.oic import OpenIDSchema
-from oic.oic import ProviderConfigurationResponse
-from oic.oic import RegistrationResponse
+from oic.oic.message import OpenIDSchema
+from oic.oic.message import ProviderConfigurationResponse
+from oic.oic.message import RegistrationResponse
 from oic.utils.keyio import KeyBundle
 from oic.utils.keyio import dump_jwks
 from oic.utils.keyio import ec_init
