@@ -50,12 +50,11 @@
       }
     },
     {
-      "LogoutPage": {
+      "EndSession": {
         "set_post_logout_redirect_uri": null,
-        "set_state": null,
+        "set_req_args_state": null,
         "set_op_args": {
-          "add_state": true,
-          "prop": "id_token_hint"
+          "add_state": true
         },
         "id_token_hint": null
       }
