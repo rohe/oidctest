@@ -381,7 +381,8 @@ class Main(object):
             logger.debug('Not for me')
             return 'OK'
         else:
-            return self._endpoint(ref='frontchannel_logout', **kwargs)
+            _args = dict([(k,v) for k,v in kwargs.items() if k != 'entity_id'])
+            return self._endpoint(ref='frontchannel_logout', **_args)
 
     @cherrypy.expose
     def session_change(self, **kwargs):
