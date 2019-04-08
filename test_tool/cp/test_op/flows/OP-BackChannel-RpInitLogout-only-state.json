@@ -10,7 +10,7 @@
     ]
   },
   "desc": "Uses RP initiated logout to end a Session at the OP.",
-  "note": "After the logout you should end up at an OP page stating thet you have been logged out. You must submit a screen shot of the final logout page",
+  "note": "After the logout you should end up at an OP page stating that you have been logged out. You must submit a screen shot of the final logout page",
   "sequence": [
     {
       "Webfinger": {

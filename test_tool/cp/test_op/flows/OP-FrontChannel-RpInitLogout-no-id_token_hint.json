@@ -9,7 +9,7 @@
       "CIT"
     ]
   },
-  "desc": "Uses RP initiated logout to end a Session at the OP. The request has state and post_logout_redirect_uri",
+  "desc": "Uses RP initiated logout to end a Session at the OP. The request is missing id_token_hint",
   "note": "This test should result in the OpenID Provider displaying an error message in your user agent. You should ignore the status of this test in the test tool, since it will be incomplete. You must submit a screen shot of the error shown as part of your certification application.",
   "sequence": [
     {
@@ -60,23 +60,10 @@
         "set_op_args": {
           "add_state": true,
           "remove_id_token_hint": true
-        }
-      }
-    },
-    "FrontChannelLogout",
-    "PostLogout",
-    {
-      "AsyncAuthn": {
-        "set_response_where": null,
-        "set_request_args": {
-          "prompt": "none"
         },
         "set_expect_error": {
           "error": [
-            "login_required",
-            "interaction_required",
-            "session_selection_required",
-            "consent_required"
+            "invalid_request"
           ],
           "stop": false
         }
