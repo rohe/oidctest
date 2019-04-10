@@ -5,7 +5,6 @@ from cherrypy import CherryPyException
 from cherrypy import HTTPRedirect
 from jwkest import as_bytes
 from jwkest import as_unicode
-from oic.oauth2 import Message
 from oic.oic import AuthorizationResponse
 from otest import Break
 from otest import exception_trace
@@ -381,7 +380,8 @@ class Main(object):
             logger.debug('Not for me')
             return 'OK'
         else:
-            _args = dict([(k,v) for k,v in kwargs.items() if k != 'entity_id'])
+            _args = dict([(k,v) for k,v in kwargs.items()
+                          if k not in ['entity_id', 'sid']])
             return self._endpoint(ref='frontchannel_logout', **_args)
 
     @cherrypy.expose
