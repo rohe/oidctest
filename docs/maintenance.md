@@ -280,6 +280,27 @@ Release a new `oidctest` version via:
 Add release notes by copying the ChangeLog additions.
 Again: Tag a new release ON THE STABLE-RELEASE branch!!
 
+##### Publishing Images on Docker Hub
+* Checkout the stable release branch
+* Run `docker-compose -f docker/docker-compose.yml build` to build images
+* Run `docker image list` and determine op_test and rp_test image fingerprints 
+* Sign in to docker by running `docker login --username=yourusername`
+* Create tags for the newly released version (vX.Y.Z in the following examples) and also the 'latest' tag. 
+```
+docker tag <op_test_image_fingerprint> openidcertification/op_test:vX.Y.Z
+docker tag <op_test_image_fingerprint> openidcertification/op_test:latest
+docker tag <rp_test_image_fingerprint> openidcertification/rp_test:vX.Y.Z 
+docker tag <rp_test_image_fingerprint> openidcertification/rp_test:latest
+```
+* Push images to docker hub (don't forget to replace vX.Y.Z with the actual version number before pushing)
+```
+docker push openidcertification/op_test:vX.Y.Z 
+docker push openidcertification/op_test:latest 
+docker push openidcertification/rp_test:vX.Y.Z
+docker push openidcertification/rp_test:latest 
+```
+* Verify that the images are listed at https://hub.docker.com/r/openidcertification/op_test/tags and https://hub.docker.com/r/openidcertification/rp_test/tags
+
 ### Deployment
 These are the actual commands one would give to update the code/configuration and make it available in the production environment.
 
