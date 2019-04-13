@@ -36,7 +36,8 @@ GRPS = [
     "request_uri Request Parameter", "scope Request Parameter",
     "nonce Request Parameter", "Client Authentication",
     "ID Token", "Key Rotation", "Claims Types", "UserInfo Endpoint",
-    "3rd-Party Init SSO", "RP Initiated BackChannel Logout"
+    "3rd-Party Init SSO", "RP Initiated Logout",
+    "RP Initiated BackChannel Logout", "RP Initiated FrontChannel Logout"
 ]
 
 # Only Username and password.
