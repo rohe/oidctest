@@ -394,7 +394,7 @@ class Main(object):
         _conv = self.tester.conv
         _entity = _conv.entity
 
-        _msg = self.tester.inut.pre_html['rp_session_iframe.mako']
+        _msg = self.tester.inut.pre_html['rp_session_iframe.html']
         # client_id
         _msg = _msg.replace("{client_id}", _entity.client_id)
         # session_state, get it from the Authorization response
