@@ -1,5 +1,6 @@
 {
-  "group": "Front Channel Logout - RP Initiated",
+  "group": "RP Initiated Logout",
+  "note": "This test should result in the OpenID Provider displaying an error message in your user agent. You should ignore the status of this test in the test tool, since it will be incomplete. You must submit a screen shot of the error shown as part of your certification application.",
   "usage": {
     "extra": true,
     "return_type": [
@@ -9,8 +10,7 @@
       "CIT"
     ]
   },
-  "desc": "Uses RP initiated logout to end a Session at the OP.",
-  "note": "After the logout you should end up at an OP page stating that you have been logged out. You must submit a screen shot of the final logout page",
+  "desc": "Sent post_logout_redirect_uri does not match a registered post_logout_redirect_uri",
   "sequence": [
     {
       "Webfinger": {
@@ -27,10 +27,8 @@
         "set_request_args": {
           "grant_types": [
             "authorization_code"
-          ],
-          "frontchannel_logout_session_required": true
-        },
-        "set_frontchannel_logout_uri": null
+          ]
+        }
       }
     },
     {
@@ -55,26 +53,17 @@
     "Note",
     {
       "EndSession": {
+        "set_request_args": {
+          "post_logout_redirect_uri": "https://example.com/post_logout"
+        },
         "set_req_args_state": null,
         "set_op_args": {
-          "add_state": true,
-          "remove_id_token_hint": true
-        }
-      }
-    },
-    "FrontChannelLogout",
-    {
-      "AsyncAuthn": {
-        "set_response_where": null,
-        "set_request_args": {
-          "prompt": "none"
+          "add_state": true
         },
+        "id_token_hint": null,
         "set_expect_error": {
           "error": [
-            "login_required",
-            "interaction_required",
-            "session_selection_required",
-            "consent_required"
+            "bad_request"
           ],
           "stop": false
         }

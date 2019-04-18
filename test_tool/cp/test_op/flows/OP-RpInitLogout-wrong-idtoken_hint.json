@@ -1,5 +1,5 @@
 {
-  "group": "Front Channel Logout - RP Initiated",
+  "group": "RP Initiated Logout",
   "usage": {
     "extra": true,
     "return_type": [
@@ -9,7 +9,7 @@
       "CIT"
     ]
   },
-  "desc": "Sent id_token_hint is stripped of its signature and has modified 'alg' header",
+  "desc": "Sent id_token_hint that is not based on a ID Token produced by the OP",
   "note": "This test should result in the OpenID Provider displaying an error message in your user agent. You should ignore the status of this test in the test tool, since it will be incomplete. You must submit a screen shot of the error shown as part of your certification application.",
   "sequence": [
     {
@@ -27,10 +27,8 @@
         "set_request_args": {
           "grant_types": [
             "authorization_code"
-          ],
-          "frontchannel_logout_session_required": true
-        },
-        "set_frontchannel_logout_uri": null
+          ]
+        }
       }
     },
     {
@@ -60,7 +58,7 @@
         "set_op_args": {
           "add_state": true
         },
-        "modified_idtoken_hint": null,
+        "create_idtoken_hint_other_issuer": {"sub": "SubjectID"},
         "set_expect_error": {
           "error": [
             "invalid_request"

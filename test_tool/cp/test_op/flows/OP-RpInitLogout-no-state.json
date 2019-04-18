@@ -1,5 +1,5 @@
 {
-  "group": "Front Channel Logout - RP Initiated",
+  "group": "RP Initiated Logout",
   "usage": {
     "extra": true,
     "return_type": [
@@ -26,10 +26,8 @@
         "set_request_args": {
           "grant_types": [
             "authorization_code"
-          ],
-          "frontchannel_logout_session_required": true
-        },
-        "set_frontchannel_logout_uri": null
+          ]
+        }
       }
     },
     {
@@ -58,7 +56,6 @@
         "id_token_hint": null
       }
     },
-    "FrontChannelLogout",
     "PostLogout",
     {
       "AsyncAuthn": {
