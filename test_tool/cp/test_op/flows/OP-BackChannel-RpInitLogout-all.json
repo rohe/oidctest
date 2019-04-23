@@ -9,7 +9,7 @@
       "CIT"
     ]
   },
-  "desc": "Uses RP initiated logout to end a Session at the OP. The request has state, post_logout_redirect_uri and in_token_hint",
+  "desc": "Registers support for backchannel logout and uses RP initiated logout to trigger the logout",
   "sequence": [
     {
       "Webfinger": {

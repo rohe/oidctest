@@ -9,7 +9,7 @@
       "CIT"
     ]
   },
-  "desc": "Uses RP initiated logout to end a Session at the OP. The request has state, post_logout_redirect_uri and in_token_hint",
+  "desc": "Uses RP initiated logout to end a Session at the OP. The RP uses session management to register the session state change",
   "sequence": [
     {
       "Webfinger": {
