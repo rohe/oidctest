@@ -53,14 +53,12 @@
     "Note",
     {
       "EndSession": {
+        "set_post_logout_redirect_uri": null,
         "set_req_args_state": null,
         "set_op_args": {
-          "add_state": true,
-          "remove_id_token_hint": true,
-          "set_op_args": {
-            "add_state": true
-          }
-        }
+          "add_state": true
+        },
+        "id_token_hint": null
       }
     },
     "PostLogout",
