@@ -9,7 +9,7 @@
       "CIT"
     ]
   },
-  "desc": "Uses RP initiated logout to end a Session at the OP. The request has post_logout_redirect_uri and an id_token_hint",
+  "desc": "Uses RP initiated logout to end a Session at the OP. The request has no parameters at all",
   "sequence": [
     {
       "Webfinger": {
