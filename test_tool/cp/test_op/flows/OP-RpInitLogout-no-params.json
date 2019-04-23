@@ -10,6 +10,7 @@
     ]
   },
   "desc": "Uses RP initiated logout to end a Session at the OP. The request has no parameters at all",
+  "note": "This test should result in the OpenID Provider displaying a page to the user that a successful logout has completed.You must submit a screen shot of the successful logout page",
   "sequence": [
     {
       "Webfinger": {
@@ -49,6 +50,7 @@
         }
       }
     },
+    "Note",
     {
       "EndSession": {
         "set_state": null,
