@@ -19,3 +19,5 @@ KEYS = [
     {"crv": "P-256", "type": "EC", "use": ["sig"]},
     {"crv": "P-256", "type": "EC", "use": ["enc"]}
 ]
+
+SESSION_CHANGE_URL='{}/session_change'.format(BASE)
