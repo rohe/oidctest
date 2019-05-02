@@ -9,7 +9,10 @@ from oic.oic import AuthorizationResponse
 from otest import Break
 from otest import exception_trace
 from otest.check import CRITICAL
+from otest.check import OK
+from otest.check import State
 from otest.check import get_protocol_response
+from otest.events import EV_CONDITION
 from otest.events import EV_EXCEPTION
 from otest.events import EV_FAULT
 from otest.events import EV_HTTP_ARGS
@@ -387,7 +390,12 @@ class Main(object):
     @cherrypy.expose
     def session_change(self, **kwargs):
         logger.debug('Session change: {}'.format(kwargs))
-        return
+        self.tester.conv.events.store('Session_change',
+                                      'Session change detected')
+        self.tester.conv.events.store(EV_CONDITION,
+                                      State('Done', status=OK))
+        self.tester.store_result()
+        self.opresult()
 
     @cherrypy.expose
     def session_iframe(self):
@@ -403,7 +411,7 @@ class Main(object):
         # issuer
         _msg = _msg.replace("{issuer}", _entity.provider_info['issuer'])
         # session_change_url
-        _msg = _msg.replace("{session_change_url}",
-                       self.info.conf.SESSION_CHANGE_URL)
+        _scu = self.info.conf.SESSION_CHANGE_URL.format(_entity.base_url)
+        _msg = _msg.replace("{session_change_url}", _scu)
 
         return as_bytes(_msg)
