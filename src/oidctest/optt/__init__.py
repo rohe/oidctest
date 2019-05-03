@@ -391,8 +391,9 @@ class Main(object):
     def session_unchange(self, **kwargs):
         self.tester.conv.events.store('SessionState',
                                       'Session state verified unchanged')
-        self.tester.conv.test_id += 1
-        return self.tester.run_flow(self.tester.conv.test_id)
+        _index = self.tester.sh['index']
+        _index += 1
+        return self.tester.run_flow(self.tester.conv.test_id, index=_index)
 
     @cherrypy.expose
     def session_change(self, **kwargs):
