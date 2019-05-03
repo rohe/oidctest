@@ -25,6 +25,7 @@ from oic.oauth2 import Message
 from oic.oauth2.exception import HttpError
 from oic.oauth2.util import JSON_ENCODED
 from oic.oauth2.util import URL_ENCODED
+from oic.oic import AuthorizationResponse
 from oic.oic import OpenIDSchema
 from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
@@ -45,6 +46,7 @@ from otest.aus.request import SyncPostRequest
 from otest.aus.request import display_jwx_headers
 from otest.aus.request import same_issuer
 from otest.check import get_id_tokens
+from otest.check import get_protocol_response
 from otest.events import EV_EXCEPTION
 from otest.events import EV_FAULT
 from otest.events import EV_NOOP
@@ -839,6 +841,18 @@ class LogoutPage(Note):
 
 class AfterLogout(Notice):
     pre_html = "after_logout.html"
+
+    def op_setup(self):
+        pass
+
+    def args(self):
+        return {
+            'check_session_iframe': self.conv.entity.provider_info[
+                'check_session_iframe']}
+
+
+class SessionCheck(Notice):
+    pre_html = "session_verify.html"
 
     def op_setup(self):
         pass
