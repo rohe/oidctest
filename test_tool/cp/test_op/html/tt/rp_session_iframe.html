@@ -32,10 +32,10 @@
         }
         stat = e.data;
 
-        if (stat == "changed") {
+        console.log("stat: " + stat);
+        if (stat === "{status}") {
             clearInterval(timer_id);
-            alert("Your session has changed, you will be redirected to log in again.");
-            window.parent.window.location = "{session_change_url}";
+            window.parent.window.location = "{service_url}";
         }
     }
 </script>
