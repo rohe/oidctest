@@ -388,17 +388,23 @@ class Main(object):
             return self._endpoint(ref='frontchannel_logout', **_args)
 
     @cherrypy.expose
+    def session_unchange(self, **kwargs):
+        self.tester.conv.events.store('SessionState',
+                                      'Session state verified unchanged')
+        self.tester.conv.test_id += 1
+        return self.tester.run_flow(self.tester.conv.test_id)
+
+    @cherrypy.expose
     def session_change(self, **kwargs):
         logger.debug('Session change: {}'.format(kwargs))
-        self.tester.conv.events.store('Session_change',
-                                      'Session change detected')
+        self.tester.conv.events.store('SessionState',
+                                      'Session state change detected')
         self.tester.conv.events.store(EV_CONDITION,
                                       State('Done', status=OK))
         self.tester.store_result()
         self.opresult()
 
-    @cherrypy.expose
-    def session_iframe(self):
+    def rp_iframe(self, status, service_url):
         _conv = self.tester.conv
         _entity = _conv.entity
 
@@ -411,7 +417,22 @@ class Main(object):
         # issuer
         _msg = _msg.replace("{issuer}", _entity.provider_info['issuer'])
         # session_change_url
-        _scu = self.info.conf.SESSION_CHANGE_URL.format(_entity.base_url)
-        _msg = _msg.replace("{session_change_url}", _scu)
+
+        _msg = _msg.replace("{service_url}", service_url)
+        _msg = _msg.replace('{status}', status)
 
         return as_bytes(_msg)
+
+    @cherrypy.expose
+    def session_iframe_unchanged(self):
+        _entity = self.tester.conv.entity
+        _service_url = self.info.conf.SESSION_UNCHANGE_URL.format(
+            _entity.base_url)
+        return self.rp_iframe('unchanged', _service_url)
+
+    @cherrypy.expose
+    def session_iframe_changed(self):
+        _entity = self.tester.conv.entity
+        _service_url = self.info.conf.SESSION_CHANGE_URL.format(
+            _entity.base_url)
+        return self.rp_iframe('changed', _service_url)
