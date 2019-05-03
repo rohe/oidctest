@@ -49,6 +49,7 @@
         }
       }
     },
+    "SessionCheck",
     {
       "EndSession": {
         "set_post_logout_redirect_uri": null,
