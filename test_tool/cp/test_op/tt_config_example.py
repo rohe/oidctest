@@ -21,3 +21,4 @@ KEYS = [
 ]
 
 SESSION_CHANGE_URL='{}session_change'
+SESSION_UNCHANGE_URL='{}session_unchange'

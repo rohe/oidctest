@@ -12,13 +12,12 @@
     console.log("RP session state: " + session_state);
     var targetOrigin = "{issuer}";
 
-    var stat = "unchanged";
     var mes = client_id + " " + session_state;
 
     window.addEventListener("message", receiveMessage, false);
     checkSession();
     console.log("RP iframe, starting timer.");
-    var timer_id = setInterval(checkSession, 5 * 1000);
+    var timer_id = setInterval(checkSession, 1000);
 
     function checkSession() {
         var win = window.parent.document.getElementById("op_iframe").contentWindow;
@@ -30,13 +29,7 @@
         if (e.origin !== targetOrigin) {
             return;
         }
-        stat = e.data;
-
-        console.log("stat: " + stat);
-        if (stat === "{status}") {
-            clearInterval(timer_id);
-            window.parent.window.location = "{service_url}";
-        }
+        window.parent.window.location.href = "{service_url}" + "?state=" + e.data;
     }
 </script>
 
