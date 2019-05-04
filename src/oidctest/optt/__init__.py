@@ -29,6 +29,8 @@ fix it. If you have no idea, then please tell us at certification@oidf.org
 and we will help you figure it out.
 """
 
+MAX_CHECKS = 10
+
 
 def expected_response_mode(conv):
     try:
@@ -59,6 +61,7 @@ class Main(object):
         self.webenv = webenv
         self.pick_grp = pick_grp
         self.kwargs = kwargs
+        self.session_checks = {'changed': 0, 'unchanged': 0}
 
     @cherrypy.expose
     def index(self):
@@ -109,6 +112,7 @@ class Main(object):
 
     @cherrypy.expose
     def run(self, test):
+        self.session_checks = {'changed': 0, 'unchanged': 0}
         try:
             resp = self.tester.run(test, **self.webenv)
         except HTTPRedirect:
@@ -197,6 +201,11 @@ class Main(object):
         self.tester.store_result(res)
         logger.error('Encountered: {} in "{}"'.format(msg, context))
         self.opresult()
+
+    def main_page(self):
+        res = Result(self.sh, self.flows.profile_handler)
+        self.tester.store_result(res)
+        return self.display()
 
     @cherrypy.expose
     # @cherrypy.tools.allow(methods=["GET"])
@@ -389,21 +398,71 @@ class Main(object):
 
     @cherrypy.expose
     def session_unchange(self, **kwargs):
-        self.tester.conv.events.store('SessionState',
-                                      'Session state verified unchanged')
-        _index = self.tester.sh['index']
-        _index += 1
-        return self.tester.run_flow(self.tester.conv.test_id, index=_index)
+        try:
+            _state = kwargs['state']
+        except KeyError:
+            pass
+        else:
+            if _state == 'unchanged':
+                self.tester.conv.events.store(
+                    'SessionState', 'Session state verified unchanged')
+                _index = self.tester.sh['index']
+                _index += 1
+                return self.tester.run_flow(self.tester.conv.test_id,
+                                            index=_index)
+            else:  # display session_verify.html again
+                self.session_checks['unchanged'] += 1
+                self.tester.conv.events.store(
+                    'SessionState',
+                    'Session check {} returned: {}'.format(
+                        self.session_checks['unchanged'], _state))
+                if self.session_checks['unchanged'] == MAX_CHECKS:
+                    self.tester.conv.events.store(EV_FAULT,
+                                                  'Session state not unchanged')
+                    return self.main_page()
+                else:
+                    _msg = self.tester.inut.pre_html['session_verify.html']
+                    _csi = self.tester.conv.entity.provider_info[
+                        'check_session_iframe']
+                    _msg.replace("{check_session_iframe}", _csi)
+                    return as_bytes(_msg)
 
     @cherrypy.expose
     def session_change(self, **kwargs):
-        logger.debug('Session change: {}'.format(kwargs))
-        self.tester.conv.events.store('SessionState',
-                                      'Session state change detected')
-        self.tester.conv.events.store(EV_CONDITION,
-                                      State('Done', status=OK))
-        self.tester.store_result()
-        self.opresult()
+        try:
+            _state = kwargs['state']
+        except KeyError:
+            pass
+        else:
+            logger.debug('Session state: {}'.format(kwargs))
+            self.tester.conv.events.store(
+                'SessionState',
+                'Session check returned: {}'.format(_state))
+
+            if _state == 'changed':
+                self.tester.conv.events.store(EV_CONDITION,
+                                              State('Done', status=OK))
+                self.tester.store_result()
+                self.opresult()
+            else:  # display after_logout.html again
+                self.session_checks['changed'] += 1
+                logger.debug('{} session check'. format(self.session_checks[
+                                                            'changed']))
+                self.tester.conv.events.store(
+                    'SessionState',
+                    'Session check {} returned: {}'.format(
+                        self.session_checks['unchanged'], _state))
+
+                if self.session_checks['changed'] >= MAX_CHECKS:
+                    self.tester.conv.events.store(EV_FAULT,
+                                                  'Session state not changed')
+                    return self.main_page()
+                else:
+                    _msg = self.tester.inut.pre_html['after_logout.html']
+                    _csi = self.tester.conv.entity.provider_info[
+                        'check_session_iframe']
+                    _msg.replace("{check_session_iframe}", _csi)
+                    return as_bytes(_msg)
 
     def rp_iframe(self, status, service_url):
         _conv = self.tester.conv
