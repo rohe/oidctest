@@ -27,7 +27,7 @@ COPY docker/op/key.pem /etc/apache2/
 
 RUN a2enmod headers && a2enmod ssl && a2enmod proxy && a2enmod proxy_http && a2ensite ssl
 
-ENV HEROKU_EXAMPLE_CONFIGURATION {"whitelistedJWA":{"idTokenSigningAlgValues":["none","HS256","RS256","PS256","ES256","EdDSA"],"requestObjectSigningAlgValues":["none","HS256","RS256","PS256","ES256","EdDSA"],"idTokenEncryptionAlgValues":["RSA1_5","A128KW","A256KW","ECDH-ES","ECDH-ES+A128KW","ECDH-ES+A256KW","RSA-OAEP"],"requestObjectEncryptionAlgValues":["RSA1_5","A128KW","A256KW","ECDH-ES","ECDH-ES+A128KW","ECDH-ES+A256KW","RSA-OAEP"],"userinfoEncryptionAlgValues":["RSA1_5","A128KW","A256KW","ECDH-ES","ECDH-ES+A128KW","ECDH-ES+A256KW","RSA-OAEP"]}}
+ENV HEROKU_EXAMPLE_CONFIGURATION '{"whitelistedJWA":{"idTokenSigningAlgValues":["none","HS256","RS256","PS256","ES256","EdDSA"],"requestObjectSigningAlgValues":["none","HS256","RS256","PS256","ES256","EdDSA"],"idTokenEncryptionAlgValues":["RSA1_5","A128KW","A256KW","ECDH-ES","ECDH-ES+A128KW","ECDH-ES+A256KW","RSA-OAEP"],"requestObjectEncryptionAlgValues":["RSA1_5","A128KW","A256KW","ECDH-ES","ECDH-ES+A128KW","ECDH-ES+A256KW","RSA-OAEP"],"userinfoEncryptionAlgValues":["RSA1_5","A128KW","A256KW","ECDH-ES","ECDH-ES+A128KW","ECDH-ES+A256KW","RSA-OAEP"]}}'
 
 COPY docker/op/run.sh ${SUBDIR}/
 
