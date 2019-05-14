@@ -15,9 +15,6 @@
     var mes = client_id + " " + session_state;
 
     window.addEventListener("message", receiveMessage, false);
-    checkSession();
-    console.log("RP iframe, starting timer.");
-    var timer_id = setInterval(checkSession, 5 * 100);
 
     function checkSession() {
         var win = window.parent.document.getElementById("op_iframe").contentWindow;
@@ -31,6 +28,7 @@
         }
         window.parent.window.location.href = "{service_url}" + "?state=" + e.data;
     }
+    setTimeout(checkSession, 500);
 </script>
 
 </body>
