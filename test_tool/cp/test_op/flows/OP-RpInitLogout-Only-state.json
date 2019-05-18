@@ -1,5 +1,5 @@
 {
-  "group": "RP Initiated Logout",
+  "group": "RP-Initiated Logout",
   "usage": {
     "extra": true,
     "return_type": [
@@ -9,7 +9,8 @@
       "CIT"
     ]
   },
-  "desc": "Uses RP initiated logout to end a Session at the OP. The request has post_logout_redirect_uri and an id_token_hint",
+  "desc": "Uses RP initiated logout to end a Session at the OP.",
+  "note": "After the logout you should end up at an OP page stating that you have been logged out. You must submit a screen shot of the final logout page",
   "sequence": [
     {
       "Webfinger": {
@@ -49,11 +50,14 @@
         }
       }
     },
+    "Note",
     {
       "EndSession": {
-        "set_post_logout_redirect_uri": null,
-        "set_state": null,
-        "id_token_hint": null
+        "set_req_args_state": null,
+        "set_op_args": {
+          "add_state": true,
+          "remove_id_token_hint": true
+        }
       }
     },
     "PostLogout",

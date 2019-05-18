@@ -1,5 +1,5 @@
 {
-  "group": "RP Initiated Logout",
+  "group": "RP-Initiated Logout",
   "usage": {
     "extra": true,
     "return_type": [

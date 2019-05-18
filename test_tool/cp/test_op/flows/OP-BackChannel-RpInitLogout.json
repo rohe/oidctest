@@ -1,5 +1,5 @@
 {
-  "group": "Front Channel Logout - RP Initiated",
+  "group": "Back-Channel Logout",
   "usage": {
     "extra": true,
     "return_type": [
@@ -9,7 +9,7 @@
       "CIT"
     ]
   },
-  "desc": "Registers support for frontchannel logout and uses RP initiated logout to trigger the logout",
+  "desc": "Registers support for backchannel logout and uses RP initiated logout to trigger the logout",
   "sequence": [
     {
       "Webfinger": {
@@ -27,9 +27,9 @@
           "grant_types": [
             "authorization_code"
           ],
-          "frontchannel_logout_session_required": true
+          "backchannel_logout_session_required": true
         },
-        "set_frontchannel_logout_uri": null
+        "set_backchannel_logout_uri": null
       }
     },
     {
@@ -66,7 +66,7 @@
         "id_token_hint": null
       }
     },
-    "FrontChannelLogout",
+    "BackChannelLogout",
     "PostLogout",
     {
       "AsyncAuthn": {

@@ -1,5 +1,5 @@
 {
-  "group": "Session management - RP Initiated Logout",
+  "group": "Session Management",
   "usage": {
     "extra": true,
     "return_type": [

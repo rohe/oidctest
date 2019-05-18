@@ -3,7 +3,7 @@
   "usage": {
     "discover": true
   },
-  "desc": "Publishes openid-configuration discovery information",
+  "desc": "Verifies that Session Management discovery values are published",
   "sequence": [
     {
       "Webfinger": {

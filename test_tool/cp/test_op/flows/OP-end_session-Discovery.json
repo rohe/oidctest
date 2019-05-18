@@ -1,9 +1,9 @@
 {
-  "group": "End Session",
+  "group": "RP-Initiated Logout",
   "usage": {
     "discover": true
   },
-  "desc": "Checks End session related openid-configuration discovery information",
+  "desc": "Verifies that end_session_endpoint is published",
   "sequence": [
     {
       "Webfinger": {
