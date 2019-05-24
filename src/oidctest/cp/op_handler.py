@@ -81,10 +81,16 @@ class OPHandler(object):
             else:
                 _op = self.setup_op(oper_id, test_id, self.com_args,
                                     self.op_args, self.test_conf, events)
-                if test_id.startswith('rp-init-logout'):
+                if test_id.startswith('rp-session'):
                     _csi = self.check_session_iframe.replace(
                         '<PATH>', '{}/{}'.format(oper_id, test_id))
                     _op.capabilities['check_session_iframe'] = _csi
+                elif test_id.startswith('rp-backchannel-'):
+                    _op.capabilities['backchannel_logout_supported'] = True
+                    _op.capabilities['backchannel_logout_session_supported'] = True
+                elif test_id.startswith('rp-frontchannel-'):
+                    _op.capabilities['frontchannel_logout_supported'] = True
+                    _op.capabilities['frontchannel_logout_session_supported'] = True
             _op.conv = Conversation(test_id, _op, None)
             _op.orig_keys = key_summary(_op.keyjar, '').split(', ')
             self.op[key] = _op
