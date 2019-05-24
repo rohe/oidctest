@@ -1,5 +1,5 @@
 {
-  "group": "RP Initiated BackChannel Logout",
+  "group": "RP Initiated Logout",
   "behavior": ["no_event"],
   "claims": "normal",
   "capabilities": {
@@ -11,7 +11,7 @@
       "code id_token token"
     ]
   },
-  "short_description": "Does RP initiated BackChannel Logout",
-  "detailed_description": "Does an RP initiated BackChannel logout.",
+  "short_description": "Does RP initiated Logout, no event claim in the logout token",
+  "detailed_description": "Does an RP initiated logout, no event claim in the logout token.",
   "expected_result": "That the Single Sign On session on the OP disappears."
 }

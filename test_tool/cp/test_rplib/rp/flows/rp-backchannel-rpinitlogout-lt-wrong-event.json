@@ -1,5 +1,5 @@
 {
-  "group": "RP Initiated BackChannel Logout",
+  "group": "RP Initiated Logout",
   "behavior": ["wrong_event"],
   "claims": "normal",
   "capabilities": {
@@ -11,7 +11,7 @@
       "code id_token token"
     ]
   },
-  "short_description": "Does RP initiated BackChannel Logout, state removed from response",
-  "detailed_description": "Does an RP initiated BackChannel logout, state removed from response.",
+  "short_description": "Does RP initiated Logout, wrong event description in logout token",
+  "detailed_description": "Does an RP initiated logout, Wrong event description in logout token.",
   "expected_result": "Error"
 }
