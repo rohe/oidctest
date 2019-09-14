@@ -78,7 +78,7 @@ def set_response_where(oper, args):
 
     :param response_type:
     :param not_response_type: 
-    :param where: Where should the Authroization response occur
+    :param where: Where should the Authorization response occur
     """
     if args is None:
         args = {"not_response_type": ["code"], "where": "fragment"}

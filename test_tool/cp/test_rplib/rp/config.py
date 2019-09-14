@@ -3,7 +3,7 @@ import os
 
 BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "static"))
 
-baseurl = "https://192.168.1.109"
+baseurl = "https://127.0.0.1"
 
 keys = [
     {"type": "RSA", "key": "keys/pyoidc_enc", "use": ["enc"]},
