@@ -1,5 +1,5 @@
 {
-  "group": "RP Initiated Logout",
+  "group": "RP Initiated BackChannel Logout",
   "behavior": ["wrong_alg"],
   "claims": "normal",
   "capabilities": {
