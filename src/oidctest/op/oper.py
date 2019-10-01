@@ -1,9 +1,5 @@
-import copy
-
-from future.backports.urllib.parse import parse_qs
-from future.backports.urllib.parse import urlencode
-
 import builtins
+import copy
 import inspect
 import json
 import logging
@@ -12,6 +8,8 @@ import sys
 import time
 
 from Cryptodome.PublicKey import RSA
+from future.backports.urllib.parse import parse_qs
+from future.backports.urllib.parse import urlencode
 from future.backports.urllib.parse import urlparse
 from jwkest import as_bytes
 from jwkest.jwk import RSAKey
@@ -25,10 +23,9 @@ from oic.oauth2 import Message
 from oic.oauth2.exception import HttpError
 from oic.oauth2.util import JSON_ENCODED
 from oic.oauth2.util import URL_ENCODED
-from oic.oic import AuthorizationResponse
 from oic.oic import OpenIDSchema
-from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
+from oic.oic.message import ProviderConfigurationResponse
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 from oic.utils.http_util import Redirect
 from oic.utils.keyio import KeyBundle
@@ -46,7 +43,6 @@ from otest.aus.request import SyncPostRequest
 from otest.aus.request import display_jwx_headers
 from otest.aus.request import same_issuer
 from otest.check import get_id_tokens
-from otest.check import get_protocol_response
 from otest.events import EV_EXCEPTION
 from otest.events import EV_FAULT
 from otest.events import EV_NOOP
@@ -164,9 +160,9 @@ class Registration(Operation):
                 self.req_args['jwks_uri'] = self.conv.entity.jwks_uri
             # use the first mutually supported authentication method
             if self.conv.entity.provider_info[
-                    "token_endpoint_auth_methods_supported"]:
+                "token_endpoint_auth_methods_supported"]:
                 for sam in self.conv.entity.provider_info[
-                        "token_endpoint_auth_methods_supported"]:
+                    "token_endpoint_auth_methods_supported"]:
                     if sam in CLIENT_AUTHN_METHOD:
                         self.req_args['token_endpoint_auth_method'] = sam
                         break
@@ -254,7 +250,7 @@ class AccessToken(SyncPostRequest):
                 # use the first mutually supported authn method
                 for am in _ent.client_authn_method.keys():
                     if am in _ent.provider_info[
-                            'token_endpoint_auth_methods_supported']:
+                        'token_endpoint_auth_methods_supported']:
                         self.op_args['authn_method'] = am
                         break
 
@@ -327,7 +323,7 @@ class RefreshToken(SyncPostRequest):
             except KeyError:
                 for am in _ent.client_authn_method.keys():
                     if am in _ent.provider_info[
-                            'token_endpoint_auth_methods_supported']:
+                        'token_endpoint_auth_methods_supported']:
                         self.op_args['authn_method'] = am
                         break
 
@@ -355,7 +351,7 @@ class RefreshToken(SyncPostRequest):
             if _jws_alg == "none":
                 pass
             elif "kid" not in atr[
-                    "id_token"].jws_header and not _jws_alg == "HS256":
+                "id_token"].jws_header and not _jws_alg == "HS256":
                 keys = self.conv.entity.keyjar.keys_by_alg_and_usage(
                     self.conv.info["issuer"], _jws_alg, "ver")
                 if len(keys) > 1:
