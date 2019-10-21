@@ -23,9 +23,9 @@ from oic.oauth2 import Message
 from oic.oauth2.exception import HttpError
 from oic.oauth2.util import JSON_ENCODED
 from oic.oauth2.util import URL_ENCODED
-from oic.oic import OpenIDSchema
-from oic.oic import RegistrationResponse
+from oic.oic.message import OpenIDSchema
 from oic.oic.message import ProviderConfigurationResponse
+from oic.oic.message import RegistrationResponse
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 from oic.utils.http_util import Redirect
 from oic.utils.keyio import KeyBundle

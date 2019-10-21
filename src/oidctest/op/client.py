@@ -9,8 +9,8 @@ from oic.exception import PyoidcError
 from oic.exception import RequestError
 from oic.oauth2 import ErrorResponse
 from oic.oauth2.exception import MissingRequiredAttribute
-from oic.oic import OpenIDSchema
-from oic.oic import UserInfoErrorResponse
+from oic.oic.message import OpenIDSchema
+from oic.oic.message import UserInfoErrorResponse
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 
 __author__ = 'roland'
