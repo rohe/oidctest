@@ -421,7 +421,7 @@ class CheckEncryptedRequestObjectSupportENC(CheckSupported):
     """
     Checks that the asked for encryption algorithm are among the supported
     """
-    cid = "check-encrypt-idtoken-enc-support"
+    cid = "check-encrypt-request-object-enc-support"
     msg = "Request_object encryption enc algorithm not supported"
     element = "request_object_encryption_enc_values_supported"
     parameter = "request_object_encryption_enc"
