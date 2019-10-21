@@ -1,6 +1,5 @@
-from future.backports.urllib.parse import urlparse
-
 import builtins
+import copy
 import inspect
 import json
 import logging
@@ -9,18 +8,26 @@ import sys
 import time
 
 from Cryptodome.PublicKey import RSA
-
+from future.backports.urllib.parse import parse_qs
+from future.backports.urllib.parse import urlencode
+from future.backports.urllib.parse import urlparse
+from jwkest import as_bytes
 from jwkest.jwk import RSAKey
-
 from oic import rndstr
 from oic.exception import IssuerMismatch
+from oic.exception import MessageException
+from oic.exception import NotForMe
 from oic.exception import ParameterError
 from oic.oauth2 import ErrorResponse
 from oic.oauth2 import Message
+from oic.oauth2.exception import HttpError
 from oic.oauth2.util import JSON_ENCODED
+from oic.oauth2.util import URL_ENCODED
 from oic.oic import OpenIDSchema
-from oic.oic import ProviderConfigurationResponse
 from oic.oic import RegistrationResponse
+from oic.oic.message import ProviderConfigurationResponse
+from oic.utils.authn.client import CLIENT_AUTHN_METHOD
+from oic.utils.http_util import Redirect
 from oic.utils.keyio import KeyBundle
 from oic.utils.keyio import dump_jwks
 from oic.utils.keyio import ec_init
@@ -28,21 +35,26 @@ from oic.utils.keyio import rsa_init
 from otest import RequirementsNotMet
 from otest import Unknown
 from otest.aus.operation import Operation
-from otest.aus.request import display_jwx_headers
 from otest.aus.request import AsyncGetRequest
+from otest.aus.request import AsyncRequest
+from otest.aus.request import Request
 from otest.aus.request import SyncGetRequest
 from otest.aus.request import SyncPostRequest
+from otest.aus.request import display_jwx_headers
 from otest.aus.request import same_issuer
 from otest.check import get_id_tokens
 from otest.events import EV_EXCEPTION
+from otest.events import EV_FAULT
 from otest.events import EV_NOOP
+from otest.events import EV_PROTOCOL_REQUEST
 from otest.events import EV_PROTOCOL_RESPONSE
+from otest.events import EV_REDIRECT_URL
 from otest.events import EV_REQUEST
 from otest.events import EV_RESPONSE
 from otest.events import OUTGOING
+from otest.operation import Note
+from otest.operation import Notice
 from otest.prof_util import RESPONSE
-from oic.utils.authn.client import CLIENT_AUTHN_METHOD
-from oic.oauth2.exception import HttpError
 
 __author__ = 'roland'
 
@@ -146,12 +158,14 @@ class Registration(Operation):
                 "registration_endpoint"]
             if self.conv.entity.jwks_uri:
                 self.req_args['jwks_uri'] = self.conv.entity.jwks_uri
-            #use the first mutually supported authentication method
-            if self.conv.entity.provider_info["token_endpoint_auth_methods_supported"]:
-                for sam in self.conv.entity.provider_info["token_endpoint_auth_methods_supported"]:
+            # use the first mutually supported authentication method
+            if self.conv.entity.provider_info[
+                "token_endpoint_auth_methods_supported"]:
+                for sam in self.conv.entity.provider_info[
+                    "token_endpoint_auth_methods_supported"]:
                     if sam in CLIENT_AUTHN_METHOD:
-                        self.req_args['token_endpoint_auth_method']=sam
-                        break                
+                        self.req_args['token_endpoint_auth_method'] = sam
+                        break
 
     def map_profile(self, profile_map):
         try:
@@ -229,12 +243,14 @@ class AccessToken(SyncPostRequest):
         if 'authn_method' not in self.op_args:
             _ent = self.conv.entity
             try:
-                #use the registered authn method
-                self.op_args['authn_method'] = _ent.registration_response['token_endpoint_auth_method']
+                # use the registered authn method
+                self.op_args['authn_method'] = _ent.registration_response[
+                    'token_endpoint_auth_method']
             except KeyError:
-                #use the first mutually supported authn method
+                # use the first mutually supported authn method
                 for am in _ent.client_authn_method.keys():
-                    if am in _ent.provider_info['token_endpoint_auth_methods_supported']:
+                    if am in _ent.provider_info[
+                        'token_endpoint_auth_methods_supported']:
                         self.op_args['authn_method'] = am
                         break
 
@@ -244,34 +260,41 @@ class AccessToken(SyncPostRequest):
                 request_args=self.req_args, **self.op_args)
         except HttpError:
             return None
-        
+
         if atr is None or isinstance(atr, ErrorResponse):
             return atr
 
         try:
-            msg = atr['id_token']
+            id_token = atr['id_token']
         except KeyError:
             pass
         else:
-            display_jwx_headers(msg, self.conv)
+            display_jwx_headers(id_token, self.conv)
 
-        try:
-            _jws_alg = atr["id_token"].jws_header['alg']
-        except (KeyError, AttributeError):
-            pass
-        else:
-            if _jws_alg == "none":
+            try:
+                _jws_alg = id_token.jws_header['alg']
+            except AttributeError:
                 pass
-            elif "kid" not in atr[
-                    "id_token"].jws_header and _jws_alg != "HS256":
-                keys = self.conv.entity.keyjar.keys_by_alg_and_usage(
-                    self.conv.info["issuer"], _jws_alg, "ver")
-                if len(keys) > 1:
-                    raise ParameterError("No 'kid' in id_token header!")
+            else:
+                if _jws_alg == "none":
+                    pass
+                elif "kid" not in id_token.jws_header and _jws_alg != "HS256":
+                    keys = self.conv.entity.keyjar.keys_by_alg_and_usage(
+                        self.conv.info["issuer"], _jws_alg, "ver")
+                    if len(keys) > 1:
+                        raise ParameterError("No 'kid' in id_token header!")
 
-        if not same_issuer(self.conv.info["issuer"], atr["id_token"]["iss"]):
-            raise IssuerMismatch(" {} != {}".format(self.conv.info["issuer"],
-                                                    atr["id_token"]["iss"]))
+            if not same_issuer(self.conv.info["issuer"], id_token["iss"]):
+                raise IssuerMismatch(
+                    " {} != {}".format(self.conv.info["issuer"],
+                                       id_token["iss"]))
+
+            try:
+                _smid = id_token['sid']
+            except KeyError:
+                pass
+            else:
+                self.conv.entity.smid2sid[_smid] = self.op_args['state']
 
         # assert isinstance(atr, AccessTokenResponse)
         return atr
@@ -300,7 +323,7 @@ class RefreshToken(SyncPostRequest):
             except KeyError:
                 for am in _ent.client_authn_method.keys():
                     if am in _ent.provider_info[
-                            'token_endpoint_auth_methods_supported']:
+                        'token_endpoint_auth_methods_supported']:
                         self.op_args['authn_method'] = am
                         break
 
@@ -367,7 +390,6 @@ class UserInfo(SyncGetRequest):
             self.conv.events.store(EV_PROTOCOL_RESPONSE, response)
 
         display_jwx_headers(response, self.conv)
-
 
     def _verify_subject_identifier(self, user_info):
         id_tokens = get_id_tokens(self.conv)
@@ -553,6 +575,292 @@ class RefreshAccessToken(SyncPostRequest):
 
 class Cache(Operation):
     pass
+
+
+class EndSession(AsyncRequest):
+    response_cls = "EndSessionResponse"
+    request_cls = "EndSessionRequest"
+    method = 'GET'
+
+    def __init__(self, conv, inut, sh, **kwargs):
+        super(EndSession, self).__init__(conv, inut, sh, **kwargs)
+        self.op_args["endpoint"] = conv.entity.provider_info[
+            "end_session_endpoint"]
+
+    def op_setup(self):
+        self.op_args['prop'] = 'id_token_hint'
+
+    def run(self):
+        _client = self.conv.entity
+
+        if 'add_state' in self.op_args:
+            _state = rndstr(32)
+            _client.logout_state2state[_state] = self.req_args['state']
+            self.op_args['state'] = self.req_args['state']
+            self.conv.end_session_state = _state
+            self.req_args['state'] = _state
+
+        logger.debug('req_args {}'.format(self.req_args))
+        logger.debug('op_args {}'.format(self.op_args))
+
+        url, body, ht_args, csi = _client.request_info(
+            self.request, method=self.method, request_args=self.req_args,
+            lax=True, **self.op_args)
+
+        if 'remove_id_token_hint' in self.op_args:
+            del csi['id_token_hint']
+            head, tail = url.split('?')
+            _qs = parse_qs(tail)
+            del _qs['id_token_hint']
+            _qs = {k: v[0] for k, v in _qs.items()}
+            url = '{}?{}'.format(head, urlencode(_qs))
+
+        self.csi = csi
+
+        self.conv.events.store(EV_REDIRECT_URL, url,
+                               sender=self.__class__.__name__)
+        return Redirect(str(url))
+
+
+class EndPoint(Request):
+    request_cls = None
+    method = ""
+    module = ""
+    content_type = URL_ENCODED
+    request_where = "url"  # otherwise 'body'
+    request_type = "urlencoded"
+    accept = None
+    _tests = {"post": [], "pre": []}
+
+    def __init__(self, conv, inut, sh, **kwargs):
+        Request.__init__(self, conv, inut, sh, **kwargs)
+        try:
+            self.profile = self.profile.split('.')
+        except AttributeError:
+            pass
+        self.conv.req = self
+        self.tests = copy.deepcopy(self._tests)
+        self.csi = None
+        # self.request = self.conv.msg_factory(self.request_cls)
+        # self.response = self.conv.msg_factory(self.request_cls)
+
+    def handle_request(self, message_factory, request=None, request_args=None,
+                       **kwargs):
+        logger.info("Request: {}".format(request))
+
+        if request or request_args:
+            _info = self.parse_request(message_factory, request, request_args)
+            return self.act_on_request(_info)
+        else:
+            return self.act_on_request()
+
+    def act_on_request(self, *arg):
+        raise NotImplemented()
+
+    def parse_request(self, message_factory, request=None, request_args=None):
+        raise NotImplemented()
+
+    def deserialize(self, message_factory, msg, msg_args, **kwargs):
+
+        req_cls = message_factory(self.request_cls)
+
+        logger.debug('msg: {}'.format(msg))
+        logger.debug('msg_args: {}'.format(msg_args))
+
+        if msg:
+            ev_index = self.conv.events.store(EV_REQUEST, msg,
+                                              receiver=self.__class__.__name__)
+            req = req_cls().from_urlencoded(msg)
+        else:
+            ev_index = self.conv.events.store(EV_REQUEST, msg_args,
+                                              receiver=self.__class__.__name__)
+            req = req_cls(**msg_args)
+
+        _inut = self.conv.operation.inut
+
+        try:
+            req.verify(**kwargs)
+        except (MessageException, ValueError, NotForMe) as err:
+            self.conv.events.store(EV_FAULT, err)
+            raise
+        except Exception as err:
+            logger.exception(err)
+            raise
+
+        logger.info("Parsed request: %s" % req.to_dict())
+        self.conv.events.store(EV_PROTOCOL_REQUEST, req, ref=ev_index,
+                               receiver=self.__class__.__name__)
+
+        return req
+
+
+class BackChannelLogout(EndPoint):
+    request_cls = "BackChannelLogoutRequest"
+    content_type = JSON_ENCODED
+    request_where = "body"  # otherwise 'body'
+    request_type = "json"
+
+    def parse_request(self, message_factory, request=None,
+                      request_args=None):
+
+        _cli = self.conv.entity
+
+        kwargs = {
+            'aud': _cli.client_id,
+            'iss': _cli.provider_info['issuer'],
+            'keyjar': _cli.keyjar
+        }
+
+        try:
+            req = self.deserialize(message_factory, request, request_args,
+                                   **kwargs)
+        except NotForMe:  # just ignore
+            return ''
+
+        if isinstance(req, str):
+            return req
+
+        # Find the state value
+
+        try:
+            sm_id = req['logout_token']['sid']
+        except KeyError:
+            raise MessageException('No session ID in logout token')
+        else:
+            try:
+                return _cli.smid2sid[sm_id]
+            except KeyError:
+                raise ValueError('Unknown session ID in logout token')
+
+    def act_on_request(self, state=''):
+        if state:
+            del self.conv.entity.grant[state]
+        return "OK"
+
+
+class FrontChannelLogout(EndPoint):
+    request_cls = "FrontChannelLogoutRequest"
+    content_type = URL_ENCODED
+    request_where = "url"  # otherwise 'body'
+    request_type = "urlencoded"
+
+    def parse_request(self, message_factory, request=None,
+                      request_args=None):
+
+        try:
+            req = self.deserialize(message_factory, request, request_args)
+        except NotForMe:
+            return ''
+
+        # sid is optional
+        try:
+            sm_id = req['sid']
+        except KeyError:
+            return None
+        else:
+            try:
+                return self.conv.entity.smid2sid[sm_id]
+            except KeyError:
+                raise ValueError('Unknown session ID in request')
+
+    def act_on_request(self, state=''):
+        if state:
+            del self.conv.entity.grant[state]
+        return "OK"
+
+
+class PostLogout(EndPoint):
+    request_cls = "Message"
+
+    def parse_request(self, message_factory, request=None, request_args=None):
+        req = self.deserialize(message_factory, request, request_args)
+
+        try:
+            return req['state']
+        except KeyError:
+            logger.debug('Missing "state"')
+            return ''
+
+    def act_on_request(self, logout_state=''):
+        if logout_state:
+            try:
+                _ = self.conv.entity.grant[logout_state]
+            except KeyError:
+                _ = self.conv.entity.logout_state2state[logout_state]
+
+        return ''
+
+
+class LogoutPage(Note):
+    pre_html = "opresult.html"
+    response_cls = "EndSessionResponse"
+    request_cls = "EndSessionRequest"
+    method = 'GET'
+
+    def __init__(self, conv, inut, sh, **kwargs):
+        super(LogoutPage, self).__init__(conv, inut, sh, **kwargs)
+        self.csi = None
+        self.request = self.conv.msg_factory(self.request_cls)
+        self.response = self.conv.msg_factory(self.response_cls)
+        self.op_args["endpoint"] = conv.entity.provider_info[
+            "end_session_endpoint"]
+
+    def op_setup(self):
+        pass
+
+    def args(self):
+        _client = self.conv.entity
+
+        if 'add_state' in self.op_args:
+            _state = rndstr(32)
+            _client.logout_state2state[_state] = self.op_args['state']
+            self.conv.end_session_state = _state
+            self.req_args['state'] = _state
+
+        url, body, ht_args, csi = _client.request_info(
+            self.request, method=self.method, request_args=self.req_args,
+            lax=True, **self.op_args)
+
+        self.csi = csi
+
+        self.conv.events.store(EV_REDIRECT_URL, url,
+                               sender=self.__class__.__name__)
+
+        return {
+            'check_session_iframe': self.conv.entity.provider_info[
+                'check_session_iframe'],
+            'logout_url': str(url)}
+
+    def __call__(self, *args, **kwargs):
+        _msg = self.inut.pre_html[self.pre_html]
+        kwargs = self.args()
+        for param in ['check_session_iframe', 'logout_url']:
+            _msg = _msg.replace('{{{}}}'.format(param), kwargs[param])
+        return as_bytes(_msg)
+
+
+class AfterLogout(Notice):
+    pre_html = "after_logout.html"
+
+    def op_setup(self):
+        pass
+
+    def args(self):
+        return {
+            'check_session_iframe': self.conv.entity.provider_info[
+                'check_session_iframe']}
+
+
+class SessionCheck(Notice):
+    pre_html = "session_verify.html"
+
+    def op_setup(self):
+        pass
+
+    def args(self):
+        return {
+            'check_session_iframe': self.conv.entity.provider_info[
+                'check_session_iframe']}
 
 
 def factory(name):

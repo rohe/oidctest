@@ -1,13 +1,14 @@
-from future.backports.urllib.parse import urlparse
-
+import json
 import logging
 
 import cherrypy
 import cherrypy_cors
 from cherrypy import url
+from future.backports.urllib.parse import urlparse
 from jwkest import as_bytes
 from jwkest import as_unicode
 from oic.oauth2 import Message
+from otest.events import EV_ENDPOINT
 from otest.events import EV_FAULT
 from otest.events import EV_REQUEST
 from otest.events import EV_RESPONSE
@@ -26,8 +27,9 @@ logger = logging.getLogger(__name__)
 def handle_error():
     cherrypy.response.status = 500
     cherrypy.response.body = [
-        "<html><body>Sorry, an error occured</body></html>"
+        b"<html><body>Sorry, an error occured</body></html>"
     ]
+
 
 def set_content_type(resp, content_type):
     if ('Content-type', content_type) in resp.headers:
@@ -40,19 +42,21 @@ def set_content_type(resp, content_type):
 
 def conv_response(op, resp):
     _stat = resp.status_code
-    #  if self.mako_lookup and self.mako_template:
-    #    argv["message"] = message
-    #    mte = self.mako_lookup.get_template(self.mako_template)
-    #    return [mte.render(**argv)]
+    for typ, val in resp.headers:
+        if typ == 'Set-Cookie':
+            cherrypy.response.cookie.load(val)
+
     if _stat < 300:
         op.events.store(EV_RESPONSE, resp.message)
         cherrypy.response.status = _stat
         for key, val in resp.headers:
+            if key == 'Set-Cookie':
+                continue
             cherrypy.response.headers[key] = val
         return as_bytes(resp.message)
     elif 300 <= _stat < 400:
         op.events.store('Redirect', resp.message)
-        raise cherrypy.HTTPRedirect(resp.message, status=_stat)
+        raise cherrypy.HTTPRedirect(resp.message, status=302)
     else:
         logger.debug("Error - Status:{}, message:{}".format(_stat, resp.message))
         op.events.store(EV_FAULT, resp.message)
@@ -265,9 +269,9 @@ class UserInfo(object):
             except KeyError:
                 pass
 
-            #kwargs.update(args)
+            # kwargs.update(args)
             resp = op.userinfo_endpoint(**args)
-            #if resp.status_code < 300:
+            # if resp.status_code < 300:
             #    set_content_type(resp, 'application/json')
             return conv_response(op, resp)
 
@@ -304,6 +308,147 @@ class Claims(object):
                 op.events.store(EV_RESPONSE, _info.to_dict())
                 cherrypy.response.headers["content-type"] = 'application/jwt'
                 return as_bytes(_info.to_jwt(key=jwt_key, algorithm="RS256"))
+
+
+class CheckSessionIframe(object):
+    @cherrypy.expose
+    @cherrypy_cors.tools.expose_public()
+    @cherrypy.tools.allow(
+        methods=["GET", "OPTIONS", "POST"])
+    def index(self, op, **kwargs):
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["GET", "POST"], origins='*',
+                allowed_headers=['Authorization', 'content-type'])
+        else:
+            store_request(op, 'CheckSessionIframe')
+            logger.debug('CheckSessionIframe: {}'.format(kwargs))
+            if cherrypy.request.method == "POST":
+                _req = cherrypy.request.body.read()
+                kwargs = json.loads(as_unicode(_req))
+                # will contain client_id and origin
+                if kwargs['client_id'] not in op.cdb:
+                    return b'error'
+                # Should have some intelligent check for origin
+                return b'ok'
+            else:
+                doc = open('templates/check_session_iframe.html').read()
+                return as_bytes(doc)
+
+
+class EndSession(object):
+    @cherrypy.expose
+    @cherrypy_cors.tools.expose_public()
+    @cherrypy.tools.allow(
+        methods=["GET", "OPTIONS"])
+    def index(self, op, **kwargs):
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["GET"], origins='*',
+                allowed_headers=['Authorization', 'content-type'])
+        else:
+            store_request(op, 'EndSessionRequest')
+            logger.debug('EndSessionRequest: {}'.format(kwargs))
+            # op.events.store(EV_REQUEST, kwargs)
+            cookie = cherrypy.request.cookie
+            _info = Message(**kwargs)
+            resp = op.end_session_endpoint(_info.to_urlencoded(), cookie=cookie)
+            # Normally the user would here be confronted with a logout
+            # verification page. We skip that and just assumes she said yes.
+
+            return conv_response(op, resp)
+
+
+LOGOUT_HTML_HEAD = """
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <title>Logout</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <style>
+    iframe{visibility:hidden;position:absolute;left:0;top:0;height:0;width:0;border:none}
+  </style>
+</head>
+"""
+LOGOUT_HTML_BODY = """
+<body>
+  <script>
+    var loaded = 0;
+    var iframes = {size};
+    function redirect() {
+      window.location.replace("{postLogoutRedirectUri}");
+    }
+    function frameOnLoad() {
+      loaded += 1;
+      if (loaded === iframes) {
+        redirect();
+      }
+    }
+    Array.prototype.slice.call(document.querySelectorAll('iframe')).forEach(function (element) {
+      element.onload = frameOnLoad;
+    });
+    setTimeout(redirect, {timeout});
+  </script>
+  {frames}
+</body>
+</html>
+"""
+
+
+class Logout(object):
+    @cherrypy.expose
+    @cherrypy_cors.tools.expose_public()
+    @cherrypy.tools.allow(
+        methods=["OPTIONS", "POST", "GET"])
+    def index(self, op, **kwargs):
+        if cherrypy.request.method == "OPTIONS":
+            cherrypy_cors.preflight(
+                allowed_methods=["POST", "GET"], origins='*',
+                allowed_headers=['Authorization', 'content-type'])
+        else:
+            store_request(op, 'Logout')
+            logger.debug('LogoutRequest: {}'.format(kwargs))
+            op.events.store(EV_REQUEST, kwargs)
+
+            # Normally the user would here be confronted with a logout
+            # verification page. We skip that and assumes she said yes.
+
+            _info = op.unpack_signed_jwt(kwargs['sjwt'])
+            logger.debug("SJWT unpacked: {}".format(_info))
+            # Before continuing make sure only the channel under test is used
+            # for cid, _c_info in op.cdb.items():
+
+            try:
+                res = op.do_verified_logout(alla=True, **_info)
+            except ConnectionRefusedError as err:
+                logger.error(err)
+                raise cherrypy.HTTPError(message="Connection Refused: {}".format(err))
+            except Exception as err:
+                logger.exception(err)
+                raise cherrypy.HTTPError(message="{}".format(err))
+
+            try:
+                _iframes = res['iframe']
+            except KeyError:
+                _iframes = []
+
+            _body = LOGOUT_HTML_BODY.replace('{size}', str(len(_iframes)))
+            _body = _body.replace('{frames}', ''.join(_iframes))
+            _body = _body.replace('{timeout}', '30')
+            _body = _body.replace('{postLogoutRedirectUri}',
+                                  _info['redirect_uri'])
+
+            try:
+                cookies = res['cookie']
+            except KeyError:
+                pass
+            else:
+                for tag, val in cookies:
+                    cherrypy.response.cookie.load(val)
+
+            return as_bytes("\n".join([LOGOUT_HTML_HEAD, _body]))
+
 
 HTML_PRE = """
 <!DOCTYPE html>
@@ -353,7 +498,8 @@ HTML_FOOTER = """
                 <ul class="list-inline">
                     <li>(C) 2017-2019 - <a href="https://openid.net/foundation">OpenID
                             Foundation</a></li>
-                    <li>E-mail: <a href="mailto:certification@oidf.org">certification@oidf.org</a></li>
+                    <li>E-mail: <a href="mailto:certification@oidf.org">certification@oidf.org</a
+                    ></li>
                     <li>Issues: <a
                         href="https://github.com/openid-certification/oidctest/issues">Github</a>
                     <li>
@@ -374,12 +520,13 @@ def choice(profiles):
 
     line = [
         '<table class="table table-hover table-bordered" style="font-family:monospace;">',
-        ]
+    ]
     for k in keys:
         line.append('<tr>')
         line.append('  <td width="80%">{}</td>'.format(k))
-        line.append('  <td class="text-center"><input type="radio" name="profile" value="{}"></td>'.format(
-            profiles[k]))
+        line.append(
+            '  <td class="text-center"><input type="radio" name="profile" value="{}"></td>'.format(
+                profiles[k]))
         line.append('</tr>')
     line.append('</table>')
     return '\n'.join(line)
@@ -407,9 +554,11 @@ class Root(object):
             HTML_PRE,
             '<div class="jumbotron">',
             '  <p>',
-            '    This is a tool for testing the compliance of an OpenID Connect Relying Party with the OpenID Connect specifications.',
+            '    This is a tool for testing the compliance of an OpenID Connect Relying Party '
+            'with the OpenID Connect specifications.',
             '    Before you start testing please read the ',
-            '    <a href="https://openid.net/certification/rp_testing/" target="_blank">Conformance Testing for RPs</a> introduction guide.',
+            '    <a href="https://openid.net/certification/rp_testing/" '
+            'target="_blank">Conformance Testing for RPs</a> introduction guide.',
             '  </p>',
             '</div>',
 
@@ -418,7 +567,8 @@ class Root(object):
             '    <h3 class="panel-title">Response Types</h3>',
             '  </div>',
             '  <div class="panel-body">'
-            '    <p>For a list of OIDC RP library tests per response_type choose your preference:</p>',
+            '    <p>For a list of OIDC RP library tests per response_type choose your '
+            'preference:</p>',
             '    <form action="list" class="col-md-6">',
             choice(ABBR),
             '        <div class="form-group">',
@@ -448,7 +598,10 @@ class Provider(Root):
         self.token = Token()
         self.userinfo = UserInfo()
         self.claims = Claims()
+        self.end_session = EndSession()
+        self.logout = Logout()
         self.reset = Reset(self.op_handler.com_args, self.op_handler.op_args)
+        self.check_session_iframe = CheckSessionIframe()
 
     def _cp_dispatch(self, vpath):
         # Only get here if vpath != None
@@ -474,6 +627,7 @@ class Provider(Root):
                 if len(vpath) == 1:
                     endpoint = vpath.pop(0)
                     op = self.op_handler.get(oper_id, test_id, ev, endpoint)[0]
+                    op.events.store(EV_ENDPOINT, endpoint)
                     cherrypy.request.params['op'] = op
                     if endpoint == 'registration':
                         return self.registration
@@ -487,6 +641,12 @@ class Provider(Root):
                         return self.claims
                     elif endpoint == 'reset':
                         return self.reset
+                    elif endpoint == 'end_session':
+                        return self.end_session
+                    elif endpoint == 'logout':
+                        return self.logout
+                    elif endpoint == 'check_session_iframe':
+                        return self.check_session_iframe
                     else:  # Shouldn't be any other
                         raise cherrypy.NotFound()
                 if len(vpath) == 2:
@@ -503,7 +663,7 @@ class Provider(Root):
 
 
 class RelyingPartyInstance(object):
-    
+
     def rp_3rd_party_init_login(self, op, client_id):
         if client_id in op.cdb:
             if 'initiate_login_uri' in op.cdb[client_id]:
@@ -514,8 +674,9 @@ class RelyingPartyInstance(object):
                 response.append('</pre>')
                 return '\n'.join(response)
         else:
-            raise cherrypy.HTTPError(404, "client_id " + client_id + " not found in client database!")            
- 
+            raise cherrypy.HTTPError(404,
+                                     "client_id " + client_id + " not found in client database!")
+
     @cherrypy.expose
     @cherrypy_cors.tools.expose_public()
     @cherrypy.tools.allow(
@@ -532,6 +693,7 @@ class RelyingPartyInstance(object):
             if test_id == "rp-3rd_party-init-login":
                 return self.rp_3rd_party_init_login(op, client_id)
             raise cherrypy.HTTPError(404, "no test handler found for test id: " + test_id)
+
 
 class RelyingParty(object):
     def __init__(self, op_handler, version=''):
@@ -559,7 +721,7 @@ class RelyingParty(object):
         # Only get here if vpath != None
         ent = cherrypy.request.remote.ip
         logger.info('ent:{}, vpath: {}'.format(ent, vpath))
-        
+
         if len(vpath) >= 1:
             ev = init_events(cherrypy.request.path_info,
                              'Test tool version:{}'.format(self.version))
@@ -568,14 +730,14 @@ class RelyingParty(object):
             test_id = vpath.pop(0)
             client_id = vpath.pop(0)
 
-            endpoint = ''            
-                    
+            endpoint = ''
+
             op = self.op_handler.get(rp_id, test_id, ev,
                                      endpoint)[0]
             cherrypy.request.params['op'] = op
             cherrypy.request.params['test_id'] = test_id
             cherrypy.request.params['client_id'] = client_id
-            
-            return self.instance            
+
+            return self.instance
         else:
             raise cherrypy.HTTPError(400, 'Unknown vpath stuffy')
