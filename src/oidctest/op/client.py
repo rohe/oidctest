@@ -21,6 +21,8 @@ logger = logging.getLogger(__name__)
 class Client(oic.Client):
     def __init__(self, *args, **kwargs):
         oic.Client.__init__(self, *args, **kwargs)
+        self.smid2sid = {}
+        self.logout_state2state = {}
 
     def generate_request_uris(self, request_dir):
         """

@@ -36,13 +36,15 @@ def init_keyjar(op, kj, com_args):
 
 
 class OPHandler(object):
-    def __init__(self, provider_cls, op_args, com_args, test_conf, folder):
+    def __init__(self, provider_cls, op_args, com_args, test_conf, folder,
+                 check_session_iframe=''):
         self.provider_cls = provider_cls
         self.op_args = op_args
         self.com_args = com_args
         self.test_conf = test_conf  # elsewhere called flows
         self.folder = folder
         self.op = {}
+        self.check_session_iframe = check_session_iframe
 
     def get(self, oper_id, test_id, events, endpoint):
         # addr = get_client_address(environ)
@@ -63,6 +65,8 @@ class OPHandler(object):
                     write_jwks_uri(_op, _op_args, self.folder)
                 else:
                     init_keyjar(_op, self.op_args['keyjar'], self.com_args)
+                    _kj = _op.keyjar.export_jwks(True, '')
+                    _op.keyjar.import_jwks(_kj, _op.name)
                     write_jwks_uri(_op, self.op_args, self.folder)
         except KeyError:
             if test_id in ['rp-id_token-kid-absent-multiple-jwks']:
@@ -77,6 +81,16 @@ class OPHandler(object):
             else:
                 _op = self.setup_op(oper_id, test_id, self.com_args,
                                     self.op_args, self.test_conf, events)
+                if test_id.startswith('rp-session'):
+                    _csi = self.check_session_iframe.replace(
+                        '<PATH>', '{}/{}'.format(oper_id, test_id))
+                    _op.capabilities['check_session_iframe'] = _csi
+                elif test_id.startswith('rp-backchannel-'):
+                    _op.capabilities['backchannel_logout_supported'] = True
+                    _op.capabilities['backchannel_logout_session_supported'] = True
+                elif test_id.startswith('rp-frontchannel-'):
+                    _op.capabilities['frontchannel_logout_supported'] = True
+                    _op.capabilities['frontchannel_logout_session_supported'] = True
             _op.conv = Conversation(test_id, _op, None)
             _op.orig_keys = key_summary(_op.keyjar, '').split(', ')
             self.op[key] = _op
@@ -99,6 +113,9 @@ class OPHandler(object):
             else:
                 setattr(op, key, val)
 
+        if not op.cookie_path:
+            op.cookie_path = '/'
+
         write_jwks_uri(op, op_arg, self.folder)
 
         if op.baseurl.endswith("/"):
@@ -108,6 +125,11 @@ class OPHandler(object):
 
         op.name = op.baseurl = "{}{}{}/{}".format(op.baseurl, div, oper_id,
                                                   test_id)
+
+        op.logout_verify_url = '{}/{}'.format(op.name, op.logout_path)
+
+        _kj = op.keyjar.export_jwks(True, '')
+        op.keyjar.import_jwks(_kj, op.name)
 
         _tc = test_conf[test_id]
         if not _tc:

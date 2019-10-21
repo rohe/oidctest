@@ -1,0 +1,29 @@
+{
+  "group": "RP-Initiated Logout",
+  "usage": {
+    "discover": true
+  },
+  "desc": "Verifies that end_session_endpoint is published",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    }
+  ],
+  "MTI": [],
+  "assert": {
+    "verify-op-endpoints-use-https": null,
+    "verify-required-claims": {
+      "ProviderConfigurationResponse": [
+        "check_session_iframe",
+        "end_session_endpoint"
+      ]
+    }
+  }
+}

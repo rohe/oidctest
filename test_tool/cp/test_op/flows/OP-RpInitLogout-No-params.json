@@ -1,0 +1,81 @@
+{
+  "group": "RP-Initiated Logout",
+  "usage": {
+    "extra": true,
+    "return_type": [
+      "C",
+      "CI",
+      "CT",
+      "CIT"
+    ]
+  },
+  "desc": "Uses RP initiated logout to end a Session at the OP. The request has no parameters at all",
+  "note": "This test should result in the OpenID Provider displaying a page to the user that a successful logout has completed.You must submit a screen shot of the successful logout page",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    {
+      "Registration": {
+        "set_request_args": {
+          "grant_types": [
+            "authorization_code"
+          ]
+        }
+      }
+    },
+    {
+      "AsyncAuthn": {
+        "set_response_where": null,
+        "set_request_args": {
+          "scope": [
+            "openid",
+            "offline_access"
+          ],
+          "prompt": "consent"
+        }
+      }
+    },
+    {
+      "AccessToken": {
+        "conditional_execution":{
+          "return_type": ["CIT","CI","C","CT"]
+        }
+      }
+    },
+    "Note",
+    {
+      "EndSession": {
+        "set_state": null,
+        "set_op_args": {
+          "remove_id_token_hint": true
+        }
+      }
+    },
+    "PostLogout",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null,
+        "set_request_args": {
+          "prompt": "none"
+        },
+        "set_expect_error": {
+          "error": [
+            "login_required",
+            "interaction_required",
+            "session_selection_required",
+            "consent_required"
+          ],
+          "stop": false
+        }
+      }
+    }
+  ]
+}

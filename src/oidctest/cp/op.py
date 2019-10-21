@@ -1,6 +1,10 @@
 import json
 import logging
 
+from http.cookies import SimpleCookie
+
+from future.backports.urllib.parse import urlparse
+
 import cherrypy
 import cherrypy_cors
 from cherrypy import url

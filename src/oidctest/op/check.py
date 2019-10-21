@@ -421,7 +421,7 @@ class CheckEncryptedRequestObjectSupportENC(CheckSupported):
     """
     Checks that the asked for encryption algorithm are among the supported
     """
-    cid = "check-encrypt-idtoken-enc-support"
+    cid = "check-encrypt-request-object-enc-support"
     msg = "Request_object encryption enc algorithm not supported"
     element = "request_object_encryption_enc_values_supported"
     parameter = "request_object_encryption_enc"
@@ -1716,6 +1716,71 @@ class VerifyOPEndpointsUseHTTPS(Error):
         return {}
 
 
+class VerifySessionMetadata(Error):
+    """
+    Verify that the following claims appear in the provider discovery metadata:
+    check_session_iframe
+    end_session_endpoint
+    """
+    cid = "verify-session-metadata"
+    msg = "Required claims missing"
+
+    def _func(self, conv):
+        m = []
+        _pi = get_provider_info(conv)
+        for claim in ['check_session_iframe', 'end_session_endpoint']:
+            if claim not in _pi:
+                self._status = self.status
+                m.append(claim)
+
+        if m:
+            self._message = 'These following required claims are missing: {}'.format(m)
+
+        return {}
+
+
+class VerifyFrontChannelMetadata(Error):
+    """
+    Verify that the following claims appear in the provider discovery metadata:
+    """
+    cid = "verify-front-channel-metadata"
+    msg = "Claim missing or defined to be False"
+
+    def _func(self, conv):
+        _pi = get_provider_info(conv)
+        for claim in ['frontchannel_logout_supported']:
+            if claim not in _pi:
+                self._status = self.status
+            elif not _pi[claim]:
+                self._status = self.status
+
+        if self._status == self.status:
+            self._message = 'Front channel logout not supported'
+
+        return {}
+
+
+class VerifyBackChannelMetadata(Error):
+    """
+    Verify that the following claims appear in the provider discovery metadata:
+    """
+    cid = "verify-back-channel-metadata"
+    msg = "Claim missing or defined to be False"
+
+    def _func(self, conv):
+        _pi = get_provider_info(conv)
+        for claim in ['backchannel_logout_supported']:
+            if claim not in _pi:
+                self._status = self.status
+            elif not _pi[claim]:
+                self._status = self.status
+
+        if self._status == self.status:
+            self._message = 'Back channel logout not supported'
+
+        return {}
+
+
 class VerifyHTTPSUsage(Error):
     """
     Verify that specific endpoints uses https
@@ -2528,6 +2593,33 @@ class Got(Error):
         if missing:
             self._status = ERROR
             self._message = self._msg_pat.format(self._kwargs['where'])
+        return {}
+
+
+class VerifyRequiredClaims(Error):
+    """
+    Verify that required claims are actually present
+    """
+    cid = 'verify-required-claims'
+    _msg_pat = "The following required claims where missing: {}"
+
+    def _func(self, conv):
+
+        missing = []
+        for cls, claims in self._kwargs.items():
+            res = get_protocol_response(conv, msg_factory(cls))
+            if res:
+                res = res[-1]
+            else:
+                missing.append(cls)
+                continue
+
+            for claim in claims:
+                if claim not in res:
+                    missing.append('{}.{}'.format(cls, claim))
+        if missing:
+            self._status = ERROR
+            self._message = self._msg_pat.format(missing)
         return {}
 
 

@@ -63,7 +63,7 @@ class Request(Operation):
 
     def map_profile(self, profile_map):
         for func, arg in profile_map[self.__class__][
-            self.profile[RESPONSE]].items():
+                self.profile[RESPONSE]].items():
             func(self, arg)
 
 

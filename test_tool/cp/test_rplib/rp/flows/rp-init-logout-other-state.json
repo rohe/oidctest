@@ -1,0 +1,17 @@
+{
+  "group": "RP Initiated Logout",
+  "claims": "normal",
+  "behavior": ["ost"],
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Does RP initiated Logout",
+  "detailed_description": "Does an RP initiated logout.",
+  "expected_result": "The OP returns wrong 'state' variable."
+}

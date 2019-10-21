@@ -1,7 +1,3 @@
-from future.backports.urllib.parse import parse_qs
-from future.backports.urllib.parse import splitquery
-from future.backports.urllib.parse import urlencode
-
 import copy
 import json
 import logging
@@ -9,24 +5,31 @@ import time
 
 import requests
 from Cryptodome.PublicKey import RSA
+from future.backports.urllib.parse import parse_qs
+from future.backports.urllib.parse import splitquery
+from future.backports.urllib.parse import urlencode
 from jwkest.ecc import P256
 from jwkest.jwk import ECKey
 from jwkest.jwk import RSAKey
 from jwkest.jwk import SYMKey
 from oic import oic
 from oic import rndstr
+from oic.exception import InvalidRequest
 from oic.oauth2 import Message
 from oic.oauth2 import error_response
 from oic.oic import provider
 from oic.oic.message import AccessTokenRequest
+from oic.oic.message import BACK_CHANNEL_LOGOUT_EVENT
 from oic.oic.message import ProviderConfigurationResponse
 from oic.oic.message import RegistrationRequest
 from oic.oic.message import RegistrationResponse
 from oic.oic.provider import FailedAuthentication
 from oic.oic.provider import InvalidRedirectURIError
+from oic.oic.provider import do_front_channel_logout_iframe
+from oic.utils.http_util import Response
+from oic.utils.jwt import JWT
 from oic.utils.keyio import key_summary
 from oic.utils.keyio import keyjar_init
-from oic.utils.http_util import Response
 from otest.events import EV_EXCEPTION
 from otest.events import EV_FAULT
 from otest.events import EV_HTTP_RESPONSE
@@ -36,6 +39,46 @@ from otest.events import EV_REQUEST
 __author__ = 'roland'
 
 logger = logging.getLogger(__name__)
+
+_jwks = {
+    "keys": [
+        {
+            "kty": "RSA",
+            "use": "sig",
+            "kid": "cnFLaGVXb2E5WDF6b3dhN1QtdFFNRERMTFVGYWVBV0R1YldEWF9YM1dHTQ",
+            "e": "AQAB",
+            "n":
+                "1duh4rXVoTxfJQutNcFR9GavPhWi2e3IqaVtIeWJ64Bdp6AxgmI5eAoaYHRMivpAfbynvB1b8G5Xoe59dfVBuhH5UScy8HFDPZknNMKTnTpyXbreOc7GmH7VPYYmK076w4oFUa76jx2V6Cm60o1enXlM9AbVrJ3llZA-eJYqvLaG2QNf63hVCpDr0a2WgSS2tk7Mu_o73SSu5tV_zLPN2efQF_e25iyMZqzEWZaMc0d4pJNXS9czXtpnumOHnxS5rps6933K50KRn2WJ9_jy65wo9w4dnmrxtxR7TaRxr2qYZUF8CKddfSOBueKjJZF_3DXWH9WhuCSyaaKtNKYFGQ",
+            "d":
+                "omkxEUZ8nf2GWFD80yUkw1I0ZhbyXUTrLoMWVTbIPlR3S7UpxFYqRNKPY48PDkCtN5BNZlx5lSeHX9AJ8co3h0LdL9dwJRAvO5mTH8thZXecoTgoSoiRZAB2m0nEtQE_Cb9I-NbFLGkQjocafYqlPzx-x5hlL7meQK6R8uxAOp2T3sl9joK5JfFr9cChZBwPjvN-8hk6NHjveHv5upQ11KVXrwoOgmCIiEFi9jyfc7mqdQlKng5CJ_uXwKdbnLyFPmx7q1Ny4WC13QRighsbKRapN-O5EAxV7mUx3LWPFOakccicl_qPxT2l4-98hqFyu15yT_0NWa25mGd0WlGSsQ",
+            "p":
+                "9_0BM2D5iJHQs1Qw23HEwEH3ayryaENdmaHIn8gQK38EqSdhPRDoyo0mOkmiNYItljpTPtSt0EOjA4mJRvHW2xnt7zI_DSLbcnFOBvurP0nnB4w1CXj8eiY7qqRnJsxobbkyZwFIjpbh_x2GDGU4wAJ3N5vUFDk0FbDqDn_9E4U",
+            "q":
+                "3MRZ9mO-B7zKw_T0H0nr8PIV6hllSzHxpsYPB3TA7gcdAVFezJnYmMjdsMzmaEYXt9KhP7WDM-2pQsRIIhJzZggQUwyy4wsfqo_C9ty7_l3W1v9fpluwWIk-fdmt5XgHbpHsmQkAA4OPJXkwJrv-z_yh54QTgdOWR5Wxe2AyrYU"
+        },
+        {
+            "kty": "EC",
+            "use": "sig",
+            "kid": "VWwxRnNkU1RSZkVHVWNVdlBjYm91RmxHYmxMZFUzaTdHbEpaS01PM04tSQ",
+            "crv": "P-256",
+            "x": "Vea7gThpgaXoQ6_gPHAeixsIOuw6Bg3CHVhNFvzc8r4",
+            "y": "Zgw4yPTZijqd1vpSWngiwE6HeX6l6btlsQHocqhmbPU",
+            "d": "_I10xkdtyAHCaPIQL1dQ5TDyvPaflHCt57jxmwJ__Uk"
+        },
+        {
+            "kty": "EC",
+            "use": "sig",
+            "kid": "STJCVHRHQzJJc3ExUDlzcF9RWktfTGlzb1JPSG5MX0VfTnBMbk8tVEhrOA",
+            "crv": "P-384",
+            "x":
+                "j_6EIot-EyPqCo19iBDe6qQS8dHPFhElUnQh_ODxbi9TKkFTdNzeKgK2JXlgmSlA",
+            "y": "ToI0SOGZgfhSO0DHPnNIguQlXIa54rP1fw-5UIcYOiKn4WgvIczf31UCG"
+                 "-YN_snW",
+            "d": "PX2PsP8ZVaoc-XcsFrFbnIs4eJzc6XwPq3GHNF-KCOL2EHxnYX066"
+                 "-S1g9G_XM1Q"
+        }
+    ]
+}
 
 
 class TestError(Exception):
@@ -106,11 +149,9 @@ class Server(oic.Server):
     def make_id_token(self, session, loa="2", issuer="",
                       alg="RS256", code=None, access_token=None,
                       user_info=None, auth_time=0, exp=None, extra_claims=None):
-        idt = oic.Server.make_id_token(self, session, loa, issuer, alg,
-                                       code,
+        idt = oic.Server.make_id_token(self, session, loa, issuer, alg, code,
                                        access_token, user_info, auth_time,
-                                       exp,
-                                       extra_claims)
+                                       exp, extra_claims)
 
         if "ath" in self.behavior_type:  # modify the at_hash if available
             try:
@@ -158,14 +199,14 @@ class Provider(provider.Provider):
                  client_authn, symkey, urlmap=None, ca_certs="", keyjar=None,
                  hostname="", template_lookup=None, template=None,
                  verify_ssl=True, capabilities=None, client_cert=None,
-                 **kwargs):
+                 logout_path='', **kwargs):
 
         provider.Provider.__init__(
             self, name, sdb, cdb, authn_broker, userinfo, authz, client_authn,
             symkey=symkey, urlmap=urlmap, keyjar=keyjar, hostname=hostname,
             template_lookup=template_lookup, template=template,
             verify_ssl=verify_ssl, capabilities=capabilities,
-            client_cert=client_cert)
+            client_cert=client_cert, logout_path=logout_path)
 
         self.claims_type = ["normal"]
         self.behavior_type = []
@@ -175,13 +216,15 @@ class Provider(provider.Provider):
         self.claim_access_token = {}
         self.init_keys = []
         self.update_key_use = ""
-        for param in ['jwks_name', 'jwks_uri']:
+        for param in ['jwks_name', 'jwks_uri', 'sso_ttl']:
             try:
                 setattr(self, param, kwargs[param])
             except KeyError:
                 pass
         self.jwx_def = {}
         self.build_jwx_def()
+        self.other = 'https://example.com/op'
+        self.keyjar.import_jwks(_jwks, self.other)
 
     def build_jwx_def(self):
         self.jwx_def = {}
@@ -331,7 +374,8 @@ class Provider(provider.Provider):
             if not "initiate_login_uri" in reg_req:
                 return error_response(
                     error="invalid_configuration_parameter",
-                    descr="No \"initiate_login_uri\" endpoint found in the Client Registration Request\"")
+                    descr="No \"initiate_login_uri\" endpoint found in the "
+                          "Client Registration Request\"")
 
         # Do initial verification that all endpoints from the client uses
         #  https
@@ -356,7 +400,8 @@ class Provider(provider.Provider):
         elif not "@" in reg_req["contacts"][0]:
             return error_response(
                 error="invalid_configuration_parameter",
-                descr="First address in \"contacts\" value in registration request is not a valid e-mail address.")
+                descr="First address in \"contacts\" value in registration "
+                      "request is not a valid e-mail address.")
 
         _response = provider.Provider.registration_endpoint(self, request,
                                                             authn, **kwargs)
@@ -380,7 +425,8 @@ class Provider(provider.Provider):
                 'action': kwargs['redirect_uri'],
                 'inputs': kwargs['aresp'],
             }
-            return Response(self.template_renderer('form_post', context), headers=kwargs["headers"])
+            return Response(self.template_renderer('form_post', context),
+                            headers=kwargs["headers"])
         elif resp_mode == 'fragment' and not fragment_enc:
             # Can't be done
             raise InvalidRequest("wrong response_mode")
@@ -445,7 +491,9 @@ class Provider(provider.Provider):
         if isinstance(request, dict):
             request = urlencode(request)
 
-        if "max_age" in _req and _req["max_age"] == "0" and "prompt" in _req and _req["prompt"] == "none":
+        if "max_age" in _req and _req["max_age"] == "0" and "prompt" in _req \
+                and \
+                _req["prompt"] == "none":
             aresp = {
                 "error": "login_required",
             }
@@ -509,7 +557,8 @@ class Provider(provider.Provider):
             self.events.store(EV_EXCEPTION,
                               "Failed to verify client due to: %s" % err)
             return error_response(error="invalid_client",
-                                  descr="Failed to verify client: {}".format(err))
+                                  descr="Failed to verify client: {}".format(
+                                      err))
 
         try:
             self._update_client_keys(client_id)
@@ -598,3 +647,78 @@ class Provider(provider.Provider):
         self.server.keyjar = item
 
     keyjar = property(_get_keyjar, _set_keyjar)
+
+    def end_session_endpoint(self, request="", cookie=None, **kwargs):
+        return provider.Provider.end_session_endpoint(self, request, cookie,
+                                                      **kwargs)
+
+    def do_back_channel_logout(self, cinfo, sub, sid):
+        try:
+            back_channel_logout_uri = cinfo['backchannel_logout_uri']
+        except KeyError:
+            return None
+
+        # always include sub and sid so I don't check for
+        # backchannel_logout_session_required
+
+        payload = {
+            'sub': sub, 'sid': sid,
+        }
+
+        if 'no_event' in self.behavior_type:
+            pass
+        elif 'wrong_event' in self.behavior_type:
+            payload['events'] = {"http://schemas.openid.net/event/foobar": {}}
+        else:
+            payload['events'] = {BACK_CHANNEL_LOGOUT_EVENT: {}}
+
+        if 'with_nonce' in self.behavior_type:
+            payload['nonce'] = rndstr(16)
+
+        try:
+            alg = cinfo['id_token_signed_response_alg']
+        except KeyError:
+            alg = self.capabilities['id_token_signing_alg_values_supported'][0]
+
+        if 'wrong_alg' in self.behavior_type:
+            # figure out a alg I could use but that are not the one used
+            # for ID Tokens. Pick one from id_token_signing_alg_values_supported
+            if alg.startswith('RS'):
+                alg = 'ES256'
+            elif alg.startswith('ES'):
+                alg = 'RS256'
+            else:  # probably HS*
+                alg = 'RS256'
+        elif 'alg_none' in self.behavior_type:
+            alg = 'none'
+
+        if 'wrong_issuer' in self.behavior_type:
+            iss = self.other
+        else:
+            iss = self.name
+
+        if 'wrong_aud' in self.behavior_type:
+            aud = self.other
+        else:
+            aud = cinfo["client_id"]
+
+        _jws = JWT(self.keyjar, iss=iss, lifetime=86400, sign_alg=alg)
+
+        if self.events:
+            kw = {'iss': iss, 'sign_alg': alg, 'aud': aud}
+            kw.update(payload)
+            self.events.store('Logout token', '{}'.format(kw))
+
+        _jws.with_jti = True
+        sjwt = _jws.pack(aud=cinfo["client_id"], **payload)
+
+        return back_channel_logout_uri, sjwt
+
+    def do_front_channel_logout_iframe(self, c_info, iss, sid):
+        if 'wrong_issuer' in self.behavior_type:
+            iss = self.other
+        if 'wrong_sid' in self.behavior_type:
+            sid = 'another_sid'
+
+        _iframe = do_front_channel_logout_iframe(c_info, iss, sid)
+        return _iframe
