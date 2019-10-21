@@ -16,6 +16,7 @@ from otest.events import EV_CONDITION
 from otest.events import EV_EXCEPTION
 from otest.events import EV_FAULT
 from otest.events import EV_HTTP_ARGS
+from otest.events import EV_HTTP_REQUEST
 from otest.events import EV_RESPONSE
 from otest.result import Result
 
@@ -387,6 +388,7 @@ class Main(object):
     @cherrypy.expose
     def frontchannel_logout(self, **kwargs):
         logger.debug('Front channel logout: {}'.format(kwargs))
+        self.sh['conv'].events.store(EV_HTTP_REQUEST, kwargs)
         if kwargs['entity_id'] != self.tester.conv.entity.entity_id:
             logger.debug('Not for me')
             return 'OK'

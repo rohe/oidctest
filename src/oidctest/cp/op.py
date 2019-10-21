@@ -1,13 +1,14 @@
 import json
+import logging
+
 from http.cookies import SimpleCookie
 
 from future.backports.urllib.parse import urlparse
 
-import logging
-
 import cherrypy
 import cherrypy_cors
 from cherrypy import url
+from future.backports.urllib.parse import urlparse
 from jwkest import as_bytes
 from jwkest import as_unicode
 from oic.oauth2 import Message
@@ -30,7 +31,7 @@ logger = logging.getLogger(__name__)
 def handle_error():
     cherrypy.response.status = 500
     cherrypy.response.body = [
-        "<html><body>Sorry, an error occured</body></html>"
+        b"<html><body>Sorry, an error occured</body></html>"
     ]
 
 
@@ -272,9 +273,9 @@ class UserInfo(object):
             except KeyError:
                 pass
 
-            #kwargs.update(args)
+            # kwargs.update(args)
             resp = op.userinfo_endpoint(**args)
-            #if resp.status_code < 300:
+            # if resp.status_code < 300:
             #    set_content_type(resp, 'application/json')
             return conv_response(op, resp)
 
@@ -419,11 +420,17 @@ class Logout(object):
 
             _info = op.unpack_signed_jwt(kwargs['sjwt'])
             logger.debug("SJWT unpacked: {}".format(_info))
+            # Before continuing make sure only the channel under test is used
+            # for cid, _c_info in op.cdb.items():
+
             try:
                 res = op.do_verified_logout(alla=True, **_info)
+            except ConnectionRefusedError as err:
+                logger.error(err)
+                raise cherrypy.HTTPError(message="Connection Refused: {}".format(err))
             except Exception as err:
                 logger.exception(err)
-                raise cherrypy.HTTPError(message=err)
+                raise cherrypy.HTTPError(message="{}".format(err))
 
             try:
                 _iframes = res['iframe']
@@ -431,7 +438,7 @@ class Logout(object):
                 _iframes = []
 
             _body = LOGOUT_HTML_BODY.replace('{size}', str(len(_iframes)))
-            _body = _body.replace('{frames}',''.join(_iframes))
+            _body = _body.replace('{frames}', ''.join(_iframes))
             _body = _body.replace('{timeout}', '30')
             _body = _body.replace('{postLogoutRedirectUri}',
                                   _info['redirect_uri'])
@@ -495,7 +502,8 @@ HTML_FOOTER = """
                 <ul class="list-inline">
                     <li>(C) 2017-2019 - <a href="https://openid.net/foundation">OpenID
                             Foundation</a></li>
-                    <li>E-mail: <a href="mailto:certification@oidf.org">certification@oidf.org</a></li>
+                    <li>E-mail: <a href="mailto:certification@oidf.org">certification@oidf.org</a
+                    ></li>
                     <li>Issues: <a
                         href="https://github.com/openid-certification/oidctest/issues">Github</a>
                     <li>
@@ -516,12 +524,13 @@ def choice(profiles):
 
     line = [
         '<table class="table table-hover table-bordered" style="font-family:monospace;">',
-        ]
+    ]
     for k in keys:
         line.append('<tr>')
         line.append('  <td width="80%">{}</td>'.format(k))
-        line.append('  <td class="text-center"><input type="radio" name="profile" value="{}"></td>'.format(
-            profiles[k]))
+        line.append(
+            '  <td class="text-center"><input type="radio" name="profile" value="{}"></td>'.format(
+                profiles[k]))
         line.append('</tr>')
     line.append('</table>')
     return '\n'.join(line)
@@ -549,9 +558,11 @@ class Root(object):
             HTML_PRE,
             '<div class="jumbotron">',
             '  <p>',
-            '    This is a tool for testing the compliance of an OpenID Connect Relying Party with the OpenID Connect specifications.',
+            '    This is a tool for testing the compliance of an OpenID Connect Relying Party '
+            'with the OpenID Connect specifications.',
             '    Before you start testing please read the ',
-            '    <a href="https://openid.net/certification/rp_testing/" target="_blank">Conformance Testing for RPs</a> introduction guide.',
+            '    <a href="https://openid.net/certification/rp_testing/" '
+            'target="_blank">Conformance Testing for RPs</a> introduction guide.',
             '  </p>',
             '</div>',
 
@@ -560,7 +571,8 @@ class Root(object):
             '    <h3 class="panel-title">Response Types</h3>',
             '  </div>',
             '  <div class="panel-body">'
-            '    <p>For a list of OIDC RP library tests per response_type choose your preference:</p>',
+            '    <p>For a list of OIDC RP library tests per response_type choose your '
+            'preference:</p>',
             '    <form action="list" class="col-md-6">',
             choice(ABBR),
             '        <div class="form-group">',
@@ -655,7 +667,7 @@ class Provider(Root):
 
 
 class RelyingPartyInstance(object):
-    
+
     def rp_3rd_party_init_login(self, op, client_id):
         if client_id in op.cdb:
             if 'initiate_login_uri' in op.cdb[client_id]:
@@ -666,8 +678,9 @@ class RelyingPartyInstance(object):
                 response.append('</pre>')
                 return '\n'.join(response)
         else:
-            raise cherrypy.HTTPError(404, "client_id " + client_id + " not found in client database!")            
- 
+            raise cherrypy.HTTPError(404,
+                                     "client_id " + client_id + " not found in client database!")
+
     @cherrypy.expose
     @cherrypy_cors.tools.expose_public()
     @cherrypy.tools.allow(
@@ -712,7 +725,7 @@ class RelyingParty(object):
         # Only get here if vpath != None
         ent = cherrypy.request.remote.ip
         logger.info('ent:{}, vpath: {}'.format(ent, vpath))
-        
+
         if len(vpath) >= 1:
             ev = init_events(cherrypy.request.path_info,
                              'Test tool version:{}'.format(self.version))
@@ -721,14 +734,14 @@ class RelyingParty(object):
             test_id = vpath.pop(0)
             client_id = vpath.pop(0)
 
-            endpoint = ''            
-                    
+            endpoint = ''
+
             op = self.op_handler.get(rp_id, test_id, ev,
                                      endpoint)[0]
             cherrypy.request.params['op'] = op
             cherrypy.request.params['test_id'] = test_id
             cherrypy.request.params['client_id'] = client_id
-            
-            return self.instance            
+
+            return self.instance
         else:
             raise cherrypy.HTTPError(400, 'Unknown vpath stuffy')

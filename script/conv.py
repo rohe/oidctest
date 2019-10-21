@@ -4,8 +4,8 @@ import os
 import sys
 from urllib.parse import quote_plus
 
-from oic.oic import ProviderConfigurationResponse
-from oic.oic import RegistrationResponse
+from oic.oic.message import ProviderConfigurationResponse
+from oic.oic.message import RegistrationResponse
 
 from oidctest.app_conf import REST
 from oidctest.ass_port import AssignedPorts
