@@ -273,6 +273,13 @@ class VerifyIdTokenSigningAlgorithmIsSupported(Error):
     cid = "verify-id_token_signing-algorithm-is-supported"
     msg = "Verify ID token signing algorithm is in " \
           "id_token_signing_alg_values_supported"
+    doc = """
+    :param algs: What algorithms 
+    :type algs: list of strings
+    
+    Example:
+        "verify-id_token_signing-algorithm-is-supported": { "algs": ["RS256"]}
+    """
 
     def _func(self, conv):
         _pi = get_provider_info(conv)
@@ -421,7 +428,7 @@ class CheckEncryptedRequestObjectSupportENC(CheckSupported):
     """
     Checks that the asked for encryption algorithm are among the supported
     """
-    cid = "check-encrypt-idtoken-enc-support"
+    cid = "check-encrypt-request-object-enc-support"
     msg = "Request_object encryption enc algorithm not supported"
     element = "request_object_encryption_enc_values_supported"
     parameter = "request_object_encryption_enc"
@@ -733,12 +740,8 @@ class VerifyClaims(Error):
     cid = "verify-claims"
     msg = "Claims received do not match those requested"
     doc = """
-    :param userinfo: Whether the method should look for the claims in the 
-    user info
-    :type userinfo: boolean
-    :param id_token: Whether the method should look for the claims in the 
-    id_token
-    :type id_token: boolean
+    :param userinfo: Whether the method should look for the claims in the user info
+    :param id_token: Whether the method should look for the claims in the id_token
     
     Example:
         "verify-claims": {
@@ -1065,7 +1068,12 @@ class MultipleSignOn(Error):
     cid = "multiple-sign-on"
     doc = """
     :param status: Status code returned on error
-    :type status: integer
+    :type status: integer (2=Warning, 3=Error)
+    
+    Example:
+        "multiple-sign-on": {
+          "status": 2
+        }
     """
 
     def _func(self, conv):
@@ -1147,6 +1155,11 @@ class VerifyRedirectUriQueryComponent(Error):
     doc = """
     :param kwargs: query components (key, value) that was expected
     :type kwargs: dictionary
+    
+    Example:
+        "verify-redirect_uri-query_component": {
+            "foo": "bar"
+        }
     """
 
     def _func(self, conv):
@@ -1439,6 +1452,13 @@ class CheckSignedEncryptedIDToken(Error):
     :type enc_enc: string
     :param sig_alg: Signature algorithm
     :type sig_alg: string
+    
+    Example:
+        "signed-encrypted-idtoken": {
+          "enc_alg": "RSA1_5",
+          "enc_enc": "A128CBC-HS256",
+          "sign_alg": "RS256"
+        }
     """
 
     def _func(self, conv):
@@ -1716,6 +1736,71 @@ class VerifyOPEndpointsUseHTTPS(Error):
         return {}
 
 
+class VerifySessionMetadata(Error):
+    """
+    Verify that the following claims appear in the provider discovery metadata:
+    check_session_iframe
+    end_session_endpoint
+    """
+    cid = "verify-session-metadata"
+    msg = "Required claims missing"
+
+    def _func(self, conv):
+        m = []
+        _pi = get_provider_info(conv)
+        for claim in ['check_session_iframe', 'end_session_endpoint']:
+            if claim not in _pi:
+                self._status = self.status
+                m.append(claim)
+
+        if m:
+            self._message = 'These following required claims are missing: {}'.format(m)
+
+        return {}
+
+
+class VerifyFrontChannelMetadata(Error):
+    """
+    Verify that the following claims appear in the provider discovery metadata:
+    """
+    cid = "verify-front-channel-metadata"
+    msg = "Claim missing or defined to be False"
+
+    def _func(self, conv):
+        _pi = get_provider_info(conv)
+        for claim in ['frontchannel_logout_supported']:
+            if claim not in _pi:
+                self._status = self.status
+            elif not _pi[claim]:
+                self._status = self.status
+
+        if self._status == self.status:
+            self._message = 'Front channel logout not supported'
+
+        return {}
+
+
+class VerifyBackChannelMetadata(Error):
+    """
+    Verify that the following claims appear in the provider discovery metadata:
+    """
+    cid = "verify-back-channel-metadata"
+    msg = "Claim missing or defined to be False"
+
+    def _func(self, conv):
+        _pi = get_provider_info(conv)
+        for claim in ['backchannel_logout_supported']:
+            if claim not in _pi:
+                self._status = self.status
+            elif not _pi[claim]:
+                self._status = self.status
+
+        if self._status == self.status:
+            self._message = 'Back channel logout not supported'
+
+        return {}
+
+
 class VerifyHTTPSUsage(Error):
     """
     Verify that specific endpoints uses https
@@ -1725,6 +1810,9 @@ class VerifyHTTPSUsage(Error):
     doc = """
     :param endpoints: Which OP endpoints that should be checked
     :type endpoints: list of strings
+    
+    Example:
+        "verify-https-usage": {"endpoints": ["initiate_login_uri"]}
     """
 
     def _func(self, conv):
@@ -1761,23 +1849,6 @@ class VerifyOPHasRegistrationEndpoint(Error):
             self._status = self.status
 
         return {}
-
-
-# class VerifyProviderHasDynamicClientEndpoint(Error):
-#     """
-#     Verify that the OP has a registration endpoint
-#     """
-#     cid = "verify-op-has-dynamic-client-endpoint"
-#     msg = "No registration endpoint"
-#
-#     def _func(self, conv):
-#         _pi = get_provider_info(conv)
-#         try:
-#             assert "dynamic_client_endpoint" in _pi
-#         except AssertionError:
-#             self._status = self.status
-#
-#         return {}
 
 
 class VerifyIDTokenUserInfoSubSame(Information):
@@ -1867,6 +1938,15 @@ class VerifySignedIdToken(Error):
     """
     cid = "verify-idtoken-is-signed"
     msg = "ID Token unsigned or signed with the wrong algorithm"
+    doc = """
+    :param alg: Which signing algorithm that was expected
+    :type alg: string
+
+    Example:
+        "verify-idtoken-is-signed": {
+          "alg": "HS256"
+        }
+    """
 
     def _func(self, conv):
         res = get_id_tokens(conv)
@@ -2044,6 +2124,15 @@ class VerifyBase64URL(Check):
     """
     cid = "verify-base64url"
     msg = "JWK not according to the spec"
+    doc = """
+    :param err_status: Which error status should be reported
+    :type err_status: integer (2=Warning, 3=Error)
+
+    Example:
+        "verify-base64url": {
+          "err_status": 3
+        }
+    """
 
     @staticmethod
     def _chk(key, params):
@@ -2251,6 +2340,12 @@ class ClaimsCheck(Information):
     :type id_token: list of strings
     :param required: If the claims are required
     :type required: boolean
+    
+    Example:
+        "claims-check": {
+          "required": true,
+          "id_token": ["auth_time"]
+        }
     """
 
     def _func(self, conv):
@@ -2325,6 +2420,11 @@ class CheckQueryPart(Error):
     doc = """
     :param kwargs: key-value pairs that should be present in the query part
     :type kwargs: dictionary
+    
+    Example:
+        "check-query-part": {
+          "foo": "bar"
+        }
     """
 
     def _func(self, conv):
@@ -2407,10 +2507,16 @@ class AuthTimeCheck(Warnings):
     expected range."""
     cid = "auth_time-check"
     doc = """
-    :param max_age: Maximum age of the id_token
+    :param max_age: Maximum age of the id_token (in seconds)
     :type max_age: int
     :param skew: The allowed skew in seconds
     :type skew: int
+    
+    Example:
+        "auth_time-check": {
+          "max_age": 1,
+          "skew": 600
+        }
     """
 
     def _func(self, conv):
@@ -2470,6 +2576,14 @@ class GotIdTokenClaims(Warnings):
     doc = """
     :param claims: claims expected to be in the id_token
     :type claims: list of strings
+    
+    Example:
+        "got_id_token_claims": {
+          "claims": [
+            "nickname",
+            "email"
+          ]
+        }
     """
 
     def _func(self, conv):
@@ -2492,6 +2606,13 @@ class GotUserinfoClaims(Warnings):
     doc = """
     :param claims: claims expected to be among the user info
     :type claims: list of strings
+    
+    Example:
+        "got_userinfo_claims": {
+          "claims": [
+            "email"
+          ]
+        }
     """
 
     def _func(self, conv):
@@ -2516,6 +2637,14 @@ class Got(Error):
     :type where: string
     :param what: Which claims 
     :type what: string
+    
+    Example:
+        "got": {
+          "what": [
+            "id_token"
+          ],
+          "where": "AccessTokenResponse"
+        }
     """
 
     def _func(self, conv):
@@ -2528,6 +2657,44 @@ class Got(Error):
         if missing:
             self._status = ERROR
             self._message = self._msg_pat.format(self._kwargs['where'])
+        return {}
+
+
+class VerifyRequiredClaims(Error):
+    """
+    Verify that required claims are actually present
+    """
+    cid = 'verify-required-claims'
+    _msg_pat = "The following required claims where missing: {}"
+    doc = """
+    Specifies which claims that was expected where.
+    
+    Example:
+        "verify-required-claims": {
+          "ProviderConfigurationResponse": [
+            "backchannel_logout_supported",
+            "backchannel_logout_session_supported"
+          ]
+        }
+    """
+
+    def _func(self, conv):
+
+        missing = []
+        for cls, claims in self._kwargs.items():
+            res = get_protocol_response(conv, msg_factory(cls))
+            if res:
+                res = res[-1]
+            else:
+                missing.append(cls)
+                continue
+
+            for claim in claims:
+                if claim not in res:
+                    missing.append('{}.{}'.format(cls, claim))
+        if missing:
+            self._status = ERROR
+            self._message = self._msg_pat.format(missing)
         return {}
 
 

@@ -1,15 +1,21 @@
-from future.backports.urllib.parse import urlencode
-from future.backports.urllib.parse import urlparse
-from past.types import basestring
-
 import inspect
 import json
 import os
-import six
 import sys
 
+import six
+from future.backports.urllib.parse import urlencode
+from future.backports.urllib.parse import urlparse
+from jwkest import as_bytes
+from jwkest import as_unicode
+from jwkest import b64e
+from jwkest.jws import factory as jws_factory
+from oic import rndstr
+from oic.oic import IdToken
 from oic.oic import PREFERENCE2PROVIDER
-
+from oic.utils.authn.client import CLIENT_AUTHN_METHOD
+from oic.utils.time_util import time_sans_frac
+from oidctest.op.check import get_id_tokens
 from otest import ConfigurationError
 from otest.check import ERROR
 from otest.check import STATUSCODE_TRANSL
@@ -20,9 +26,7 @@ from otest.func import SetUpError
 from otest.func import get_base
 from otest.prof_util import return_type
 from otest.result import get_issuer
-
-from oidctest.op.check import get_id_tokens
-from oic.utils.authn.client import CLIENT_AUTHN_METHOD
+from past.types import basestring
 
 __author__ = 'roland'
 
@@ -74,7 +78,7 @@ def set_response_where(oper, args):
 
     :param response_type:
     :param not_response_type: 
-    :param where: Where should the Authroization response occur
+    :param where: Where should the Authorization response occur
     """
     if args is None:
         args = {"not_response_type": ["code"], "where": "fragment"}
@@ -384,7 +388,8 @@ def essential_and_specific_acr_claim(oper, args):
                                 "acr_values_supported", args)
 
     oper.req_args["claims"] = {
-        "id_token": {"acr": {"value": _acrs[0], 'essential': True}}}
+        "id_token": {"acr": {"value": _acrs[0], 'essential': True}}
+    }
 
 
 def sub_claims(oper, args):
@@ -502,6 +507,22 @@ def redirect_uris_with_fragment(oper, kwargs):
     oper.req_args["redirect_uris"] = [ru]
 
 
+def post_logout_redirect_uri_with_query_component(oper, args):
+    """
+    Context: AsyncAuthn
+    Action: Add a query component to the post_logout_redirect_uri
+    Example:
+        post_logout_redirect_uri_with_query_component:
+            foo: bar
+
+    :param oper: An Operation Instance
+    :param kwargs: Values to build the query part from
+    """
+    ru = oper.conv.entity.registration_info['post_logout_redirect_uris'][0]
+    ru += "?%s" % urlencode(args)
+    oper.req_args.update({"post_logout_redirect_uri": [ru]})
+
+
 def request_in_file(oper, kwargs):
     """
     Context: AsyncAuthn
@@ -590,29 +611,141 @@ def set_state(oper, arg):
     oper.op_args['state'] = oper.conv.state
 
 
+def set_req_args_state(oper, arg):
+    """
+    Context: RefreshAccessToken
+    Action: Sets the operation argument 'state' to what has been used
+    previously in the session.
+    Example:
+        "set_state": null
+
+    """
+
+    oper.req_args['state'] = oper.conv.state
+
+
+def set_post_logout_redirect_uri(oper, arg):
+    """
+    Context: EndSession
+    Action: Sets the 'post_logout_redirect_uri' argument
+    Usage Example:
+        "set_post_logout_redirect_uri": null
+    """
+    ent = oper.conv.entity
+    oper.req_args["post_logout_redirect_uri"] = ent.registration_info[
+        'post_logout_redirect_uris'][0]
+
+
+def register_signing_arg(oper, arg):
+    """
+    Context: ClientRegistration
+    Action: Registers a signing algorithm that the provider supports
+    Example:
+        "register_signing_arg": "id_token"
+
+    """
+    map = {
+        'id_token': 'id_token_signed_response_alg',
+        'userinfo': 'userinfo_signed_response_alg',
+        'request_object': 'request_object_signing_alg',
+        'token_endpoint': 'token_endpoint_auth_signing_alg'
+    }
+
+    _pinfo = oper.conv.entity.provider_info
+    _pref = oper.conv.entity.pref
+
+    # What the provider can do
+    _algs = _pinfo[PREFERENCE2PROVIDER[map[arg]]]
+
+    oper.op_args[map[arg]] = _algs[0]
+
+
 def register(oper, arg):
     for a in arg:
         oper.req_args[a] = oper.conv.entity.provider_info[
             PREFERENCE2PROVIDER[a]][0]
 
 
+def set_end_session_state(oper, arg):
+    """
+    Context: EndSession
+    Action: Sets the 'state' argument in a end_session request. Note that this
+        'state' variable has nothing to do with the authn 'state'
+    Usage Example:
+        "set_end_session_state": null
+    """
+    _state = rndstr(32)
+    oper.conv.end_session_state = _state
+    oper.req_args["state"] = _state
+
+
 def set_client_authn_method(oper, arg):
     _entity = oper.conv.entity
     try:
-        _method = _entity.behaviour["token_endpoint_auth_method"]        
+        _method = _entity.behaviour["token_endpoint_auth_method"]
     except KeyError:
         try:
-            if _entity.provider_info["token_endpoint_auth_methods_supported"] :
-                for sam in _entity.provider_info["token_endpoint_auth_methods_supported"]:
-                    if sam in CLIENT_AUTHN_METHOD:
-                        #use the first mutually supported method
-                        _method=sam
-                        break                
+            _method = _entity.provider_info[
+                "token_endpoint_auth_methods_supported"][0]
+            # generate a key error if client authn method is not supported by
+            # pyoidc
+            m = CLIENT_AUTHN_METHOD[_method]
         except KeyError:  # Go with default
             _method = 'client_secret_basic'
-    
-        
+
     oper.op_args['authn_method'] = _method
+
+
+def create_idtoken_hint_other_issuer(oper, arg):
+    """
+    Context: EndSession
+    Action: Sets the 'id_token_hint' argument in a end_session request.
+        The value of the argument is a correct signed JWT but not the one
+        that should have been used.
+    Usage Example:
+        "create_idtoken_hint_other_issuer": null
+    """
+    iss = oper.conv.entity.client_id
+    op = oper.conv.entity.provider_info['issuer']
+    iat = time_sans_frac()
+    exp = iat+3600
+    idt = IdToken(iss=iss, aud=[op], iat=iat, exp=exp, **arg)
+    keys = oper.conv.entity.keyjar.get_signing_key('rsa')
+    _jwt = idt.to_jwt(keys, 'RS256')
+    oper.req_args["id_token_hint"] = _jwt
+
+
+def modified_idtoken_hint(oper, arg):
+    """
+    Context: EndSession
+    Action: Sets the 'id_token_hint' argument in a end_session request.
+        The value of the argument is a incorrect signed JWT.
+    Usage Example:
+        "create_idtoken_hint_other_issuer": null
+    """
+    res = get_signed_id_tokens(oper.conv)
+    if res:
+        _jws = jws_factory(res[-1])
+
+        header = as_unicode(b64e(as_bytes(json.dumps({'alg': 'none'}))))
+        oper.req_args["id_token_hint"] = '.'.join(
+            [header, as_unicode(_jws.jwt.b64part[1]), ''])
+
+
+def set_backchannel_logout_uri(oper, args):
+    _base = get_base(oper.conv.entity.base_url)
+    entity_id = rndstr(24)
+    oper.conv.entity.entity_id = entity_id
+    oper.req_args['backchannel_logout_uri'] = "{}{}?entity_id={}".format(
+        _base, "backchannel_logout", entity_id)
+
+
+def set_frontchannel_logout_uri(oper, args):
+    _base = get_base(oper.conv.entity.base_url)
+    entity_id = rndstr(24)
+    oper.conv.entity.entity_id = entity_id
+    oper.req_args['frontchannel_logout_uri'] = "{}{}?entity_id={}".format(
+        _base, "frontchannel_logout", entity_id)
 
 
 def factory(name):

@@ -5,6 +5,7 @@ import os
 
 import cherrypy
 import sys
+
 from oic.utils import webfinger
 from otest.flow import Flow
 from otest.prof_util import SimpleProfileHandler
@@ -57,8 +58,14 @@ if __name__ == '__main__':
     folder = os.path.abspath(os.curdir)
     _flowsdir = os.path.normpath(os.path.join(folder, args.flowsdir))
     _flows = Flow(_flowsdir, profile_handler=SimpleProfileHandler)
-    op_handler = OPHandler(provider.Provider, _op_arg, _com_args, _flows,
-                           folder)
+    try:
+        csi = config.CHECK_SESSION_IFRAME
+    except AttributeError:
+        op_handler = OPHandler(provider.Provider, _op_arg, _com_args, _flows,
+                               folder)
+    else:
+        op_handler = OPHandler(provider.Provider, _op_arg, _com_args, _flows,
+                               folder, csi.format(args.port))
 
     cherrypy.tools.dumplog = cherrypy.Tool('before_finalize', dump_log)
 
@@ -90,20 +97,20 @@ if __name__ == '__main__':
         '/favicon.ico':
         {
             'tools.staticfile.on': True,
-            'tools.staticfile.filename': os.path.join(folder, 'static/favicon.ico')
+            'tools.staticfile.filename': os.path.join(folder,
+                                                      'static/favicon.ico')
         },
         '/robots.txt':
         {
             'tools.staticfile.on': True,
-            'tools.staticfile.filename': os.path.join(folder, 'static/robots.txt')
+            'tools.staticfile.filename': os.path.join(folder,
+                                                      'static/robots.txt')
         }
     }
 
     # WebFinger
-    webfinger_config = {
-        '/': {'base_url': _op_arg['baseurl']}}
-    cherrypy.tree.mount(WebFinger(webfinger.WebFinger(),
-                                  version=_version),
+    webfinger_config = {'/': {'base_url': _op_arg['baseurl']}}
+    cherrypy.tree.mount(WebFinger(webfinger.WebFinger(), version=_version),
                         '/.well-known/webfinger', webfinger_config)
 
     # test list

@@ -138,6 +138,7 @@ def main_setup(args, lookup=None):
     except AttributeError:
         pass
 
+
     # print URLS
     if args.debug:
         op_arg["debug"] = True
@@ -208,6 +209,11 @@ def cb_setup(args, lookup=None):
     except AttributeError:
         pass
 
+    try:
+        com_args['sso_ttl'] = config.SSO_TTL
+    except AttributeError:
+        pass
+
     # Client data base
     try:
         com_args['cdb'] = InMemoryBCD()
@@ -264,17 +270,15 @@ def cb_setup(args, lookup=None):
         print("Can't access client certificate and/or client secret")
         exit(-1)
 
+    try:
+        com_args['logout_path'] = config.LOGOUT_PATH
+    except AttributeError:
+        pass
+
     op_arg = {}
 
-    try:
-        op_arg["cookie_ttl"] = config.COOKIETTL
-    except AttributeError:
-        pass
-
-    try:
-        op_arg["cookie_name"] = config.COOKIENAME
-    except AttributeError:
-        pass
+    for key, val in config.COOKIE.items():
+        op_arg["cookie_{}".format(key)] = val
 
     # print URLS
     if args.debug:
@@ -292,12 +296,15 @@ def cb_setup(args, lookup=None):
         _sdb = create_session_db(com_args["baseurl"], 'automover', '430X', {})
         _op = Provider(sdb=_sdb, **com_args)
         jwks = keyjar_init(_op, config.keys)
+        # Add keys under the issuer ID
+        _bj = _op.keyjar.export_jwks(True, '')
+        _op.keyjar.import_jwks(_bj, _op.baseurl)
     except KeyError:
         pass
     else:
         op_arg["jwks"] = jwks
         op_arg['keyjar'] = _op.keyjar
-        #op_arg["keys"] = config.keys
+        # op_arg["keys"] = config.keys
 
     try:
         op_arg["marg"] = multi_keys(com_args, config.multi_keys)

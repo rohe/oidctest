@@ -4,12 +4,19 @@ import cherrypy
 from cherrypy import CherryPyException
 from cherrypy import HTTPRedirect
 from jwkest import as_bytes
+from jwkest import as_unicode
+from oic.oic import AuthorizationResponse
 from otest import Break
 from otest import exception_trace
 from otest.check import CRITICAL
+from otest.check import OK
+from otest.check import State
+from otest.check import get_protocol_response
+from otest.events import EV_CONDITION
 from otest.events import EV_EXCEPTION
 from otest.events import EV_FAULT
 from otest.events import EV_HTTP_ARGS
+from otest.events import EV_HTTP_REQUEST
 from otest.events import EV_RESPONSE
 from otest.result import Result
 
@@ -28,7 +35,8 @@ def expected_response_mode(conv):
     try:
         response_mode = conv.req.req_args["response_mode"]
     except KeyError:
-        if conv.req.req_args["response_type"] == [''] or conv.req.req_args["response_type"] == ['code']:
+        if conv.req.req_args["response_type"] == [''] or conv.req.req_args[
+                "response_type"] == ['code']:
             response_mode = 'query'
         else:
             response_mode = 'fragment'
@@ -52,6 +60,8 @@ class Main(object):
         self.webenv = webenv
         self.pick_grp = pick_grp
         self.kwargs = kwargs
+        self.session_checks = {'changed': 0, 'unchanged': 0}
+        self.max_checks = self.info.conf.SESSION_MAX_CHECKS
 
     @cherrypy.expose
     def index(self):
@@ -102,12 +112,13 @@ class Main(object):
 
     @cherrypy.expose
     def run(self, test):
+        self.session_checks = {'changed': 0, 'unchanged': 0}
         try:
             resp = self.tester.run(test, **self.webenv)
         except HTTPRedirect:
             raise
         except Exception as err:
-            #test_id = list(self.flows.complete.keys())[0]
+            # test_id = list(self.flows.complete.keys())[0]
             _trace = exception_trace('run', err, logger)
             self.tester.conv.events.store(EV_FAULT, _trace)
             return self.display_exception(exception_trace=_trace)
@@ -190,6 +201,11 @@ class Main(object):
         self.tester.store_result(res)
         logger.error('Encountered: {} in "{}"'.format(msg, context))
         self.opresult()
+
+    def main_page(self):
+        res = Result(self.sh, self.flows.profile_handler)
+        self.tester.store_result(res)
+        return self.display()
 
     @cherrypy.expose
     # @cherrypy.tools.allow(methods=["GET"])
@@ -302,3 +318,182 @@ class Main(object):
                 return resp
 
             self.opresult()
+
+    def _endpoint(self, ref, request=None, **kwargs):
+        _conv = self.sh['conv']
+
+        # continue with next operation in the sequence
+        self.sh["index"] += 1
+        try:
+            resp = self.tester.handle_request(request, **kwargs)
+        except cherrypy.HTTPRedirect:
+            raise
+        except Break:
+            resp = False
+            self.tester.store_result()
+        except Exception as err:
+            _trace = exception_trace(ref, err, logger)
+            _conv.events.store(EV_FAULT, _trace)
+            self.tester.store_result()
+            return self.display_exception(exception_trace=_trace)
+
+        if resp is False or resp is True:
+            pass
+        elif isinstance(resp, dict) and 'exception_trace' in resp:
+            return self.display_exception(**resp)
+        elif not isinstance(resp, int):
+            return resp
+
+        self.opresult()
+
+    @cherrypy.expose
+    def logout(self, **kwargs):  # post_logout_redirect_uri
+        logger.debug('Post logout: {}'.format(kwargs))
+        if kwargs:
+            return self._endpoint(ref='logout', request_args=kwargs)
+        else:
+            return self._endpoint(ref='logout')
+
+    @cherrypy.expose
+    def backchannel_logout(self, **kwargs):
+        logger.debug('Back channel logout: {}'.format(kwargs))
+        if cherrypy.request.process_request_body is True:
+            _request = as_unicode(cherrypy.request.body.read())
+            if _request:
+                logger.info('back_channel logout request: {}'.format(_request))
+                if kwargs['entity_id'] != self.tester.conv.entity.entity_id:
+                    logger.debug('Not for me ')
+                    return 'OK'
+                else:
+                    return self._endpoint(ref='backchannel_logout',
+                                      request=_request)
+            else:
+                _request_args = cherrypy.request.params
+                if not _request_args:
+                    raise cherrypy.HTTPError(
+                        400, 'Missing Back channel Logout request body')
+
+                logger.info('back_channel logout request_args: {}'.format(
+                    _request_args))
+                if kwargs['entity_id'] != self.tester.conv.entity.entity_id:
+                    logger.debug('Not for me ')
+                    return 'OK'
+                else:
+                    return self._endpoint(ref='backchannel_logout',
+                                          request_args=_request_args)
+        else:
+            raise cherrypy.HTTPError(
+                400, 'Missing Back channel Logout request body')
+
+    @cherrypy.expose
+    def frontchannel_logout(self, **kwargs):
+        logger.debug('Front channel logout: {}'.format(kwargs))
+        self.sh['conv'].events.store(EV_HTTP_REQUEST, kwargs)
+        if kwargs['entity_id'] != self.tester.conv.entity.entity_id:
+            logger.debug('Not for me')
+            return 'OK'
+        else:
+            _args = dict([(k,v) for k,v in kwargs.items()
+                          if k not in ['entity_id', 'sid']])
+            return self._endpoint(ref='frontchannel_logout', **_args)
+
+    @cherrypy.expose
+    def session_unchange(self, **kwargs):
+        try:
+            _state = kwargs['state']
+        except KeyError:
+            pass
+        else:
+            if _state == 'unchanged':
+                self.tester.conv.events.store(
+                    'SessionState', 'Session state verified unchanged')
+                _index = self.tester.sh['index']
+                _index += 1
+                return self.tester.run_flow(self.tester.conv.test_id,
+                                            index=_index)
+            else:  # display session_verify.html again
+                self.session_checks['unchanged'] += 1
+                self.tester.conv.events.store(
+                    'SessionState',
+                    'Session check {} returned: {}'.format(
+                        self.session_checks['unchanged'], _state))
+                if self.session_checks['unchanged'] == self.max_checks:
+                    self.tester.conv.events.store(EV_FAULT,
+                                                  'Session state not unchanged')
+                    return self.main_page()
+                else:
+                    _msg = self.tester.inut.pre_html['session_verify.html']
+                    _csi = self.tester.conv.entity.provider_info[
+                        'check_session_iframe']
+                    _msg.replace("{check_session_iframe}", _csi)
+                    return as_bytes(_msg)
+
+    @cherrypy.expose
+    def session_change(self, **kwargs):
+        try:
+            _state = kwargs['state']
+        except KeyError:
+            pass
+        else:
+            logger.debug('Session state: {}'.format(kwargs))
+            self.tester.conv.events.store(
+                'SessionState',
+                'Session check returned: {}'.format(_state))
+
+            if _state == 'changed':
+                self.tester.conv.events.store(EV_CONDITION,
+                                              State('Done', status=OK))
+                self.tester.store_result()
+                self.opresult()
+            else:  # display after_logout.html again
+                self.session_checks['changed'] += 1
+                logger.debug('{} session check'. format(self.session_checks[
+                                                            'changed']))
+                self.tester.conv.events.store(
+                    'SessionState',
+                    'Session check {} returned: {}'.format(
+                        self.session_checks['unchanged'], _state))
+
+                if self.session_checks['changed'] >= self.max_checks:
+                    self.tester.conv.events.store(EV_FAULT,
+                                                  'Session state not changed')
+                    return self.main_page()
+                else:
+                    _msg = self.tester.inut.pre_html['after_logout.html']
+                    _csi = self.tester.conv.entity.provider_info[
+                        'check_session_iframe']
+                    _msg.replace("{check_session_iframe}", _csi)
+                    return as_bytes(_msg)
+
+    def rp_iframe(self, status, service_url):
+        _conv = self.tester.conv
+        _entity = _conv.entity
+
+        _msg = self.tester.inut.pre_html['rp_session_iframe.html']
+        # client_id
+        _msg = _msg.replace("{client_id}", _entity.client_id)
+        # session_state, get it from the Authorization response
+        inst = get_protocol_response(_conv, AuthorizationResponse)
+        _msg = _msg.replace("{session_state}", inst[0]['session_state'])
+        # issuer
+        _msg = _msg.replace("{issuer}", _entity.provider_info['issuer'])
+        # session_change_url
+
+        _msg = _msg.replace("{service_url}", service_url)
+        _msg = _msg.replace('{status}', status)
+
+        return as_bytes(_msg)
+
+    @cherrypy.expose
+    def session_iframe_unchanged(self):
+        _entity = self.tester.conv.entity
+        _service_url = self.info.conf.SESSION_UNCHANGE_URL.format(
+            _entity.base_url)
+        return self.rp_iframe('unchanged', _service_url)
+
+    @cherrypy.expose
+    def session_iframe_changed(self):
+        _entity = self.tester.conv.entity
+        _service_url = self.info.conf.SESSION_CHANGE_URL.format(
+            _entity.base_url)
+        return self.rp_iframe('changed', _service_url)

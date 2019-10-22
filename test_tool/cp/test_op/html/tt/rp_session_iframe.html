@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+<script type="application/javascript">
+    var client_id = "{client_id}";
+    var session_state = "{session_state}";
+    console.log("RP session state: " + session_state);
+    var targetOrigin = "{issuer}";
+
+    var mes = client_id + " " + session_state;
+
+    window.addEventListener("message", receiveMessage, false);
+
+    function checkSession() {
+        var win = window.parent.document.getElementById("op_iframe").contentWindow;
+        win.postMessage(mes, targetOrigin);
+    }
+
+    function receiveMessage(e) {
+        console.log("origin: " + e.origin + " expected: " + targetOrigin);
+        if (e.origin !== targetOrigin) {
+            return;
+        }
+        window.parent.window.location.href = "{service_url}" + "?state=" + e.data;
+    }
+    setTimeout(checkSession, 500);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "group": "Back-Channel Logout",
+  "usage": {
+    "discover": true
+  },
+  "desc": "Checks Front Channel related openid-configuration discovery information",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    }
+  ],
+  "MTI": [],
+  "assert": {
+    "verify-op-endpoints-use-https": null,
+    "verify-required-claims": {
+      "ProviderConfigurationResponse": [
+        "backchannel_logout_supported",
+        "backchannel_logout_session_supported"
+      ]
+    }
+  }
+}

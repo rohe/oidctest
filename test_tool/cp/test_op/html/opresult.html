@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+
+<html>
+<head>
+    <title>OIDCTest RP</title>
+</head>
+<body>
+
+<h1>OP result</h1>
+<h2>You have successfully logged in!</h2>
+
+{% if check_session_iframe is defined %}
+    <iframe id="rp_iframe" src="/session_iframe" hidden></iframe>
+    <iframe id="op_iframe" src="{check_session_iframe}" hidden></iframe>
+    <iframe id="logout" src="{end_session}" hidden></iframe>
+{% endif %}
+
+
+</body>
+</html>
