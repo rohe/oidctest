@@ -5,7 +5,8 @@ RUN apt-get clean && apt-get --fix-missing update
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y git ntp curl
 RUN apt-get update && apt-get install -y gnupg
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+
 RUN apt-get update && apt-get install -y nodejs apache2
 
 ENV SRCDIR /usr/local/src
@@ -14,7 +15,7 @@ ENV SUBDIR ${SRCDIR}/${INSTDIR}
 
 WORKDIR ${SRCDIR}
 
-ENV VERSION_NODE_OP   tags/v4.0.3
+ENV VERSION_NODE_OP   tags/v6.0.0-alpha.4
 
 RUN git clone https://github.com/panva/node-oidc-provider.git
 RUN cd node-oidc-provider && git checkout ${VERSION_NODE_OP} && cd -
@@ -25,6 +26,8 @@ COPY docker/op/cert.pem /etc/apache2/
 COPY docker/op/key.pem /etc/apache2/
 
 RUN a2enmod headers && a2enmod ssl && a2enmod proxy && a2enmod proxy_http && a2ensite ssl
+
+ENV HEROKU_EXAMPLE_CONFIGURATION '{"whitelistedJWA":{"idTokenSigningAlgValues":["none","HS256","RS256","PS256","ES256","EdDSA"],"requestObjectSigningAlgValues":["none","HS256","RS256","PS256","ES256","EdDSA"],"idTokenEncryptionAlgValues":["RSA1_5","A128KW","A256KW","ECDH-ES","ECDH-ES+A128KW","ECDH-ES+A256KW","RSA-OAEP"],"requestObjectEncryptionAlgValues":["RSA1_5","A128KW","A256KW","ECDH-ES","ECDH-ES+A128KW","ECDH-ES+A256KW","RSA-OAEP"],"userinfoEncryptionAlgValues":["RSA1_5","A128KW","A256KW","ECDH-ES","ECDH-ES+A128KW","ECDH-ES+A256KW","RSA-OAEP"]}}'
 
 COPY docker/op/run.sh ${SUBDIR}/
 
