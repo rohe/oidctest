@@ -1,1 +1,65 @@
-{"group": "Client Authentication", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, {"Registration": {"check_support": {"ERROR": {"token_endpoint_auth_methods_supported": "client_secret_basic"}}, "set_request_args": {"token_endpoint_auth_method": "client_secret_basic"}}}, {"AsyncAuthn": {"set_response_where": null}}, {"AccessToken": {"check_support": {"WARNING": {"token_endpoint_auth_methods_supported": "client_secret_basic"}}, "set_op_args": {"authn_method": "client_secret_basic"}}}], "usage": {"return_type": ["C", "CI", "CIT", "CT"], "register": true}, "desc": "Access token request with client_secret_basic authentication", "assert": {"verify-response": {"response_cls": ["AuthorizationResponse", "AccessTokenResponse"]}}, "reference": ["https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication"]}
+{
+  "group": "Client Authentication",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    {
+      "Registration": {
+        "check_support": {
+          "ERROR": {
+            "token_endpoint_auth_methods_supported": "client_secret_basic"
+          }
+        },
+        "set_request_args": {
+          "token_endpoint_auth_method": "client_secret_basic"
+        }
+      }
+    },
+    {
+      "AsyncAuthn": {
+        "set_response_where": null
+      }
+    },
+    {
+      "AccessToken": {
+        "check_support": {
+          "WARNING": {
+            "token_endpoint_auth_methods_supported": "client_secret_basic"
+          }
+        },
+        "set_op_args": {
+          "authn_method": "client_secret_basic"
+        }
+      }
+    }
+  ],
+  "usage": {
+    "return_type": [
+      "C",
+      "CI",
+      "CIT",
+      "CT"
+    ],
+    "register": true
+  },
+  "desc": "Access token request with client_secret_basic authentication",
+  "assert": {
+    "verify-response": {
+      "response_cls": [
+        "AuthorizationResponse",
+        "AccessTokenResponse"
+      ]
+    }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication"
+  ]
+}

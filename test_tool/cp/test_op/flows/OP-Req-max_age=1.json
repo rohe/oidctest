@@ -1,1 +1,99 @@
-{"group": "Misc Request Parameters", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", "AsyncAuthn", {"AccessToken": {"conditional_execution": {"return_type": ["CIT", "CI", "C", "CT"]}}}, "Note", {"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", {"AsyncAuthn": {"set_response_where": null, "set_request_args": {"max_age": 1}}}, {"AccessToken": {"conditional_execution": {"return_type": ["CIT", "CI", "C", "CT"]}}}], "usage": {}, "desc": "Requesting ID Token with max_age=1 seconds restriction", "result": "The test passed if you were prompted to log in.", "note": "Wait at least one second before proceeding so that the max_age=1 period expires. You should be prompted to authenticate or re-authenticate. Please submit a screen shot of any authentication user interaction that occurred as part of your certification application.", "assert": {"claims-check": {"required": true, "id_token": ["auth_time"]}, "auth_time-check": {"max_age": 1, "skew": 600}, "multiple-sign-on": {"status": 2}, "verify-response": {"response_cls": ["AccessTokenResponse", "AuthorizationResponse"]}}, "MTI": ["CT", "CIT", "CI", "I", "IT", "C", "CNF", "DYN"], "reference": ["https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest"]}
+{
+  "group": "Misc Request Parameters",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    "AsyncAuthn",
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": [
+            "CIT",
+            "CI",
+            "C",
+            "CT"
+          ]
+        }
+      }
+    },
+    "Note",
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null,
+        "set_request_args": {
+          "max_age": 1
+        }
+      }
+    },
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": [
+            "CIT",
+            "CI",
+            "C",
+            "CT"
+          ]
+        }
+      }
+    }
+  ],
+  "usage": {},
+  "desc": "Requesting ID Token with max_age=1 seconds restriction",
+  "result": "The test passed if you were prompted to log in.",
+  "note": "Wait at least one second before proceeding so that the max_age=1 period expires. You should be prompted to authenticate or re-authenticate. Please submit a screen shot of any authentication user interaction that occurred as part of your certification application.",
+  "assert": {
+    "claims-check": {
+      "required": true,
+      "id_token": [
+        "auth_time"
+      ]
+    },
+    "auth_time-check": {
+      "max_age": 1,
+      "skew": 600
+    },
+    "multiple-sign-on": {
+      "status": 2
+    },
+    "verify-response": {
+      "response_cls": [
+        "AccessTokenResponse",
+        "AuthorizationResponse"
+      ]
+    }
+  },
+  "MTI": [
+    "CT",
+    "CIT",
+    "CI",
+    "I",
+    "IT",
+    "C",
+    "CNF",
+    "DYN"
+  ],
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest"
+  ]
+}

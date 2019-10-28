@@ -1,1 +1,50 @@
-{"group": "redirect_uri Request Parameter", "usage": {"register": true}, "desc": "Request with a redirect_uri with a query component when a redirect_uri with the same query component is registered", "reference": ["https://tools.ietf.org/html/rfc6749#section-3.1.2"], "assert": {"check-query-part": {"foo": "bar"}, "verify-response": {"response_cls": ["AuthorizationResponse"]}}, "MTI": ["DYN"], "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, {"Registration": {"redirect_uris_with_query_component": {"foo": "bar"}}}, {"AsyncAuthn": {"redirect_uri_with_query_component": {"foo": "bar"}, "set_response_where": null}}]}
+{
+  "group": "redirect_uri Request Parameter",
+  "usage": {
+    "register": true
+  },
+  "desc": "Request with a redirect_uri with a query component when a redirect_uri with the same query component is registered",
+  "reference": [
+    "https://tools.ietf.org/html/rfc6749#section-3.1.2"
+  ],
+  "assert": {
+    "check-query-part": {
+      "foo": "bar"
+    },
+    "verify-response": {
+      "response_cls": [
+        "AuthorizationResponse"
+      ]
+    }
+  },
+  "MTI": [
+    "DYN"
+  ],
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    {
+      "Registration": {
+        "redirect_uris_with_query_component": {
+          "foo": "bar"
+        }
+      }
+    },
+    {
+      "AsyncAuthn": {
+        "redirect_uri_with_query_component": {
+          "foo": "bar"
+        },
+        "set_response_where": null
+      }
+    }
+  ]
+}

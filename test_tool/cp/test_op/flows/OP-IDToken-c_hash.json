@@ -1,1 +1,38 @@
-{"group": "ID Token", "usage": {"return_type": ["CI", "CIT"]}, "desc": "ID Token has c_hash when ID Token and Authorization Code returned from Authorization Endpoint [Hybrid]", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", {"AsyncAuthn": {"set_response_where": null}}], "MTI": ["CI", "CIT"], "assert": {"verify-authn-response": null}, "reference": ["https://openid.net/specs/openid-connect-core-1_0.html#HybridIDToken"]}
+{
+  "group": "ID Token",
+  "usage": {
+    "return_type": [
+      "CI",
+      "CIT"
+    ]
+  },
+  "desc": "ID Token has c_hash when ID Token and Authorization Code returned from Authorization Endpoint [Hybrid]",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null
+      }
+    }
+  ],
+  "MTI": [
+    "CI",
+    "CIT"
+  ],
+  "assert": {
+    "verify-authn-response": null
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#HybridIDToken"
+  ]
+}

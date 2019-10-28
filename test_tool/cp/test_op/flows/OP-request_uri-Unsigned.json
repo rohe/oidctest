@@ -1,1 +1,52 @@
-{"group": "request_uri Request Parameter", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, {"Registration": {"set_request_args": {"request_object_signing_alg": "none"}, "check_support": {"ERROR": {"request_uri_parameter_supported": true}}}}, {"AsyncAuthn": {"set_response_where": null, "set_op_args": {"request_object_signing_alg": null, "local_dir": "export", "request_method": "file"}, "request_in_file": null}}], "usage": {"register": true}, "desc": "Support request_uri request parameter with unsigned request", "assert": {"verify-response": {"response_cls": ["AuthorizationResponse"]}}, "reference": ["https://openid.net/specs/openid-connect-core-1_0.html#RequestUriParameter"]}
+{
+  "group": "request_uri Request Parameter",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    {
+      "Registration": {
+        "set_request_args": {
+          "request_object_signing_alg": "none"
+        },
+        "check_support": {
+          "ERROR": {
+            "request_uri_parameter_supported": true
+          }
+        }
+      }
+    },
+    {
+      "AsyncAuthn": {
+        "set_response_where": null,
+        "set_op_args": {
+          "request_object_signing_alg": null,
+          "local_dir": "export",
+          "request_method": "file"
+        },
+        "request_in_file": null
+      }
+    }
+  ],
+  "usage": {
+    "register": true
+  },
+  "desc": "Support request_uri request parameter with unsigned request",
+  "assert": {
+    "verify-response": {
+      "response_cls": [
+        "AuthorizationResponse"
+      ]
+    }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#RequestUriParameter"
+  ]
+}
