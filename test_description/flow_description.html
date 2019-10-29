@@ -1,0 +1,167 @@
+<h1 id="test_description">1. Test description file</h1>
+The test description files are JSON documents. Each of these documents
+contains a JSON object with a set of keys and values. The possible keys are:
+<ul>
+    <li>assert</li>
+    <li>desc</li>
+    <li>group</li>
+    <li>note</li>
+    <li>reference</li>
+    <li>sequence</li>
+    <li>usage</li>
+    <li>MTI</li>
+</ul>
+These will be described one by one below
+<h2 id="json_assert">1.1. assert</h2>
+Lists the assertions that are performed after a test has completed.
+A example is:
+<pre>
+    "assert": {
+        "verify-response": {
+              "response_cls": [
+                    "OpenIDSchema"
+              ]
+        }
+    }
+</pre>
+The interpretation of these is that the assertion with the identifier
+<em>verify-response</em> will be executed with the argument
+<pre>
+    response_cls="OpenDISchema"
+</pre>
+<h2 id="json_desc">1.2. desc</h2>
+A human readable description of what the test is trying to accomplish.
+<h2 id="json_group">1.3. group</h2>
+Which group the test belongs to. When the tests are presented to the tester
+tests belonging to the same group are listed together under the group header.
+<h2 id="json_note">1.4. note</h2>
+In some case the test tool needs to pass information to the tester.
+This is where that information is stored.
+<h2 id="json_reference">1.5. reference</h2>
+Links to parts of the OpenID Connect and accompanying standards that are
+tested by the test.
+<h2 id="json_sequence">1.6. sequence</h2>
+The complete flow of a test. This consists of a number of requests.
+<p></p>
+Before a request is issued the arguments fo the request may be set to specific
+values. Also before a request is sent a check my be performed to figure out if
+there is any meaning to send the request. One reason for it not to be so would
+be that the OP does not support the functionality that is under test.
+<p></p>
+An simple example of a sequence:
+<pre>
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    }
+  ]
+</pre>
+This sequence contains 2 requests, the first being a Webfinger request and the
+second a discovery request. Before the webfinger request is sent, the webfinger
+resource is specified by the <em>set_webfinger_resource</em> function.
+Similarly, before the discovery request is sent the issuer is collected using
+the <em>set_discovery_issuer</em> function.
+<p>
+    <b>Note:</b> If webfinger is not supported then that request is not sent.<br>
+    The same goes for discovery. Which means that running this test when not
+    supporting dynamic discovery is useless.
+</p>
+<p></p>
+A slightly more complex sequence:
+<pre>
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null
+      }
+    },
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": [
+            "CIT",
+            "CI",
+            "C",
+            "CT"
+          ]
+        }
+      }
+    },
+    {
+      "UserInfo": {
+        "set_op_args": {
+          "method": "POST",
+          "authn_method": "token_in_message_body"
+        }
+      }
+    }
+  ]
+</pre>
+This starts in the same way as the previous one. Webfinger, provider info
+discovery and client registration is performed if supported.<br>
+Then follows a Authorization request, Access token request and finally
+Userinfo request.
+<p>
+    <b>Note:</b>The Access token request will only be performed if the
+    <em>response_type</em> is one of "code", "code token", "code idtoken" or
+    "code idtoken token".
+</p>
+<p>
+    <b>Note:</b> The Userinfo request will be formed as described in
+    Section 2.2 of
+    <a href="https://tools.ietf.org/html/rfc6750#section-2.2">RFC6750</a>
+</p>
+<h2 id="json_usage">usage</h2>
+Specifies when the test can be used. This is connected to the test profiles.
+<p>Example:</p>
+<pre>
+  "usage": {
+    "sig": true,
+    "register": true,
+    "extra": true
+  }
+</pre>
+This specific test will be included if the tester has specified that extra tests
+should be used and the OpenID provider that is being tested supports dynamic
+registration and signature creation/verification.
+<p></p>
+The complete set of usage demands are:
+<dl>
+    <dt>webfinger</dt>
+    <dd>Webfinger MUST be supported</dd>
+    <dt>enc</dt>
+    <dd>Encryption and decryption MUST be supported</dd>
+    <dt>extra</dt>
+    <dd>This test is an extra test.
+        Not necessary to run for basic standard conformance testing</dd>
+    <dt>discover</dt>
+    <dd>Dynamic discovery MUST be supported</dd>
+    <dt>sig</dt>
+    <dd>Signature creation and signature validation MUST be supported</dd>
+    <dt>none</dt>
+    <dd>Support for signing_alg=None</dd>
+    <dt>return_type</dt>
+    <dd>Which response_types that are expected to be supported</dd>
+    <dt>register</dt>
+    <dd>Dynamic client registration MUST be supported</dd>
+    <dt>form_post</dt>
+    <dd>The form_post response_type MUST be supported</dd>
+</dl>
