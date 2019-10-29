@@ -143,9 +143,9 @@ def get_check(name):
     elif check_warning in _mro:
         _outcome = "Warning"
     elif check_expected_error in _mro:
-        _outcome = "Expected Error"
+        _outcome = "Error"
     elif check_critical_error in _mro:
-        _outcome = "Critical Error"
+        _outcome = "Error"
     else:
         _outcome = "Undefined"
 
