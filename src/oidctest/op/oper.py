@@ -23,9 +23,9 @@ from oic.oauth2 import Message
 from oic.oauth2.exception import HttpError
 from oic.oauth2.util import JSON_ENCODED
 from oic.oauth2.util import URL_ENCODED
-from oic.oic import OpenIDSchema
-from oic.oic import RegistrationResponse
+from oic.oic.message import OpenIDSchema
 from oic.oic.message import ProviderConfigurationResponse
+from oic.oic.message import RegistrationResponse
 from oic.utils.authn.client import CLIENT_AUTHN_METHOD
 from oic.utils.http_util import Redirect
 from oic.utils.keyio import KeyBundle
@@ -752,10 +752,11 @@ class FrontChannelLogout(EndPoint):
         except NotForMe:
             return ''
 
+        # sid is optional
         try:
             sm_id = req['sid']
         except KeyError:
-            raise MessageException('No session ID in request')
+            return None
         else:
             try:
                 return self.conv.entity.smid2sid[sm_id]
@@ -782,7 +783,10 @@ class PostLogout(EndPoint):
 
     def act_on_request(self, logout_state=''):
         if logout_state:
-            _sid = self.conv.entity.logout_state2state[logout_state]
+            try:
+                _ = self.conv.entity.grant[logout_state]
+            except KeyError:
+                _ = self.conv.entity.logout_state2state[logout_state]
 
         return ''
 

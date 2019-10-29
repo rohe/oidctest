@@ -244,7 +244,7 @@ def get_check(check_id):
     prefix = package.__name__ + "."
     for importer, modname, ispkg in pkgutil.iter_modules(package.__path__,
                                                          prefix):
-        module = __import__(modname, fromlist="dummy")
+        module = __import__(modname, fromlist=["dummy"])
         chk = module.factory(check_id)
         if chk:
             return chk

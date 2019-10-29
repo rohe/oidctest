@@ -34,5 +34,8 @@
     "discover": true,
     "register": true
   },
-  "desc": "Incorrect registration of sector_identifier_uri"
+  "desc": "Incorrect registration of sector_identifier_uri",
+  "reference": [
+    "https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata"
+  ]
 }

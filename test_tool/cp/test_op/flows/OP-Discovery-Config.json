@@ -17,12 +17,24 @@
     }
   ],
   "MTI": [
-    "DYN", "CNF"
+    "DYN",
+    "CNF"
   ],
   "assert": {
     "check-http-response": null,
     "verify-op-endpoints-use-https": null,
-    "verify-https-usage": {"endpoints": ["jwks_uri"]},
-    "verify-id_token_signing-algorithm-is-supported": { "algs": ["RS256"]}
-  }
+    "verify-https-usage": {
+      "endpoints": [
+        "jwks_uri"
+      ]
+    },
+    "verify-id_token_signing-algorithm-is-supported": {
+      "algs": [
+        "RS256"
+      ]
+    }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata"
+  ]
 }

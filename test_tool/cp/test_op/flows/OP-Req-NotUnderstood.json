@@ -18,7 +18,7 @@
       "AsyncAuthn": {
         "set_response_where": null,
         "set_request_args": {
-            "extra": "foobar"
+          "extra": "foobar"
         }
       }
     }
@@ -33,5 +33,8 @@
   ],
   "assert": {
     "verify-authn-response": null
-  }
+  },
+  "reference": [
+    "https://tools.ietf.org/html/rfc6749#page-19"
+  ]
 }

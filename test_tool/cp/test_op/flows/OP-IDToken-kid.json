@@ -24,7 +24,12 @@
     {
       "AccessToken": {
         "conditional_execution": {
-          "return_type": ["CIT","CI","C","CT"]
+          "return_type": [
+            "CIT",
+            "CI",
+            "C",
+            "CT"
+          ]
         }
       }
     }
@@ -45,5 +50,9 @@
       ]
     },
     "verify-signed-idtoken-has-kid": null
-  }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#Signing",
+    "https://openid.net/specs/openid-connect-core-1_0.html#Encryption"
+  ]
 }

@@ -1,40 +1,38 @@
-from future.backports.urllib.parse import parse_qs
-from future.backports.urllib.parse import urlparse
-from future.backports.urllib.parse import urlsplit
-
 import inspect
 import json
 import logging
 import sys
 
+from future.backports.urllib.parse import parse_qs
+from future.backports.urllib.parse import urlparse
+from future.backports.urllib.parse import urlsplit
 from jwkest.jwk import base64url_to_long
 from jwkest.jwt import split_token
 from oic.exception import MessageException
 from oic.oauth2 import message
 from oic.oauth2.message import ErrorResponse
-from oic.oic.message import factory as msg_factory
-# from oic.oic import claims_match
-from oic.oic.message import SCOPE2CLAIMS
 from oic.oic.message import AuthorizationRequest
 from oic.oic.message import AuthorizationResponse
 from oic.oic.message import IdToken
+from oic.oic.message import OIDCMessageFactory
 from oic.oic.message import OpenIDSchema
+from oic.oic.message import SCOPE2CLAIMS
 from oic.utils import time_util
 from oic.utils.time_util import utc_time_sans_frac
 from otest.aus.check import CONT_JSON
 from otest.aus.check import CONT_JWT
 from otest.check import CRITICAL
-from otest.check import ERROR
-from otest.check import INFORMATION
-from otest.check import INTERACTION
-from otest.check import OK
-from otest.check import WARNING
 from otest.check import Check
 from otest.check import CriticalError
+from otest.check import ERROR
 from otest.check import Error
+from otest.check import INFORMATION
+from otest.check import INTERACTION
 from otest.check import Information
+from otest.check import OK
 from otest.check import Other
 from otest.check import ResponseInfo
+from otest.check import WARNING
 from otest.check import Warnings
 from otest.check import get_authorization_request
 from otest.check import get_id_tokens
@@ -49,9 +47,9 @@ from otest.events import EV_REDIRECT_URL
 from otest.events import EV_RESPONSE
 
 from oidctest.regalg import MTI
-from oidctest.regalg import REGISTERED_JWS_ALGORITHMS
 from oidctest.regalg import REGISTERED_JWE_alg_ALGORITHMS
 from oidctest.regalg import REGISTERED_JWE_enc_ALGORITHMS
+from oidctest.regalg import REGISTERED_JWS_ALGORITHMS
 
 __author__ = 'rohe0002'
 
@@ -233,7 +231,7 @@ class CheckSupported(CriticalError):
 
 
 class CheckOPSupported(CheckSupported):
-    pass
+    cid = "check-support"
 
 
 class CheckResponseType(CheckOPSupported):
@@ -273,6 +271,13 @@ class VerifyIdTokenSigningAlgorithmIsSupported(Error):
     cid = "verify-id_token_signing-algorithm-is-supported"
     msg = "Verify ID token signing algorithm is in " \
           "id_token_signing_alg_values_supported"
+    doc = """
+    :param algs: What algorithms 
+    :type algs: list of strings
+
+    Example:
+        "verify-id_token_signing-algorithm-is-supported": { "algs": ["RS256"]}
+    """
 
     def _func(self, conv):
         _pi = get_provider_info(conv)
@@ -421,7 +426,7 @@ class CheckEncryptedRequestObjectSupportENC(CheckSupported):
     """
     Checks that the asked for encryption algorithm are among the supported
     """
-    cid = "check-encrypt-idtoken-enc-support"
+    cid = "check-encrypt-request-object-enc-support"
     msg = "Request_object encryption enc algorithm not supported"
     element = "request_object_encryption_enc_values_supported"
     parameter = "request_object_encryption_enc"
@@ -1065,7 +1070,12 @@ class MultipleSignOn(Error):
     cid = "multiple-sign-on"
     doc = """
     :param status: Status code returned on error
-    :type status: integer
+    :type status: integer  (2=Warning, 3=Error)
+    
+    Example:
+        "multiple-sign-on": {
+          "status": 2
+        }
     """
 
     def _func(self, conv):
@@ -1147,6 +1157,11 @@ class VerifyRedirectUriQueryComponent(Error):
     doc = """
     :param kwargs: query components (key, value) that was expected
     :type kwargs: dictionary
+    
+    Example:
+        "verify-redirect_uri-query_component": {
+            "foo": "bar"
+        }
     """
 
     def _func(self, conv):
@@ -1439,6 +1454,13 @@ class CheckSignedEncryptedIDToken(Error):
     :type enc_enc: string
     :param sig_alg: Signature algorithm
     :type sig_alg: string
+    
+    Example:
+        "signed-encrypted-idtoken": {
+          "enc_alg": "RSA1_5",
+          "enc_enc": "A128CBC-HS256",
+          "sign_alg": "RS256"
+        }
     """
 
     def _func(self, conv):
@@ -1790,6 +1812,9 @@ class VerifyHTTPSUsage(Error):
     doc = """
     :param endpoints: Which OP endpoints that should be checked
     :type endpoints: list of strings
+    
+    Example:
+        "verify-https-usage": {"endpoints": ["initiate_login_uri"]}
     """
 
     def _func(self, conv):
@@ -1826,23 +1851,6 @@ class VerifyOPHasRegistrationEndpoint(Error):
             self._status = self.status
 
         return {}
-
-
-# class VerifyProviderHasDynamicClientEndpoint(Error):
-#     """
-#     Verify that the OP has a registration endpoint
-#     """
-#     cid = "verify-op-has-dynamic-client-endpoint"
-#     msg = "No registration endpoint"
-#
-#     def _func(self, conv):
-#         _pi = get_provider_info(conv)
-#         try:
-#             assert "dynamic_client_endpoint" in _pi
-#         except AssertionError:
-#             self._status = self.status
-#
-#         return {}
 
 
 class VerifyIDTokenUserInfoSubSame(Information):
@@ -1932,6 +1940,15 @@ class VerifySignedIdToken(Error):
     """
     cid = "verify-idtoken-is-signed"
     msg = "ID Token unsigned or signed with the wrong algorithm"
+    doc = """
+    :param alg: Which signing algorithm that was expected
+    :type alg: string
+
+    Example:
+        "verify-idtoken-is-signed": {
+          "alg": "HS256"
+        }
+    """
 
     def _func(self, conv):
         res = get_id_tokens(conv)
@@ -2109,6 +2126,15 @@ class VerifyBase64URL(Check):
     """
     cid = "verify-base64url"
     msg = "JWK not according to the spec"
+    doc = """
+    :param err_status: Which error status should be reported
+    :type err_status: integer (2=Warning, 3=Error)
+
+    Example:
+        "verify-base64url": {
+          "err_status": 3
+        }
+    """
 
     @staticmethod
     def _chk(key, params):
@@ -2316,6 +2342,12 @@ class ClaimsCheck(Information):
     :type id_token: list of strings
     :param required: If the claims are required
     :type required: boolean
+    
+    Example:
+        "claims-check": {
+          "required": true,
+          "id_token": ["auth_time"]
+        }
     """
 
     def _func(self, conv):
@@ -2390,6 +2422,11 @@ class CheckQueryPart(Error):
     doc = """
     :param kwargs: key-value pairs that should be present in the query part
     :type kwargs: dictionary
+    
+    Example:
+        "check-query-part": {
+          "foo": "bar"
+        }
     """
 
     def _func(self, conv):
@@ -2472,10 +2509,16 @@ class AuthTimeCheck(Warnings):
     expected range."""
     cid = "auth_time-check"
     doc = """
-    :param max_age: Maximum age of the id_token
+    :param max_age: Maximum age of the id_token (in seconds)
     :type max_age: int
     :param skew: The allowed skew in seconds
     :type skew: int
+    
+    Example:
+        "auth_time-check": {
+          "max_age": 1,
+          "skew": 600
+        }
     """
 
     def _func(self, conv):
@@ -2535,6 +2578,14 @@ class GotIdTokenClaims(Warnings):
     doc = """
     :param claims: claims expected to be in the id_token
     :type claims: list of strings
+    
+    Example:
+        "got_id_token_claims": {
+          "claims": [
+            "nickname",
+            "email"
+          ]
+        }
     """
 
     def _func(self, conv):
@@ -2557,6 +2608,13 @@ class GotUserinfoClaims(Warnings):
     doc = """
     :param claims: claims expected to be among the user info
     :type claims: list of strings
+    
+    Example:
+        "got_userinfo_claims": {
+          "claims": [
+            "email"
+          ]
+        }
     """
 
     def _func(self, conv):
@@ -2581,10 +2639,19 @@ class Got(Error):
     :type where: string
     :param what: Which claims 
     :type what: string
+    
+    Example:
+        "got": {
+          "what": [
+            "id_token"
+          ],
+          "where": "AccessTokenResponse"
+        }
     """
 
     def _func(self, conv):
-        res = get_protocol_response(conv, msg_factory(self._kwargs['where']))
+        _cls = OIDCMessageFactory.get_response_type(self._kwargs['where'])
+        res = get_protocol_response(conv, _cls)
         response = res[0]
         missing = []
         for key in self._kwargs['what']:
@@ -2602,21 +2669,33 @@ class VerifyRequiredClaims(Error):
     """
     cid = 'verify-required-claims'
     _msg_pat = "The following required claims where missing: {}"
+    doc = """
+    Specifies which claims that was expected where.
+
+    Example:
+        "verify-required-claims": {
+          "ProviderConfigurationResponse": [
+            "backchannel_logout_supported",
+            "backchannel_logout_session_supported"
+          ]
+        }
+    """
 
     def _func(self, conv):
 
         missing = []
-        for cls, claims in self._kwargs.items():
-            res = get_protocol_response(conv, msg_factory(cls))
+        for resp_cls, claims in self._kwargs.items():
+            _cls = OIDCMessageFactory.get_response_type(resp_cls)
+            res = get_protocol_response(conv, _cls)
             if res:
                 res = res[-1]
             else:
-                missing.append(cls)
+                missing.append(resp_cls)
                 continue
 
             for claim in claims:
                 if claim not in res:
-                    missing.append('{}.{}'.format(cls, claim))
+                    missing.append('{}.{}'.format(resp_cls, claim))
         if missing:
             self._status = ERROR
             self._message = self._msg_pat.format(missing)

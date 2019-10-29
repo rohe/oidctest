@@ -15,7 +15,10 @@
       "Registration": {
         "set_request_args": {
           "token_endpoint_auth_method": "private_key_jwt",
-          "grant_types": ["authorization_code", "refresh_token"]
+          "grant_types": [
+            "authorization_code",
+            "refresh_token"
+          ]
         },
         "check_support": {
           "ERROR": {
@@ -68,5 +71,8 @@
   "desc": "Request access token, change RSA signing key and request another access token",
   "assert": {
     "check-http-response": null
-  }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys"
+  ]
 }
