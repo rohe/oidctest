@@ -1,6 +1,8 @@
-<h1 id="test_description">1. Test description file</h1>
-The test description files are JSON documents. Each of these documents
-contains a JSON object with a set of keys and values. The possible keys are:
+<h1 id="test_description">1. Test description syntax</h1>
+<p>
+    The test description files are JSON documents. Each of these documents
+    contains a JSON object with a set of keys and values. The possible keys are:
+</p>
 <ul>
     <li>assert</li>
     <li>desc</li>
@@ -11,10 +13,10 @@ contains a JSON object with a set of keys and values. The possible keys are:
     <li>usage</li>
     <li>MTI</li>
 </ul>
-These will be described one by one below
+<p>These will be described one by one below.</p>
 <h2 id="json_assert">1.1. assert</h2>
-Lists the assertions that are performed after a test has completed.
-A example is:
+<p>Lists the assertions that are performed after a test has completed.</p>
+<p>A example is:</p>
 <pre>
     "assert": {
         "verify-response": {
@@ -24,16 +26,40 @@ A example is:
         }
     }
 </pre>
-The interpretation of these is that the assertion with the identifier
+<p>The interpretation of this is that the assertion with the identifier</p>
 <em>verify-response</em> will be executed with the argument
 <pre>
     response_cls="OpenDISchema"
 </pre>
+<p>
+    If a test run reaches the end of the
+    <a href="#json_sequence">request sequence</a>
+    the assertion checks are run one after the other.
+</p>
+<p>
+    When some assertion checks fails that is registered as an Error, for some
+    other
+    checks a failure is logged as a Warning. And then there are a few where
+    how a failure is interpreted is configurable.
+</p>
+<p>
+    To get the result of the whole test run the results of the assertion checks
+    are added together. Such that if there is one or more Error failures then
+    the result of the test is an Error. If there is no Error failures but at
+    least
+    on Warning failure then the result is a Warning. If no failures are
+    encountered that is logged as a Success.
+</p>
 <h2 id="json_desc">1.2. desc</h2>
-A human readable description of what the test is trying to accomplish.
+<p>
+    A human readable description of what the test is trying to accomplish.
+</p>
 <h2 id="json_group">1.3. group</h2>
-Which group the test belongs to. When the tests are presented to the tester
-tests belonging to the same group are listed together under the group header.
+<p>
+    Which group the test belongs to. When the tests are presented to the tester
+    tests belonging to the same group are listed together under the group
+    header.
+</p>
 <p>Present list of used groups:</p>
 <ul>
     <li>Response Type</li>
@@ -44,11 +70,11 @@ tests belonging to the same group are listed together under the group header.
     <li>Client Authentication</li>
     <li>Access Token</li>
     <li>Userinfo Endpoint</li>
-    <li>claims Request Parameter</li>,
+    <li>claims Request Parameter</li>
     <li>display Request Parameter</li>
     <li>nonce Request Parameter</li>
     <li>prompt Request Parameter</li>
-    <li>redirect_uri Request Parameter</li>,
+    <li>redirect_uri Request Parameter</li>
     <li>request Request Parameter</li>
     <li>request_uri Request Parameter</li>
     <li>scope Request Parameter</li>
@@ -61,20 +87,31 @@ tests belonging to the same group are listed together under the group header.
     <li>Session Management</li>
 </ul>
 <h2 id="json_note">1.4. note</h2>
-In some case the test tool needs to pass information to the tester.
-This is where that information is stored.
+<p>
+    In some case the test tool needs to pass information to the tester.
+    This is where that information is stored.
+</p>
 <h2 id="json_reference">1.5. reference</h2>
-Links to parts of the OpenID Connect and accompanying standards that are
-tested by the test.
+<p>
+    Links to parts of the OpenID Connect and accompanying standards that are
+    tested by the test.
+</p>
 <h2 id="json_sequence">1.6. sequence</h2>
-The complete flow of a test. This consists of a number of requests.
-<p></p>
-Before a request is issued the arguments fo the request may be set to specific
-values. Also before a request is sent a check my be performed to figure out if
-there is any meaning to send the request. One reason for it not to be so would
-be that the OP does not support the functionality that is under test.
-<p></p>
-An simple example of a sequence:
+<p>
+    The complete flow of a test. This consists of a number of requests.
+</p>
+<p>
+    Before a request is issued the arguments fo the request may be set to
+    specific
+    values. Also before a request is sent a check my be performed to figure out
+    if
+    there is any meaning to send the request. One reason for it not to be so
+    would
+    be that the OP does not support the functionality that is under test.
+</p>
+<p>
+    An simple example of a sequence:
+</p>
 <pre>
   "sequence": [
     {
@@ -89,18 +126,25 @@ An simple example of a sequence:
     }
   ]
 </pre>
-This sequence contains 2 requests, the first being a Webfinger request and the
-second a discovery request. Before the webfinger request is sent, the webfinger
-resource is specified by the <em>set_webfinger_resource</em> function.
-Similarly, before the discovery request is sent the issuer is collected using
-the <em>set_discovery_issuer</em> function.
 <p>
-    <b>Note:</b> If webfinger is not supported then that request is not sent.<br>
+    This sequence contains 2 requests, the first being a Webfinger request and
+    the
+    second a discovery request. Before the webfinger request is sent, the
+    webfinger
+    resource is specified by the <em>set_webfinger_resource</em> function.
+    Similarly, before the discovery request is sent the issuer is collected
+    using
+    the <em>set_discovery_issuer</em> function.
+</p>
+<p>
+    <b>Note:</b> If webfinger is not supported then that request is not
+    sent.<br>
     The same goes for discovery. Which means that running this test when not
     supporting dynamic discovery is useless.
 </p>
-<p></p>
-A slightly more complex sequence:
+<p>
+    A slightly more complex sequence:
+</p>
 <pre>
   "sequence": [
     {
@@ -141,14 +185,17 @@ A slightly more complex sequence:
     }
   ]
 </pre>
-This starts in the same way as the previous one. Webfinger, provider info
-discovery and client registration is performed if supported.<br>
-Then follows a Authorization request, Access token request and finally
-Userinfo request.
+<p>
+    This starts in the same way as the previous one. Webfinger, provider info
+    discovery and client registration is performed if supported.
+</p><p>
+    Then follows an Authorization, an Access token and finally an
+    Userinfo request.
+</p>
 <p>
     <b>Note:</b>The Access token request will only be performed if the
-    <em>response_type</em> is one of "code", "code token", "code idtoken" or
-    "code idtoken token".
+    <em>response_type</em> is one of "code", "code token", "code id_token" or
+    "code id_token token".
 </p>
 <p>
     <b>Note:</b> The Userinfo request will be formed as described in
@@ -156,7 +203,9 @@ Userinfo request.
     <a href="https://tools.ietf.org/html/rfc6750#section-2.2">RFC6750</a>
 </p>
 <h2 id="json_usage">usage</h2>
-Specifies when the test can be used. This is connected to the test profiles.
+<p>
+    Specifies when the test can be used. This is connected to the test profiles.
+</p>
 <p>Example:</p>
 <pre>
   "usage": {
@@ -165,31 +214,33 @@ Specifies when the test can be used. This is connected to the test profiles.
     "extra": true
   }
 </pre>
-This specific test will be included if the tester has specified that extra tests
+<p>
+    This specific test will be included if the tester has specified that extra tests
 should be used and the OpenID provider that is being tested supports dynamic
 registration and signature creation/verification.
-<p></p>
-The complete set of usage demands are:
+</p>
+<p>The complete set of usage demands are:</p>
 <dl>
     <dt>webfinger</dt>
-    <dd>Webfinger MUST be supported</dd>
+    <dd>Tests if Webfinger is supported</dd>
     <dt>enc</dt>
-    <dd>Encryption and decryption MUST be supported</dd>
+    <dd>Tests if encryption and decryption is supported</dd>
     <dt>extra</dt>
     <dd>This test is an extra test.
-        Not necessary to run for basic standard conformance testing</dd>
+        Not necessary to run for basic standard conformance testing
+    </dd>
     <dt>discover</dt>
-    <dd>Dynamic discovery MUST be supported</dd>
+    <dd>Tests that dynamic discovery is supported</dd>
     <dt>sig</dt>
-    <dd>Signature creation and signature validation MUST be supported</dd>
+    <dd>Tests that signature creation and signature validation is supported</dd>
     <dt>none</dt>
-    <dd>Support for signing_alg=None</dd>
+    <dd>Tests support for signing_alg=None</dd>
     <dt>return_type</dt>
-    <dd>Which response_types that are expected to be supported</dd>
+    <dd>The response_types that are expected to be used during testing</dd>
     <dt>register</dt>
-    <dd>Dynamic client registration MUST be supported</dd>
+    <dd>Tests is dynamic client registration is supported</dd>
     <dt>form_post</dt>
-    <dd>The form_post response_type MUST be supported</dd>
+    <dd>Tests if the form_post response_type is supported</dd>
 </dl>
 <h2 id="json_mti">MTI</h2>
-<p>Mandatory to implement <b>OBSOLETE</b></p>
+<p>Mandatory to implement <b>NOT USED</b></p>
