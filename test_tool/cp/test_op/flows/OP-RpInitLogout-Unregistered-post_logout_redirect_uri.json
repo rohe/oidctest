@@ -45,15 +45,22 @@
     },
     {
       "AccessToken": {
-        "conditional_execution":{
-          "return_type": ["CIT","CI","C","CT"]
+        "conditional_execution": {
+          "return_type": [
+            "CIT",
+            "CI",
+            "C",
+            "CT"
+          ]
         }
       }
     },
     "Note",
     {
       "EndSession": {
-        "post_logout_redirect_uri_with_query_component": {"foo":  "bar"},
+        "post_logout_redirect_uri_with_query_component": {
+          "foo": "bar"
+        },
         "set_req_args_state": null,
         "set_op_args": {
           "add_state": true

@@ -1,1 +1,30 @@
-{"group": "Discovery", "usage": {"discover": true}, "desc": "Verify that claims_supported is published", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}], "MTI": ["DYN", "CNF"], "assert": {"providerinfo-has-claims_supported": null, "check-http-response": null}, "reference": ["https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata"]}
+{
+  "group": "Discovery",
+  "usage": {
+    "discover": true
+  },
+  "desc": "Verify that claims_supported is published",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    }
+  ],
+  "MTI": [
+    "DYN",
+    "CNF"
+  ],
+  "assert": {
+    "providerinfo-has-claims_supported": null,
+    "check-http-response": null
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata"
+  ]
+}

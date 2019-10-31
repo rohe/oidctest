@@ -1,1 +1,61 @@
-{"group": "OAuth behaviors", "usage": {"return_type": ["C", "CI", "CT", "CIT"]}, "desc": "Trying to use authorization code twice with 30 seconds in between uses must result in an error", "reference": ["https://tools.ietf.org/html/rfc6749#section-4.1.2"], "note": "A 30 second delay is added between the first and the second use of the authorization code. This test should result in the OpenID Provider returning an error message.", "sequence": ["Note", {"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", {"AsyncAuthn": {"set_response_where": null}}, "AccessToken", "TimeDelay", {"AccessToken": {"set_expect_error": {"error": ["invalid_request", "access_denied", "invalid_grant"]}}}], "assert": {"check-http-error-response": {}, "verify-response": {"response_cls": ["ErrorResponse"], "status": 3, "error": ["access_denied", "invalid_grant"]}}}
+{
+  "group": "OAuth behaviors",
+  "usage": {
+    "return_type": [
+      "C",
+      "CI",
+      "CT",
+      "CIT"
+    ]
+  },
+  "desc": "Trying to use authorization code twice with 30 seconds in between uses must result in an error",
+  "reference": [
+    "https://tools.ietf.org/html/rfc6749#section-4.1.2"
+  ],
+  "note": "A 30 second delay is added between the first and the second use of the authorization code. This test should result in the OpenID Provider returning an error message.",
+  "sequence": [
+    "Note",
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null
+      }
+    },
+    "AccessToken",
+    "TimeDelay",
+    {
+      "AccessToken": {
+        "set_expect_error": {
+          "error": [
+            "invalid_request",
+            "access_denied",
+            "invalid_grant"
+          ]
+        }
+      }
+    }
+  ],
+  "assert": {
+    "check-http-error-response": {},
+    "verify-response": {
+      "response_cls": [
+        "ErrorResponse"
+      ],
+      "status": 3,
+      "error": [
+        "access_denied",
+        "invalid_grant"
+      ]
+    }
+  }
+}

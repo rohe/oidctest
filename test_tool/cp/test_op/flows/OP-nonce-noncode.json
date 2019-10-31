@@ -1,1 +1,58 @@
-{"group": "nonce Request Parameter", "usage": {"return_type": ["I", "IT", "CI", "CT", "CIT"]}, "desc": "Request with nonce, verifies it was returned in ID Token [Implicit, Hybrid]", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", "AsyncAuthn", {"AccessToken": {"conditional_execution": {"return_type": ["CIT", "CI", "CT"]}}}], "MTI": ["I", "IT", "CI", "CT", "CIT"], "assert": {"check-idtoken-nonce": null, "verify-response": {"response_cls": ["AccessTokenResponse", "AuthorizationResponse"]}}, "reference": ["https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest", "https://openid.net/specs/openid-connect-core-1_0.html#IDToken"]}
+{
+  "group": "nonce Request Parameter",
+  "usage": {
+    "return_type": [
+      "I",
+      "IT",
+      "CI",
+      "CT",
+      "CIT"
+    ]
+  },
+  "desc": "Request with nonce, verifies it was returned in ID Token [Implicit, Hybrid]",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    "AsyncAuthn",
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": [
+            "CIT",
+            "CI",
+            "CT"
+          ]
+        }
+      }
+    }
+  ],
+  "MTI": [
+    "I",
+    "IT",
+    "CI",
+    "CT",
+    "CIT"
+  ],
+  "assert": {
+    "check-idtoken-nonce": null,
+    "verify-response": {
+      "response_cls": [
+        "AccessTokenResponse",
+        "AuthorizationResponse"
+      ]
+    }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest",
+    "https://openid.net/specs/openid-connect-core-1_0.html#IDToken"
+  ]
+}

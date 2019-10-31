@@ -45,8 +45,13 @@
     },
     {
       "AccessToken": {
-        "conditional_execution":{
-          "return_type": ["CIT","CI","C","CT"]
+        "conditional_execution": {
+          "return_type": [
+            "CIT",
+            "CI",
+            "C",
+            "CT"
+          ]
         }
       }
     },
@@ -58,7 +63,9 @@
         "set_op_args": {
           "add_state": true
         },
-        "create_idtoken_hint_other_issuer": {"sub": "SubjectID"},
+        "create_idtoken_hint_other_issuer": {
+          "sub": "SubjectID"
+        },
         "set_expect_error": {
           "error": [
             "invalid_request"
