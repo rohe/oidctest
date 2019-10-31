@@ -368,11 +368,15 @@ def do_func_toc(func, nr):
 
 # ================================================================================================
 
+# git log | head -n 1
+# Will give you the commit ID
+#
+
 toc_4_pattern = """<li>4.{nr}. <a href="#{link}">{id}</a></li>"""
 
 if __name__ == "__main__":
     REPO = "https://github.com/rohe"
-    OTEST_BLOB = "74add55d9d0cefd5f52c1f9bb09589f5b8b4c234"
+    OTEST_BLOB = "4dd6cd7035ea563be949ae084a2435c7a22c1e1a"
     OIDCTEST_BLOB = "e326e6f7d13560a262363bbddd9d99ef26633e91"
 
     URL = {
