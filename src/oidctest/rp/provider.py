@@ -719,3 +719,18 @@ class Provider(provider.Provider):
 
         _iframe = provider.Provider.do_front_channel_logout_iframe(c_info, iss, sid)
         return _iframe
+
+    def do_verified_logout(self, sid, client_id, alla = False, **kwargs):
+        # Remove the logout uri that should not be used.
+        if "back" in self.behavior_type:
+            try:
+                del self.cdb[client_id]["frontchannel_logout_uri"]
+            except KeyError:
+                pass
+        elif "front" in self.behavior_type:
+            try:
+                del self.cdb[client_id]["backchannel_logout_uri"]
+            except KeyError:
+                pass
+
+        return provider.Provider.do_verified_logout(self, sid, client_id, alla, **kwargs)
