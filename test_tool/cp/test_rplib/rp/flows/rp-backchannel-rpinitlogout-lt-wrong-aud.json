@@ -1,6 +1,6 @@
 {
   "group": "RP Initiated BackChannel Logout",
-  "behavior": ["wrong_aud"],
+  "behavior": ["wrong_aud", "back"],
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [
