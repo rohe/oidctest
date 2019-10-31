@@ -368,13 +368,12 @@ def do_func_toc(func, nr):
 
 # ================================================================================================
 
-
 toc_4_pattern = """<li>4.{nr}. <a href="#{link}">{id}</a></li>"""
 
 if __name__ == "__main__":
     REPO = "https://github.com/rohe"
-    OTEST_BLOB = "c72d8cefc19472a2967ecb00272c469a65b11"
-    OIDCTEST_BLOB = "cedb05b4c64597aaa4c277a6a34a2f8dafbd69ca"
+    OTEST_BLOB = "74add55d9d0cefd5f52c1f9bb09589f5b8b4c234"
+    OIDCTEST_BLOB = "dfc43807a650e94fc6abc6ca8fad134b3fba010a"
 
     URL = {
         "otest/check.py": "{}/otest/blob/{}/src/otest/check.py".format(REPO, OTEST_BLOB),
