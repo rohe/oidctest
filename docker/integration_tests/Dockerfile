@@ -5,7 +5,7 @@ RUN apt-get clean && apt-get --fix-missing update
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y git ntp curl
 RUN apt-get update && apt-get install -y gnupg
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
 RUN apt-get update && apt-get install -y nodejs apache2 wget libgconf-2-4
 
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
