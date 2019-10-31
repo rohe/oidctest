@@ -14,7 +14,7 @@ from oic.oauth2.message import ErrorResponse
 from oic.oic.message import AuthorizationRequest
 from oic.oic.message import AuthorizationResponse
 from oic.oic.message import IdToken
-from oic.oic.message import OIDCMessageFactory
+from oic.oic.message import MSG
 from oic.oic.message import OpenIDSchema
 from oic.oic.message import SCOPE2CLAIMS
 from oic.utils import time_util
@@ -2646,8 +2646,7 @@ class Got(Error):
     """
 
     def _func(self, conv):
-        _cls = OIDCMessageFactory.get_response_type(self._kwargs['where'])
-        res = get_protocol_response(conv, _cls)
+        res = get_protocol_response(conv, MSG[self._kwargs['where']])
         response = res[0]
         missing = []
         for key in self._kwargs['what']:
@@ -2681,8 +2680,7 @@ class VerifyRequiredClaims(Error):
 
         missing = []
         for resp_cls, claims in self._kwargs.items():
-            _cls = OIDCMessageFactory.get_response_type(resp_cls)
-            res = get_protocol_response(conv, _cls)
+            res = get_protocol_response(conv, MSG[resp_cls])
             if res:
                 res = res[-1]
             else:
