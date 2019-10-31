@@ -738,12 +738,8 @@ class VerifyClaims(Error):
     cid = "verify-claims"
     msg = "Claims received do not match those requested"
     doc = """
-    :param userinfo: Whether the method should look for the claims in the 
-    user info
-    :type userinfo: boolean
-    :param id_token: Whether the method should look for the claims in the 
-    id_token
-    :type id_token: boolean
+    :param userinfo: Whether the method should look for the claims in the user info
+    :param id_token: Whether the method should look for the claims in the id_token
     
     Example:
         "verify-claims": {
@@ -1070,7 +1066,7 @@ class MultipleSignOn(Error):
     cid = "multiple-sign-on"
     doc = """
     :param status: Status code returned on error
-    :type status: integer  (2=Warning, 3=Error)
+    :type status: integer (2=Warning, 3=Error)
     
     Example:
         "multiple-sign-on": {

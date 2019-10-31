@@ -49,7 +49,7 @@ setup(
         'CherryPy == 8.9.1',
         'oic >= 1.1.0',
         'otest >= 0.7.8',
-        #'psutil',
+        'psutil',
         'cherrypy-cors >= 1.5',
         'six',
     ],

@@ -332,10 +332,8 @@ class Provider(provider.Provider):
 
         return ava
 
-    def create_providerinfo(self, pcr_class=ProviderConfigurationResponse,
-                            setup=None):
-        _response = provider.Provider.create_providerinfo(self, pcr_class,
-                                                          setup)
+    def create_providerinfo(self, setup=None):
+        _response = provider.Provider.create_providerinfo(self, setup)
 
         if "isso" in self.behavior_type:
             _response["issuer"] = "https://example.com"
