@@ -13,7 +13,9 @@
     },
     {
       "Registration": {
-        "set_redirect_uris": ["authz_post"]
+        "set_redirect_uris": [
+          "authz_post"
+        ]
       }
     },
     {

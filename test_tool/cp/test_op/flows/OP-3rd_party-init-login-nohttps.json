@@ -13,8 +13,8 @@
       }
     },
     {
-      "Registration": { 
-         "set_request_args": {
+      "Registration": {
+        "set_request_args": {
           "initiate_login_uri": "http://op.certification.openid.net/start-3rd-party-initiated-sso"
         },
         "expect_exception": "RegistrationError"

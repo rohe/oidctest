@@ -19,7 +19,7 @@
     },
     {
       "AccessToken": {
-          "set_client_authn_method" : null
+        "set_client_authn_method": null
       }
     }
   ],

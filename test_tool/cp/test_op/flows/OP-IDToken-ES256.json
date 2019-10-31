@@ -26,7 +26,12 @@
     {
       "AccessToken": {
         "conditional_execution": {
-          "return_type": ["CIT","CI","C","CT"]
+          "return_type": [
+            "CIT",
+            "CI",
+            "C",
+            "CT"
+          ]
         }
       }
     }

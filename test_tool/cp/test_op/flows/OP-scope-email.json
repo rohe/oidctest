@@ -1,1 +1,78 @@
-{"group": "scope Request Parameter", "usage": {}, "desc": "Scope requesting email claims", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", {"AsyncAuthn": {"set_response_where": null, "check_support": {"WARNING": {"scopes_supported": ["email"]}}, "set_request_args": {"scope": ["openid", "email"]}}}, {"AccessToken": {"conditional_execution": {"return_type": ["CIT", "CI", "C", "CT"]}}}, {"UserInfo": {"conditional_execution": {"return_type": ["CIT", "CI", "C", "CT", "IT"]}, "set_op_args": {"method": "GET", "authn_method": "bearer_header"}}}], "assert": {"verify-scopes": null, "check-http-response": null, "verify-response": {"response_cls": ["OpenIDSchema", "AuthorizationResponse"]}}, "reference": ["https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims"]}
+{
+  "group": "scope Request Parameter",
+  "usage": {},
+  "desc": "Scope requesting email claims",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null,
+        "check_support": {
+          "WARNING": {
+            "scopes_supported": [
+              "email"
+            ]
+          }
+        },
+        "set_request_args": {
+          "scope": [
+            "openid",
+            "email"
+          ]
+        }
+      }
+    },
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": [
+            "CIT",
+            "CI",
+            "C",
+            "CT"
+          ]
+        }
+      }
+    },
+    {
+      "UserInfo": {
+        "conditional_execution": {
+          "return_type": [
+            "CIT",
+            "CI",
+            "C",
+            "CT",
+            "IT"
+          ]
+        },
+        "set_op_args": {
+          "method": "GET",
+          "authn_method": "bearer_header"
+        }
+      }
+    }
+  ],
+  "assert": {
+    "verify-scopes": null,
+    "check-http-response": null,
+    "verify-response": {
+      "response_cls": [
+        "OpenIDSchema",
+        "AuthorizationResponse"
+      ]
+    }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims"
+  ]
+}
