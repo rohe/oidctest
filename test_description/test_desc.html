@@ -1,0 +1,4867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OpenID Connect OP Test descriptions</title>
+    <style type="text/css" title="Xml2Rfc (sans serif)">
+        a {
+            text-decoration: none;
+        }
+
+        a.info span {
+            display: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:active {
+            text-decoration: underline;
+        }
+
+        dd {
+            margin-right: 2em;
+        }
+
+        dl {
+            margin-left: 2em;
+        }
+
+        ul.empty li {
+            margin-top: .5em;
+        }
+
+        dl p {
+            margin-left: 0;
+        }
+
+        dt {
+            margin-top: .5em;
+        }
+
+        h1 {
+            font-size: 16pt;
+            line-height: 21pt;
+            page-break-after: avoid;
+        }
+
+        h1.np {
+            page-break-before: always;
+        }
+
+        h1 a {
+            color: #333333;
+        }
+
+        h2 {
+            font-size: 12pt;
+            line-height: 15pt;
+            page-break-after: avoid;
+        }
+
+        h3, h4, h5, h6 {
+            font-size: 10pt;
+            page-break-after: avoid;
+        }
+
+        h2 a, h3 a, h4 a, h5 a, h6 a {
+            color: black;
+        }
+
+        p {
+            margin-left: 2em;
+            margin-right: 2em;
+        }
+
+        pre {
+            margin-left: 3em;
+            background-color: lightyellow;
+            padding: .25em;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        table, td {
+            margin-left: 2em;
+            border-style: solid;
+            border-width: 1px;
+        }
+
+        table.tt td {
+            vertical-align: top;
+        }
+
+        table.full td {
+            border-style: inset;
+            border-width: 1px;
+        }
+
+        table.tt th {
+            vertical-align: top;
+        }
+
+        table.full th {
+            border-style: inset;
+            border-width: 1px;
+        }
+
+        table.headers th {
+            border-style: none none inset none;
+            border-width: 1px;
+        }
+
+        caption {
+            caption-side: bottom;
+            font-weight: bold;
+            font-size: 9pt;
+            margin-top: .5em;
+        }
+
+        table.header td {
+            background-color: gray;
+            width: 50%;
+        }
+
+        table.header a {
+            color: white;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        ul.toc, ul.toc ul {
+            list-style: none;
+            margin-left: 1.5em;
+            margin-right: 0;
+            padding-left: 0;
+        }
+
+        ul.toc li {
+            line-height: 150%;
+            font-weight: bold;
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        ul.toc li li {
+            line-height: normal;
+            font-weight: normal;
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        ul p {
+            margin-left: 0;
+        }
+    </style>
+</head>
+<body>
+<h1>This document describes all the OP tests that the OpenID Connect test suite contains.</h1>
+<hr>
+<h1 class="np" id="toc">Table of Contents</h1>
+<ul class="toc">
+
+    <li><a href="#test_description">1. Test description file</a></li>
+    <ul>
+
+<li>1.1. <a href="#json_assert">assert</a></li>
+<li>1.2. <a href="#json_desc">desc</a></li>
+<li>1.3. <a href="#json_group">group</a></li>
+<li>1.4. <a href="#json_note">note</a></li>
+<li>1.5. <a href="#json_reference">reference</a></li>
+<li>1.6. <a href="#json_sequence">sequence</a></li>
+<li>1.7. <a href="#json_usage">usage</a></li>
+<li>1.8. <a href="#json_mti">MTI</a></li>
+</ul>
+    <li>2. <a href="#section.2">Tests</a></li>
+    <ul>
+
+<li>2.1. <a href="#OP_ClientAuth_Basic_Dynamic">OP-ClientAuth-Basic-Dynamic</a></li>
+<li>2.2. <a href="#OP_ClientAuth_SecretPost_Dynamic">OP-ClientAuth-SecretPost-Dynamic</a></li>
+<li>2.3. <a href="#OP_Discovery_Config">OP-Discovery-Config</a></li>
+<li>2.4. <a href="#OP_Discovery_JWKs">OP-Discovery-JWKs</a></li>
+<li>2.5. <a href="#OP_Discovery_claims_supported">OP-Discovery-claims_supported</a></li>
+<li>2.6. <a href="#OP_Discovery_jwks_uri">OP-Discovery-jwks_uri</a></li>
+<li>2.7. <a href="#OP_IDToken_C_Signature">OP-IDToken-C-Signature</a></li>
+<li>2.8. <a href="#OP_IDToken_RS256">OP-IDToken-RS256</a></li>
+<li>2.9. <a href="#OP_IDToken_at_hash">OP-IDToken-at_hash</a></li>
+<li>2.10. <a href="#OP_IDToken_c_hash">OP-IDToken-c_hash</a></li>
+<li>2.11. <a href="#OP_IDToken_kid">OP-IDToken-kid</a></li>
+<li>2.12. <a href="#OP_OAuth_2nd">OP-OAuth-2nd</a></li>
+<li>2.13. <a href="#OP_OAuth_2nd_30s">OP-OAuth-2nd-30s</a></li>
+<li>2.14. <a href="#OP_OAuth_2nd_Revokes">OP-OAuth-2nd-Revokes</a></li>
+<li>2.15. <a href="#OP_Registration_Dynamic">OP-Registration-Dynamic</a></li>
+<li>2.16. <a href="#OP_Registration_Endpoint">OP-Registration-Endpoint</a></li>
+<li>2.17. <a href="#OP_Registration_Sector_Bad">OP-Registration-Sector-Bad</a></li>
+<li>2.18. <a href="#OP_Registration_jwks">OP-Registration-jwks</a></li>
+<li>2.19. <a href="#OP_Registration_jwks_uri">OP-Registration-jwks_uri</a></li>
+<li>2.20. <a href="#OP_Registration_logo_uri">OP-Registration-logo_uri</a></li>
+<li>2.21. <a href="#OP_Registration_policy_uri">OP-Registration-policy_uri</a></li>
+<li>2.22. <a href="#OP_Registration_tos_uri">OP-Registration-tos_uri</a></li>
+<li>2.23. <a href="#OP_Req_NotUnderstood">OP-Req-NotUnderstood</a></li>
+<li>2.24. <a href="#OP_Req_acr_values">OP-Req-acr_values</a></li>
+<li>2.25. <a href="#OP_Req_claims_locales">OP-Req-claims_locales</a></li>
+<li>2.26. <a href="#OP_Req_id_token_hint">OP-Req-id_token_hint</a></li>
+<li>2.27. <a href="#OP_Req_login_hint">OP-Req-login_hint</a></li>
+<li>2.28. <a href="#OP_Req_max_age=1">OP-Req-max_age=1</a></li>
+<li>2.29. <a href="#OP_Req_max_age=10000">OP-Req-max_age=10000</a></li>
+<li>2.30. <a href="#OP_Req_ui_locales">OP-Req-ui_locales</a></li>
+<li>2.31. <a href="#OP_Response_Missing">OP-Response-Missing</a></li>
+<li>2.32. <a href="#OP_Response_code">OP-Response-code</a></li>
+<li>2.33. <a href="#OP_Response_code+id_token">OP-Response-code+id_token</a></li>
+<li>2.34. <a href="#OP_Response_code+id_token+token">OP-Response-code+id_token+token</a></li>
+<li>2.35. <a href="#OP_Response_code+token">OP-Response-code+token</a></li>
+<li>2.36. <a href="#OP_Response_id_token">OP-Response-id_token</a></li>
+<li>2.37. <a href="#OP_Response_id_token+token">OP-Response-id_token+token</a></li>
+<li>2.38. <a href="#OP_Rotation_OP_Sig">OP-Rotation-OP-Sig</a></li>
+<li>2.39. <a href="#OP_Rotation_RP_Sig">OP-Rotation-RP-Sig</a></li>
+<li>2.40. <a href="#OP_UserInfo_Body">OP-UserInfo-Body</a></li>
+<li>2.41. <a href="#OP_UserInfo_Endpoint">OP-UserInfo-Endpoint</a></li>
+<li>2.42. <a href="#OP_UserInfo_Header">OP-UserInfo-Header</a></li>
+<li>2.43. <a href="#OP_UserInfo_RS256">OP-UserInfo-RS256</a></li>
+<li>2.44. <a href="#OP_UserInfo_sig_any">OP-UserInfo-sig-any</a></li>
+<li>2.45. <a href="#OP_claims_essential">OP-claims-essential</a></li>
+<li>2.46. <a href="#OP_display_page">OP-display-page</a></li>
+<li>2.47. <a href="#OP_display_popup">OP-display-popup</a></li>
+<li>2.48. <a href="#OP_end_session_Discovery">OP-end_session-Discovery</a></li>
+<li>2.49. <a href="#OP_nonce_NoReq_code">OP-nonce-NoReq-code</a></li>
+<li>2.50. <a href="#OP_nonce_NoReq_noncode">OP-nonce-NoReq-noncode</a></li>
+<li>2.51. <a href="#OP_nonce_code">OP-nonce-code</a></li>
+<li>2.52. <a href="#OP_nonce_noncode">OP-nonce-noncode</a></li>
+<li>2.53. <a href="#OP_prompt_login">OP-prompt-login</a></li>
+<li>2.54. <a href="#OP_prompt_none_LoggedIn">OP-prompt-none-LoggedIn</a></li>
+<li>2.55. <a href="#OP_prompt_none_NotLoggedIn">OP-prompt-none-NotLoggedIn</a></li>
+<li>2.56. <a href="#OP_redirect_uri_Missing">OP-redirect_uri-Missing</a></li>
+<li>2.57. <a href="#OP_redirect_uri_NotReg">OP-redirect_uri-NotReg</a></li>
+<li>2.58. <a href="#OP_redirect_uri_Query_Added">OP-redirect_uri-Query-Added</a></li>
+<li>2.59. <a href="#OP_redirect_uri_Query_Mismatch">OP-redirect_uri-Query-Mismatch</a></li>
+<li>2.60. <a href="#OP_redirect_uri_Query_OK">OP-redirect_uri-Query-OK</a></li>
+<li>2.61. <a href="#OP_redirect_uri_RegFrag">OP-redirect_uri-RegFrag</a></li>
+<li>2.62. <a href="#OP_request_Unsigned">OP-request-Unsigned</a></li>
+<li>2.63. <a href="#OP_request_uri_Sig">OP-request_uri-Sig</a></li>
+<li>2.64. <a href="#OP_request_uri_Sig_any">OP-request_uri-Sig-any</a></li>
+<li>2.65. <a href="#OP_request_uri_Unsigned">OP-request_uri-Unsigned</a></li>
+<li>2.66. <a href="#OP_scope_All">OP-scope-All</a></li>
+<li>2.67. <a href="#OP_scope_address">OP-scope-address</a></li>
+<li>2.68. <a href="#OP_scope_email">OP-scope-email</a></li>
+<li>2.69. <a href="#OP_scope_phone">OP-scope-phone</a></li>
+<li>2.70. <a href="#OP_scope_profile">OP-scope-profile</a></li>
+</ul>
+    <li>3. <a href="#section.3">Assertions</a></li>
+    <ul>
+
+    
+<li>3.1. <a href="#asym_signed_userinfo">asym-signed-userinfo</a></li>
+<li>3.2. <a href="#auth_time_check">auth_time-check</a></li>
+<li>3.3. <a href="#authn_response_or_error">authn-response-or-error</a></li>
+<li>3.4. <a href="#bare_keys">bare-keys</a></li>
+<li>3.5. <a href="#check_http_error_response">check-http-error-response</a></li>
+<li>3.6. <a href="#check_http_response">check-http-response</a></li>
+<li>3.7. <a href="#check_idtoken_nonce">check-idtoken-nonce</a></li>
+<li>3.8. <a href="#check_query_part">check-query-part</a></li>
+<li>3.9. <a href="#claims_check">claims-check</a></li>
+<li>3.10. <a href="#is_idtoken_signed">is-idtoken-signed</a></li>
+<li>3.11. <a href="#multiple_sign_on">multiple-sign-on</a></li>
+<li>3.12. <a href="#new_signing_keys">new-signing-keys</a></li>
+<li>3.13. <a href="#providerinfo_has_claims_supported">providerinfo-has-claims_supported</a></li>
+<li>3.14. <a href="#providerinfo_has_jwks_uri">providerinfo-has-jwks_uri</a></li>
+<li>3.15. <a href="#same_authn">same-authn</a></li>
+<li>3.16. <a href="#used_acr_value">used-acr-value</a></li>
+<li>3.17. <a href="#verify_authn_response">verify-authn-response</a></li>
+<li>3.18. <a href="#verify_base64url">verify-base64url</a></li>
+<li>3.19. <a href="#verify_claims">verify-claims</a></li>
+<li>3.20. <a href="#verify_error_response">verify-error-response</a></li>
+<li>3.21. <a href="#verify_https_usage">verify-https-usage</a></li>
+<li>3.22. <a href="#verify_id_token_signing_algorithm_is_supported">verify-id_token_signing-algorithm-is-supported</a></li>
+<li>3.23. <a href="#verify_idtoken_is_signed">verify-idtoken-is-signed</a></li>
+<li>3.24. <a href="#verify_nonce">verify-nonce</a></li>
+<li>3.25. <a href="#verify_op_endpoints_use_https">verify-op-endpoints-use-https</a></li>
+<li>3.26. <a href="#verify_op_has_registration_endpoint">verify-op-has-registration-endpoint</a></li>
+<li>3.27. <a href="#verify_required_claims">verify-required-claims</a></li>
+<li>3.28. <a href="#verify_response">verify-response</a></li>
+<li>3.29. <a href="#verify_scopes">verify-scopes</a></li>
+<li>3.30. <a href="#verify_signed_idtoken_has_kid">verify-signed-idtoken-has-kid</a></li>
+</ul>
+    <li>4. <a href="#section.4">In-flow functions</a></li>
+    <ul>
+
+    
+<li>4.1. <a href="#acr_value">acr_value</a></li>
+<li>4.2. <a href="#check_config">check_config</a></li>
+<li>4.3. <a href="#check_support">check_support</a></li>
+<li>4.4. <a href="#claims_locales">claims_locales</a></li>
+<li>4.5. <a href="#conditional_execution">conditional_execution</a></li>
+<li>4.6. <a href="#expect_exception">expect_exception</a></li>
+<li>4.7. <a href="#id_token_hint">id_token_hint</a></li>
+<li>4.8. <a href="#login_hint">login_hint</a></li>
+<li>4.9. <a href="#multiple_return_uris">multiple_return_uris</a></li>
+<li>4.10. <a href="#redirect_uri_with_query_component">redirect_uri_with_query_component</a></li>
+<li>4.11. <a href="#redirect_uris_with_fragment">redirect_uris_with_fragment</a></li>
+<li>4.12. <a href="#redirect_uris_with_query_component">redirect_uris_with_query_component</a></li>
+<li>4.13. <a href="#register">register</a></li>
+<li>4.14. <a href="#request_in_file">request_in_file</a></li>
+<li>4.15. <a href="#set_discovery_issuer">set_discovery_issuer</a></li>
+<li>4.16. <a href="#set_essential_arg_claim">set_essential_arg_claim</a></li>
+<li>4.17. <a href="#set_expect_error">set_expect_error</a></li>
+<li>4.18. <a href="#set_op_args">set_op_args</a></li>
+<li>4.19. <a href="#set_request_args">set_request_args</a></li>
+<li>4.20. <a href="#set_response_where">set_response_where</a></li>
+<li>4.21. <a href="#set_state">set_state</a></li>
+<li>4.22. <a href="#set_uri">set_uri</a></li>
+<li>4.23. <a href="#set_webfinger_resource">set_webfinger_resource</a></li>
+<li>4.24. <a href="#static_jwk">static_jwk</a></li>
+<li>4.25. <a href="#store_sector_redirect_uris">store_sector_redirect_uris</a></li>
+<li>4.26. <a href="#ui_locales">ui_locales</a></li>
+</ul></ul>
+<h1 id="test_description">1. Test description syntax</h1>
+<p>
+    The test description files are JSON documents. Each of these documents
+    contains a JSON object with a set of keys and values. The possible keys are:
+</p>
+<ul>
+    <li>assert</li>
+    <li>desc</li>
+    <li>group</li>
+    <li>note</li>
+    <li>reference</li>
+    <li>sequence</li>
+    <li>usage</li>
+    <li>MTI</li>
+</ul>
+<p>These will be described one by one below.</p>
+<h2 id="json_assert">1.1. assert</h2>
+<p>Lists the assertions that are performed after a test has completed.</p>
+<p>A example is:</p>
+<pre>
+    "assert": {
+        "verify-response": {
+              "response_cls": [
+                    "OpenIDSchema"
+              ]
+        }
+    }
+</pre>
+<p>The interpretation of this is that the assertion with the identifier</p>
+<em>verify-response</em> will be executed with the argument
+<pre>
+    response_cls="OpenDISchema"
+</pre>
+<p>
+    If a test run reaches the end of the
+    <a href="#json_sequence">request sequence</a>
+    the assertion checks are run one after the other.
+</p>
+<p>
+    When some assertion checks fails that is registered as an Error, for some
+    other
+    checks a failure is logged as a Warning. And then there are a few where
+    how a failure is interpreted is configurable.
+</p>
+<p>
+    To get the result of the whole test run the results of the assertion checks
+    are added together. Such that if there is one or more Error failures then
+    the result of the test is an Error. If there is no Error failures but at
+    least
+    on Warning failure then the result is a Warning. If no failures are
+    encountered that is logged as a Success.
+</p>
+<h2 id="json_desc">1.2. desc</h2>
+<p>
+    A human readable description of what the test is trying to accomplish.
+</p>
+<h2 id="json_group">1.3. group</h2>
+<p>
+    Which group the test belongs to. When the tests are presented to the tester
+    tests belonging to the same group are listed together under the group
+    header.
+</p>
+<p>Present list of used groups:</p>
+<ul>
+    <li>Response Type</li>
+    <li>Response Mode</li>
+    <li>Discovery</li>
+    <li>Dynamic Client Registration</li>
+    <li>ID Token</li>
+    <li>Client Authentication</li>
+    <li>Access Token</li>
+    <li>Userinfo Endpoint</li>
+    <li>claims Request Parameter</li>
+    <li>display Request Parameter</li>
+    <li>nonce Request Parameter</li>
+    <li>prompt Request Parameter</li>
+    <li>redirect_uri Request Parameter</li>
+    <li>request Request Parameter</li>
+    <li>request_uri Request Parameter</li>
+    <li>scope Request Parameter</li>
+    <li>Misc Request Parameters</li>
+    <li>OAuth behaviors</li>
+    <li>Key Rotation</li>
+    <li>RP-Initiated Logout</li>
+    <li>Back-Channel Logout</li>
+    <li>Front-Channel Logout</li>
+    <li>Session Management</li>
+</ul>
+<h2 id="json_note">1.4. note</h2>
+<p>
+    In some case the test tool needs to pass information to the tester.
+    This is where that information is stored.
+</p>
+<h2 id="json_reference">1.5. reference</h2>
+<p>
+    Links to parts of the OpenID Connect and accompanying standards that are
+    tested by the test.
+</p>
+<h2 id="json_sequence">1.6. sequence</h2>
+<p>
+    The complete flow of a test. This consists of a number of requests.
+</p>
+<p>
+    Before a request is issued the arguments fo the request may be set to
+    specific
+    values. Also before a request is sent a check my be performed to figure out
+    if
+    there is any meaning to send the request. One reason for it not to be so
+    would
+    be that the OP does not support the functionality that is under test.
+</p>
+<p>
+    An simple example of a sequence:
+</p>
+<pre>
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    }
+  ]
+</pre>
+<p>
+    This sequence contains 2 requests, the first being a Webfinger request and
+    the
+    second a discovery request. Before the webfinger request is sent, the
+    webfinger
+    resource is specified by the <em>set_webfinger_resource</em> function.
+    Similarly, before the discovery request is sent the issuer is collected
+    using
+    the <em>set_discovery_issuer</em> function.
+</p>
+<p>
+    <b>Note:</b> If webfinger is not supported then that request is not
+    sent.<br>
+    The same goes for discovery. Which means that running this test when not
+    supporting dynamic discovery is useless.
+</p>
+<p>
+    A slightly more complex sequence:
+</p>
+<pre>
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null
+      }
+    },
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": [
+            "CIT",
+            "CI",
+            "C",
+            "CT"
+          ]
+        }
+      }
+    },
+    {
+      "UserInfo": {
+        "set_op_args": {
+          "method": "POST",
+          "authn_method": "token_in_message_body"
+        }
+      }
+    }
+  ]
+</pre>
+<p>
+    This starts in the same way as the previous one. Webfinger, provider info
+    discovery and client registration is performed if supported.
+</p><p>
+    Then follows an Authorization, an Access token and finally an
+    Userinfo request.
+</p>
+<p>
+    <b>Note:</b>The Access token request will only be performed if the
+    <em>response_type</em> is one of "code", "code token", "code id_token" or
+    "code id_token token".
+</p>
+<p>
+    <b>Note:</b> The Userinfo request will be formed as described in
+    Section 2.2 of
+    <a href="https://tools.ietf.org/html/rfc6750#section-2.2">RFC6750</a>
+</p>
+<h2 id="json_usage">usage</h2>
+<p>
+    Specifies when the test can be used. This is connected to the test profiles.
+</p>
+<p>Example:</p>
+<pre>
+  "usage": {
+    "sig": true,
+    "register": true,
+    "extra": true
+  }
+</pre>
+<p>
+    This specific test will be included if the tester has specified that extra tests
+should be used and the OpenID provider that is being tested supports dynamic
+registration and signature creation/verification.
+</p>
+<p>The complete set of usage demands are:</p>
+<dl>
+    <dt>webfinger</dt>
+    <dd>Tests if Webfinger is supported</dd>
+    <dt>enc</dt>
+    <dd>Tests if encryption and decryption is supported</dd>
+    <dt>extra</dt>
+    <dd>This test is an extra test.
+        Not necessary to run for basic standard conformance testing
+    </dd>
+    <dt>discover</dt>
+    <dd>Tests that dynamic discovery is supported</dd>
+    <dt>sig</dt>
+    <dd>Tests that signature creation and signature validation is supported</dd>
+    <dt>none</dt>
+    <dd>Tests support for signing_alg=None</dd>
+    <dt>return_type</dt>
+    <dd>The response_types that are expected to be used during testing</dd>
+    <dt>register</dt>
+    <dd>Tests is dynamic client registration is supported</dd>
+    <dt>form_post</dt>
+    <dd>Tests if the form_post response_type is supported</dd>
+</dl>
+<h2 id="json_mti">MTI</h2>
+<p>Mandatory to implement <b>NOT USED</b></p>
+<h1 id="section.2">2. Tests</h1>
+
+<h1 id="OP_ClientAuth_Basic_Dynamic">2.1. OP-ClientAuth-Basic-Dynamic</h1>
+<p><em>Access token request with client_secret_basic authentication</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-ClientAuth-Basic-Dynamic.json">OP-ClientAuth-Basic-Dynamic</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#check_support">check_support</a><br>
+<a href="#set_request_args">set_request_args</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#check_support">check_support</a><br>
+<a href="#set_op_args">set_op_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Client Authentication</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication">https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_ClientAuth_SecretPost_Dynamic">2.2. OP-ClientAuth-SecretPost-Dynamic</h1>
+<p><em>Access token request with client_secret_post authentication</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-ClientAuth-SecretPost-Dynamic.json">OP-ClientAuth-SecretPost-Dynamic</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#check_support">check_support</a><br>
+<a href="#set_request_args">set_request_args</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#check_support">check_support</a><br>
+<a href="#set_op_args">set_op_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Client Authentication</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication">https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Discovery_Config">2.3. OP-Discovery-Config</h1>
+<p><em>Publishes openid-configuration discovery information</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Discovery-Config.json">OP-Discovery-Config</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#check_http_response">check-http-response</a><br>
+<a href="#verify_op_endpoints_use_https">verify-op-endpoints-use-https</a><br>
+<a href="#verify_https_usage">verify-https-usage</a><br>
+<a href="#verify_id_token_signing_algorithm_is_supported">verify-id_token_signing-algorithm-is-supported</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Discovery</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata">https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Discovery_JWKs">2.4. OP-Discovery-JWKs</h1>
+<p><em>Keys in OP JWKs well formed</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Discovery-JWKs.json">OP-Discovery-JWKs</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#check_http_response">check-http-response</a><br>
+<a href="#verify_base64url">verify-base64url</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Discovery</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Discovery_claims_supported">2.5. OP-Discovery-claims_supported</h1>
+<p><em>Verify that claims_supported is published</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Discovery-claims_supported.json">OP-Discovery-claims_supported</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#providerinfo_has_claims_supported">providerinfo-has-claims_supported</a><br>
+<a href="#check_http_response">check-http-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Discovery</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata">https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Discovery_jwks_uri">2.6. OP-Discovery-jwks_uri</h1>
+<p><em>Verify that jwks_uri is published</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Discovery-jwks_uri.json">OP-Discovery-jwks_uri</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#bare_keys">bare-keys</a><br>
+<a href="#providerinfo_has_jwks_uri">providerinfo-has-jwks_uri</a><br>
+<a href="#check_http_response">check-http-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Discovery</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata">https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_IDToken_C_Signature">2.7. OP-IDToken-C-Signature</h1>
+<p><em>Does the OP sign the ID Token and with what</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-IDToken-C-Signature.json">OP-IDToken-C-Signature</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a><br>
+<a href="#is_idtoken_signed">is-idtoken-signed</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_IDToken_RS256">2.8. OP-IDToken-RS256</h1>
+<p><em>Asymmetric ID Token signature with RS256</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-IDToken-RS256.json">OP-IDToken-RS256</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#set_request_args">set_request_args</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_idtoken_is_signed">verify-idtoken-is-signed</a><br>
+<a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#Signing">https://openid.net/specs/openid-connect-core-1_0.html#Signing</a><br>
+<a href="https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata">https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_IDToken_at_hash">2.9. OP-IDToken-at_hash</h1>
+<p><em>ID Token has at_hash when ID Token and Access Token are returned from the Authorization Endpoint</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-IDToken-at_hash.json">OP-IDToken-at_hash</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_authn_response">verify-authn-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>IDToken Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#CodeIDToken">https://openid.net/specs/openid-connect-core-1_0.html#CodeIDToken</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_IDToken_c_hash">2.10. OP-IDToken-c_hash</h1>
+<p><em>ID Token has c_hash when ID Token and Authorization Code returned from Authorization Endpoint [Hybrid]</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-IDToken-c_hash.json">OP-IDToken-c_hash</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_authn_response">verify-authn-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code IDtoken<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#HybridIDToken">https://openid.net/specs/openid-connect-core-1_0.html#HybridIDToken</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_IDToken_kid">2.11. OP-IDToken-kid</h1>
+<p><em>IDToken has kid [Basic, Implicit, Hybrid]</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-IDToken-kid.json">OP-IDToken-kid</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a><br>
+<a href="#verify_signed_idtoken_has_kid">verify-signed-idtoken-has-kid</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#Signing">https://openid.net/specs/openid-connect-core-1_0.html#Signing</a><br>
+<a href="https://openid.net/specs/openid-connect-core-1_0.html#Encryption">https://openid.net/specs/openid-connect-core-1_0.html#Encryption</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_OAuth_2nd">2.12. OP-OAuth-2nd</h1>
+<p><em>Trying to use authorization code twice should result in an error</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-OAuth-2nd.json">OP-OAuth-2nd</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#set_expect_error">set_expect_error</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#check_http_error_response">check-http-error-response</a><br>
+<a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>OAuth behaviors</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://tools.ietf.org/html/rfc6749#section-4.1.2">https://tools.ietf.org/html/rfc6749#section-4.1.2</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>This test should result in the OpenID Provider returning an error message.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_OAuth_2nd_30s">2.13. OP-OAuth-2nd-30s</h1>
+<p><em>Trying to use authorization code twice with 30 seconds in between uses must result in an error</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-OAuth-2nd-30s.json">OP-OAuth-2nd-30s</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#set_expect_error">set_expect_error</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#check_http_error_response">check-http-error-response</a><br>
+<a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>OAuth behaviors</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://tools.ietf.org/html/rfc6749#section-4.1.2">https://tools.ietf.org/html/rfc6749#section-4.1.2</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>A 30 second delay is added between the first and the second use of the authorization code. This test should result in the OpenID Provider returning an error message.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_OAuth_2nd_Revokes">2.14. OP-OAuth-2nd-Revokes</h1>
+<p><em>Trying to use authorization code twice should result in revoking previously issued access tokens</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-OAuth-2nd-Revokes.json">OP-OAuth-2nd-Revokes</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#set_expect_error">set_expect_error</a></dd>
+<dt>UserInfo<dt>
+<dd><a href="#set_expect_error">set_expect_error</a><br>
+<a href="#set_op_args">set_op_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>OAuth behaviors</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://tools.ietf.org/html/rfc6749#section-4.1.2">https://tools.ietf.org/html/rfc6749#section-4.1.2</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>This test should result in the OpenID Provider returning an error message after the userinfo endpoint is accessed with a revoked access token.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Registration_Dynamic">2.15. OP-Registration-Dynamic</h1>
+<p><em>Client registration request</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Registration-Dynamic.json">OP-Registration-Dynamic</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#check_http_response">check-http-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Dynamic Client Registration</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-registration-1_0.html#RegistrationRequest">https://openid.net/specs/openid-connect-registration-1_0.html#RegistrationRequest</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Registration_Endpoint">2.16. OP-Registration-Endpoint</h1>
+<p><em>Verify that registration_endpoint is published</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Registration-Endpoint.json">OP-Registration-Endpoint</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_op_has_registration_endpoint">verify-op-has-registration-endpoint</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Dynamic Client Registration</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata">https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Registration_Sector_Bad">2.17. OP-Registration-Sector-Bad</h1>
+<p><em>Incorrect registration of sector_identifier_uri</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Registration-Sector-Bad.json">OP-Registration-Sector-Bad</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#check_support">check_support</a><br>
+<a href="#store_sector_redirect_uris">store_sector_redirect_uris</a><br>
+<a href="#set_request_args">set_request_args</a><br>
+<a href="#expect_exception">expect_exception</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Dynamic Client Registration</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata">https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Registration_jwks">2.18. OP-Registration-jwks</h1>
+<p><em>Uses keys registered with jwks value</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Registration-jwks.json">OP-Registration-jwks</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#static_jwk">static_jwk</a><br>
+<a href="#set_request_args">set_request_args</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#check_support">check_support</a><br>
+<a href="#set_op_args">set_op_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Dynamic Client Registration</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata">https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Registration_jwks_uri">2.19. OP-Registration-jwks_uri</h1>
+<p><em>Uses keys registered with jwks_uri value</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Registration-jwks_uri.json">OP-Registration-jwks_uri</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#set_request_args">set_request_args</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#check_support">check_support</a><br>
+<a href="#set_op_args">set_op_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Dynamic Client Registration</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata">https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Registration_logo_uri">2.20. OP-Registration-logo_uri</h1>
+<p><em>Registration with logo_uri</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Registration-logo_uri.json">OP-Registration-logo_uri</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#set_uri">set_uri</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_authn_response">verify-authn-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Dynamic Client Registration</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata">https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>This test verifies that an OP displays the RP's logo. To make sure you get a fresh login page, you need to remove any cookies you may have received from the OP before proceeding.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Registration_policy_uri">2.21. OP-Registration-policy_uri</h1>
+<p><em>Registration with policy_uri</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Registration-policy_uri.json">OP-Registration-policy_uri</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#set_uri">set_uri</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_authn_response">verify-authn-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Dynamic Client Registration</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata">https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>This test verifies that an OP displays a link to the RP's policy document. To make sure you get a fresh login page, you need to remove any cookies you may have received from the OP before proceeding.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Registration_tos_uri">2.22. OP-Registration-tos_uri</h1>
+<p><em>Registration with tos_uri</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Registration-tos_uri.json">OP-Registration-tos_uri</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#set_uri">set_uri</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_authn_response">verify-authn-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Dynamic Client Registration</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata">https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>This test verifies that an OP displays a link to the RP's terms of service. To make sure you get a fresh login page, you need to remove any cookies you may have received from the OP before proceeding.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Req_NotUnderstood">2.23. OP-Req-NotUnderstood</h1>
+<p><em>Request with extra query component</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Req-NotUnderstood.json">OP-Req-NotUnderstood</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#set_request_args">set_request_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_authn_response">verify-authn-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Misc Request Parameters</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://tools.ietf.org/html/rfc6749#page-19">https://tools.ietf.org/html/rfc6749#page-19</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Req_acr_values">2.24. OP-Req-acr_values</h1>
+<p><em>Providing acr_values</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Req-acr_values.json">OP-Req-acr_values</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#acr_value">acr_value</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#used_acr_value">used-acr-value</a><br>
+<a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Misc Request Parameters</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#acrSemantics">https://openid.net/specs/openid-connect-core-1_0.html#acrSemantics</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Req_claims_locales">2.25. OP-Req-claims_locales</h1>
+<p><em>Providing claims_locales</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Req-claims_locales.json">OP-Req-claims_locales</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#claims_locales">claims_locales</a><br>
+<a href="#set_response_where">set_response_where</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a></dd>
+<dt>UserInfo<dt>
+<dd><a href="#conditional_execution">conditional_execution</a><br>
+<a href="#set_op_args">set_op_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#check_http_response">check-http-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Misc Request Parameters</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#ClaimsLanguagesAndScripts">https://openid.net/specs/openid-connect-core-1_0.html#ClaimsLanguagesAndScripts</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>This test requests that claims be returned using the specified locale(s). The use of this parameter in the request must not cause an error at the OP.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Req_id_token_hint">2.26. OP-Req-id_token_hint</h1>
+<p><em>Using prompt=none with user hint through id_token_hint</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Req-id_token_hint.json">OP-Req-id_token_hint</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#set_response_where">set_response_where</a><br>
+<a href="#set_request_args">set_request_args</a><br>
+<a href="#id_token_hint">id_token_hint</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a><br>
+<a href="#conditional_execution">conditional_execution</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#same_authn">same-authn</a><br>
+<a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Misc Request Parameters</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest">https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Req_login_hint">2.27. OP-Req-login_hint</h1>
+<p><em>Providing login_hint</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Req-login_hint.json">OP-Req-login_hint</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>VerifyConfiguration<dt>
+<dd><a href="#check_config">check_config</a></dd>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#login_hint">login_hint</a><br>
+<a href="#set_response_where">set_response_where</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_authn_response">verify-authn-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Misc Request Parameters</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest">https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>Please remove any cookies you may have received from the OpenID Provider before proceeding. This test requests that you log in as a specific user, so a fresh login page is needed.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Req_max_age=1">2.28. OP-Req-max_age=1</h1>
+<p><em>Requesting ID Token with max_age=1 seconds restriction</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Req-max_age=1.json">OP-Req-max_age=1</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a><br>
+<a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a><br>
+<a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a><br>
+<a href="#conditional_execution">conditional_execution</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#set_request_args">set_request_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#claims_check">claims-check</a><br>
+<a href="#auth_time_check">auth_time-check</a><br>
+<a href="#multiple_sign_on">multiple-sign-on</a><br>
+<a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Misc Request Parameters</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest">https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>Wait at least one second before proceeding so that the max_age=1 period expires. You should be prompted to authenticate or re-authenticate. Please submit a screen shot of any authentication user interaction that occurred as part of your certification application.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Req_max_age=10000">2.29. OP-Req-max_age=10000</h1>
+<p><em>Requesting ID Token with max_age=10000 seconds restriction</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Req-max_age=10000.json">OP-Req-max_age=10000</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#set_response_where">set_response_where</a><br>
+<a href="#set_request_args">set_request_args</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a><br>
+<a href="#conditional_execution">conditional_execution</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#claims_check">claims-check</a><br>
+<a href="#same_authn">same-authn</a><br>
+<a href="#auth_time_check">auth_time-check</a><br>
+<a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Misc Request Parameters</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest">https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Req_ui_locales">2.30. OP-Req-ui_locales</h1>
+<p><em>Providing ui_locales</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Req-ui_locales.json">OP-Req-ui_locales</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#ui_locales">ui_locales</a><br>
+<a href="#set_response_where">set_response_where</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_authn_response">verify-authn-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Misc Request Parameters</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest">https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>Please remove any cookies you may have received from the OpenID Provider before proceeding. You need to do this so you can check that the login page is displayed using one of the requested locales. The use of this parameter in the request must not cause an error at the OP.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Response_Missing">2.31. OP-Response-Missing</h1>
+<p><em>Authorization request missing the response_type parameter</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Response-Missing.json">OP-Response-Missing</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_expect_error">set_expect_error</a><br>
+<a href="#set_response_where">set_response_where</a><br>
+<a href="#set_request_args">set_request_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_error_response">verify-error-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Response Type</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://tools.ietf.org/html/rfc6749#page-19">https://tools.ietf.org/html/rfc6749#page-19</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>There are two acceptable outcomes: (1) returning an error response to the RP or (2) returning an error message to the End-User. In case (2), you must submit a screen shot of the error shown as part of your certification application.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Response_code">2.32. OP-Response-code</h1>
+<p><em>Request with response_type=code</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Response-code.json">OP-Response-code</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_authn_response">verify-authn-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Response Type</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://tools.ietf.org/html/rfc6749#section-4.1.2">https://tools.ietf.org/html/rfc6749#section-4.1.2</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Response_code+id_token">2.33. OP-Response-code+id_token</h1>
+<p><em>Request with response_type=code id_token</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Response-code+id_token.json">OP-Response-code+id_token</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_authn_response">verify-authn-response</a><br>
+<a href="#check_idtoken_nonce">check-idtoken-nonce</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Response Type</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code IDtoken</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth">https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Response_code+id_token+token">2.34. OP-Response-code+id_token+token</h1>
+<p><em>Request with response_type=code id_token token</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Response-code+id_token+token.json">OP-Response-code+id_token+token</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_authn_response">verify-authn-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Response Type</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth">https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Response_code+token">2.35. OP-Response-code+token</h1>
+<p><em>Request with response_type=code token</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Response-code+token.json">OP-Response-code+token</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_authn_response">verify-authn-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Response Type</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth">https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Response_id_token">2.36. OP-Response-id_token</h1>
+<p><em>Request with response_type=id_token</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Response-id_token.json">OP-Response-id_token</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_authn_response">verify-authn-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Response Type</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>IDToken</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth">https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Response_id_token+token">2.37. OP-Response-id_token+token</h1>
+<p><em>Request with response_type=id_token token</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Response-id_token+token.json">OP-Response-id_token+token</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_authn_response">verify-authn-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Response Type</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth">https://openid.net/specs/openid-connect-core-1_0.html#ImplicitFlowAuth</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Rotation_OP_Sig">2.38. OP-Rotation-OP-Sig</h1>
+<p><em>Can rotate OP signing keys</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Rotation-OP-Sig.json">OP-Rotation-OP-Sig</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a><br>
+<a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a><br>
+<a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#check_http_response">check-http-response</a><br>
+<a href="#new_signing_keys">new-signing-keys</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Key Rotation</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys">https://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>Please make your OP rotate its signing keys now. If you are not able to cause the server to rotate the keys while running the test, then you will have to self-assert that your deployment can do OP signing key rotation as part of your certification application.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_Rotation_RP_Sig">2.39. OP-Rotation-RP-Sig</h1>
+<p><em>Request access token, change RSA signing key and request another access token</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-Rotation-RP-Sig.json">OP-Rotation-RP-Sig</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#set_request_args">set_request_args</a><br>
+<a href="#check_support">check_support</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#set_request_args">set_request_args</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#set_op_args">set_op_args</a></dd>
+<dt>RefreshAccessToken<dt>
+<dd><a href="#set_op_args">set_op_args</a><br>
+<a href="#set_state">set_state</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#check_http_response">check-http-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Key Rotation</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys">https://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_UserInfo_Body">2.40. OP-UserInfo-Body</h1>
+<p><em>UserInfo Endpoint access with POST and bearer body</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-UserInfo-Body.json">OP-UserInfo-Body</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a></dd>
+<dt>UserInfo<dt>
+<dd><a href="#set_op_args">set_op_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Userinfo Endpoint</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#UserInfo">https://openid.net/specs/openid-connect-core-1_0.html#UserInfo</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_UserInfo_Endpoint">2.41. OP-UserInfo-Endpoint</h1>
+<p><em>UserInfo Endpoint access with GET and bearer header</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-UserInfo-Endpoint.json">OP-UserInfo-Endpoint</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a></dd>
+<dt>UserInfo<dt>
+<dd><a href="#set_op_args">set_op_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Userinfo Endpoint</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#UserInfoRequest">https://openid.net/specs/openid-connect-core-1_0.html#UserInfoRequest</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_UserInfo_Header">2.42. OP-UserInfo-Header</h1>
+<p><em>UserInfo Endpoint access with POST and bearer header</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-UserInfo-Header.json">OP-UserInfo-Header</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a></dd>
+<dt>UserInfo<dt>
+<dd><a href="#set_op_args">set_op_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Userinfo Endpoint</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#UserInfoRequest">https://openid.net/specs/openid-connect-core-1_0.html#UserInfoRequest</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_UserInfo_RS256">2.43. OP-UserInfo-RS256</h1>
+<p><em>RP registers userinfo_signed_response_alg to signal that it wants signed UserInfo returned</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-UserInfo-RS256.json">OP-UserInfo-RS256</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#set_request_args">set_request_args</a><br>
+<a href="#check_support">check_support</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a></dd>
+<dt>UserInfo<dt>
+<dd><a href="#set_op_args">set_op_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#asym_signed_userinfo">asym-signed-userinfo</a><br>
+<a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Userinfo Endpoint</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#UserInfoRequest">https://openid.net/specs/openid-connect-core-1_0.html#UserInfoRequest</a><br>
+<a href="https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata">https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_UserInfo_sig_any">2.44. OP-UserInfo-sig-any</h1>
+<p><em>RP registers userinfo_signed_response_alg to signal that it wants signed UserInfo returned</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-UserInfo-sig-any.json">OP-UserInfo-sig-any</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#register">register</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a></dd>
+<dt>UserInfo<dt>
+<dd><a href="#set_op_args">set_op_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Userinfo Endpoint</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#UserInfoRequest">https://openid.net/specs/openid-connect-core-1_0.html#UserInfoRequest</a><br>
+<a href="https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata">https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_claims_essential">2.45. OP-claims-essential</h1>
+<p><em>Claims request with essential name claim</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-claims-essential.json">OP-claims-essential</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#set_essential_arg_claim">set_essential_arg_claim</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a></dd>
+<dt>UserInfo<dt>
+<dd><a href="#conditional_execution">conditional_execution</a><br>
+<a href="#set_op_args">set_op_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_claims">verify-claims</a><br>
+<a href="#check_http_response">check-http-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>claims Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#IndividualClaimsRequests">https://openid.net/specs/openid-connect-core-1_0.html#IndividualClaimsRequests</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_display_page">2.46. OP-display-page</h1>
+<p><em>Request with display=page</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-display-page.json">OP-display-page</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_request_args">set_request_args</a><br>
+<a href="#check_support">check_support</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>display Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest">https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>To make sure you get a login page, please remove any cookies you may have received from the OpenID Provider before proceeding. You should get a normal user agent login page view.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_display_popup">2.47. OP-display-popup</h1>
+<p><em>Request with display=popup</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-display-popup.json">OP-display-popup</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_request_args">set_request_args</a><br>
+<a href="#check_support">check_support</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>display Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest">https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>To make sure you get a login page, please remove any cookies you may have received from the OpenID Provider before proceeding. You should get a popup user agent login window.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_end_session_Discovery">2.48. OP-end_session-Discovery</h1>
+<p><em>Verifies that end_session_endpoint is published</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-end_session-Discovery.json">OP-end_session-Discovery</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_op_endpoints_use_https">verify-op-endpoints-use-https</a><br>
+<a href="#verify_required_claims">verify-required-claims</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>RP-Initiated Logout</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-session-1_0.html#OPMetadata">https://openid.net/specs/openid-connect-session-1_0.html#OPMetadata</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_nonce_NoReq_code">2.49. OP-nonce-NoReq-code</h1>
+<p><em>Login no nonce, code flow [Basic]</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-nonce-NoReq-code.json">OP-nonce-NoReq-code</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_request_args">set_request_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>nonce Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest">https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_nonce_NoReq_noncode">2.50. OP-nonce-NoReq-noncode</h1>
+<p><em>Reject requests without nonce unless using the 'code' or 'code token' flow</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-nonce-NoReq-noncode.json">OP-nonce-NoReq-noncode</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_request_args">set_request_args</a><br>
+<a href="#set_expect_error">set_expect_error</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>nonce Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest">https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest</a><br>
+<a href="https://openid.net/specs/openid-connect-core-1_0.html#IDToken">https://openid.net/specs/openid-connect-core-1_0.html#IDToken</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>There are two acceptable outcomes: (1) returning an error response to the RP or (2) returning an error message to the End-User. In case (2), you must submit a screen shot of the error shown as part of your certification application.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_nonce_code">2.51. OP-nonce-code</h1>
+<p><em>ID Token has nonce when requested for code flow</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-nonce-code.json">OP-nonce-code</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_request_args">set_request_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_nonce">verify-nonce</a><br>
+<a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>nonce Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest">https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest</a><br>
+<a href="https://openid.net/specs/openid-connect-core-1_0.html#IDToken">https://openid.net/specs/openid-connect-core-1_0.html#IDToken</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_nonce_noncode">2.52. OP-nonce-noncode</h1>
+<p><em>Request with nonce, verifies it was returned in ID Token [Implicit, Hybrid]</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-nonce-noncode.json">OP-nonce-noncode</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#check_idtoken_nonce">check-idtoken-nonce</a><br>
+<a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>nonce Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest">https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest</a><br>
+<a href="https://openid.net/specs/openid-connect-core-1_0.html#IDToken">https://openid.net/specs/openid-connect-core-1_0.html#IDToken</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_prompt_login">2.53. OP-prompt-login</h1>
+<p><em>Request with prompt=login</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-prompt-login.json">OP-prompt-login</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#set_request_args">set_request_args</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a><br>
+<a href="#conditional_execution">conditional_execution</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#multiple_sign_on">multiple-sign-on</a><br>
+<a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>prompt Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest">https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>You should be prompted to authenticate or re-authenticate. Please submit a screen shot of any authentication user interaction that occurred as part of your certification application.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_prompt_none_LoggedIn">2.54. OP-prompt-none-LoggedIn</h1>
+<p><em>Request with prompt=none when logged in [Basic, Implicit, Hybrid]</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-prompt-none-LoggedIn.json">OP-prompt-none-LoggedIn</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a><br>
+<a href="#conditional_execution">conditional_execution</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_request_args">set_request_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#same_authn">same-authn</a><br>
+<a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>prompt Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_prompt_none_NotLoggedIn">2.55. OP-prompt-none-NotLoggedIn</h1>
+<p><em>Request with prompt=none when not logged in</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-prompt-none-NotLoggedIn.json">OP-prompt-none-NotLoggedIn</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_expect_error">set_expect_error</a><br>
+<a href="#set_response_where">set_response_where</a><br>
+<a href="#set_request_args">set_request_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_error_response">verify-error-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>prompt Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest">https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>This tests what happens if the authentication request specifies that no interaction may occur with the End-User and no recent enough authentication is present to enable a silent login. Please remove any cookies you may have received from the OpenID Provider before proceeding.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_redirect_uri_Missing">2.56. OP-redirect_uri-Missing</h1>
+<p><em>Reject request without redirect_uri when multiple registered</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-redirect_uri-Missing.json">OP-redirect_uri-Missing</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#multiple_return_uris">multiple_return_uris</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#set_request_args">set_request_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>redirect_uri Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest">https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>This test should result in the OpenID Provider displaying an error message in your user agent. You should ignore the status of this test in the test tool, since it will be incomplete. You must submit a screen shot of the error shown as part of your certification application.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_redirect_uri_NotReg">2.57. OP-redirect_uri-NotReg</h1>
+<p><em>Sent redirect_uri does not match a registered redirect_uri</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-redirect_uri-NotReg.json">OP-redirect_uri-NotReg</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#set_request_args">set_request_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>redirect_uri Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest">https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>This test should result in the OpenID Provider displaying an error message in your user agent. You should ignore the status of this test in the test tool, since it will be incomplete. You must submit a screen shot of the error shown as part of your certification application.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_redirect_uri_Query_Added">2.58. OP-redirect_uri-Query-Added</h1>
+<p><em>Request with redirect_uri with query component when registered redirect_uri has no query component</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-redirect_uri-Query-Added.json">OP-redirect_uri-Query-Added</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#redirect_uri_with_query_component">redirect_uri_with_query_component</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>redirect_uri Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://tools.ietf.org/html/rfc6749#section-3.1.2">https://tools.ietf.org/html/rfc6749#section-3.1.2</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>This test should result in the OpenID Provider displaying an error message in your user agent. You should ignore the status of this test in the test tool, since it will be incomplete. You must submit a screen shot of the error shown as part of your certification application.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_redirect_uri_Query_Mismatch">2.59. OP-redirect_uri-Query-Mismatch</h1>
+<p><em>Rejects redirect_uri when query parameter does not match what is registed</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-redirect_uri-Query-Mismatch.json">OP-redirect_uri-Query-Mismatch</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#redirect_uri_with_query_component">redirect_uri_with_query_component</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#redirect_uri_with_query_component">redirect_uri_with_query_component</a><br>
+<a href="#set_response_where">set_response_where</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>redirect_uri Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://tools.ietf.org/html/rfc6749#section-3.1.2">https://tools.ietf.org/html/rfc6749#section-3.1.2</a></td>
+    </tr>
+        <tr>
+        <td>Note</td>
+        <td>This test should result in the OpenID Provider displaying an error message in your user agent. You should ignore the status of this test in the test tool, since it will be incomplete. You must submit a screen shot of the error shown as part of your certification application.</td>
+    </tr>
+
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_redirect_uri_Query_OK">2.60. OP-redirect_uri-Query-OK</h1>
+<p><em>Request with a redirect_uri with a query component when a redirect_uri with the same query component is registered</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-redirect_uri-Query-OK.json">OP-redirect_uri-Query-OK</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#redirect_uris_with_query_component">redirect_uris_with_query_component</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#redirect_uri_with_query_component">redirect_uri_with_query_component</a><br>
+<a href="#set_response_where">set_response_where</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#check_query_part">check-query-part</a><br>
+<a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>redirect_uri Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://tools.ietf.org/html/rfc6749#section-3.1.2">https://tools.ietf.org/html/rfc6749#section-3.1.2</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_redirect_uri_RegFrag">2.61. OP-redirect_uri-RegFrag</h1>
+<p><em>Reject registration where a redirect_uri has a fragment</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-redirect_uri-RegFrag.json">OP-redirect_uri-RegFrag</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#redirect_uris_with_fragment">redirect_uris_with_fragment</a><br>
+<a href="#expect_exception">expect_exception</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_error_response">verify-error-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>redirect_uri Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://tools.ietf.org/html/rfc6749#section-3.1.2">https://tools.ietf.org/html/rfc6749#section-3.1.2</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_request_Unsigned">2.62. OP-request-Unsigned</h1>
+<p><em>Support request request parameter with unsigned request</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-request-Unsigned.json">OP-request-Unsigned</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#set_request_args">set_request_args</a><br>
+<a href="#check_support">check_support</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#set_op_args">set_op_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#authn_response_or_error">authn-response-or-error</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>request Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#RequestObject">https://openid.net/specs/openid-connect-core-1_0.html#RequestObject</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_request_uri_Sig">2.63. OP-request_uri-Sig</h1>
+<p><em>Support request_uri request parameter with signed request</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-request_uri-Sig.json">OP-request_uri-Sig</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#set_request_args">set_request_args</a><br>
+<a href="#check_support">check_support</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#set_op_args">set_op_args</a><br>
+<a href="#request_in_file">request_in_file</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#authn_response_or_error">authn-response-or-error</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>request_uri Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#RequestUriParameter">https://openid.net/specs/openid-connect-core-1_0.html#RequestUriParameter</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_request_uri_Sig_any">2.64. OP-request_uri-Sig-any</h1>
+<p><em>Support request_uri request parameter with signed request</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-request_uri-Sig-any.json">OP-request_uri-Sig-any</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#set_op_args">set_op_args</a><br>
+<a href="#request_in_file">request_in_file</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#authn_response_or_error">authn-response-or-error</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>request_uri Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#RequestUriParameter">https://openid.net/specs/openid-connect-core-1_0.html#RequestUriParameter</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_request_uri_Unsigned">2.65. OP-request_uri-Unsigned</h1>
+<p><em>Support request_uri request parameter with unsigned request</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-request_uri-Unsigned.json">OP-request_uri-Unsigned</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>Registration<dt>
+<dd><a href="#set_request_args">set_request_args</a><br>
+<a href="#check_support">check_support</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#set_op_args">set_op_args</a><br>
+<a href="#request_in_file">request_in_file</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>request_uri Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#RequestUriParameter">https://openid.net/specs/openid-connect-core-1_0.html#RequestUriParameter</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_scope_All">2.66. OP-scope-All</h1>
+<p><em>Scope requesting all claims</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-scope-All.json">OP-scope-All</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#check_support">check_support</a><br>
+<a href="#set_request_args">set_request_args</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a></dd>
+<dt>UserInfo<dt>
+<dd><a href="#conditional_execution">conditional_execution</a><br>
+<a href="#set_op_args">set_op_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_scopes">verify-scopes</a><br>
+<a href="#check_http_response">check-http-response</a><br>
+<a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>scope Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims">https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_scope_address">2.67. OP-scope-address</h1>
+<p><em>Scope requesting address claims</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-scope-address.json">OP-scope-address</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#check_support">check_support</a><br>
+<a href="#set_request_args">set_request_args</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a></dd>
+<dt>UserInfo<dt>
+<dd><a href="#conditional_execution">conditional_execution</a><br>
+<a href="#set_op_args">set_op_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_scopes">verify-scopes</a><br>
+<a href="#check_http_response">check-http-response</a><br>
+<a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>scope Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims">https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_scope_email">2.68. OP-scope-email</h1>
+<p><em>Scope requesting email claims</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-scope-email.json">OP-scope-email</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#check_support">check_support</a><br>
+<a href="#set_request_args">set_request_args</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a></dd>
+<dt>UserInfo<dt>
+<dd><a href="#conditional_execution">conditional_execution</a><br>
+<a href="#set_op_args">set_op_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_scopes">verify-scopes</a><br>
+<a href="#check_http_response">check-http-response</a><br>
+<a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>scope Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims">https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_scope_phone">2.69. OP-scope-phone</h1>
+<p><em>Scope requesting phone claims</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-scope-phone.json">OP-scope-phone</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#check_support">check_support</a><br>
+<a href="#set_request_args">set_request_args</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a></dd>
+<dt>UserInfo<dt>
+<dd><a href="#conditional_execution">conditional_execution</a><br>
+<a href="#set_op_args">set_op_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_scopes">verify-scopes</a><br>
+<a href="#check_http_response">check-http-response</a><br>
+<a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>scope Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims">https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+
+<h1 id="OP_scope_profile">2.70. OP-scope-profile</h1>
+<p><em>Scope requesting profile claims</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>JSON description</td>
+        <td><a href="https://github.com/rohe/oidctest/blob/master/test_tool/cp/test_op/flows/OP-scope-profile.json">OP-scope-profile</a></td>
+    </tr>
+    <tr>
+        <td>In-flow checks</td>
+        <td><dl>
+<dt>Webfinger<dt>
+<dd><a href="#set_webfinger_resource">set_webfinger_resource</a></dd>
+<dt>Discovery<dt>
+<dd><a href="#set_discovery_issuer">set_discovery_issuer</a></dd>
+<dt>AsyncAuthn<dt>
+<dd><a href="#set_response_where">set_response_where</a><br>
+<a href="#check_support">check_support</a><br>
+<a href="#set_request_args">set_request_args</a></dd>
+<dt>AccessToken<dt>
+<dd><a href="#conditional_execution">conditional_execution</a></dd>
+<dt>UserInfo<dt>
+<dd><a href="#conditional_execution">conditional_execution</a><br>
+<a href="#set_op_args">set_op_args</a></dd>
+</dl></td>
+    </tr>
+    <tr>
+        <td>Assertions</td>
+        <td><a href="#verify_scopes">verify-scopes</a><br>
+<a href="#check_http_response">check-http-response</a><br>
+<a href="#verify_response">verify-response</a></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>scope Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td>Code<br>
+IDToken<br>
+IDToken Token<br>
+Code IDtoken<br>
+Code Token<br>
+Code IDToken Token</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><a href="https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims">https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims</a></td>
+    </tr>
+    
+    </tbody>
+</table>
+
+<p></p>
+
+<p></p>
+<h1 id="section.3">3. Assertions</h1>
+
+<h1 id="asym_signed_userinfo">3.1. asym-signed-userinfo</h1>
+<p>Verifies that the UserInfo was signed with a RSA key</p>
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L1333">Link to code</a></p>
+
+
+<h1 id="auth_time_check">3.2. auth_time-check</h1>
+<p>Check that the auth_time returned in the ID Token is in the
+expected range.</p>
+<pre>
+Parameter description:<br>
+
+    :param max_age: Maximum age of the id_token (in seconds)
+    :type max_age: int
+    :param skew: The allowed skew in seconds
+    :type skew: int
+    
+    Example:
+        "auth_time-check": {
+          "max_age": 1,
+          "skew": 600
+        }
+    
+</pre>
+
+<p>Possible outcome: Warning<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L2503">Link to code</a></p>
+
+
+<h1 id="authn_response_or_error">3.3. authn-response-or-error</h1>
+<p>Checks that the last response was a JSON encoded authentication or
+error message</p>
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/otest/blob/74add55d9d0cefd5f52c1f9bb09589f5b8b4c234/src/otest/aus/check.py#L527">Link to code</a></p>
+
+
+<h1 id="bare_keys">3.4. bare-keys</h1>
+<p>Dynamic OPs MUST publish their public keys as bare JWK keys</p>
+<p>Possible outcome: Undefined<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L2377">Link to code</a></p>
+
+
+<h1 id="check_http_error_response">3.5. check-http-error-response</h1>
+<p>Checks that an error code is either 400 or 401 which are the only ones
+accepted by OAuth2/OIDC.</p>
+<p>Possible outcome: Warning<p>
+<p><a href="https://github.com/rohe/otest/blob/74add55d9d0cefd5f52c1f9bb09589f5b8b4c234/src/otest/aus/check.py#L131">Link to code</a></p>
+
+
+<h1 id="check_http_response">3.6. check-http-response</h1>
+<p>Checks that the HTTP response status is within the 200 or 300 range.
+Also does some extra JSON checks</p>
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/otest/blob/74add55d9d0cefd5f52c1f9bb09589f5b8b4c234/src/otest/aus/check.py#L91">Link to code</a></p>
+
+
+<h1 id="check_idtoken_nonce">3.7. check-idtoken-nonce</h1>
+<p>Verify that the nonce in the IDToken is the same that's included in the
+Authorization Request.</p>
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L1528">Link to code</a></p>
+
+
+<h1 id="check_query_part">3.8. check-query-part</h1>
+<p>Check that a query part send in the Authorization Request is returned in the
+Authorization response.</p>
+<pre>
+Parameter description:<br>
+
+    :param kwargs: key-value pairs that should be present in the query part
+    :type kwargs: dictionary
+    
+    Example:
+        "check-query-part": {
+          "foo": "bar"
+        }
+    
+</pre>
+
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L2411">Link to code</a></p>
+
+
+<h1 id="claims_check">3.9. claims-check</h1>
+<p>Checks if specific claims is present or not</p>
+<pre>
+Parameter description:<br>
+
+    :param id_token: Claims that should be present in the id_token
+    :type id_token: list of strings
+    :param required: If the claims are required
+    :type required: boolean
+    
+    Example:
+        "claims-check": {
+          "required": true,
+          "id_token": ["auth_time"]
+        }
+    
+</pre>
+
+<p>Possible outcome: Undefined<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L2330">Link to code</a></p>
+
+
+<h1 id="is_idtoken_signed">3.10. is-idtoken-signed</h1>
+<p>Checks if the id_token is signed</p>
+<p>Possible outcome: Undefined<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L2305">Link to code</a></p>
+
+
+<h1 id="multiple_sign_on">3.11. multiple-sign-on</h1>
+<p>Verifies that multiple authentications was used in the flow</p>
+<pre>
+Parameter description:<br>
+
+    :param status: Status code returned on error
+    :type status: integer (2=Warning, 3=Error)
+    
+    Example:
+        "multiple-sign-on": {
+          "status": 2
+        }
+    
+</pre>
+
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L1064">Link to code</a></p>
+
+
+<h1 id="new_signing_keys">3.12. new-signing-keys</h1>
+<p>Verifies that two set of signing keys are not the same</p>
+<p>Possible outcome: Warning<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L2211">Link to code</a></p>
+
+
+<h1 id="providerinfo_has_claims_supported">3.13. providerinfo-has-claims_supported</h1>
+<p>Check that the claims_supported discovery metadata value is in the
+provider_info</p>
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L618">Link to code</a></p>
+
+
+<h1 id="providerinfo_has_jwks_uri">3.14. providerinfo-has-jwks_uri</h1>
+<p>Check that the jwks_uri discovery metadata value is in the provider_info</p>
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L601">Link to code</a></p>
+
+
+<h1 id="same_authn">3.15. same-authn</h1>
+<p>Verifies that the same authentication was used twice in the flow.</p>
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L1117">Link to code</a></p>
+
+
+<h1 id="used_acr_value">3.16. used-acr-value</h1>
+<p>The acr value in the ID Token</p>
+<p>Possible outcome: Undefined<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L2271">Link to code</a></p>
+
+
+<h1 id="verify_authn_response">3.17. verify-authn-response</h1>
+<p>Checks that the last response was a JSON encoded authentication message</p>
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/otest/blob/74add55d9d0cefd5f52c1f9bb09589f5b8b4c234/src/otest/aus/check.py#L505">Link to code</a></p>
+
+
+<h1 id="verify_base64url">3.18. verify-base64url</h1>
+<p>Verifies that the base64 encoded parts of a JWK is in fact base64url
+encoded and not just base64 encoded</p>
+<pre>
+Parameter description:<br>
+
+    :param err_status: Which error status should be reported
+    :type err_status: integer (2=Warning, 3=Error)
+
+    Example:
+        "verify-base64url": {
+          "err_status": 3
+        }
+    
+</pre>
+
+<p>Possible outcome: Undefined<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L2118">Link to code</a></p>
+
+
+<h1 id="verify_claims">3.19. verify-claims</h1>
+<p>Verifies that the claims returned as UserInfo or in the ID Token is
+consistent with what was asked for</p>
+<pre>
+Parameter description:<br>
+
+    :param userinfo: Whether the method should look for the claims in the user info
+    :param id_token: Whether the method should look for the claims in the id_token
+    
+    Example:
+        "verify-claims": {
+          "id_token": null
+        }
+    
+</pre>
+
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L733">Link to code</a></p>
+
+
+<h1 id="verify_error_response">3.20. verify-error-response</h1>
+<p>Checks that the last response was a JSON encoded error message</p>
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/otest/blob/74add55d9d0cefd5f52c1f9bb09589f5b8b4c234/src/otest/aus/check.py#L472">Link to code</a></p>
+
+
+<h1 id="verify_https_usage">3.21. verify-https-usage</h1>
+<p>Verify that specific endpoints uses https</p>
+<pre>
+Parameter description:<br>
+
+    :param endpoints: Which OP endpoints that should be checked
+    :type endpoints: list of strings
+    
+    Example:
+        "verify-https-usage": {"endpoints": ["initiate_login_uri"]}
+    
+</pre>
+
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L1802">Link to code</a></p>
+
+
+<h1 id="verify_id_token_signing_algorithm_is_supported">3.22. verify-id_token_signing-algorithm-is-supported</h1>
+<p>Verify that required algorithms in id_token_signing_alg_values_supported</p>
+<pre>
+Parameter description:<br>
+
+    :param algs: What algorithms 
+    :type algs: list of strings
+
+    Example:
+        "verify-id_token_signing-algorithm-is-supported": { "algs": ["RS256"]}
+    
+</pre>
+
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L267">Link to code</a></p>
+
+
+<h1 id="verify_idtoken_is_signed">3.23. verify-idtoken-is-signed</h1>
+<p>Verifies that an ID Token is signed</p>
+<pre>
+Parameter description:<br>
+
+    :param alg: Which signing algorithm that was expected
+    :type alg: string
+
+    Example:
+        "verify-idtoken-is-signed": {
+          "alg": "HS256"
+        }
+    
+</pre>
+
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L1933">Link to code</a></p>
+
+
+<h1 id="verify_nonce">3.24. verify-nonce</h1>
+<p>Verifies that the nonce received in the IDToken is the same as was
+given in the Authorization Request</p>
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L1973">Link to code</a></p>
+
+
+<h1 id="verify_op_endpoints_use_https">3.25. verify-op-endpoints-use-https</h1>
+<p>Verify that all OP endpoints uses https</p>
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L1714">Link to code</a></p>
+
+
+<h1 id="verify_op_has_registration_endpoint">3.26. verify-op-has-registration-endpoint</h1>
+<p>Verify that the OP has a registration endpoint</p>
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L1835">Link to code</a></p>
+
+
+<h1 id="verify_required_claims">3.27. verify-required-claims</h1>
+<p>Verify that required claims are actually present</p>
+<pre>
+Parameter description:<br>
+
+    Specifies which claims that was expected where.
+
+    Example:
+        "verify-required-claims": {
+          "ProviderConfigurationResponse": [
+            "backchannel_logout_supported",
+            "backchannel_logout_session_supported"
+          ]
+        }
+    
+</pre>
+
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L2662">Link to code</a></p>
+
+
+<h1 id="verify_response">3.28. verify-response</h1>
+<p>Checks that the last response was one of a possible set of OpenID Connect
+Responses</p>
+<pre>
+Parameter description:<br>
+
+    :param response_cls: Which responses the test tool has received
+    :type response_cls: list of strings
+
+    Example:
+        "verify-response": {
+          "response_cls": [
+            "AuthorizationResponse",
+            "AccessTokenResponse"
+          ]
+        }
+    
+</pre>
+
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/otest/blob/74add55d9d0cefd5f52c1f9bb09589f5b8b4c234/src/otest/aus/check.py#L562">Link to code</a></p>
+
+
+<h1 id="verify_scopes">3.29. verify-scopes</h1>
+<p>Verifies that the claims corresponding to the requested scopes are returned</p>
+<p>Possible outcome: Warning<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L2457">Link to code</a></p>
+
+
+<h1 id="verify_signed_idtoken_has_kid">3.30. verify-signed-idtoken-has-kid</h1>
+<p>Verifies that the header of a signed IDToken includes a kid claim.</p>
+<p>Possible outcome: Error<p>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/check.py#L1906">Link to code</a></p>
+
+<h1 id="section.4">4. In-flow functions</h1>
+
+<h1 id="acr_value">4.1. acr_value</h1>
+<dl><dt>Context</dt>
+<dd>AsyncAuthn</dd>
+<dt>Action</dt>
+<dd>Sets the request attribute 'acr_values' to something configured,
+something gotten from the OP or to a default.</dd>
+<dt>Example</dt>
+<dd><pre>"acr_value": null</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L347">Link to code</a></p>
+
+
+<h1 id="check_config">4.2. check_config</h1>
+<dl><dt>Context</dt>
+<dd>VerifyConfiguration</dd>
+<dt>Action</dt>
+<dd>Verifies that certain parameters appear in the configuration.</dd>
+<dt>Args</dt>
+<dd>Dictionary with parameters and values that MUST be in the tool configuration</dd>
+<dt>Example</dt>
+<dd><pre>"check_config": {
+"login_hint": null
+}</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L587">Link to code</a></p>
+
+
+<h1 id="check_support">4.3. check_support</h1>
+<dl><dt>Context</dt>
+<dd>AsyncAuthn</dd>
+<dt>Action</dt>
+<dd>Verify that the needed support is supported by the OP</dd>
+<dt>Args</dt>
+<dd>A dictionary of dictionaries. {level: {item: value}}</dd>
+<dt>Example</dt>
+<dd><pre>"check_support": {
+WARNING: {"scopes_supported": ["phone"]}
+}
+"check_support": {
+ERROR: {"id_token_signing_alg_values_supported": null}
+}</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L106">Link to code</a></p>
+
+
+<h1 id="claims_locales">4.4. claims_locales</h1>
+<dl><dt>Context</dt>
+<dd>AsyncAuthn</dd>
+<dt>Action</dt>
+<dd>Set the request argument 'claims_locales' to something configured or use the default.</dd>
+<dt>Example</dt>
+<dd><pre>"claims_locales": null</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L307">Link to code</a></p>
+
+
+<h1 id="conditional_execution">4.5. conditional_execution</h1>
+<dl><dt>Context</dt>
+<dd>AccessToken/UserInfo</dd>
+<dt>Action</dt>
+<dd>If the condition is not fulfilled the operation will not be executed.</dd>
+<dt>Args</dt>
+<dd>Dictionary with claim as key and allowed values as values</dd>
+<dt>Example</dt>
+<dd><pre>"conditional_execution":{
+"return_type": ["CIT","CI","C","CT"]
+}</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L556">Link to code</a></p>
+
+
+<h1 id="expect_exception">4.6. expect_exception</h1>
+
+<p><a href="https://github.com/rohe/otest/blob/74add55d9d0cefd5f52c1f9bb09589f5b8b4c234/src/otest/func.py#L52">Link to code</a></p>
+
+
+<h1 id="id_token_hint">4.7. id_token_hint</h1>
+<dl><dt>Context</dt>
+<dd>AsyncAuthn</dd>
+<dt>Action</dt>
+<dd>Will pick up an id_token received in an earlier authorization
+request and add it as value to the request claim "id_token_hint".</dd>
+<dt>Example</dt>
+<dd><pre>"id_token_hint": null</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L253">Link to code</a></p>
+
+
+<h1 id="login_hint">4.8. login_hint</h1>
+<dl><dt>Context</dt>
+<dd>AsyncAuthn</dd>
+<dt>Action</dt>
+<dd>Sets the request argument 'login_hint' to a value picked from the configuration.</dd>
+<dt>Example</dt>
+<dd><pre>"login_hint": null</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L268">Link to code</a></p>
+
+
+<h1 id="multiple_return_uris">4.9. multiple_return_uris</h1>
+<dl><dt>Context</dt>
+<dd>Registration</dd>
+<dt>Action</dt>
+<dd>Makes the request contain two redirect_uris. Default is that it only contains one.</dd>
+<dt>Example</dt>
+<dd><pre>"multiple_return_uris": null</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L442">Link to code</a></p>
+
+
+<h1 id="redirect_uri_with_query_component">4.10. redirect_uri_with_query_component</h1>
+<dl><dt>Context</dt>
+<dd>AsyncAuthn</dd>
+<dt>Action</dt>
+<dd>Add a query component to the redirect_uri</dd>
+<dt>Args</dt>
+<dd>Dictionary with claims and values to build the query part from</dd>
+<dt>Example</dt>
+<dd><pre>"redirect_uri_with_query_component": {
+"foo": "bar"
+}</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L456">Link to code</a></p>
+
+
+<h1 id="redirect_uris_with_fragment">4.11. redirect_uris_with_fragment</h1>
+<dl><dt>Context</dt>
+<dd>Registration</dd>
+<dt>Action</dt>
+<dd>Add a fragment component to a redirect_uri</dd>
+<dt>Args</dt>
+<dd>Dictionary with attributes and values to build the query part from</dd>
+<dt>Example</dt>
+<dd><pre>"redirect_uris_with_fragment": {
+"foo": "bar"
+}</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L508">Link to code</a></p>
+
+
+<h1 id="redirect_uris_with_query_component">4.12. redirect_uris_with_query_component</h1>
+<dl><dt>Context</dt>
+<dd>AsyncAuthn</dd>
+<dt>Action</dt>
+<dd>Add a query component to the redirect_uris</dd>
+<dt>Args</dt>
+<dd>Dictionary with attributes and values to build the query part from</dd>
+<dt>Example</dt>
+<dd><pre>"redirect_uris_with_query_component": {
+"foo": "bar"
+}</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L474">Link to code</a></p>
+
+
+<h1 id="register">4.13. register</h1>
+<dl><dt>Context</dt>
+<dd>ClientRegistration</dd>
+<dt>Action</dt>
+<dd>Registers a set of claims</dd>
+<dt>Args</dt>
+<dd>List of claims to register.</dd>
+<dt>Example</dt>
+<dd><pre>"register": [ "userinfo_signed_response_alg" ]</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L685">Link to code</a></p>
+
+
+<h1 id="request_in_file">4.14. request_in_file</h1>
+<dl><dt>Context</dt>
+<dd>AsyncAuthn</dd>
+<dt>Action</dt>
+<dd>Sets the operation argument 'base_path' to where the request
+can be found. This is about the usage of the request_uri parameter.</dd>
+<dt>Example</dt>
+<dd><pre>"request_in_file": null</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L542">Link to code</a></p>
+
+
+<h1 id="set_discovery_issuer">4.15. set_discovery_issuer</h1>
+<dl><dt>Context</dt>
+<dd>AsyncAuthn</dd>
+<dt>Action</dt>
+<dd>Pick up issuer ID either from static configuration or dynamic discovery.</dd>
+<dt>Example</dt>
+<dd><pre>"set_discovery_issuer": null</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L63">Link to code</a></p>
+
+
+<h1 id="set_essential_arg_claim">4.16. set_essential_arg_claim</h1>
+<dl><dt>Context</dt>
+<dd>AsyncAuthn</dd>
+<dt>Action</dt>
+<dd>Specify an essential claim. Whether it should be placed in the
+id_token or returned together with the user info depends on the profile used.</dd>
+<dt>Args</dt>
+<dd>A claim name</dd>
+<dt>Example</dt>
+<dd><pre>"set_essential_arg_claim": "name"</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L424">Link to code</a></p>
+
+
+<h1 id="set_expect_error">4.17. set_expect_error</h1>
+
+<p><a href="https://github.com/rohe/otest/blob/74add55d9d0cefd5f52c1f9bb09589f5b8b4c234/src/otest/func.py#L84">Link to code</a></p>
+
+
+<h1 id="set_op_args">4.18. set_op_args</h1>
+
+<p><a href="https://github.com/rohe/otest/blob/74add55d9d0cefd5f52c1f9bb09589f5b8b4c234/src/otest/func.py#L37">Link to code</a></p>
+
+
+<h1 id="set_request_args">4.19. set_request_args</h1>
+
+<p><a href="https://github.com/rohe/otest/blob/74add55d9d0cefd5f52c1f9bb09589f5b8b4c234/src/otest/func.py#L29">Link to code</a></p>
+
+
+<h1 id="set_response_where">4.20. set_response_where</h1>
+<dl><dt>Context</dt>
+<dd>AsyncAuthn</dd>
+<dt>Action</dt>
+<dd>Set where the response is expected to occur dependent on which
+response_type it is or which it isn't.</dd>
+<dt>Args</dt>
+<dd>None or one of response_type or not_response_type and where</dd>
+<dt>Example</dt>
+<dd><pre>"set_response_where": null</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L76">Link to code</a></p>
+
+
+<h1 id="set_state">4.21. set_state</h1>
+<dl><dt>Context</dt>
+<dd>RefreshAccessToken</dd>
+<dt>Action</dt>
+<dd>Sets the operation argument 'state' to what has been used previously in the session.</dd>
+<dt>Example</dt>
+<dd><pre>"set_state": null</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L620">Link to code</a></p>
+
+
+<h1 id="set_uri">4.22. set_uri</h1>
+
+<p><a href="https://github.com/rohe/otest/blob/74add55d9d0cefd5f52c1f9bb09589f5b8b4c234/src/otest/func.py#L136">Link to code</a></p>
+
+
+<h1 id="set_webfinger_resource">4.23. set_webfinger_resource</h1>
+<dl><dt>Context</dt>
+<dd>WebFinger</dd>
+<dt>Action</dt>
+<dd>Specifies the webfinger resource. If the OP supports
+webfinger queries then the resource is set to the value of 'webfinger_url'
+or 'webfinger_email' from the test instance configuration.</dd>
+<dt>Example</dt>
+<dd><pre>"set_webfinger_resource": null</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L34">Link to code</a></p>
+
+
+<h1 id="static_jwk">4.24. static_jwk</h1>
+<dl><dt>Context</dt>
+<dd>Registration</dd>
+<dt>Action</dt>
+<dd>Set a static JWKS, remove jwks_uri if specified.</dd>
+<dt>Example</dt>
+<dd><pre>"static_jwk": null</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L183">Link to code</a></p>
+
+
+<h1 id="store_sector_redirect_uris">4.25. store_sector_redirect_uris</h1>
+<dl><dt>Context</dt>
+<dd>Registration</dd>
+<dt>Action</dt>
+<dd>Will store a number of redirectURIs in a file and add a
+"sector_identifier_uri" pointing to that file to the request arguments.</dd>
+<dt>Args</dt>
+<dd>other_uris: list of complete URLs
+redirect_uris: Use default redirect_uris for this entity
+extra: Extra relative url paths</dd>
+<dt>Example</dt>
+<dd><pre>"store_sector_redirect_uris": {
+"other_uris": [
+"https://example.com/op"
+]
+}</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L208">Link to code</a></p>
+
+
+<h1 id="ui_locales">4.26. ui_locales</h1>
+<dl><dt>Context</dt>
+<dd>AsyncAuthn</dd>
+<dt>Action</dt>
+<dd>Set the request argument 'ui_locales' to something configured or use the default.</dd>
+<dt>Example</dt>
+<dd><pre>"ui_locales": null</pre></dd></dl>
+<p><a href="https://github.com/rohe/oidctest/blob/dfc43807a650e94fc6abc6ca8fad134b3fba010a/src/oidctest/op/func.py#L293">Link to code</a></p>
+
+</body></html>
