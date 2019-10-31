@@ -1,7 +1,7 @@
 {
   "group": "Front-Channel Logout",
   "usage": {
-    "extra": true,
+    "front": true,
     "return_type": [
       "C",
       "CI",

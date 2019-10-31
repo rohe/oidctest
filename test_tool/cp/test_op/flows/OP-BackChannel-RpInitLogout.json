@@ -1,7 +1,7 @@
 {
   "group": "Back-Channel Logout",
   "usage": {
-    "extra": true,
+    "back": true,
     "return_type": [
       "C",
       "CI",

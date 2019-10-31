@@ -1,6 +1,7 @@
 {
   "group": "Front-Channel Logout",
   "usage": {
+    "front": true,
     "discover": true
   },
   "desc": "Checks Front Channel related openid-configuration discovery information",

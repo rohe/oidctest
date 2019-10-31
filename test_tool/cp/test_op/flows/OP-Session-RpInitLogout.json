@@ -1,7 +1,7 @@
 {
   "group": "Session Management",
   "usage": {
-    "extra": true,
+    "session": true,
     "return_type": [
       "C",
       "CI",

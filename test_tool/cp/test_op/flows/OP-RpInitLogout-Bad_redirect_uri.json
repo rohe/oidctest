@@ -2,7 +2,7 @@
   "group": "RP-Initiated Logout",
   "note": "This test should result in the OpenID Provider displaying an error message in your user agent. You should ignore the status of this test in the test tool, since it will be incomplete. You must submit a screen shot of the error shown as part of your certification application.",
   "usage": {
-    "extra": true,
+    "rp_init": true,
     "return_type": [
       "C",
       "CI",
