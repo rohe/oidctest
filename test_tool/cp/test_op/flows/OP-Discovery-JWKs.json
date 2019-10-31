@@ -17,7 +17,8 @@
     }
   ],
   "MTI": [
-    "DYN", "CNF"
+    "DYN",
+    "CNF"
   ],
   "assert": {
     "check-http-response": null,

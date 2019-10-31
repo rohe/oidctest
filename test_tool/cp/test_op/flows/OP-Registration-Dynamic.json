@@ -1,1 +1,29 @@
-{"group": "Dynamic Client Registration", "usage": {"register": true}, "desc": "Client registration request", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration"], "MTI": ["DYN"], "assert": {"check-http-response": null}, "reference": ["https://openid.net/specs/openid-connect-registration-1_0.html#RegistrationRequest"]}
+{
+  "group": "Dynamic Client Registration",
+  "usage": {
+    "register": true
+  },
+  "desc": "Client registration request",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration"
+  ],
+  "MTI": [
+    "DYN"
+  ],
+  "assert": {
+    "check-http-response": null
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-registration-1_0.html#RegistrationRequest"
+  ]
+}

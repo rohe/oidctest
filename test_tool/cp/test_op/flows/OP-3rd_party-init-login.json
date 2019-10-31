@@ -29,6 +29,10 @@
   "desc": "Supports initiation of the SSO flow from a 3rd-party.",
   "assert": {
     "check-http-response": null,
-    "verify-https-usage": {"endpoints": ["initiate_login_uri"]}
+    "verify-https-usage": {
+      "endpoints": [
+        "initiate_login_uri"
+      ]
+    }
   }
 }

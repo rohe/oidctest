@@ -1,1 +1,61 @@
-{"group": "Userinfo Endpoint", "usage": {"return_type": ["C", "IT", "CI", "CT", "CIT"]}, "desc": "UserInfo Endpoint access with GET and bearer header", "sequence": [{"Webfinger": {"set_webfinger_resource": null}}, {"Discovery": {"set_discovery_issuer": null}}, "Registration", {"AsyncAuthn": {"set_response_where": null}}, {"AccessToken": {"conditional_execution": {"return_type": ["CIT", "CI", "C", "CT"]}}}, {"UserInfo": {"set_op_args": {"method": "GET", "authn_method": "bearer_header"}}}], "assert": {"verify-response": {"response_cls": ["OpenIDSchema"]}}, "reference": ["https://openid.net/specs/openid-connect-core-1_0.html#UserInfoRequest"]}
+{
+  "group": "Userinfo Endpoint",
+  "usage": {
+    "return_type": [
+      "C",
+      "IT",
+      "CI",
+      "CT",
+      "CIT"
+    ]
+  },
+  "desc": "UserInfo Endpoint access with GET and bearer header",
+  "sequence": [
+    {
+      "Webfinger": {
+        "set_webfinger_resource": null
+      }
+    },
+    {
+      "Discovery": {
+        "set_discovery_issuer": null
+      }
+    },
+    "Registration",
+    {
+      "AsyncAuthn": {
+        "set_response_where": null
+      }
+    },
+    {
+      "AccessToken": {
+        "conditional_execution": {
+          "return_type": [
+            "CIT",
+            "CI",
+            "C",
+            "CT"
+          ]
+        }
+      }
+    },
+    {
+      "UserInfo": {
+        "set_op_args": {
+          "method": "GET",
+          "authn_method": "bearer_header"
+        }
+      }
+    }
+  ],
+  "assert": {
+    "verify-response": {
+      "response_cls": [
+        "OpenIDSchema"
+      ]
+    }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#UserInfoRequest"
+  ]
+}
