@@ -34,7 +34,8 @@ GRPS = [
     "request_uri Request Parameter", "scope Request Parameter",
     "nonce Request Parameter", "Client Authentication",
     "ID Token", "Key Rotation", "Claims Types", "UserInfo Endpoint",
-    "3rd-Party Init SSO"
+    "3rd-Party Init SSO", "RP Initiated BackChannel Logout",
+    "RP Initiated FrontChannel Logout", "RP Initiated Logout"
 ]
 
 #Only Username and password.
@@ -43,8 +44,14 @@ AUTHENTICATION = {
     "NoAuthn": {"ACR": "PASSWORD", "WEIGHT": 1, "user": "diana"}
 }
 
-COOKIENAME = 'pyoic'
-COOKIETTL = 4 * 60  # 4 hours
+COOKIE = {
+    #    'domain': '192.168.1.109'
+    'name': 'pyoic',
+    'ttl': 4 * 60  # 4 hours
+}
+
+SSO_TTL = 2*60
+
 SYM_KEY = "SoLittleTime,Got"
 
 SERVER_CERT = "certs/cert.pem"
@@ -52,6 +59,12 @@ SERVER_KEY = "certs/key.pem"
 CA_BUNDLE = None
 
 CLIENT_DB = "client_db"
+
+# This is where a user should be involved but we skip that and go directly
+# to logout
+LOGOUT_PATH = 'logout'
+
+CHECK_SESSION_IFRAME = "{}:{{}}/<PATH>/check_session_iframe".format(baseurl)
 
 # =======  SIMPLE DATABASE ==============
 

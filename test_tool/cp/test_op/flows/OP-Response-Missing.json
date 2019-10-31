@@ -49,5 +49,8 @@
     "CI",
     "CT",
     "CIT"
+  ],
+  "reference": [
+    "https://tools.ietf.org/html/rfc6749#page-19"
   ]
 }

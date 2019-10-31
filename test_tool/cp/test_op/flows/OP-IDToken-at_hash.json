@@ -31,5 +31,8 @@
   ],
   "assert": {
     "verify-authn-response": null
-  }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#CodeIDToken"
+  ]
 }

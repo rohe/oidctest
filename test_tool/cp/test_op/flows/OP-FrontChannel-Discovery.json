@@ -25,5 +25,8 @@
         "frontchannel_logout_session_supported"
       ]
     }
-  }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-frontchannel-1_0.html#OPLogout"
+  ]
 }

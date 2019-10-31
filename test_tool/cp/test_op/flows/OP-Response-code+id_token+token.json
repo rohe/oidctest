@@ -26,5 +26,8 @@
   "desc": "Request with response_type=code id_token token",
   "assert": {
     "verify-authn-response": null
-  }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth"
+  ]
 }

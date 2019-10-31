@@ -25,7 +25,6 @@ from oic.oic.message import RegistrationRequest
 from oic.oic.message import RegistrationResponse
 from oic.oic.provider import FailedAuthentication
 from oic.oic.provider import InvalidRedirectURIError
-from oic.oic.provider import do_front_channel_logout_iframe
 from oic.utils.http_util import Response
 from oic.utils.jwt import JWT
 from oic.utils.keyio import key_summary
@@ -718,5 +717,5 @@ class Provider(provider.Provider):
         if 'wrong_sid' in self.behavior_type:
             sid = 'another_sid'
 
-        _iframe = do_front_channel_logout_iframe(c_info, iss, sid)
+        _iframe = provider.Provider.do_front_channel_logout_iframe(c_info, iss, sid)
         return _iframe

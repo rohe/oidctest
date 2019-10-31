@@ -25,5 +25,8 @@
   "note": "Please remove any cookies you may have received from the OpenID Provider before proceeding. You need to do this so you can check that the login page is displayed using one of the requested locales. The use of this parameter in the request must not cause an error at the OP.",
   "assert": {
     "verify-authn-response": null
-  }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest"
+  ]
 }

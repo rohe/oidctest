@@ -34,15 +34,26 @@
     },
     {
       "AccessToken": {
-        "conditional_execution":{
-          "return_type": ["CIT","CI","C","CT"]
+        "conditional_execution": {
+          "return_type": [
+            "CIT",
+            "CI",
+            "C",
+            "CT"
+          ]
         }
       }
     },
     {
       "UserInfo": {
-        "conditional_execution":{
-          "return_type": ["CIT","CI","C","CT", "IT"]
+        "conditional_execution": {
+          "return_type": [
+            "CIT",
+            "CI",
+            "C",
+            "CT",
+            "IT"
+          ]
         },
         "set_op_args": {
           "method": "GET",
@@ -60,5 +71,8 @@
         "AuthorizationResponse"
       ]
     }
-  }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#ScopeClaims"
+  ]
 }

@@ -4,7 +4,9 @@
     "register": true
   },
   "desc": "Request with a redirect_uri with a query component when a redirect_uri with the same query component is registered",
-  "reference": "http://tools.ietf.org/html/draft-ietf-oauth-v2-31#section-3.1.2",
+  "reference": [
+    "https://tools.ietf.org/html/rfc6749#section-3.1.2"
+  ],
   "assert": {
     "check-query-part": {
       "foo": "bar"

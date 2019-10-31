@@ -33,5 +33,8 @@
   "note": "This test verifies that an OP displays a link to the RP's policy document. To make sure you get a fresh login page, you need to remove any cookies you may have received from the OP before proceeding.",
   "assert": {
     "verify-authn-response": null
-  }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata"
+  ]
 }

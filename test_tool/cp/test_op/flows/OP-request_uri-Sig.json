@@ -49,5 +49,8 @@
         "request_uri_not_supported"
       ]
     }
-  }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#RequestUriParameter"
+  ]
 }

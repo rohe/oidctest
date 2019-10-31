@@ -1,40 +1,38 @@
-from future.backports.urllib.parse import parse_qs
-from future.backports.urllib.parse import urlparse
-from future.backports.urllib.parse import urlsplit
-
 import inspect
 import json
 import logging
 import sys
 
+from future.backports.urllib.parse import parse_qs
+from future.backports.urllib.parse import urlparse
+from future.backports.urllib.parse import urlsplit
 from jwkest.jwk import base64url_to_long
 from jwkest.jwt import split_token
 from oic.exception import MessageException
 from oic.oauth2 import message
 from oic.oauth2.message import ErrorResponse
-from oic.oic.message import factory as msg_factory
-# from oic.oic import claims_match
-from oic.oic.message import SCOPE2CLAIMS
 from oic.oic.message import AuthorizationRequest
 from oic.oic.message import AuthorizationResponse
 from oic.oic.message import IdToken
+from oic.oic.message import OIDCMessageFactory
 from oic.oic.message import OpenIDSchema
+from oic.oic.message import SCOPE2CLAIMS
 from oic.utils import time_util
 from oic.utils.time_util import utc_time_sans_frac
 from otest.aus.check import CONT_JSON
 from otest.aus.check import CONT_JWT
 from otest.check import CRITICAL
-from otest.check import ERROR
-from otest.check import INFORMATION
-from otest.check import INTERACTION
-from otest.check import OK
-from otest.check import WARNING
 from otest.check import Check
 from otest.check import CriticalError
+from otest.check import ERROR
 from otest.check import Error
+from otest.check import INFORMATION
+from otest.check import INTERACTION
 from otest.check import Information
+from otest.check import OK
 from otest.check import Other
 from otest.check import ResponseInfo
+from otest.check import WARNING
 from otest.check import Warnings
 from otest.check import get_authorization_request
 from otest.check import get_id_tokens
@@ -49,9 +47,9 @@ from otest.events import EV_REDIRECT_URL
 from otest.events import EV_RESPONSE
 
 from oidctest.regalg import MTI
-from oidctest.regalg import REGISTERED_JWS_ALGORITHMS
 from oidctest.regalg import REGISTERED_JWE_alg_ALGORITHMS
 from oidctest.regalg import REGISTERED_JWE_enc_ALGORITHMS
+from oidctest.regalg import REGISTERED_JWS_ALGORITHMS
 
 __author__ = 'rohe0002'
 
@@ -233,7 +231,7 @@ class CheckSupported(CriticalError):
 
 
 class CheckOPSupported(CheckSupported):
-    pass
+    cid = "check-support"
 
 
 class CheckResponseType(CheckOPSupported):
@@ -276,7 +274,7 @@ class VerifyIdTokenSigningAlgorithmIsSupported(Error):
     doc = """
     :param algs: What algorithms 
     :type algs: list of strings
-    
+
     Example:
         "verify-id_token_signing-algorithm-is-supported": { "algs": ["RS256"]}
     """
@@ -2648,7 +2646,8 @@ class Got(Error):
     """
 
     def _func(self, conv):
-        res = get_protocol_response(conv, msg_factory(self._kwargs['where']))
+        _cls = OIDCMessageFactory.get_response_type(self._kwargs['where'])
+        res = get_protocol_response(conv, _cls)
         response = res[0]
         missing = []
         for key in self._kwargs['what']:
@@ -2668,7 +2667,7 @@ class VerifyRequiredClaims(Error):
     _msg_pat = "The following required claims where missing: {}"
     doc = """
     Specifies which claims that was expected where.
-    
+
     Example:
         "verify-required-claims": {
           "ProviderConfigurationResponse": [
@@ -2681,17 +2680,18 @@ class VerifyRequiredClaims(Error):
     def _func(self, conv):
 
         missing = []
-        for cls, claims in self._kwargs.items():
-            res = get_protocol_response(conv, msg_factory(cls))
+        for resp_cls, claims in self._kwargs.items():
+            _cls = OIDCMessageFactory.get_response_type(resp_cls)
+            res = get_protocol_response(conv, _cls)
             if res:
                 res = res[-1]
             else:
-                missing.append(cls)
+                missing.append(resp_cls)
                 continue
 
             for claim in claims:
                 if claim not in res:
-                    missing.append('{}.{}'.format(cls, claim))
+                    missing.append('{}.{}'.format(resp_cls, claim))
         if missing:
             self._status = ERROR
             self._message = self._msg_pat.format(missing)
