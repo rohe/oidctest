@@ -69,6 +69,26 @@ TOOLTIPS = {
         'desc': "Enable tests that check support for the form_post response mode. Make sure to register https://<host>:<port>/authz_post as redirect URI when enabled!.",
         'example': "true"
     },
+    'tool:front': {
+        'type': "JSON boolean",
+        'desc': "Enable tests that check support front-channel logout.",
+        'example': "true"
+    },
+    'tool:back': {
+        'type': "JSON boolean",
+        'desc': "Enable tests that check support back-channel logout.",
+        'example': "true"
+    },
+    'tool:session': {
+        'type': "JSON boolean",
+        'desc': "Enable tests that check support session management.",
+        'example': "true"
+    },
+    'tool:rp_init': {
+        'type': "JSON boolean",
+        'desc': "Enable tests that check support RP initiated logout.",
+        'example': "true"
+    },
     'tool:insecure': {
         'type': "JSON boolean",
         'desc': "Enable support for OPs that don't run on https",
