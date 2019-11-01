@@ -74,10 +74,16 @@ desc_pattern = """
         <td>Link to specification</td>
         <td>{ref}</td>
     </tr>
-    {extra}
+    {extra}    
     </tbody>
 </table>
 
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
 <p></p>
 """
 
@@ -313,6 +319,12 @@ pattern = """
 <p>{doc}</p>{para_desc}
 <p>Possible outcome: {outcome}<p>
 <p><a href="{url}#L{line_nr}">Link to code</a></p>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
 """
 param_desc = """
 <pre>
@@ -342,6 +354,12 @@ func_pattern = """
 <h1 id="{link}">4.{nr}. {id}</h1>
 {docs}
 <p><a href="{url}#L{line_nr}">Link to code</a></p>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
 """
 
 
