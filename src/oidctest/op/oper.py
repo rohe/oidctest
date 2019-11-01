@@ -608,10 +608,16 @@ class EndSession(AsyncRequest):
             lax=True, **self.op_args)
 
         if 'remove_id_token_hint' in self.op_args:
-            del csi['id_token_hint']
+            try:
+                del csi['id_token_hint']
+            except KeyError:
+                pass
             head, tail = url.split('?')
             _qs = parse_qs(tail)
-            del _qs['id_token_hint']
+            try:
+                del _qs['id_token_hint']
+            except KeyError:
+                pass
             _qs = {k: v[0] for k, v in _qs.items()}
             url = '{}?{}'.format(head, urlencode(_qs))
 
