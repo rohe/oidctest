@@ -33,7 +33,7 @@ def test_session_init():
     sh = SessionHandler(profiles, "C.T.T.T", flow_state, oper,
                         tool_conf={'profile': 'C.T.T.T'})
     sh.session_init()
-    assert len(sh['tests']) == 61
+    assert len(sh['tests']) == 54
     assert len(list(flow_state.keys())) > len(sh['tests'])
 
 
