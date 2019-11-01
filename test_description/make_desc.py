@@ -376,7 +376,7 @@ toc_4_pattern = """<li>4.{nr}. <a href="#{link}">{id}</a></li>"""
 
 if __name__ == "__main__":
     REPO = "https://github.com/rohe"
-    OTEST_BLOB = "df2239180e6f29dc641232b901ab38146c27caa9"
+    OTEST_BLOB = "1304cd0c079811c96a95eceeeee8bafc7a8a01ee"
     OIDCTEST_BLOB = "bcf4457c5920414b0a619d3e34a9262ffe214dc8"
 
     URL = {
