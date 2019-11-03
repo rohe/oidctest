@@ -21,7 +21,7 @@
     "Note",
     {
       "AsyncAuthn": {
-        "redirect_uri_with_query_component": {
+        "redirect_uris_with_query_component": {
           "bar": "foo"
         },
         "set_response_where": null
