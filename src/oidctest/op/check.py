@@ -2308,7 +2308,14 @@ class IsIDTokenSigned(Information):
     """
     cid = "is-idtoken-signed"
     msg = ""
-
+    doc = """
+    :param alg: Which algorithm that should have been used
+    
+    Example:
+        "is-idtoken-signed": {
+          "alg": "RS256"
+        }
+    """
     def _func(self, conv):
         res = get_id_tokens(conv)
         if not res:

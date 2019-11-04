@@ -22,6 +22,17 @@ def expect_exception(oper, args):
 
 
 def conditional_expect_exception(oper, args):
+    """
+    Context:
+        Registration
+    Action:
+        Verifies that the thrown exception is the one expected.
+    Args:
+        Expected exception
+    Example:
+        "expect_exception": "RegistrationError"
+    """
+
     condition = args["condition"]
     exception = args["exception"]
 

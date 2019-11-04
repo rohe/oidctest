@@ -196,13 +196,31 @@ def static_jwk(oper, args):
 
 
 def set_redirect_uri(oper, args):
+    """
+    Context:
+        Authorization
+    Action:
+        Set the path of the redirect_uri.
+    Example:
+        "set_redirect_uri": "authz_post"
+    """
+
+
     _base = get_base(oper.conv.entity.base_url)
     oper.req_args["redirect_uri"] = "%s%s" % (_base, args)
 
 
 def set_redirect_uris(oper, args):
+    """
+    Context:
+        Authorization
+    Action:
+        Constructs a set of redirect_uris based on the base_url and a number of paths.
+    Example:
+        "set_redirect_uris": ["authz_post"]
+    """
     _base = get_base(oper.conv.entity.base_url)
-    oper.req_args["redirect_uris"] = ["%s%s" % (_base, a) for a in args]
+    oper.req_args["redirect_uris"] = ["%s%s" % (_base, path) for path in args]
 
 
 def store_sector_redirect_uris(oper, args):
