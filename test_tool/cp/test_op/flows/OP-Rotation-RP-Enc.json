@@ -57,5 +57,8 @@
   "desc": "Request encrypted UserInfo at registration, change RSA encryption key and request UserInfo",
   "assert": {
     "check-http-response": null
-  }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#RotateEncKeys"
+  ]
 }

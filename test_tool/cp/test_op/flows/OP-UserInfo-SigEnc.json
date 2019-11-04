@@ -78,5 +78,9 @@
       ]
     },
     "encrypted-userinfo": null
-  }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#UserInfoRequest",
+    "https://openid.net/specs/openid-connect-registration-1_0.html#ClientMetadata"
+  ]
 }

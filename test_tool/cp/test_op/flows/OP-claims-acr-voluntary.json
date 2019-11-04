@@ -51,5 +51,9 @@
         "AuthorizationResponse"
       ]
     }
-  }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#ClaimsParameter",
+    "https://openid.net/specs/openid-connect-core-1_0.html#acrSemantics"
+  ]
 }

@@ -34,5 +34,8 @@
         "initiate_login_uri"
       ]
     }
-  }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#ThirdPartyInitiatedLogin"
+  ]
 }

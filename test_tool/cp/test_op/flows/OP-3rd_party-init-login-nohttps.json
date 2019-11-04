@@ -25,5 +25,8 @@
     "register": true,
     "extra": true
   },
-  "desc": "Supports initiation of the SSO flow from a 3rd-party and refuses registration with a \"initiate_login_uri\" parameter with a non-https URL."
+  "desc": "Supports initiation of the SSO flow from a 3rd-party and refuses registration with a \"initiate_login_uri\" parameter with a non-https URL.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#ThirdPartyInitiatedLogin"
+  ]
 }

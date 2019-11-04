@@ -95,5 +95,10 @@
         "consent_required"
       ]
     }
-  }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-backchannel-1_0.html#BCSupport",
+    "https://openid.net/specs/openid-connect-backchannel-1_0.html#RPInitiated",
+    "https://openid.net/specs/openid-connect-session-1_0.html#RPLogout"
+  ]
 }

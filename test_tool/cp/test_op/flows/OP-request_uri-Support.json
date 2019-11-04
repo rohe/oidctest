@@ -37,5 +37,8 @@
   "assert": {
     "check-request_uri-parameter-supported-support": null,
     "check-http-response": null
-  }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderMetadata"
+  ]
 }

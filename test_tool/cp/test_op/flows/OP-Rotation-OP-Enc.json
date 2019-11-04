@@ -34,5 +34,8 @@
   "assert": {
     "check-http-response": null,
     "new-encryption-keys": null
-  }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#RotateEncKeys"
+  ]
 }

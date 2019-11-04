@@ -75,5 +75,9 @@
       "userinfo": null
     },
     "check-http-response": null
-  }
+  },
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#IndividualClaimsRequests",
+    "https://openid.net/specs/openid-connect-core-1_0.html#ClaimsParameter"
+  ]
 }

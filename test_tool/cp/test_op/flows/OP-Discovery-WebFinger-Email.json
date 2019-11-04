@@ -13,5 +13,9 @@
     "extra": true,
     "webfinger": true
   },
-  "desc": "Can discover identifiers using e-mail syntax"
+  "desc": "Can discover identifiers using e-mail syntax",
+  "reference": [
+    "https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery",
+    "https://tools.ietf.org/html/rfc7033"
+  ]
 }

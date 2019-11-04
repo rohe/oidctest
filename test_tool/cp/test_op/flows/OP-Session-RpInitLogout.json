@@ -67,5 +67,8 @@
     },
     "PostLogout",
     "AfterLogout"
+  ],
+  "reference": [
+    "https://openid.net/specs/openid-connect-session-1_0.html#RPLogout"
   ]
 }

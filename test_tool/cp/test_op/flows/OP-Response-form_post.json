@@ -44,5 +44,8 @@
   "desc": "Request with response_mode=form_post",
   "assert": {
     "verify-authn-response": null
-  }
+  },
+  "reference": [
+    "https://openid.net/specs/oauth-v2-form-post-response-mode-1_0.html#FormPostResponseMode"
+  ]
 }

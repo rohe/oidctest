@@ -53,6 +53,5 @@
   },
   "reference": [
     "https://openid.net/specs/openid-connect-core-1_0.html#Signing",
-    "https://openid.net/specs/openid-connect-core-1_0.html#Encryption"
   ]
 }
