@@ -31,7 +31,7 @@
   "usage": {
     "register": true
   },
-  "desc": "Rejects redirect_uri when query parameter does not match what is registed",
+  "desc": "Rejects redirect_uri when query parameter does not match what is registered",
   "reference": [
     "https://tools.ietf.org/html/rfc6749#section-3.1.2"
   ],
