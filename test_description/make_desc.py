@@ -2,11 +2,12 @@
 import inspect
 import json
 import os
+from json import JSONDecodeError
 
-from otest.check import Error as check_error
-from otest.check import Warnings as check_warning
-from otest.check import ExpectedError as check_expected_error
 from otest.check import CriticalError as check_critical_error
+from otest.check import Error as check_error
+from otest.check import ExpectedError as check_expected_error
+from otest.check import Warnings as check_warning
 from otest.conf_setup import OP_ORDER
 from otest.flow import FlowState
 from otest.prof_util import ProfileHandler
@@ -96,6 +97,8 @@ NOTE = """    <tr>
 
 def get_func(name):
     obj = func_factory(name)
+    if obj is None:
+        print(name)
     _doc_str = obj.__doc__
     if _doc_str:
         _doc = {'Context:': [], "Action:": [], "Args:": [], "Example:": []}
@@ -111,7 +114,10 @@ def get_func(name):
                     section = sec_name
                     break
 
-            _doc[section].append(d)
+            if section == "Example:":
+                _doc[section].append(dline)
+            else:
+                _doc[section].append(d)
     else:
         _doc = None
 
@@ -237,20 +243,49 @@ DONE = [
 FLOWDIR = "../test_tool/cp/test_op/flows"
 
 
-def make_test_desc(flow_dir, done, checks, funcs):
+def get_tests_by_profile(flow_dir, profile, response_types=None):
     fl = flows(flow_dir)
     res = {}
-    # profile = 'C.T.T.T.s.+'
-    # Return_type, webfinger, discovery, registration, sign/enc ,extras
-    RT = ['C', 'I', 'IT', 'CI', 'CT', 'CIT']
-    for rt in RT:
-        profile = '{}.T.T.T'.format(rt)
-        tests = fl.matches_profile(profile)
+
+    if response_types is None:
+        # Do all response types
+        response_types = ['C', 'I', 'IT', 'CI', 'CT', 'CIT']
+
+    for rt in response_types:
+        _prof = '{}.{}'.format(rt, profile)
+        tests = fl.matches_profile(_prof)
         for t in tests:
             try:
                 res[t].append(rt)
             except KeyError:
                 res[t] = [rt]
+    return res
+
+
+def all_tests(flow_dir):
+    tests = {}
+
+    for f in os.listdir(flow_dir):
+        fname = os.path.join(flow_dir, f)
+        if os.path.isfile(fname):
+            try:
+                flow = json.loads(open(fname).read())
+            except JSONDecodeError:
+                print("JSON decode failed on:", fname)
+                raise
+            try:
+                resp_type = flow['usage']['return_type']
+            except KeyError:
+                resp_type = ['C', 'I', 'IT', 'CI', 'CT', 'CIT']
+            tests[f.split('.')[0]] = resp_type
+    return tests
+
+
+def make_test_desc(flow_dir, done, checks, funcs, profile=""):
+    if profile:
+        res = get_tests_by_profile(flow_dir, profile)
+    else:  # get all
+        res = all_tests(flow_dir)
 
     tt = list(res.keys())
     tt.sort()
@@ -409,6 +444,7 @@ if __name__ == "__main__":
     # The flow specs
     checks = {}
     funcs = {}
+    # _test_desc = make_test_desc(FLOWDIR, [], checks, funcs, profile="T.T.T")
     _test_desc = make_test_desc(FLOWDIR, [], checks, funcs)
 
     # Print document
