@@ -1,7 +1,8 @@
 {
   "group": "RP-Initiated Logout",
   "usage": {
-    "discover": true
+    "discover": true,
+    "rp_init": true
   },
   "desc": "Verifies that end_session_endpoint is published",
   "sequence": [
