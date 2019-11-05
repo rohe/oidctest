@@ -1,13 +1,7 @@
 {
   "group": "Front-Channel Logout",
   "usage": {
-    "front": true,
-    "return_type": [
-      "C",
-      "CI",
-      "CT",
-      "CIT"
-    ]
+    "front": true
   },
   "desc": "Registers support for frontchannel logout and uses RP initiated logout to trigger the logout",
   "sequence": [

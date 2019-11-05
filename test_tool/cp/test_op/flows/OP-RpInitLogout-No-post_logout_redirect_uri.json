@@ -1,13 +1,7 @@
 {
   "group": "RP-Initiated Logout",
   "usage": {
-    "rp_init": true,
-    "return_type": [
-      "C",
-      "CI",
-      "CT",
-      "CIT"
-    ]
+    "rp_init": true
   },
   "desc": "Uses RP initiated logout to end a Session at the OP.",
   "note": "After the logout you should end up at an OP page stating that you have been logged out. You must submit a screen shot of the final logout page",

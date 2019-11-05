@@ -1,13 +1,7 @@
 {
   "group": "RP-Initiated Logout",
   "usage": {
-    "rp_init": true,
-    "return_type": [
-      "C",
-      "CI",
-      "CT",
-      "CIT"
-    ]
+    "rp_init": true
   },
   "desc": "Sent id_token_hint is stripped of its signature and has modified 'alg' header",
   "note": "This test should result in the OpenID Provider displaying an error message in your user agent. You should ignore the status of this test in the test tool, since it will be incomplete. You must submit a screen shot of the error shown as part of your certification application.",

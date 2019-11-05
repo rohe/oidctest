@@ -1,13 +1,7 @@
 {
   "group": "RP-Initiated Logout",
   "usage": {
-    "rp_init": true,
-    "return_type": [
-      "C",
-      "CI",
-      "CT",
-      "CIT"
-    ]
+    "rp_init": true
   },
   "desc": "Uses RP initiated logout to end a Session at the OP.",
   "sequence": [

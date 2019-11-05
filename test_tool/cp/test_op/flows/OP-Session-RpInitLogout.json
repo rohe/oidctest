@@ -1,13 +1,7 @@
 {
   "group": "Session Management",
   "usage": {
-    "session": true,
-    "return_type": [
-      "C",
-      "CI",
-      "CT",
-      "CIT"
-    ]
+    "session": true
   },
   "desc": "Uses RP initiated logout to end a Session at the OP. The RP uses session management to register the session state change",
   "sequence": [

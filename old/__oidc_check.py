@@ -523,7 +523,18 @@ class VerifyErrorMessage(ExpectedError):
     """
     cid = "verify-error-response"
     msg = "OP error"
-
+    doc = """
+        :param error: Expected error messages
+        
+        Example:
+        
+        "verify-error-response": {
+          "error": [
+            "invalid_request",
+            "unsupported_response_type"
+          ]
+        }    
+    """
     def _func(self, conv):
         inst = conv.events.last_item(EV_PROTOCOL_RESPONSE)
 

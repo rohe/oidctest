@@ -1,13 +1,7 @@
 {
   "group": "Back-Channel Logout",
   "usage": {
-    "back": true,
-    "return_type": [
-      "C",
-      "CI",
-      "CT",
-      "CIT"
-    ]
+    "back": true
   },
   "desc": "Registers support for backchannel logout and uses RP initiated logout to trigger the logout",
   "sequence": [

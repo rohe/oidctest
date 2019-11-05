@@ -1,7 +1,8 @@
 {
   "group": "Back-Channel Logout",
   "usage": {
-    "back": true
+    "back": true,
+    "discover": true
   },
   "desc": "Checks Front Channel related openid-configuration discovery information",
   "sequence": [
