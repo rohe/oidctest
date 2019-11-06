@@ -141,7 +141,7 @@ def response_type_cmp(allowed, offered):
 
 class Server(oic.Server):
     def __init__(self, keyjar=None, ca_certs=None, verify_ssl=True):
-        oic.Server.__init__(self, keyjar, ca_certs, verify_ssl)
+        oic.Server.__init__(self, verify_ssl=verify_ssl, keyjar=keyjar, client_cert=ca_certs)
 
         self.behavior_type = []
 
