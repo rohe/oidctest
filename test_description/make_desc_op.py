@@ -430,7 +430,7 @@ toc_4_pattern = """<li>4.{nr}. <a href="#{link}">{id}</a></li>"""
 if __name__ == "__main__":
     REPO = "https://github.com/rohe"
     OTEST_BLOB = "c681eaec4301479c8836e21521847d03dca4ff3b"
-    OIDCTEST_BLOB = "7bc1f020b2822b7d0dd8e4d91607466e2845582c"
+    OIDCTEST_BLOB = "2fd68abed8a03b6d2bb911eeb7e111cbde027837"
 
     URL = {
         "otest/check.py": "{}/otest/blob/{}/src/otest/check.py".format(REPO, OTEST_BLOB),
