@@ -98,7 +98,7 @@ class OPHandler(object):
         return _op, path, key
 
     def setup_op(self, oper_id, test_id, com_args, op_arg, test_conf, events):
-        _sdb = create_session_db(com_args["baseurl"], 'automover', '430X', {})
+        _sdb = create_session_db(com_args["baseurl"], 'automover', '430X')
         op = self.provider_cls(sdb=_sdb, **com_args)
         op.events = events
         op.oper_id = oper_id
