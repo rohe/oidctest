@@ -48,6 +48,7 @@ def conv_response(op, resp):
     _stat = resp.status_code
     for typ, val in resp.headers:
         if typ == 'Set-Cookie':
+            logger.debug("Response cookie: %s", val)
             cherrypy.response.cookie.load(val)
 
     if _stat < 300:
@@ -355,6 +356,8 @@ class EndSession(object):
             logger.debug('EndSessionRequest: {}'.format(kwargs))
             # op.events.store(EV_REQUEST, kwargs)
             cookie = cherrypy.request.cookie
+            if cookie:
+                logger.debug("Request cookie at end_session_endpoint: %s", cookie)
             _info = Message(**kwargs)
             resp = op.end_session_endpoint(_info.to_urlencoded(), cookie=cookie)
             # Normally the user would here be confronted with a logout
@@ -449,6 +452,7 @@ class Logout(object):
                 pass
             else:
                 for tag, val in cookies:
+                    logger.debug("Response cookie: %s", val)
                     cherrypy.response.cookie.load(val)
 
             return as_bytes("\n".join([LOGOUT_HTML_HEAD, _body]))
