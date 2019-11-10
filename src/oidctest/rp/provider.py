@@ -215,7 +215,7 @@ class Provider(provider.Provider):
         self.claim_access_token = {}
         self.init_keys = []
         self.update_key_use = ""
-        for param in ['jwks_name', 'jwks_uri', 'sso_ttl']:
+        for param in ['jwks_name', 'jwks_uri', 'sso_ttl', 'seed']:
             try:
                 setattr(self, param, kwargs[param])
             except KeyError:

@@ -4,6 +4,7 @@ import os
 import shelve
 import sys
 
+from oic import rndstr
 from oic.utils.authn.authn_context import AuthnBroker
 from oic.utils.authn.client import verify_client
 from oic.utils.authz import AuthzHandling
@@ -208,6 +209,11 @@ def cb_setup(args, lookup=None):
         com_args["symkey"] = config.SYM_KEY
     except AttributeError:
         pass
+
+    try:
+        com_args["seed"] = config.SEED
+    except AttributeError:
+        com_args['sees'] = rndstr().encode("utf-8")
 
     try:
         com_args['sso_ttl'] = config.SSO_TTL
