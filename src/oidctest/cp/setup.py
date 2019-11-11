@@ -213,7 +213,7 @@ def cb_setup(args, lookup=None):
     try:
         com_args["seed"] = config.SEED
     except AttributeError:
-        com_args['sees'] = rndstr().encode("utf-8")
+        com_args['seed'] = rndstr().encode("utf-8")
 
     try:
         com_args['sso_ttl'] = config.SSO_TTL
