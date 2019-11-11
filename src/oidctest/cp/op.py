@@ -1,10 +1,6 @@
 import json
 import logging
 
-from http.cookies import SimpleCookie
-
-from future.backports.urllib.parse import urlparse
-
 import cherrypy
 import cherrypy_cors
 from cherrypy import url
@@ -434,6 +430,10 @@ class Logout(object):
             except Exception as err:
                 logger.exception(err)
                 raise cherrypy.HTTPError(message="{}".format(err))
+
+            if res == {}:  # Failed
+                raise cherrypy.HTTPError(
+                    message="Backchannel logout failed. No Frontchannel logout defined")
 
             try:
                 _iframes = res['iframe']
