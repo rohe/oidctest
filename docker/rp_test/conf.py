@@ -53,6 +53,7 @@ COOKIE = {
 SSO_TTL = 2*60
 
 SYM_KEY = "SoLittleTime,Got"
+SEED = b"abcdefghijklmnop"
 
 SERVER_CERT = "certs/cert.pem"
 SERVER_KEY = "certs/key.pem"
