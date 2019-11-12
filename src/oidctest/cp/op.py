@@ -293,14 +293,14 @@ class Claims(object):
                 assert authz.startswith("Bearer")
             except AssertionError:
                 op.events.store(EV_FAULT, "Bad authorization token")
-                cherrypy.HTTPError(400, "Bad authorization token")
+                raise cherrypy.HTTPError(400, "Bad authorization token")
 
             tok = authz[7:]
             try:
                 _claims = op.claim_access_token[tok]
             except KeyError:
                 op.events.store(EV_FAULT, "Bad authorization token")
-                cherrypy.HTTPError(400, "Bad authorization token")
+                raise cherrypy.HTTPError(400, "Bad authorization token")
             else:
                 # one time token
                 del op.claim_access_token[tok]
@@ -355,6 +355,11 @@ class EndSession(object):
             if cookie:
                 logger.debug("Request cookie at end_session_endpoint: %s", cookie)
             _info = Message(**kwargs)
+            if "post_logout_redirect_uri" in _info:
+                if not 'id_token_hint' in _info:
+                    raise cherrypy.HTTPError(
+                        400, message="If 'post_logout_redirect_uri' the 'id_token_hint' is a MUST")
+
             resp = op.end_session_endpoint(_info.to_urlencoded(), cookie=cookie)
             # Normally the user would here be confronted with a logout
             # verification page. We skip that and just assumes she said yes.
