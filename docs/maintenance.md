@@ -1,6 +1,6 @@
 # Operational Maintenance
 
-*Version 2.1.0 - October 2, 2018*
+*Version 2.1.1 - November 11, 2019*
 
 This document describes operational maintenance procedures for the OpenID Connect OP and RP certification environments
 that the OpenID Foundation provides. It lists important directory/file structures and the steps one would have to take
@@ -99,7 +99,7 @@ sudo service apache2 restart
 1. merge/rebase upstream repositories for `rohe/oidctest` and `rohe/otest` into `openid-certification/oidctest` and `openid-certification/otest` respectively
 1. possibly also update `openid-certification/oidc-provider-conformance-tests` and `openid-certification/openid-client-conformance-tests` based on upstream changes
 1. wait for Travis CI on `oidctest/master` to finish successfully
-1. merge `oidctest/master` into `oidctest/stable-release-1.1.x` whilst adapting version numbers and `ChangeLog`
+1. merge `oidctest/master` into `oidctest/stable-release-1.2.x` whilst adapting version numbers and `ChangeLog`
 1. deploy on OP/RP production servers according to the steps in the `docker/op_test` and `docker/rp_test` files
 
 ##### Notes
@@ -108,8 +108,8 @@ sudo service apache2 restart
 - review the commits in the upstream repositories before merging/rebasing to `openid-certification` so we know what to expect
 - manage versions of `oidctest`, `otest` and all of its dependencies, most notably `pyoidc`
 - aim for releasing only with released and packaged versions of `oidctest`, `otest` and `pyoidc`; as an exception it may be necessary to checkout a specific commit version of `pyoidc`
-- branches in `openid-certification/oidctest` are `master`, deployed (as much as needed) on the test environment (`new-op` and `new-rp`) and `stable-release-1.1.x`, (always) deployed on the production environment (`op` and `rp`)
-- Docker files in `stable-release-1.1.x` are leading for the installation/deployment process/steps
+- branches in `openid-certification/oidctest` are `master`, deployed (as much as needed) on the test environment (`new-op` and `new-rp`) and `stable-release-1.2.x`, (always) deployed on the production environment (`op` and `rp`)
+- Docker files in `stable-release-1.2.x` are leading for the installation/deployment process/steps
 - `oidctest` version number `1.x.x` relates to a specific OP `2.x.x` version and a specific RP `1.x.x` version and it binds those two together; upgrading OP (or RP respectively) would increase the `oidctest` `1.x.x` version/tag number but not necessarily lead to also a new RP (resp. OP) release
 - `otest` releases are managed by git tag in the `openid-certification/otest` repository (i.e. not from upstream)
 
@@ -167,7 +167,7 @@ upstream	https://github.com/rohe/oidctest.git (push)
 
 $ cd ~/projects/oidctest && git branch -v
 * master                         557d113 Merge pull request #112 from zmartzone/master
-  stable-release-1.1.x           deb2351 release OP 2.1.5 and RP 1.1.4
+  stable-release-1.2.x           deb2351 release OP 2.3.0 and RP 1.2.0
 ```
 
 #### Steps
@@ -234,16 +234,16 @@ git push
 ###### DO WITH MERGE TOOL - MERGE BUT DON'T COMMIT YET - AND UPDATE VERSION NUMBER, UPDATE CHANGELOG, UPDATE DOCKER FILES
 
 ```
-git checkout stable-release-1.1.x
+git checkout stable-release-1.2.x
 git merge master --no-commit
 
 # document changes compared to last release based on the commit history/diff
 vi ChangeLog
 
 # if a new version of otest was released, change versions of otest in Docker envs
-#  ENV VERSION_OTEST   tags/v0.7.x
+#  ENV VERSION_OTEST   tags/v0.8.x
 vi docker/op_test/Dockerfile
-#  ENV VERSION_OTEST   tags/v0.7.x
+#  ENV VERSION_OTEST   tags/v0.8.x
 vi docker/rp_test/Dockerfile
 
 # change versions of oidc-provider-conformance-tests and/or openid-client-conformance-tests
@@ -261,15 +261,15 @@ vi .travis.yml
 vi docker/op/Dockerfile
 
 # if new version of OP suite is required
-#  VERSION = '2.1.x'
+#  VERSION = '2.3.x'
 vi test_tool/cp/test_op/version.py
 # if new version of RP suite is required
-#  VERSION = '1.1.x'
+#  VERSION = '1.2.x'
 vi test_tool/cp/test_rplib/rp/version.py
 
 
 # probably do the release commit with an editor/IDE to record changes in commit message (basically copy the ChangeLog additions):
-git commit -m "release OP <2.1.x> and/or RP <1.1.x>" .
+git commit -m "release OP <2.3.x> and/or RP <1.2.x>" .
 git push
 ```
 
