@@ -22,7 +22,6 @@
     "verify-op-endpoints-use-https": null,
     "verify-required-claims": {
       "ProviderConfigurationResponse": [
-        "check_session_iframe",
         "end_session_endpoint"
       ]
     }
