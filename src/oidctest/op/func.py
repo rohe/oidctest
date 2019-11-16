@@ -41,7 +41,7 @@ def set_webfinger_resource(oper, args):
         or 'webfinger_email' from the test instance configuration.
     Example:
         "set_webfinger_resource": null
-        
+
     """
 
     try:
@@ -188,7 +188,7 @@ def static_jwk(oper, args):
         Set a static JWKS, remove jwks_uri if specified.
     Example:
         "static_jwk": null
-        
+
     """
     _client = oper.conv.entity
     del oper.req_args["jwks_uri"]
@@ -466,7 +466,7 @@ def multiple_return_uris(oper, args):
     Example:
         "multiple_return_uris": null
     """
-    redirects = oper.conv.entity.registration_info['redirect_uris'][:]
+    redirects = oper.conv.entity.registration_response['redirect_uris'][:]
     redirects.append("%scb" % get_base(oper.conv.entity.base_url))
     oper.req_args["redirect_uris"] = redirects
 
@@ -484,7 +484,7 @@ def redirect_uri_with_query_component(oper, args):
           "foo": "bar"
         }
     """
-    ru = oper.conv.entity.registration_info['redirect_uris'][0]
+    ru = oper.conv.entity.registration_response['redirect_uris'][0]
     ru += "?%s" % urlencode(args)
     oper.req_args.update({"redirect_uri": [ru]})
 
@@ -502,7 +502,7 @@ def redirect_uris_with_query_component(oper, args):
           "foo": "bar"
         }
     """
-    ru = oper.conv.entity.registration_info['redirect_uris'][0]
+    ru = oper.conv.entity.registration_response['redirect_uris'][0]
     ru += "?%s" % urlencode(args)
     oper.req_args.update({"redirect_uris": [ru]})
 
@@ -520,7 +520,7 @@ def redirect_uris_with_scheme(oper, args):
     """
     oper.req_args['redirect_uris'] = [
         r.replace('https', args) for r in
-        oper.conv.entity.registration_info['redirect_uris'][0]]
+        oper.conv.entity.registration_response['redirect_uris'][0]]
 
 
 def redirect_uris_with_fragment(oper, kwargs):
@@ -536,7 +536,7 @@ def redirect_uris_with_fragment(oper, kwargs):
           "foo": "bar"
         }
     """
-    ru = oper.conv.entity.registration_info['redirect_uris'][0]
+    ru = oper.conv.entity.registration_response['redirect_uris'][0]
     ru += "#" + ".".join(["%s%s" % (x, y) for x, y in list(kwargs.items())])
     oper.req_args["redirect_uris"] = [ru]
 
@@ -552,7 +552,7 @@ def post_logout_redirect_uri_with_query_component(oper, args):
     Example:
         "post_logout_redirect_uri_with_query_component": {"foo":  "bar"}
     """
-    ru = oper.conv.entity.registration_info['post_logout_redirect_uris'][0]
+    ru = oper.conv.entity.registration_response['post_logout_redirect_uris'][0]
     ru += "?%s" % urlencode(args)
     oper.req_args.update({"post_logout_redirect_uri": [ru]})
 
