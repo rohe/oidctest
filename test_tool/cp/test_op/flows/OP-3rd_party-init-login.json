@@ -16,7 +16,7 @@
       "Registration": {
         "set_uri": [
           "initiate_login_uri",
-          "/start-3rd-party-initiated-sso"
+          "start-3rd-party-initiated-sso"
         ]
       }
     },

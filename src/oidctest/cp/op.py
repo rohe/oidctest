@@ -358,7 +358,7 @@ class EndSession(object):
             if "post_logout_redirect_uri" in _info:
                 if not 'id_token_hint' in _info:
                     raise cherrypy.HTTPError(
-                        400, message="If 'post_logout_redirect_uri' the 'id_token_hint' is a MUST")
+                        400, message="If 'post_logout_redirect_uri' then 'id_token_hint' is a MUST")
 
             resp = op.end_session_endpoint(_info.to_urlencoded(), cookie=cookie)
             # Normally the user would here be confronted with a logout
