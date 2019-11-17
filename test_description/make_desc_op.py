@@ -192,6 +192,9 @@ def construct_desc(flowdir, testname, return_types, checks, funcs):
                 for attr, val in _spec.items():
                     if attr not in funcs:
                         funcs[attr] = get_func(attr)
+                        funcs[attr]['usage'] = [href+':'+_type]
+                    else:
+                        funcs[attr]['usage'].append(href+':'+_type)
 
                     try:
                         _in_flow_check[_type].append(attr)
@@ -388,6 +391,9 @@ def do_check_toc(check, nr):
 func_pattern = """
 <h1 id="{link}">4.{nr}. {id}</h1>
 {docs}
+<p></p>
+{usages}
+<p></p>
 <p><a href="{url}#L{line_nr}">Link to code</a></p>
 <p>
 Java Implementation Status: Status TDB
@@ -398,7 +404,7 @@ Link to Java code: Link TBD
 """
 
 
-def do_func_desc(func, nr):
+def do_func_desc(func, nr, nr_of_tests):
     url = do_url(func, URL)
     if func['doc']:
         _strlist = []
@@ -412,7 +418,16 @@ def do_func_desc(func, nr):
         docs = "<dl>{}</dl>".format("\n".join(_strlist))
     else:
         docs = ""
-    return func_pattern.format(nr=nr, url=url, docs=docs, **func)
+
+    if len(func['usage']) == nr_of_tests:
+        _usage = "<dl><dt>Test usage:</dt><dd>ALL</dd></dl>"
+    else:
+        _usage = ["<dl><dt>Test usage:</dt>"]
+        _usage.append('<dd>{}</dd>'.format("<br>\n".join(func['usage'])))
+        _usage.append("</dl>")
+        _usage = "\n".join(_usage)
+
+    return func_pattern.format(nr=nr, url=url, docs=docs, usages=_usage, **func)
 
 
 def do_func_toc(func, nr):
@@ -429,8 +444,8 @@ toc_4_pattern = """<li>4.{nr}. <a href="#{link}">{id}</a></li>"""
 
 if __name__ == "__main__":
     REPO = "https://github.com/rohe"
-    OTEST_BLOB = "c681eaec4301479c8836e21521847d03dca4ff3b"
-    OIDCTEST_BLOB = "2fd68abed8a03b6d2bb911eeb7e111cbde027837"
+    OTEST_BLOB = "980474527ea5ebb0f5b530341bfdea63df6f580e"
+    OIDCTEST_BLOB = "d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5"
 
     URL = {
         "otest/check.py": "{}/otest/blob/{}/src/otest/check.py".format(REPO, OTEST_BLOB),
@@ -446,6 +461,7 @@ if __name__ == "__main__":
     funcs = {}
     # _test_desc = make_test_desc(FLOWDIR, [], checks, funcs, profile="T.T.T")
     _test_desc = make_test_desc(FLOWDIR, [], checks, funcs)
+    _nr_of_tests = len(_test_desc)
 
     # Print document
 
@@ -506,6 +522,6 @@ if __name__ == "__main__":
     print('<h1 id="section.4">4. In-flow functions</h1>')
     nr = 1
     for d in fkeys:
-        print(do_func_desc(funcs[d], nr))
+        print(do_func_desc(funcs[d], nr, _nr_of_tests))
         nr += 1
     print("</body></html>")
