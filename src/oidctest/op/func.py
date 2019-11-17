@@ -466,7 +466,7 @@ def multiple_return_uris(oper, args):
     Example:
         "multiple_return_uris": null
     """
-    redirects = oper.conv.entity.registration_response['redirect_uris'][:]
+    redirects = oper.conv.entity.registration_info['redirect_uris'][:]
     redirects.append("%scb" % get_base(oper.conv.entity.base_url))
     oper.req_args["redirect_uris"] = redirects
 
@@ -492,7 +492,7 @@ def redirect_uri_with_query_component(oper, args):
 def redirect_uris_with_query_component(oper, args):
     """
     Context:
-        AsyncAuthn
+        Registration
     Action:
         Add a query component to the redirect_uris
     Args:
@@ -502,7 +502,7 @@ def redirect_uris_with_query_component(oper, args):
           "foo": "bar"
         }
     """
-    ru = oper.conv.entity.registration_response['redirect_uris'][0]
+    ru = oper.conv.entity.registration_info['redirect_uris'][0]
     ru += "?%s" % urlencode(args)
     oper.req_args.update({"redirect_uris": [ru]})
 
@@ -520,7 +520,7 @@ def redirect_uris_with_scheme(oper, args):
     """
     oper.req_args['redirect_uris'] = [
         r.replace('https', args) for r in
-        oper.conv.entity.registration_response['redirect_uris'][0]]
+        oper.conv.entity.registration_info['redirect_uris'][0]]
 
 
 def redirect_uris_with_fragment(oper, kwargs):
@@ -536,7 +536,7 @@ def redirect_uris_with_fragment(oper, kwargs):
           "foo": "bar"
         }
     """
-    ru = oper.conv.entity.registration_response['redirect_uris'][0]
+    ru = oper.conv.entity.registration_info['redirect_uris'][0]
     ru += "#" + ".".join(["%s%s" % (x, y) for x, y in list(kwargs.items())])
     oper.req_args["redirect_uris"] = [ru]
 
@@ -671,7 +671,7 @@ def set_post_logout_redirect_uri(oper, arg):
         "set_post_logout_redirect_uri": null
     """
     ent = oper.conv.entity
-    oper.req_args["post_logout_redirect_uri"] = ent.registration_info[
+    oper.req_args["post_logout_redirect_uri"] = ent.registration_response[
         'post_logout_redirect_uris'][0]
 
 
