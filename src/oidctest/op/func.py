@@ -466,7 +466,7 @@ def multiple_return_uris(oper, args):
     Example:
         "multiple_return_uris": null
     """
-    redirects = oper.conv.entity.registration_info['redirect_uris'][:]
+    redirects = oper.conv.entity.redirect_uris[:]
     redirects.append("%scb" % get_base(oper.conv.entity.base_url))
     oper.req_args["redirect_uris"] = redirects
 

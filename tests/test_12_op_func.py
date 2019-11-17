@@ -194,10 +194,9 @@ def test_multiple_return_uris():
     _info = setup_conv()
     oper = AsyncAuthn(_info['conv'], _info['io'], None)
 
-    oper.conv.entity.registration_response = {'redirect_uris': [
-        'https://example.org/authzcb']}
+    oper.conv.entity.redirect_uris = ['https://example.org/authzcb']
     oper.conv.entity.base_url = 'https://example.org'
-    _ruris = len(oper.conv.entity.registration_response['redirect_uris'])
+    _ruris = len(oper.conv.entity.redirect_uris)
     args = None
     multiple_return_uris(oper, args)
 
@@ -220,24 +219,12 @@ def test_redirect_uris_with_fragment():
     _info = setup_conv()
     oper = AsyncAuthn(_info['conv'], _info['io'], None)
 
-    oper.conv.entity.registration_response = {'redirect_uris': [
+    oper.conv.entity.registration_info = {'redirect_uris': [
         'https://example.org/authzcb']}
 
     redirect_uris_with_fragment(oper, {'fragment': 'one'})
 
     assert oper.req_args["redirect_uris"][0].endswith('#fragmentone')
-
-
-# def test_redirect_uris_with_query_component():
-#     _info = setup_conv()
-#     oper = AsyncAuthn(_info['conv'], _info['io'], None)
-#
-#     oper.conv.entity.registration_info = {'redirect_uris': [
-#         'https://example.org/authzcb']}
-#
-#     redirect_uris_with_query_component(oper, {'foo': 'bar'})
-#
-#     assert oper.req_args["redirect_uris"][0].endswith('?foo=bar')
 
 
 def test_request_in_file():
