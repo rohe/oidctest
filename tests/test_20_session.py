@@ -1,4 +1,5 @@
 import importlib
+import os
 
 from oidctest.prof_util import ProfileHandler
 from otest.conf_setup import OP_ORDER
@@ -12,7 +13,10 @@ from oidctest.session import SessionHandler
 
 __author__ = 'roland'
 
-_flowdir = 'flows'
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
+
+
+_flowdir = os.path.join(BASEDIR, 'flows')
 
 cls_factories = {'': oper.factory}
 func_factory = func.factory
