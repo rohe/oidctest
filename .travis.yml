@@ -67,24 +67,14 @@ before_script:
 script:
   - cd $TRAVIS_BUILD_DIR/../oidc-provider-conformance-tests
   - export ISSUER=https://op:4433
-  - npm run code
-  - npm run id_token
-  - npm run id_token+token
-  - npm run code+id_token
-  - npm run code+id_token+token
-  - npm run code+token
+  - npm i -g concurrently@5
+  - concurrently -- "npm:code" "npm:id_token"
+  - concurrently -- "npm:id_token+token" "npm:code+id_token"
+  - concurrently -- "npm:code+id_token+token" "npm:code+token"
   - cd $TRAVIS_BUILD_DIR/../openid-client-conformance-tests
   - export ISSUER=https://rp-test:8080
   - export NODE_TLS_REJECT_UNAUTHORIZED=0
-  - npm run non-profile
-  - npm run basic
-  - npm run config
-  - npm run dynamic
-  - npm run id_token-implicit 
-  - npm run id_token+token-implicit
-  - npm run code+id_token-hybrid
-  - npm run code+token-hybrid
-  - npm run code+id_token+token-hybrid
+  - npm run test
 
 env:
   global:
