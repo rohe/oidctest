@@ -194,9 +194,9 @@ def test_multiple_return_uris():
     _info = setup_conv()
     oper = AsyncAuthn(_info['conv'], _info['io'], None)
 
-    oper.conv.entity.redirect_uris = ['https://example.org/authzcb']
+    oper.conv.entity.registration_info = {'redirect_uris': ['https://example.org/authzcb']}
     oper.conv.entity.base_url = 'https://example.org'
-    _ruris = len(oper.conv.entity.redirect_uris)
+    _ruris = len(oper.conv.entity.registration_info['redirect_uris'])
     args = None
     multiple_return_uris(oper, args)
 
