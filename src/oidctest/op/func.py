@@ -484,7 +484,7 @@ def redirect_uri_with_query_component(oper, args):
           "foo": "bar"
         }
     """
-    ru = oper.conv.entity.registration_response['redirect_uris'][0]
+    ru = oper.conv.entity.registration_info['redirect_uris'][0]
     ru += "?%s" % urlencode(args)
     oper.req_args.update({"redirect_uri": [ru]})
 
