@@ -207,7 +207,7 @@ def test_redirect_uri_with_query_component():
     _info = setup_conv()
     oper = AsyncAuthn(_info['conv'], _info['io'], None)
 
-    oper.conv.entity.registration_response = {'redirect_uris': [
+    oper.conv.entity.registration_info = {'redirect_uris': [
         'https://example.org/authzcb']}
 
     redirect_uri_with_query_component(oper, {'foo': 'bar'})
