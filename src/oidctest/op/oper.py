@@ -661,10 +661,10 @@ class EndPoint(Request):
             return self.act_on_request()
 
     def act_on_request(self, *arg):
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def parse_request(self, message_factory, request=None, request_args=None):
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def deserialize(self, message_factory, msg, msg_args, **kwargs):
 
@@ -741,7 +741,7 @@ class BackChannelLogout(EndPoint):
     def act_on_request(self, state=''):
         if state:
             del self.conv.entity.grant[state]
-        return "OK"
+        return "DONE"
 
 
 class FrontChannelLogout(EndPoint):
@@ -772,7 +772,7 @@ class FrontChannelLogout(EndPoint):
     def act_on_request(self, state=''):
         if state:
             del self.conv.entity.grant[state]
-        return "OK"
+        return "DONE"
 
 
 class PostLogout(EndPoint):
