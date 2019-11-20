@@ -17,6 +17,7 @@ from otest.events import EV_EXCEPTION
 from otest.events import EV_FAULT
 from otest.events import EV_HTTP_ARGS
 from otest.events import EV_HTTP_REQUEST
+from otest.events import EV_REQUEST
 from otest.events import EV_RESPONSE
 from otest.result import Result
 
@@ -348,6 +349,7 @@ class Main(object):
 
     @cherrypy.expose
     def logout(self, **kwargs):  # post_logout_redirect_uri
+        self.sh['conv'].events.store(EV_REQUEST, kwargs, receiver=self.tester.__class__.__name__)
         logger.debug('Post logout: {}'.format(kwargs))
         if kwargs:
             return self._endpoint(ref='logout', request_args=kwargs)
@@ -357,6 +359,7 @@ class Main(object):
     @cherrypy.expose
     def backchannel_logout(self, **kwargs):
         logger.debug('Back channel logout: {}'.format(kwargs))
+        self.sh['conv'].events.store(EV_HTTP_REQUEST, kwargs)
         if cherrypy.request.process_request_body is True:
             _request = as_unicode(cherrypy.request.body.read())
             if _request:
