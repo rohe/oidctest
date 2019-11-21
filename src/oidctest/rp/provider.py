@@ -152,39 +152,48 @@ class Server(oic.Server):
                                        access_token, user_info, auth_time,
                                        exp, extra_claims)
 
-        if "ath" in self.behavior_type:  # modify the at_hash if available
+        if "ath" in self.behavior_type:
+            # Modify the at_hash if present
             try:
                 idt["at_hash"] = sort_string(idt["at_hash"])
             except KeyError:
                 raise TestError("Missing at_hash in id_token")
 
-        if "math" in self.behavior_type:  # remove the at_hash if available
+        if "math" in self.behavior_type:
+            # Remove the at_hash if present
             if "at_hash" in idt:
                 del idt['at_hash']
 
-        if "ch" in self.behavior_type:  # modify the c_hash if available
+        if "ch" in self.behavior_type:
+            # Modify the c_hash if present
             try:
                 idt["c_hash"] = sort_string(idt["c_hash"])
             except (KeyError, TypeError):
                 pass
 
-        if "mch" in self.behavior_type:  # remove the c_hash if available
+        if "mch" in self.behavior_type:
+            # Remove the c_hash if present
             if "c_hash" in idt:
                 del idt['c_hash']
 
-        if "issi" in self.behavior_type:  # mess with the iss value
+        if "issi" in self.behavior_type:
+            # Mess with the iss value
             idt["iss"] = "https://example.org/"
 
-        if "itsub" in self.behavior_type:  # missing sub claim
+        if "itsub" in self.behavior_type:
+            # Remove sub claim
             del idt["sub"]
 
-        if "aud" in self.behavior_type:  # invalid aud claim
+        if "aud" in self.behavior_type:
+            # Set an invalid aud claim
             idt["aud"] = "https://example.com/"
 
-        if "iat" in self.behavior_type:  # missing iat claim
+        if "iat" in self.behavior_type:
+            # Remove iat claim
             del idt["iat"]
 
-        if "nonce" in self.behavior_type:  # invalid nonce if present
+        if "nonce" in self.behavior_type:
+            # Remove nonce claim if present
             try:
                 idt["nonce"] = "012345678"
             except KeyError:
@@ -257,7 +266,8 @@ class Provider(provider.Provider):
 
         kwargs = {}
 
-        if "rotsig" in self.behavior_type:  # Rollover signing keys
+        if "rotsig" in self.behavior_type:
+            # Rollover signing keys
             if alg == "RS256":
                 key = RSAKey(kid="rotated_rsa_{}".format(time.time()),
                              use="sig").load_key(RSA.generate(2048))
@@ -271,23 +281,12 @@ class Provider(provider.Provider):
             self.events.store("Rotated signing keys", '')
 
         if "nokid1jwks" in self.behavior_type:
+            # Remove key ID from keys
             kwargs['keys'] = self.no_kid_keys()
-            # found_key = None
-            # for kb in self.keyjar.key_summary[""]:
-            #     issuer_key = list(kb.keys())[0]
-            #     if issuer_key.use == "sig" and \
-            #             issuer_key.kty.startswith(
-            #                 alg[:2]):
-            #         issuer_key.kid = None
-            #         found_key = key
-            #         break
-            # self.keyjar.key_summary[""] = [found_key]
 
         if "nokidmuljwks" in self.behavior_type:
+            # Remove key ID from keys
             kwargs['keys'] = self.no_kid_keys()
-            # for key in self.keyjar.key_summary[""]:
-            #     for inner_key in list(key.keys()):
-            #         inner_key.kid = None
 
         _jws = provider.Provider.id_token_as_signed_jwt(
             self, session, loa=loa, alg=alg, code=code,
@@ -295,8 +294,8 @@ class Provider(provider.Provider):
             auth_time=auth_time,
             exp=exp, extra_claims=extra_claims, **kwargs)
 
-        if "idts" in self.behavior_type:  # mess with the signature
-            #
+        if "idts" in self.behavior_type:
+            # Mess with the signature of the JWS
             p = _jws.split(".")
             p[2] = sort_string(p[2])
             _jws = ".".join(p)
@@ -308,7 +307,8 @@ class Provider(provider.Provider):
                                                    userinfo_claims)
 
         _src = "src1"
-        if "aggregated" in self.claims_type:  # add some aggregated claims
+        if "aggregated" in self.claims_type:
+            # add some aggregated claims
             extra = Message(eye_color="blue", shoe_size=8)
             _jwt = extra.to_jwt(algorithm="none")
             ava["_claim_names"] = Message(eye_color=_src,
@@ -328,6 +328,7 @@ class Provider(provider.Provider):
             ava["_claim_sources"] = Message(**d_claims)
 
         if "uisub" in self.behavior_type:
+            # Set a faulty sub in the User Info
             ava["sub"] = "foobar"
 
         return ava
@@ -336,6 +337,7 @@ class Provider(provider.Provider):
         _response = provider.Provider.create_providerinfo(self, setup)
 
         if "isso" in self.behavior_type:
+            # Return an incorrect issuer in the provider configuration
             _response["issuer"] = "https://example.com"
 
         return _response
@@ -368,6 +370,7 @@ class Provider(provider.Provider):
                 descr="Invalid redirect_uri: {}".format(err))
 
         if "initiate_login_uri" in self.behavior_type:
+            # ??
             if not "initiate_login_uri" in reg_req:
                 return error_response(
                     error="invalid_configuration_parameter",
@@ -375,7 +378,7 @@ class Provider(provider.Provider):
                           "Client Registration Request\"")
 
         # Do initial verification that all endpoints from the client uses
-        #  https
+        # https
         for endp in ["jwks_uri", "initiate_login_uri"]:
             try:
                 uris = reg_req[endp]
@@ -506,7 +509,8 @@ class Provider(provider.Provider):
                                                                  cookie,
                                                                  **kwargs)
 
-        if "rotenc" in self.behavior_type:  # Rollover encryption keys
+        if "rotenc" in self.behavior_type:
+            # Rollover encryption keys
             rsa_key = RSAKey(kid="rotated_rsa_{}".format(time.time()),
                              use="enc").load_key(RSA.generate(2048))
             ec_key = ECKey(kid="rotated_ec_{}".format(time.time()),
@@ -569,28 +573,30 @@ class Provider(provider.Provider):
 
         return _response
 
-    def generate_jwks(self, mode):
-        if "nokid1jwk" in self.behavior_type:
-            alg = mode["sign_alg"]
-            if not alg:
-                alg = "RS256"
-            keys = [k.to_dict() for kb in self.keyjar[""] for k in
-                    list(kb.keys())]
-            for key in keys:
-                if key["use"] == "sig" and key["kty"].startswith(alg[:2]):
-                    key.pop("kid", None)
-                    jwk = dict(keys=[key])
-                    return json.dumps(jwk)
-            raise Exception(
-                "Did not find sig {} key for nokid1jwk test ".format(alg))
-        else:  # Return all keys
-            keys = [k.to_dict() for kb in self.keyjar[""] for k in
-                    list(kb.keys())]
-            jwks = dict(keys=keys)
-            return json.dumps(jwks)
+    # def generate_jwks(self, mode):
+    #     if "nokid1jwk" in self.behavior_type:
+    #         # Remove kid from keys for a specified alg in the JWKS
+    #         alg = mode["sign_alg"]
+    #         if not alg:
+    #             alg = "RS256"
+    #         keys = [k.to_dict() for kb in self.keyjar[""] for k in
+    #                 list(kb.keys())]
+    #         for key in keys:
+    #             if key["use"] == "sig" and key["kty"].startswith(alg[:2]):
+    #                 key.pop("kid", None)
+    #                 jwk = dict(keys=[key])
+    #                 return json.dumps(jwk)
+    #         raise Exception(
+    #             "Did not find sig {} key for nokid1jwk test ".format(alg))
+    #     else:  # Return all keys
+    #         keys = [k.to_dict() for kb in self.keyjar[""] for k in
+    #                 list(kb.keys())]
+    #         jwks = dict(keys=keys)
+    #         return json.dumps(jwks)
 
     def _update_client_keys(self, client_id):
         if "updkeys" in self.behavior_type:
+            # Update client keys
             if not self.init_keys:
                 if "rp-enc-key" in self.baseurl:
                     self.update_key_use = "enc"
@@ -646,6 +652,22 @@ class Provider(provider.Provider):
     keyjar = property(_get_keyjar, _set_keyjar)
 
     def end_session_endpoint(self, request="", cookie=None, **kwargs):
+        if "nst" in self.behavior_type:
+            # Make sure there is no 'state' in the request and as an effect of that none
+            # in the logout token
+            _req = self.server.message_factory.get_request_type("endsession_endpoint")
+            esr = _req().from_urlencoded(request)
+            if 'state' in esr:
+                del esr['state']
+                request = esr.to_urlencoded()
+        elif 'ost' in self.behavior_type:
+            # Put a faulty 'state' in the request and as an effect of that
+            # in the logout token
+            _req = self.server.message_factory.get_request_type("endsession_endpoint")
+            esr = _req().from_urlencoded(request)
+            esr['state'] = "RandomString"
+            request = esr.to_urlencoded()
+
         return provider.Provider.end_session_endpoint(self, request, cookie,
                                                       **kwargs)
 
@@ -663,13 +685,16 @@ class Provider(provider.Provider):
         }
 
         if 'no_event' in self.behavior_type:
+            # Remove a event specification from the JWT
             pass
         elif 'wrong_event' in self.behavior_type:
+            # Set the event to be something it should not be
             payload['events'] = {"http://schemas.openid.net/event/foobar": {}}
         else:
             payload['events'] = {BACK_CHANNEL_LOGOUT_EVENT: {}}
 
         if 'with_nonce' in self.behavior_type:
+            # Add a nonce to the logout token
             payload['nonce'] = rndstr(16)
 
         try:
@@ -678,7 +703,7 @@ class Provider(provider.Provider):
             alg = self.capabilities['id_token_signing_alg_values_supported'][0]
 
         if 'wrong_alg' in self.behavior_type:
-            # figure out a alg I could use but that are not the one used
+            # Figure out a alg I could use but that are not the one used
             # for ID Tokens. Pick one from id_token_signing_alg_values_supported
             if alg.startswith('RS'):
                 alg = 'ES256'
@@ -687,34 +712,39 @@ class Provider(provider.Provider):
             else:  # probably HS*
                 alg = 'RS256'
         elif 'alg_none' in self.behavior_type:
+            # Set signing algorithm to be none
             alg = 'none'
 
         if 'wrong_issuer' in self.behavior_type:
+            # Set the wrong issuer on the logout token
             iss = self.other
         else:
             iss = self.name
 
         if 'wrong_aud' in self.behavior_type:
-            aud = self.other
+            # Set wrong audience of the logout token
+            _aud = self.other
         else:
-            aud = cinfo["client_id"]
+            _aud = cinfo["client_id"]
 
         _jws = JWT(self.keyjar, iss=iss, lifetime=86400, sign_alg=alg)
 
         if self.events:
-            kw = {'iss': iss, 'sign_alg': alg, 'aud': aud}
+            kw = {'iss': iss, 'sign_alg': alg, 'aud': _aud}
             kw.update(payload)
             self.events.store('Logout token', '{}'.format(kw))
 
         _jws.with_jti = True
-        sjwt = _jws.pack(aud=cinfo["client_id"], **payload)
+        sjwt = _jws.pack(aud=_aud, **payload)
 
         return back_channel_logout_uri, sjwt
 
     def do_front_channel_logout_iframe(self, c_info, iss, sid):
         if 'wrong_issuer' in self.behavior_type:
+            # Set the wrong issuer of the logout IFrame
             iss = self.other
         if 'wrong_sid' in self.behavior_type:
+            # Set the wrong session ID in the logout IFrame
             sid = 'another_sid'
 
         _iframe = provider.Provider.do_front_channel_logout_iframe(c_info, iss, sid)
@@ -723,11 +753,13 @@ class Provider(provider.Provider):
     def do_verified_logout(self, sid, client_id, alla = False, **kwargs):
         # Remove the logout uri that should not be used.
         if "back" in self.behavior_type:
+            # Remove frontchannel_logout_uri if one is specified
             try:
                 del self.cdb[client_id]["frontchannel_logout_uri"]
             except KeyError:
                 pass
         elif "front" in self.behavior_type:
+            # Remove backchannel_logout_uri if one is specified
             try:
                 del self.cdb[client_id]["backchannel_logout_uri"]
             except KeyError:
