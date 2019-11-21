@@ -17,6 +17,7 @@ from otest.events import EV_EXCEPTION
 from otest.events import EV_FAULT
 from otest.events import EV_HTTP_ARGS
 from otest.events import EV_HTTP_REQUEST
+from otest.events import EV_REQUEST
 from otest.events import EV_RESPONSE
 from otest.result import Result
 
@@ -339,6 +340,8 @@ class Main(object):
 
         if resp is False or resp is True:
             pass
+        elif resp in ["DONE", ""]:
+            pass
         elif isinstance(resp, dict) and 'exception_trace' in resp:
             return self.display_exception(**resp)
         elif not isinstance(resp, int):
@@ -348,6 +351,7 @@ class Main(object):
 
     @cherrypy.expose
     def logout(self, **kwargs):  # post_logout_redirect_uri
+        self.sh['conv'].events.store(EV_REQUEST, kwargs, receiver=self.tester.__class__.__name__)
         logger.debug('Post logout: {}'.format(kwargs))
         if kwargs:
             return self._endpoint(ref='logout', request_args=kwargs)
@@ -357,13 +361,15 @@ class Main(object):
     @cherrypy.expose
     def backchannel_logout(self, **kwargs):
         logger.debug('Back channel logout: {}'.format(kwargs))
+        self.sh['conv'].events.store(EV_HTTP_REQUEST, kwargs)
         if cherrypy.request.process_request_body is True:
             _request = as_unicode(cherrypy.request.body.read())
             if _request:
                 logger.info('back_channel logout request: {}'.format(_request))
                 if kwargs['entity_id'] != self.tester.conv.entity.entity_id:
-                    logger.debug('Not for me ')
-                    return 'OK'
+                    self.sh['conv'].events.store(EV_FAULT, "Not for me!")
+                    logger.debug('Not for me')
+                    self.opresult()
                 else:
                     return self._endpoint(ref='backchannel_logout',
                                       request=_request)
@@ -376,8 +382,9 @@ class Main(object):
                 logger.info('back_channel logout request_args: {}'.format(
                     _request_args))
                 if kwargs['entity_id'] != self.tester.conv.entity.entity_id:
-                    logger.debug('Not for me ')
-                    return 'OK'
+                    self.sh['conv'].events.store(EV_FAULT, "Not for me!")
+                    logger.debug('Not for me')
+                    self.opresult()
                 else:
                     return self._endpoint(ref='backchannel_logout',
                                           request_args=_request_args)
@@ -391,7 +398,9 @@ class Main(object):
         self.sh['conv'].events.store(EV_HTTP_REQUEST, kwargs)
         if kwargs['entity_id'] != self.tester.conv.entity.entity_id:
             logger.debug('Not for me')
-            return 'OK'
+            self.sh['conv'].events.store(EV_FAULT, "Not for me!")
+            logger.debug('Not for me')
+            self.opresult()
         else:
             _args = dict([(k,v) for k,v in kwargs.items()
                           if k not in ['entity_id', 'sid']])
