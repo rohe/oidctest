@@ -7,6 +7,7 @@ from jwkest import as_bytes
 from jwkest import as_unicode
 from oic.oic import AuthorizationResponse
 from otest import Break
+from otest import OperationError
 from otest import exception_trace
 from otest.check import CRITICAL
 from otest.check import OK
@@ -329,8 +330,9 @@ class Main(object):
             resp = self.tester.handle_request(request, **kwargs)
         except cherrypy.HTTPRedirect:
             raise
-        except Break:
+        except (Break, OperationError) as err:
             resp = False
+            _conv.events.store(EV_FAULT, err)
             self.tester.store_result()
         except Exception as err:
             _trace = exception_trace(ref, err, logger)

@@ -1,0 +1,4548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OpenID Connect RP Library Test descriptions</title>
+    <style type="text/css" title="Xml2Rfc (sans serif)">
+        a {
+            text-decoration: none;
+        }
+
+        a.info span {
+            display: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a:active {
+            text-decoration: underline;
+        }
+
+        dd {
+            margin-right: 2em;
+        }
+
+        dl {
+            margin-left: 2em;
+        }
+
+        ul.empty li {
+            margin-top: .5em;
+        }
+
+        dl p {
+            margin-left: 0;
+        }
+
+        dt {
+            margin-top: .5em;
+        }
+
+        h1 {
+            font-size: 16pt;
+            line-height: 21pt;
+            page-break-after: avoid;
+        }
+
+        h1.np {
+            page-break-before: always;
+        }
+
+        h1 a {
+            color: #333333;
+        }
+
+        h2 {
+            font-size: 12pt;
+            line-height: 15pt;
+            page-break-after: avoid;
+        }
+
+        h3, h4, h5, h6 {
+            font-size: 10pt;
+            page-break-after: avoid;
+        }
+
+        h2 a, h3 a, h4 a, h5 a, h6 a {
+            color: black;
+        }
+
+        p {
+            margin-left: 2em;
+            margin-right: 2em;
+        }
+
+        pre {
+            background-color: lightyellow;
+            padding: .25em;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        table, td {
+            margin-left: 2em;
+            border-style: solid;
+            border-width: 1px;
+        }
+
+        table.tt td {
+            vertical-align: top;
+        }
+
+        table.full td {
+            border-style: inset;
+            border-width: 1px;
+        }
+
+        table.tt th {
+            vertical-align: top;
+        }
+
+        table.full th {
+            border-style: inset;
+            border-width: 1px;
+        }
+
+        table.headers th {
+            border-style: none none inset none;
+            border-width: 1px;
+        }
+
+        caption {
+            caption-side: bottom;
+            font-weight: bold;
+            font-size: 9pt;
+            margin-top: .5em;
+        }
+
+        table.header td {
+            background-color: gray;
+            width: 50%;
+        }
+
+        table.header a {
+            color: white;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        ul.toc, ul.toc ul {
+            list-style: none;
+            margin-left: 1.5em;
+            margin-right: 0;
+            padding-left: 0;
+        }
+
+        ul.toc li {
+            line-height: 150%;
+            font-weight: bold;
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        ul.toc li li {
+            line-height: normal;
+            font-weight: normal;
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        ul p {
+            margin-left: 0;
+        }
+    </style>
+</head>
+
+<body>
+<h1>This document describes all the RP tests that the OpenID Connect test suite contains.</h1>
+<hr>
+<h1 class="np" id="toc">Table of Contents</h1>
+<ul class="toc">
+    <li>
+        <a href="#intro">1. Introduction</a>
+        <ul>
+            <li><a href="#json_behavior">1.1 behavior</a></li>
+            <li><a href="#json_capabilities">1.2 capabilities</a></li>
+            <li><a href="#json_claims">1.3 claims</a></li>
+            <li><a href="#json_detailed_description">1.4 detailed_description</a></li>
+            <li><a href="#json_expected_result">1.5 expected_result</a></li>
+            <li><a href="#json_group">1.6 group</a></li>
+            <li><a href="#json_reference">1.7 reference</a></li>
+            <li><a href="#json_short_description">1.8 short_description</a></li>
+        </ul>
+    </li>
+    <li>
+        <a href="#syntax">2. Test description syntax</a>
+    </li>
+    <li>
+        <a href="#test_description">3. Test descriptions</a>
+        <ul>
+            <li>3.1. <a href="#rp-3rd_party-init-login">rp-3rd_party-init-login</a></li>
+<li>3.2. <a href="#rp-backchannel-rpinitlogout">rp-backchannel-rpinitlogout</a></li>
+<li>3.3. <a href="#rp-backchannel-rpinitlogout-lt-alg-none">rp-backchannel-rpinitlogout-lt-alg-none</a></li>
+<li>3.4. <a href="#rp-backchannel-rpinitlogout-lt-no-event">rp-backchannel-rpinitlogout-lt-no-event</a></li>
+<li>3.5. <a href="#rp-backchannel-rpinitlogout-lt-with-nonce">rp-backchannel-rpinitlogout-lt-with-nonce</a></li>
+<li>3.6. <a href="#rp-backchannel-rpinitlogout-lt-wrong-alg">rp-backchannel-rpinitlogout-lt-wrong-alg</a></li>
+<li>3.7. <a href="#rp-backchannel-rpinitlogout-lt-wrong-aud">rp-backchannel-rpinitlogout-lt-wrong-aud</a></li>
+<li>3.8. <a href="#rp-backchannel-rpinitlogout-lt-wrong-event">rp-backchannel-rpinitlogout-lt-wrong-event</a></li>
+<li>3.9. <a href="#rp-backchannel-rpinitlogout-lt-wrong-issuer">rp-backchannel-rpinitlogout-lt-wrong-issuer</a></li>
+<li>3.10. <a href="#rp-claims-aggregated">rp-claims-aggregated</a></li>
+<li>3.11. <a href="#rp-claims-distributed">rp-claims-distributed</a></li>
+<li>3.12. <a href="#rp-claims_request-id_token">rp-claims_request-id_token</a></li>
+<li>3.13. <a href="#rp-claims_request-userinfo">rp-claims_request-userinfo</a></li>
+<li>3.14. <a href="#rp-discovery-issuer-not-matching-config">rp-discovery-issuer-not-matching-config</a></li>
+<li>3.15. <a href="#rp-discovery-jwks_uri-keys">rp-discovery-jwks_uri-keys</a></li>
+<li>3.16. <a href="#rp-discovery-openid-configuration">rp-discovery-openid-configuration</a></li>
+<li>3.17. <a href="#rp-discovery-webfinger-acct">rp-discovery-webfinger-acct</a></li>
+<li>3.18. <a href="#rp-discovery-webfinger-http-href">rp-discovery-webfinger-http-href</a></li>
+<li>3.19. <a href="#rp-discovery-webfinger-unknown-member">rp-discovery-webfinger-unknown-member</a></li>
+<li>3.20. <a href="#rp-discovery-webfinger-url">rp-discovery-webfinger-url</a></li>
+<li>3.21. <a href="#rp-frontchannel-rpinitlogout">rp-frontchannel-rpinitlogout</a></li>
+<li>3.22. <a href="#rp-frontchannel-rpinitlogout-wrong-iss">rp-frontchannel-rpinitlogout-wrong-iss</a></li>
+<li>3.23. <a href="#rp-frontchannel-rpinitlogout-wrong-sid">rp-frontchannel-rpinitlogout-wrong-sid</a></li>
+<li>3.24. <a href="#rp-id_token-aud">rp-id_token-aud</a></li>
+<li>3.25. <a href="#rp-id_token-bad-at_hash">rp-id_token-bad-at_hash</a></li>
+<li>3.26. <a href="#rp-id_token-bad-c_hash">rp-id_token-bad-c_hash</a></li>
+<li>3.27. <a href="#rp-id_token-bad-sig-es256">rp-id_token-bad-sig-es256</a></li>
+<li>3.28. <a href="#rp-id_token-bad-sig-hs256">rp-id_token-bad-sig-hs256</a></li>
+<li>3.29. <a href="#rp-id_token-bad-sig-rs256">rp-id_token-bad-sig-rs256</a></li>
+<li>3.30. <a href="#rp-id_token-iat">rp-id_token-iat</a></li>
+<li>3.31. <a href="#rp-id_token-issuer-mismatch">rp-id_token-issuer-mismatch</a></li>
+<li>3.32. <a href="#rp-id_token-kid-absent-multiple-jwks">rp-id_token-kid-absent-multiple-jwks</a></li>
+<li>3.33. <a href="#rp-id_token-kid-absent-single-jwks">rp-id_token-kid-absent-single-jwks</a></li>
+<li>3.34. <a href="#rp-id_token-missing-at_hash">rp-id_token-missing-at_hash</a></li>
+<li>3.35. <a href="#rp-id_token-missing-c_hash">rp-id_token-missing-c_hash</a></li>
+<li>3.36. <a href="#rp-id_token-sig+enc">rp-id_token-sig+enc</a></li>
+<li>3.37. <a href="#rp-id_token-sig+enc-a128kw">rp-id_token-sig+enc-a128kw</a></li>
+<li>3.38. <a href="#rp-id_token-sig-es256">rp-id_token-sig-es256</a></li>
+<li>3.39. <a href="#rp-id_token-sig-hs256">rp-id_token-sig-hs256</a></li>
+<li>3.40. <a href="#rp-id_token-sig-none">rp-id_token-sig-none</a></li>
+<li>3.41. <a href="#rp-id_token-sig-rs256">rp-id_token-sig-rs256</a></li>
+<li>3.42. <a href="#rp-id_token-sub">rp-id_token-sub</a></li>
+<li>3.43. <a href="#rp-init-logout">rp-init-logout</a></li>
+<li>3.44. <a href="#rp-init-logout-no-state">rp-init-logout-no-state</a></li>
+<li>3.45. <a href="#rp-init-logout-other-state">rp-init-logout-other-state</a></li>
+<li>3.46. <a href="#rp-key-rotation-op-enc-key">rp-key-rotation-op-enc-key</a></li>
+<li>3.47. <a href="#rp-key-rotation-op-sign-key">rp-key-rotation-op-sign-key</a></li>
+<li>3.48. <a href="#rp-key-rotation-op-sign-key-native">rp-key-rotation-op-sign-key-native</a></li>
+<li>3.49. <a href="#rp-nonce-invalid">rp-nonce-invalid</a></li>
+<li>3.50. <a href="#rp-nonce-unless-code-flow">rp-nonce-unless-code-flow</a></li>
+<li>3.51. <a href="#rp-registration-dynamic">rp-registration-dynamic</a></li>
+<li>3.52. <a href="#rp-request_uri-enc">rp-request_uri-enc</a></li>
+<li>3.53. <a href="#rp-request_uri-sig">rp-request_uri-sig</a></li>
+<li>3.54. <a href="#rp-request_uri-sig+enc">rp-request_uri-sig+enc</a></li>
+<li>3.55. <a href="#rp-request_uri-unsigned">rp-request_uri-unsigned</a></li>
+<li>3.56. <a href="#rp-response_mode-form_post">rp-response_mode-form_post</a></li>
+<li>3.57. <a href="#rp-response_mode-form_post-error">rp-response_mode-form_post-error</a></li>
+<li>3.58. <a href="#rp-response_type-code">rp-response_type-code</a></li>
+<li>3.59. <a href="#rp-response_type-code+id_token">rp-response_type-code+id_token</a></li>
+<li>3.60. <a href="#rp-response_type-code+id_token+token">rp-response_type-code+id_token+token</a></li>
+<li>3.61. <a href="#rp-response_type-code+token">rp-response_type-code+token</a></li>
+<li>3.62. <a href="#rp-response_type-id_token">rp-response_type-id_token</a></li>
+<li>3.63. <a href="#rp-response_type-id_token+token">rp-response_type-id_token+token</a></li>
+<li>3.64. <a href="#rp-scope-userinfo-claims">rp-scope-userinfo-claims</a></li>
+<li>3.65. <a href="#rp-token_endpoint-client_secret_basic">rp-token_endpoint-client_secret_basic</a></li>
+<li>3.66. <a href="#rp-token_endpoint-client_secret_jwt">rp-token_endpoint-client_secret_jwt</a></li>
+<li>3.67. <a href="#rp-token_endpoint-client_secret_post">rp-token_endpoint-client_secret_post</a></li>
+<li>3.68. <a href="#rp-token_endpoint-private_key_jwt">rp-token_endpoint-private_key_jwt</a></li>
+<li>3.69. <a href="#rp-userinfo-bad-sub-claim">rp-userinfo-bad-sub-claim</a></li>
+<li>3.70. <a href="#rp-userinfo-bearer-body">rp-userinfo-bearer-body</a></li>
+<li>3.71. <a href="#rp-userinfo-bearer-header">rp-userinfo-bearer-header</a></li>
+<li>3.72. <a href="#rp-userinfo-enc">rp-userinfo-enc</a></li>
+<li>3.73. <a href="#rp-userinfo-sig">rp-userinfo-sig</a></li>
+<li>3.74. <a href="#rp-userinfo-sig+enc">rp-userinfo-sig+enc</a></li>
+        </ul>
+    </li>
+    <li>
+        <a href="#modifiers">4. Modifiers</a>
+        <ul>
+            <li>4.1. <a href="#alg_none">alg_none</a></li>
+<li>4.2. <a href="#ath">ath</a></li>
+<li>4.3. <a href="#aud">aud</a></li>
+<li>4.4. <a href="#back">back</a></li>
+<li>4.5. <a href="#ch">ch</a></li>
+<li>4.6. <a href="#front">front</a></li>
+<li>4.7. <a href="#iat">iat</a></li>
+<li>4.8. <a href="#idts">idts</a></li>
+<li>4.9. <a href="#initiate_login_uri">initiate_login_uri</a></li>
+<li>4.10. <a href="#issi">issi</a></li>
+<li>4.11. <a href="#isso">isso</a></li>
+<li>4.12. <a href="#itsub">itsub</a></li>
+<li>4.13. <a href="#math">math</a></li>
+<li>4.14. <a href="#mch">mch</a></li>
+<li>4.15. <a href="#no_event">no_event</a></li>
+<li>4.16. <a href="#nokid1jwks">nokid1jwks</a></li>
+<li>4.17. <a href="#nokidmuljwks">nokidmuljwks</a></li>
+<li>4.18. <a href="#nonce">nonce</a></li>
+<li>4.19. <a href="#nst">nst</a></li>
+<li>4.20. <a href="#ost">ost</a></li>
+<li>4.21. <a href="#rotenc">rotenc</a></li>
+<li>4.22. <a href="#rotsig">rotsig</a></li>
+<li>4.23. <a href="#uisub">uisub</a></li>
+<li>4.24. <a href="#with_nonce">with_nonce</a></li>
+<li>4.25. <a href="#wrong_alg">wrong_alg</a></li>
+<li>4.26. <a href="#wrong_aud">wrong_aud</a></li>
+<li>4.27. <a href="#wrong_event">wrong_event</a></li>
+<li>4.28. <a href="#wrong_issuer">wrong_issuer</a></li>
+<li>4.29. <a href="#wrong_sid">wrong_sid</a></li>
+        </ul>
+    </li>
+</ul>
+<h1 id="intro">1. Introduction</h1>
+<p>
+    <b>PLACEHOLDER</b>
+</p>
+<h1 id="syntax">2. Test description syntax</h1>
+<p>
+    The test description files are JSON documents. Each of these documents
+    contains a JSON object with a set of keys and values. The possible keys are:
+</p>
+<ul>
+    <li>behavior</li>
+    <li>capabilities</li>
+    <li>claims</li>
+    <li>detailed_description</li>
+    <li>expected_result</li>
+    <li>group</li>
+    <li>reference</li>
+    <li>short_description</li>
+</ul>
+<p>These will be described one by one below.</p>
+<h2 id="json_behavior">2.1. behavior</h2>
+<p>
+This is a list of identifiers. Each of them used in the code to decide
+on actions. This is exclusively used to make responses or requests not
+standard compliant.
+</p>
+<h2 id="json_capabilities">2.2. capabilities</h2>
+<p>
+This is used to decided what features the test tool (an OP) should support.
+Most commonly this is about which <b>response_types</b> that are supported.
+</p>
+<h2 id="json_claims">2.3. claims</h2>
+<p>
+Denotes whether claims returned should only be normal claims or aggregated
+and/or distributed.
+</p>
+<h2 id="json_detailed_description">2.4. detailed_description</h2>
+<p>
+A description aimied at the user of the test suite.
+</p>
+<h2 id="json_expected_result">2.5. expected_result</h2>
+<p>
+A description of the expected result.
+</p>
+<h2 id="json_group">2.6. group</h2>
+<p>
+Which group of tests the test belongs to.
+As of now the complete set is:
+<ul>
+<li>3rd-Party Init SSO</li>
+<li>Claims Request Parameter</li>
+<li>Claims Types</li>
+<li>Client Authentication</li>
+<li>Discovery</li>
+<li>Dynamic Client Registration</li>
+<li>ID Token</li>
+<li>Key Rotation</li>
+<li>RP Initiated BackChannel Logout</li>
+<li>RP Initiated FrontChannel Logout</li>
+<li>RP Initiated Logout</li>
+<li>Response Type and Response Mode</li>
+<li>UserInfo Endpoint</li>
+<li>nonce Request Parameter</li>
+<li>request_uri Request Parameter</li>
+<li>scope Request Parameter</li>
+</ul>
+</p>
+<h2 id="json_reference">2.7. reference</h2>
+<p>
+A link to the part of the standard that is being tested..
+</p>
+<h2 id="json_short_description">2.8. short_description</h2>
+<p>
+Short description of what the test tries to test.
+</p>
+<h1 id="test_description">3. Test description</h1>
+
+<h2 id="rp_3rd_party_init_login">3.1. rp-3rd_party-init-login</h2>
+<p><em>Supports initiation of the SSO flow from a 3rd-party.</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Exposes a ${THIRD_PARTY_INITIATED_LOGIN} endpoint that 3rd parties can use to start the SSO process. Initiated via: https://&lt;rp_test_host&gt;:&lt;rp_test_port&gt;/rp/&lt;rp_id&gt;/rp-3rd_party-init-login/&lt;client_id&gt;</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>3rd-Party Init SSO</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#initiate_login_uri">initiate_login_uri</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>A successful Authentication Request to the OP triggered by accessing the ${THIRD_PARTY_INITIATED_LOGIN} URL.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td><ul>
+<li>https://openid.net/specs/openid-connect-core-1_0.html#ThirdPartyInitiatedLogin</li>
+</ul></td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_backchannel_rpinitlogout">3.2. rp-backchannel-rpinitlogout</h2>
+<p><em>Does RP initiated BackChannel Logout</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Does an RP initiated BackChannel logout.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>RP Initiated BackChannel Logout</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#back">back</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>That the Single Sign On session on the OP disappears.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_backchannel_rpinitlogout_lt_alg_none">3.3. rp-backchannel-rpinitlogout-lt-alg-none</h2>
+<p><em>Does RP initiated Logout, unsigned logout token</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Does an RP initiated logout, unsigned logout token.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>RP Initiated BackChannel Logout</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#alg_none">alg_none</a></li>
+<li><a href="#back">back</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>That the Single Sign On session on the OP disappears.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_backchannel_rpinitlogout_lt_no_event">3.4. rp-backchannel-rpinitlogout-lt-no-event</h2>
+<p><em>Does RP initiated Logout, no event claim in the logout token</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Does an RP initiated logout, no event claim in the logout token.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>RP Initiated BackChannel Logout</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#no_event">no_event</a></li>
+<li><a href="#back">back</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>That the Single Sign On session on the OP disappears.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_backchannel_rpinitlogout_lt_with_nonce">3.5. rp-backchannel-rpinitlogout-lt-with-nonce</h2>
+<p><em>Does RP initiated Logout, incorrect nonce in logout token</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Does an RP initiated logout, incorrect nonce in logout token.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>RP Initiated BackChannel Logout</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#with_nonce">with_nonce</a></li>
+<li><a href="#back">back</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Error</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_backchannel_rpinitlogout_lt_wrong_alg">3.6. rp-backchannel-rpinitlogout-lt-wrong-alg</h2>
+<p><em>Does RP initiated Logout, wrong signing algorithm was used for the logout token</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Does an RP initiated logout, wrong signing algorithm was used for the logout token.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>RP Initiated BackChannel Logout</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#wrong_alg">wrong_alg</a></li>
+<li><a href="#back">back</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Error</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_backchannel_rpinitlogout_lt_wrong_aud">3.7. rp-backchannel-rpinitlogout-lt-wrong-aud</h2>
+<p><em>Does RP initiated Logout, wrong audience in logout token</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Does an RP initiated logout, wrong audience in logout token.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>RP Initiated BackChannel Logout</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#wrong_aud">wrong_aud</a></li>
+<li><a href="#back">back</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Error</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_backchannel_rpinitlogout_lt_wrong_event">3.8. rp-backchannel-rpinitlogout-lt-wrong-event</h2>
+<p><em>Does RP initiated Logout, wrong event description in logout token</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Does an RP initiated logout, Wrong event description in logout token.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>RP Initiated BackChannel Logout</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#wrong_event">wrong_event</a></li>
+<li><a href="#back">back</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Error</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_backchannel_rpinitlogout_lt_wrong_issuer">3.9. rp-backchannel-rpinitlogout-lt-wrong-issuer</h2>
+<p><em>Does RP initiated Logout, wrong issuer in logout token</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Does an RP initiated logout, wrong issuer in logout token.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>RP Initiated BackChannel Logout</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#wrong_issuer">wrong_issuer</a></li>
+<li><a href="#back">back</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Error</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_claims_aggregated">3.10. rp-claims-aggregated</h2>
+<p><em>Can use Aggregated Claims</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Make a ${USERINFO_REQUEST} and read the ${AGGREGATED_CLAIMS}.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Claims Types</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Understand the aggregated claims in the ${USERINFO_RESPONSE}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_claims_distributed">3.11. rp-claims-distributed</h2>
+<p><em>Can use Distributed Claims</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Make a ${USERINFO_REQUEST} and read the ${DISTRIBUTED_CLAIMS}.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Claims Types</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Understand the distributed claims in the ${USERINFO_RESPONSE}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_claims_request_id_token">3.12. rp-claims_request-id_token</h2>
+<p><em>Can request and use claims in ID Token using the 'claims' request parameter</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Ask for the claim 'name' using the ${CLAIMS_REQUEST_PARAMETER}. Retrieve the claim from an ID Token, either by making a ${TOKEN_REQUEST} or by using ${IMPLICIT_FLOW}.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Claims Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>An ${ID_TOKEN} containing the requested claim.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_claims_request_userinfo">3.13. rp-claims_request-userinfo</h2>
+<p><em>Can request and use claims in UserInfo Response using the 'claims' request parameter</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Ask for the claim 'name' using the ${CLAIMS_REQUEST_PARAMETER}. Retrieve the claims by making a ${USERINFO_REQUEST}.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Claims Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>A ${USERINFO_RESPONSE} containing the requested claim.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_discovery_issuer_not_matching_config">3.14. rp-discovery-issuer-not-matching-config</h2>
+<p><em>Rejects discovered issuer not matching provider configuration issuer</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Retrieve ${OPENID_CONFIGURATION_INFORMATION} for OpenID Provider from the .well-known/openid-configuration path. Verify that the issuer in the ${PROVIDER_CONFIGURATION}  matches the one returned by WebFinger.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Discovery</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#isso">isso</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Identify that the issuers are not matching and reject the provider configuration.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_discovery_jwks_uri_keys">3.15. rp-discovery-jwks_uri-keys</h2>
+<p><em>Uses keys discovered with jwks_uri value</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>The Relying Party uses keys from the jwks_uri which has been obtained from the ${OPENID_PROVIDER_METADATA}.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Discovery</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Should be able to verify signed responses and/or encrypt requests using obtained keys.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_discovery_openid_configuration">3.16. rp-discovery-openid-configuration</h2>
+<p><em>Uses Provider Configuration Information</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Retrieve and use the ${OPENID_CONFIGURATION_INFORMATION}.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Discovery</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Read and use the JSON object returned from the OpenID Connect Provider.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_discovery_webfinger_acct">3.17. rp-discovery-webfinger-acct</h2>
+<p><em>Can discover OpenID providers using acct URI syntax</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Use WebFinger (${RFC7033}) and ${ISSUER_DISCOVERY_DOC} to determine the location of the OpenID Provider. The discovery should be done using ${ACCT_SYNTAX} as user input identifier. Note that the local part of the acct value should adhere to the pattern <oper_id>.<test_id></td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Discovery</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>An issuer location should be returned.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_discovery_webfinger_http_href">3.18. rp-discovery-webfinger-http-href</h2>
+<p><em>href URLs must be HTTPS</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>href URLs must be HTTPS</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Discovery</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Complain about return URL being http</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_discovery_webfinger_unknown_member">3.19. rp-discovery-webfinger-unknown-member</h2>
+<p><em>The webfinger response will contain a member that the client doesn't recognize</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>The webfinger response will contain a member that the client doesn't recognize</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Discovery</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>An issuer location should be returned.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_discovery_webfinger_url">3.20. rp-discovery-webfinger-url</h2>
+<p><em>Can discover OpenID providers using URL syntax</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Use WebFinger (${RFC7033}) and ${ISSUER_DISCOVERY_DOC} to determine the location of the OpenID Provider. The discovery should be done using ${URL_SYNTAX} as user input identifier.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Discovery</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>An issuer location should be returned.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_frontchannel_rpinitlogout">3.21. rp-frontchannel-rpinitlogout</h2>
+<p><em>Does RP initiated Front Channel Logout</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Does an RP initiated Front Channel logout.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>RP Initiated FrontChannel Logout</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#front">front</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>That the Single Sign On session on the OP disappears.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_frontchannel_rpinitlogout_wrong_iss">3.22. rp-frontchannel-rpinitlogout-wrong-iss</h2>
+<p><em>Does RP initiated Front Channel Logout, the front channel call has the wrong issuer</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Does an RP initiated Front Channel logout, the front channel call has the wrong issuer.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>RP Initiated FrontChannel Logout</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#wrong_issuer">wrong_issuer</a></li>
+<li><a href="#front">front</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>That the Single Sign On session on the OP disappears.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_frontchannel_rpinitlogout_wrong_sid">3.23. rp-frontchannel-rpinitlogout-wrong-sid</h2>
+<p><em>Does RP initiated Front Channel Logout, the front channel call has the wrong sid</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Does an RP initiated Front Channel logout, the front channel call has the wrong sid.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>RP Initiated FrontChannel Logout</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#wrong_sid">wrong_sid</a></li>
+<li><a href="#front">front</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>That the Single Sign On session on the OP disappears.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_aud">3.24. rp-id_token-aud</h2>
+<p><em>Rejects ID Token with invalid 'aud' claim</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Request an ID token and compare its ${AUD} value to the Relying Party's '${CLIENT_ID}'.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#aud">aud</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Identify that the 'aud' value is missing or doesn't match the 'client_id' and reject the ID Token after doing ${ID_TOKEN_VALIDATION}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_bad_at_hash">3.25. rp-id_token-bad-at_hash</h2>
+<p><em>Rejects ID Token with incorrect 'at_hash' claim when response_type='id_token token'</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Make an authentication request using response_type='id_token token' for ${IMPLICIT_FLOW} or response_type='code id_token token' for ${HYBRID_FLOW}. Verify the 'at_hash' value in the returned ${ID_TOKEN}.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>id_token token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#ath">ath</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Identify the incorrect 'at_hash' value and reject the ID Token after doing ${ACCESS_TOKEN_VALIDATION}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_bad_c_hash">3.26. rp-id_token-bad-c_hash</h2>
+<p><em>Rejects ID Token with incorrect 'c_hash' claim when hybrid flow is used</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Retrieve Authorization Code and ID Token from the Authorization Endpoint, using ${HYBRID_FLOW}. Verify the ${C_HASH} value in the returned ID token. 'id_token_signed_response_alg' must NOT be 'none'</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code id_token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#ch">ch</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Identify the incorrect 'c_hash' value and reject the ID Token after doing ${AUTHORIZATION_CODE_VALIDATION}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_bad_sig_es256">3.27. rp-id_token-bad-sig-es256</h2>
+<p><em>Rejects ID Token with invalid asymmetric 'ES256' signature</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Request an ID token and verify its signature using the keys provided by the Issuer.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#idts">idts</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Identify the invalid signature and reject the ID Token after doing ${ID_TOKEN_VALIDATION}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_bad_sig_hs256">3.28. rp-id_token-bad-sig-hs256</h2>
+<p><em>Rejects ID Token with invalid symmetric 'HS256' signature</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Request an ID token and verify its signature using the ${SYMMETRIC_SIGNATURES}.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#idts">idts</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Identify the invalid signature and reject the ID Token after doing ${ID_TOKEN_VALIDATION}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_bad_sig_rs256">3.29. rp-id_token-bad-sig-rs256</h2>
+<p><em>Rejects ID Token with invalid asymmetric 'RS256' signature</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Request an ID token and verify its signature using the keys provided by the Issuer.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#idts">idts</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Identify the invalid signature and reject the ID Token after doing ${ID_TOKEN_VALIDATION}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_iat">3.30. rp-id_token-iat</h2>
+<p><em>Rejects ID Token without 'iat' claim</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Request an ID token and verify its '${IAT}' value.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#iat">iat</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Identify the missing 'iat' value and reject the ID Token after doing ${ID_TOKEN_VALIDATION}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_issuer_mismatch">3.31. rp-id_token-issuer-mismatch</h2>
+<p><em>Rejects ID Token with incorrect 'iss' claim</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Request an ID token and verify its '${ISS}' value.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#issi">issi</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Identify the incorrect 'iss' value and reject the ID Token after doing ${ID_TOKEN_VALIDATION}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_kid_absent_multiple_jwks">3.32. rp-id_token-kid-absent-multiple-jwks</h2>
+<p><em>Rejects ID Token without 'kid' claim in JOSE header if multiple JWKs supplied in 'jwks_uri'</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Request an ID token and verify its signature using the keys provided by the Issuer.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#nokidmuljwks">nokidmuljwks</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Identify that the 'kid' value is missing from the JOSE header and that the Issuer publishes ${MULITPLE_KEYS_JWKS} (referenced by 'jwks_uri'). The RP can do one of two things; reject the ID Token since it can not by using the kid determined which key to use to verify the signature. Or it can just test all possible keys and hit upon one that works, which it will in this case.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_kid_absent_single_jwks">3.33. rp-id_token-kid-absent-single-jwks</h2>
+<p><em>Accepts ID Token without 'kid' claim in JOSE header if only one matching JWK is supplied in 'jwks_uri'</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Request an ID token and verify its signature using a single matching key provided by the Issuer.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#nokid1jwks">nokid1jwks</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Use the single matching key out of the Issuer's published set to verify the ID Tokens signature and accept the ID Token after doing ${ID_TOKEN_VALIDATION}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_missing_at_hash">3.34. rp-id_token-missing-at_hash</h2>
+<p><em>Rejects ID Token with incorrect 'at_hash' claim when response_type='id_token token'</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Make an authentication request using response_type='id_token token' for Implicit Flow or response_type='code id_token token' for Hybrid Flow. Verify the 'at_hash' presence in the returned ID Token.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>id_token token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#math">math</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Identify missing 'at_hash' value and reject the ID Token.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_missing_c_hash">3.35. rp-id_token-missing-c_hash</h2>
+<p><em>Rejects ID Token with missing 'c_hash' claim when hybrid flow is used</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Retrieve Authorization Code and ID Token from the Authorization Endpoint, using Hybrid Flow. Verify the c_hash presence in the returned ID token.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code id_token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#mch">mch</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Identify missing 'c_hash' value and reject the ID Token.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_sig+enc">3.36. rp-id_token-sig+enc</h2>
+<p><em>Can request and use signed and encrypted ID Token</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Request an signed and encrypted ID Token. Decrypt the returned the ID Token and verify its signature using the keys published by the Issuer.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Accept the ID Token after doing ${ID_TOKEN_VALIDATION}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_sig+enc_a128kw">3.37. rp-id_token-sig+enc-a128kw</h2>
+<p><em>Can request and use signed and encrypted ID Token using A128kw</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Request an signed and encrypted ID Token. Decrypt the returned the ID Token and verify its signature using the keys published by the Issuer.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Accept the ID Token after doing ${ID_TOKEN_VALIDATION}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_sig_es256">3.38. rp-id_token-sig-es256</h2>
+<p><em>Accepts ID Token with valid asymmetric 'ES256' signature</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Request an signed ID Token. Verify the signature on the ID Token using the keys published by the Issuer.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Accept the ID Token after doing ${ID_TOKEN_VALIDATION}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_sig_hs256">3.39. rp-id_token-sig-hs256</h2>
+<p><em>Accepts ID Token with valid symmetric 'HS256' signature</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Accepts ID Token with valid symmetric 'HS256' signature. Verify the signature on the ID Token using the keys published by the Issuer.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Accept the ID Token after doing ${ID_TOKEN_VALIDATION}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_sig_none">3.40. rp-id_token-sig-none</h2>
+<p><em>Can request and use unsigned ID Token</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Use ${CODE_FLOW} and retrieve an unsigned ID Token. This test is only applicable when response_type='code'</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Accept the ID Token after doing ${ID_TOKEN_VALIDATION}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_sig_rs256">3.41. rp-id_token-sig-rs256</h2>
+<p><em>Accepts ID Token with valid asymmetric 'RS256' signature</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Request an signed ID Token. Verify the signature on the ID Token using the keys published by the Issuer.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Accept the ID Token after doing ${ID_TOKEN_VALIDATION}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_id_token_sub">3.42. rp-id_token-sub</h2>
+<p><em>Rejects ID Token without 'sub' claim</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Request an ID token and verify it contains a ${SUB} value.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>ID Token</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#itsub">itsub</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Identify the missing 'sub' value and reject the ID Token.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_init_logout">3.43. rp-init-logout</h2>
+<p><em>Does RP initiated Logout</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Does an RP initiated logout.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>RP Initiated Logout</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>That the Single Sign On session on the OP disappears.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_init_logout_no_state">3.44. rp-init-logout-no-state</h2>
+<p><em>Does RP initiated Logout</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Does an RP initiated logout.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>RP Initiated Logout</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#nst">nst</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>The OP does not return the 'state' variable.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_init_logout_other_state">3.45. rp-init-logout-other-state</h2>
+<p><em>Does RP initiated Logout</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Does an RP initiated logout.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>RP Initiated Logout</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#ost">ost</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>The OP returns random 'state' variable.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_key_rotation_op_enc_key">3.46. rp-key-rotation-op-enc-key</h2>
+<p><em>Supports rotation of provider's asymmetric encryption keys</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Fetch the issuer's keys from the 'jwks_uri' and make an ${ENCRYPTED_REQUEST} using the issuer's encryption keys. Fetch the issuer's keys from the jwks_uri again, and make a new encrypted request using the rotated encryption keys.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Key Rotation</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#rotenc">rotenc</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>A successful authentication response to both authentication requests encrypted using rotated encryption keys.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_key_rotation_op_sign_key">3.47. rp-key-rotation-op-sign-key</h2>
+<p><em>Supports rotation of provider's asymmetric signing keys</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Request an ID Token and verify its signature. Make a new authentication request and retrieve another ID Token and verify its signature.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Key Rotation</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#rotsig">rotsig</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Successfully verify both ID Token signatures, fetching the ${SIGNING_KEY_ROTATION} if the 'kid' claim in the JOSE header is unknown.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_key_rotation_op_sign_key_native">3.48. rp-key-rotation-op-sign-key-native</h2>
+<p><em>Supports rotation of provider's asymmetric signing keys, variant for 'native' apps</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Request an ID Token and verify its signature. Will have to retrieve new keys from the OP to be able to verify the ID Token</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Key Rotation</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#rotsig">rotsig</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Successfully verify the ID Token signature, fetching the ${SIGNING_KEY_ROTATION} if the 'kid' claim in the JOSE header is unknown.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_nonce_invalid">3.49. rp-nonce-invalid</h2>
+<p><em>Rejects ID Token with invalid 'nonce' when valid 'nonce' sent</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Pass a ${NONCE_IMPLEMENTATION} in the Authentication Request. Verify the 'nonce' value returned in the ${ID_TOKEN}.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>nonce Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#nonce">nonce</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Identify that the 'nonce' value in the ID Token is invalid and reject the ID Token.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_nonce_unless_code_flow">3.50. rp-nonce-unless-code-flow</h2>
+<p><em>Sends 'nonce' unless using code flow</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Always send a ${NONCE_IMPLEMENTATION} as a request parameter while using implicit or hybrid flow. Verify the 'nonce' value returned in the ${ID_TOKEN}.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>nonce Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>An ${ID_TOKEN}, either from the Authorization Endpoint or from the Token Endpoint, containing the same 'nonce' value as passed in the authentication request when using ${HYBRID_FLOW_ID_TOKEN} or ${IMPLICIT_FLOW_ID_TOKEN}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_registration_dynamic">3.51. rp-registration-dynamic</h2>
+<p><em>Uses dynamic registration</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Use the ${CLIENT_REGISTRATION_ENDPOINT} in order to dynamically register the Relying Party.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Dynamic Client Registration</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Get a ${CLIENT_REGISTRATION_RESPONSE}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_request_uri_enc">3.52. rp-request_uri-enc</h2>
+<p><em>Can use request_uri request parameter with encrypted request</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Pass a ${REQUEST_OBJECT_BY_REFERENCE}, using the request_uri parameter. ${ENCRYPT_THE_REQUEST_OBJECT} using the 'RSA1_5' and 'A128CBC-HS256' algorithms.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>request_uri Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>An authentication response to the encrypted request passed using the request_uri request parameter.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_request_uri_sig">3.53. rp-request_uri-sig</h2>
+<p><em>Can use request_uri request parameter with signed request</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Pass a ${REQUEST_OBJECT_BY_REFERENCE}, using the request_uri parameter. ${SIGN_THE_REQUEST_OBJECT} using the 'RS256' algorithm.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>request_uri Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>An authentication response to the signed request passed using the request_uri request parameter.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_request_uri_sig+enc">3.54. rp-request_uri-sig+enc</h2>
+<p><em>Can use request_uri request parameter with signed and encrypted request</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Pass a ${REQUEST_OBJECT_BY_REFERENCE}, using the request_uri parameter. ${SIGN_THE_REQUEST_OBJECT} using the 'RS256' algorithm, then ${ENCRYPT_THE_REQUEST_OBJECT} using the 'RSA1_5' and 'A128CBC-HS256' algorithms.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>request_uri Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>An authentication response to the signed and encrypted request passed using the request_uri request parameter.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_request_uri_unsigned">3.55. rp-request_uri-unsigned</h2>
+<p><em>Can use request_uri request parameter with unsigned request</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Pass a ${REQUEST_OBJECT_BY_REFERENCE}, using the request_uri parameter. The Request Object should be signed using the algorithm 'none' (${UNSECURED_JWS}).</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>request_uri Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>An authentication response to the unsigned request passed using the request_uri request parameter.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_response_mode_form_post">3.56. rp-response_mode-form_post</h2>
+<p><em>Can make request using response_type='id_token token' and response_mode='form_post'</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Make an authentication request with the ${RESPONSE_TYPE} set to 'id_token token' and the ${RESPONSE_MODE} set to ${FORM_POST}.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Response Type and Response Mode</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>HTML form post response processed, resulting in query encoded parameters.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_response_mode_form_post_error">3.57. rp-response_mode-form_post-error</h2>
+<p><em>Can consume an authentication error response with response_mode='form_post'</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Construct and send an Authentication Request with ${RESPONSE_MODE} set to ${FORM_POST}, max_age=0 and prompt=none which results in the test suite returning an error because the requested conditions cannot be met.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Response Type and Response Mode</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>The HTML form post authorization error response is consumed, resulting in an error screen shown to the user.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_response_type_code">3.58. rp-response_type-code</h2>
+<p><em>Can make request using response_type 'code'</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Make an authentication request using the ${AUTHORIZATION_CODE_FLOW}.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Response Type and Response Mode</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>An ${CODE_AUTHENTICATION_RESPONSE} containing an authorization code.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_response_type_code+id_token">3.59. rp-response_type-code+id_token</h2>
+<p><em>Can make request using response_type 'code id_token'</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Make an authentication request using the ${HYBRID_FLOW}, specifying the ${RESPONSE_TYPE} as 'code id_token'</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Response Type and Response Mode</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code id_token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>An ${IMPLICIT_AUTHENTICATION_RESPONSE} containing an ${ID_TOKEN} and an Authorization Code.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_response_type_code+id_token+token">3.60. rp-response_type-code+id_token+token</h2>
+<p><em>Can make request using response_type 'code id_token token'</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Make an authentication request using the ${HYBRID_FLOW}, specifying the ${RESPONSE_TYPE} as 'code id_token token'</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Response Type and Response Mode</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>An ${IMPLICIT_AUTHENTICATION_RESPONSE} containing an authorization code, an ${ID_TOKEN} and an Access Token.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_response_type_code+token">3.61. rp-response_type-code+token</h2>
+<p><em>Can make request using response_type 'code token'</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Make an authentication request using the ${HYBRID_FLOW}, specifying the ${RESPONSE_TYPE} as 'code token'</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Response Type and Response Mode</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>An ${IMPLICIT_AUTHENTICATION_RESPONSE} containing an authorization code and an Access Token.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_response_type_id_token">3.62. rp-response_type-id_token</h2>
+<p><em>Can make request using response_type 'id_token'</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Make an authentication request using the ${IMPLICIT_FLOW}, specifying the ${RESPONSE_TYPE} as 'id_token'.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Response Type and Response Mode</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>id_token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>An ${IMPLICIT_AUTHENTICATION_RESPONSE} containing an ${ID_TOKEN}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_response_type_id_token+token">3.63. rp-response_type-id_token+token</h2>
+<p><em>Can make request using response_type 'id_token token'</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Make an authentication request using the ${IMPLICIT_FLOW}, specifying the ${RESPONSE_TYPE} as 'id_token token'</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Response Type and Response Mode</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>An ${IMPLICIT_AUTHENTICATION_RESPONSE} containing an ${ID_TOKEN} and an Access Token.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_scope_userinfo_claims">3.64. rp-scope-userinfo-claims</h2>
+<p><em>Can request and use claims using scope values</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>${REQUEST_CLAIMS_USING_SCOPE_VALUES}.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>scope Request Parameter</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>A ${USERINFO_RESPONSE} containing the requested claims. If no access token is issued (when using ${IMPLICIT_FLOW} with response_type='id_token') the ${ID_TOKEN} contains the requested claims.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_token_endpoint_client_secret_basic">3.65. rp-token_endpoint-client_secret_basic</h2>
+<p><em>Can make Access Token Request with 'client_secret_basic' authentication</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Use the '${CLIENT_SECRET_BASIC}' method to authenticate at the Authorization Server when using the token endpoint.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Client Authentication</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>A ${TOKEN_RESPONSE}, containing an ID token.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_token_endpoint_client_secret_jwt">3.66. rp-token_endpoint-client_secret_jwt</h2>
+<p><em>Can make Access Token Request with 'client_secret_jwt' authentication</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Use the '${CLIENT_SECRET_JWT}' method to authenticate at the Authorization Server when using the token endpoint.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Client Authentication</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>code id_token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>A ${TOKEN_RESPONSE}, containing an ID token.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_token_endpoint_client_secret_post">3.67. rp-token_endpoint-client_secret_post</h2>
+<p><em>Can make Access Token Request with 'client_secret_post' authentication</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Use the '${CLIENT_SECRET_POST}' method to authenticate at the Authorization Server when using the token endpoint.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Client Authentication</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>code id_token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>A ${TOKEN_RESPONSE}, containing an ID token.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_token_endpoint_private_key_jwt">3.68. rp-token_endpoint-private_key_jwt</h2>
+<p><em>Can make Access Token Request with 'private_key_jwt' authentication</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Use the '${PRIVATE_KEY_JWT}' method to authenticate at the Authorization Server when using the token endpoint.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>Client Authentication</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>code id_token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>A ${TOKEN_RESPONSE}, containing an ID token.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_userinfo_bad_sub_claim">3.69. rp-userinfo-bad-sub-claim</h2>
+<p><em>Rejects UserInfo Response with invalid 'sub' claim</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Make a ${USERINFO_REQUEST} and verify the 'sub' value of the ${USERINFO_RESPONSE} by ${USER_INFO_SUB_CLAIM}.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>UserInfo Endpoint</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td><ul>
+<li><a href="#uisub">uisub</a></li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Identify the invalid 'sub' value and reject the UserInfo Response.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_userinfo_bearer_body">3.70. rp-userinfo-bearer-body</h2>
+<p><em>Can send Access Token as form-encoded body parameter</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Pass the access token as a ${FORM_ENCODED_BODY_PARAMETER} while doing the ${USERINFO_REQUEST}.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>UserInfo Endpoint</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>A ${USERINFO_RESPONSE}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_userinfo_bearer_header">3.71. rp-userinfo-bearer-header</h2>
+<p><em>Can send Access Token in the HTTP Authorization request header</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Pass the access token using the ${BEARER_AUTH_SCHEME} while doing the ${USERINFO_REQUEST}.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>UserInfo Endpoint</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>A ${USERINFO_RESPONSE}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_userinfo_enc">3.72. rp-userinfo-enc</h2>
+<p><em>Can request and use encrypted UserInfo Response</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Request encrypted UserInfo. Decrypt the ${USERINFO_RESPONSE}.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>UserInfo Endpoint</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>A ${USERINFO_RESPONSE}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_userinfo_sig">3.73. rp-userinfo-sig</h2>
+<p><em>Can request and use signed UserInfo Response</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Request signed UserInfo.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>UserInfo Endpoint</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Successful signature verification of the ${USERINFO_RESPONSE}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+
+<h2 id="rp_userinfo_sig+enc">3.74. rp-userinfo-sig+enc</h2>
+<p><em>Can request and use signed and encrypted UserInfo Response</em></p>
+<p></p>
+
+<table>
+    <tbody>
+    <tr>
+        <td>Description</td>
+        <td>Request signed and encrypted UserInfo. Decrypt the ${USERINFO_RESPONSE} and verify its signature.</td>
+    </tr>
+    <tr>
+        <td>Group</td>
+        <td>UserInfo Endpoint</td>
+    </tr>
+    <tr>
+        <td>Return Types</td>
+        <td><ul>
+<li>code</li>
+<li>id_token token</li>
+<li>code id_token</li>
+<li>code token</li>
+<li>code id_token token</li>
+</ul></td>
+    </tr>
+    <tr>
+        <td>Modifiers</td>
+        <td>NONE</td>
+    </tr>
+    <tr>
+        <td>Expected result</td>
+        <td>Successful decryption and signature verification of the ${USERINFO_RESPONSE}.</td>
+    </tr>
+    <tr>
+        <td>Link to specification</td>
+        <td>MISSING</td>
+    </tr>
+        
+    </tbody>
+</table>
+
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+<p></p>
+
+<h1 id="modifiers">4. Modifiers</h1>
+
+<h2 id="alg_none">4.1. alg_none</h2>
+<p>Set signing algorithm to be none</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L688">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-backchannel-rpinitlogout-lt-alg-none</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="ath">4.2. ath</h2>
+<p>Modify the at_hash if present</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L155">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-id_token-bad-at_hash</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="aud">4.3. aud</h2>
+<p>Set an invalid aud claim</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L181">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-id_token-aud</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="back">4.4. back</h2>
+<p>Remove frontchannel_logout_uri if one is specified</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L724">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-backchannel-rpinitlogout-lt-wrong-event</dd>
+<dd>rp-backchannel-rpinitlogout-lt-wrong-aud</dd>
+<dd>rp-backchannel-rpinitlogout-lt-no-event</dd>
+<dd>rp-backchannel-rpinitlogout-lt-wrong-issuer</dd>
+<dd>rp-backchannel-rpinitlogout-lt-alg-none</dd>
+<dd>rp-backchannel-rpinitlogout-lt-wrong-alg</dd>
+<dd>rp-backchannel-rpinitlogout</dd>
+<dd>rp-backchannel-rpinitlogout-lt-with-nonce</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="ch">4.5. ch</h2>
+<p>Modify the c_hash if present</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L165">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-id_token-bad-c_hash</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="front">4.6. front</h2>
+<p>Remove backchannel_logout_uri if one is specified</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L729">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-frontchannel-rpinitlogout</dd>
+<dd>rp-frontchannel-rpinitlogout-wrong-sid</dd>
+<dd>rp-frontchannel-rpinitlogout-wrong-iss</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="iat">4.7. iat</h2>
+<p>Remove iat claim</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L184">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-id_token-iat</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="idts">4.8. idts</h2>
+<p>Mess with the signature of the JWS</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L285">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-id_token-bad-sig-es256</dd>
+<dd>rp-id_token-bad-sig-hs256</dd>
+<dd>rp-id_token-bad-sig-rs256</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="initiate_login_uri">4.9. initiate_login_uri</h2>
+<p>??</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L357">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-3rd_party-init-login</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="issi">4.10. issi</h2>
+<p>Mess with the iss value</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L175">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-id_token-issuer-mismatch</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="isso">4.11. isso</h2>
+<p>Return an incorrect issuer in the provider configuration</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L325">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-discovery-issuer-not-matching-config</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="itsub">4.12. itsub</h2>
+<p>Remove sub claim</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L178">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-id_token-sub</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="math">4.13. math</h2>
+<p>Remove the at_hash if present</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L161">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-id_token-missing-at_hash</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="mch">4.14. mch</h2>
+<p>Remove the c_hash if present</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L171">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-id_token-missing-c_hash</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="no_event">4.15. no_event</h2>
+<p>Remove a event specification from the JWT</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L666">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-backchannel-rpinitlogout-lt-no-event</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="nokid1jwks">4.16. nokid1jwks</h2>
+<p>Remove key ID from keys</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L273">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-id_token-kid-absent-single-jwks</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="nokidmuljwks">4.17. nokidmuljwks</h2>
+<p>Remove key ID from keys</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L276">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-id_token-kid-absent-multiple-jwks</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="nonce">4.18. nonce</h2>
+<p>Remove nonce claim if present</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L187">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-nonce-invalid</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="nst">4.19. nst</h2>
+<p>Make sure there is no 'state' in the request and as an effect of that none<br>
+in the logout token</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L638">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-init-logout-no-state</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="ost">4.20. ost</h2>
+<p>Put a faulty 'state' in the request and as an effect of that<br>
+in the logout token</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L644">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-init-logout-other-state</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="rotenc">4.21. rotenc</h2>
+<p>Rollover encryption keys</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L496">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-key-rotation-op-enc-key</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="rotsig">4.22. rotsig</h2>
+<p>Rollover signing keys</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L260">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-key-rotation-op-sign-key</dd>
+<dd>rp-key-rotation-op-sign-key-native</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="uisub">4.23. uisub</h2>
+<p>Set a faulty sub in the User Info</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L317">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-userinfo-bad-sub-claim</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="with_nonce">4.24. with_nonce</h2>
+<p>Add a nonce to the logout token</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L673">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-backchannel-rpinitlogout-lt-with-nonce</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="wrong_alg">4.25. wrong_alg</h2>
+<p>Figure out a alg I could use but that are not the one used<br>
+for ID Tokens. Pick one from id_token_signing_alg_values_supported</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L681">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-backchannel-rpinitlogout-lt-wrong-alg</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="wrong_aud">4.26. wrong_aud</h2>
+<p>Set wrong audience of the logout token</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L696">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-backchannel-rpinitlogout-lt-wrong-aud</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="wrong_event">4.27. wrong_event</h2>
+<p>Set the event to be something it should not be</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L668">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-backchannel-rpinitlogout-lt-wrong-event</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="wrong_issuer">4.28. wrong_issuer</h2>
+<p>Set the wrong issuer on the logout token<br>
+Set the wrong issuer of the logout IFrame</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L691">code</a></dd>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L714">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-backchannel-rpinitlogout-lt-wrong-issuer</dd>
+<dd>rp-frontchannel-rpinitlogout-wrong-iss</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+
+<h2 id="wrong_sid">4.29. wrong_sid</h2>
+<p>Set the wrong session ID in the logout IFrame</p>
+<p><dl><dt>Links to code:<dt>
+<dd><a href="https://github.com/rohe/oidctest/blob/d0b29ad27101fc3a64329c7cee6b27fdcb6b52d5/src/oidctest/rp/provider.py#L716">code</a></dd>
+</dl>
+<p><dl><dt>Used in tests:<dt>
+<dd>rp-frontchannel-rpinitlogout-wrong-sid</dd>
+</dl>
+<p>
+Java Implementation Status: Status TDB
+</p>
+<p>
+Link to Java code: Link TBD
+</p>
+
+</body>
+</html>
