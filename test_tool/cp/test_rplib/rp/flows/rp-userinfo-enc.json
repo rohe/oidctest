@@ -12,5 +12,8 @@
   },
   "short_description": "Can request and use encrypted UserInfo Response",
   "detailed_description": "Request encrypted UserInfo. Decrypt the ${USERINFO_RESPONSE}.",
-  "expected_result": "A ${USERINFO_RESPONSE}."
+  "expected_result": "A ${USERINFO_RESPONSE}.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#UserInfo"
+  ]
 }

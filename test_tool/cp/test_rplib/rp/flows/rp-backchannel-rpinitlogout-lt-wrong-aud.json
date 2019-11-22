@@ -1,6 +1,9 @@
 {
   "group": "RP Initiated BackChannel Logout",
-  "behavior": ["wrong_aud", "back"],
+  "behavior": [
+    "wrong_aud",
+    "back"
+  ],
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [
@@ -13,5 +16,9 @@
   },
   "short_description": "Does RP initiated Logout, wrong audience in logout token",
   "detailed_description": "Does an RP initiated logout, wrong audience in logout token.",
-  "expected_result": "Error"
+  "expected_result": "Error",
+  "reference": [
+    "https://openid.net/specs/openid-connect-backchannel-1_0.html#BCRequest",
+    "https://openid.net/specs/openid-connect-session-1_0.html#RPLogout"
+  ]
 }

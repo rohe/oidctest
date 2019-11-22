@@ -13,5 +13,8 @@
   },
   "short_description": "Can use request_uri request parameter with signed and encrypted request",
   "detailed_description": "Pass a ${REQUEST_OBJECT_BY_REFERENCE}, using the request_uri parameter. ${SIGN_THE_REQUEST_OBJECT} using the 'RS256' algorithm, then ${ENCRYPT_THE_REQUEST_OBJECT} using the 'RSA1_5' and 'A128CBC-HS256' algorithms.",
-  "expected_result": "An authentication response to the signed and encrypted request passed using the request_uri request parameter."
+  "expected_result": "An authentication response to the signed and encrypted request passed using the request_uri request parameter.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#RequestUriParameter"
+  ]
 }

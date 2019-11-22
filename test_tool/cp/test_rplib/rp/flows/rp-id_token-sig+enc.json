@@ -22,5 +22,8 @@
   },
   "short_description": "Can request and use signed and encrypted ID Token",
   "detailed_description": "Request an signed and encrypted ID Token. Decrypt the returned the ID Token and verify its signature using the keys published by the Issuer.",
-  "expected_result": "Accept the ID Token after doing ${ID_TOKEN_VALIDATION}."
+  "expected_result": "Accept the ID Token after doing ${ID_TOKEN_VALIDATION}.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#IDToken"
+  ]
 }

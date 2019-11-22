@@ -12,5 +12,8 @@
   },
   "short_description": "Can request and use signed and encrypted UserInfo Response",
   "detailed_description": "Request signed and encrypted UserInfo. Decrypt the ${USERINFO_RESPONSE} and verify its signature.",
-  "expected_result": "Successful decryption and signature verification of the ${USERINFO_RESPONSE}."
+  "expected_result": "Successful decryption and signature verification of the ${USERINFO_RESPONSE}.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#UserInfo"
+  ]
 }

@@ -7,7 +7,9 @@
     "CIT"
   ],
   "group": "UserInfo Endpoint",
-  "behavior": ["uisub"],
+  "behavior": [
+    "uisub"
+  ],
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [
@@ -20,5 +22,8 @@
   },
   "short_description": "Rejects UserInfo Response with invalid 'sub' claim",
   "detailed_description": "Make a ${USERINFO_REQUEST} and verify the 'sub' value of the ${USERINFO_RESPONSE} by ${USER_INFO_SUB_CLAIM}.",
-  "expected_result": "Identify the invalid 'sub' value and reject the UserInfo Response."
+  "expected_result": "Identify the invalid 'sub' value and reject the UserInfo Response.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#UserInfo"
+  ]
 }

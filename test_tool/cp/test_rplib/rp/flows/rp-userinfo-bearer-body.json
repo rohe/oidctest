@@ -12,5 +12,9 @@
   },
   "short_description": "Can send Access Token as form-encoded body parameter",
   "detailed_description": "Pass the access token as a ${FORM_ENCODED_BODY_PARAMETER} while doing the ${USERINFO_REQUEST}.",
-  "expected_result": "A ${USERINFO_RESPONSE}."
+  "expected_result": "A ${USERINFO_RESPONSE}.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#UserInfo",
+    "https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication"
+  ]
 }

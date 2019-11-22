@@ -16,5 +16,8 @@
   },
   "short_description": "Can use request_uri request parameter with unsigned request",
   "detailed_description": "Pass a ${REQUEST_OBJECT_BY_REFERENCE}, using the request_uri parameter. The Request Object should be signed using the algorithm 'none' (${UNSECURED_JWS}).",
-  "expected_result": "An authentication response to the unsigned request passed using the request_uri request parameter."
+  "expected_result": "An authentication response to the unsigned request passed using the request_uri request parameter.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#RequestUriParameter"
+  ]
 }

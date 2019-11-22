@@ -16,5 +16,8 @@
   },
   "short_description": "Can request and use unsigned ID Token",
   "detailed_description": "Use ${CODE_FLOW} and retrieve an unsigned ID Token. This test is only applicable when response_type='code'",
-  "expected_result": "Accept the ID Token after doing ${ID_TOKEN_VALIDATION}."
+  "expected_result": "Accept the ID Token after doing ${ID_TOKEN_VALIDATION}.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#IDToken"
+  ]
 }

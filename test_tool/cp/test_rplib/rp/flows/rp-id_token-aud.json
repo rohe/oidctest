@@ -8,7 +8,9 @@
     "CIT"
   ],
   "group": "ID Token",
-  "behavior": ["aud"],
+  "behavior": [
+    "aud"
+  ],
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [
@@ -22,5 +24,8 @@
   },
   "short_description": "Rejects ID Token with invalid 'aud' claim",
   "detailed_description": "Request an ID token and compare its ${AUD} value to the Relying Party's '${CLIENT_ID}'.",
-  "expected_result": "Identify that the 'aud' value is missing or doesn't match the 'client_id' and reject the ID Token after doing ${ID_TOKEN_VALIDATION}."
+  "expected_result": "Identify that the 'aud' value is missing or doesn't match the 'client_id' and reject the ID Token after doing ${ID_TOKEN_VALIDATION}.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#IDToken"
+  ]
 }

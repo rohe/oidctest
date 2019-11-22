@@ -15,5 +15,8 @@
   },
   "short_description": "Can request and use signed UserInfo Response",
   "detailed_description": "Request signed UserInfo.",
-  "expected_result": "Successful signature verification of the ${USERINFO_RESPONSE}."
+  "expected_result": "Successful signature verification of the ${USERINFO_RESPONSE}.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#UserInfo"
+  ]
 }

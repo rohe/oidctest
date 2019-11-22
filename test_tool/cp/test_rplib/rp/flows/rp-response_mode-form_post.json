@@ -13,5 +13,8 @@
   },
   "short_description": "Can make request using response_type='id_token token' and response_mode='form_post'",
   "detailed_description": "Make an authentication request with the ${RESPONSE_TYPE} set to 'id_token token' and the ${RESPONSE_MODE} set to ${FORM_POST}.",
-  "expected_result": "HTML form post response processed, resulting in query encoded parameters."
+  "expected_result": "HTML form post response processed, resulting in query encoded parameters.",
+  "reference": [
+    "https://openid.net/specs/oauth-v2-form-post-response-mode-1_0.html#FormPostResponseMode"
+  ]
 }

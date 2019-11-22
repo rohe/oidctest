@@ -12,5 +12,8 @@
   },
   "short_description": "Can request and use claims in UserInfo Response using the 'claims' request parameter",
   "detailed_description": "Ask for the claim 'name' using the ${CLAIMS_REQUEST_PARAMETER}. Retrieve the claims by making a ${USERINFO_REQUEST}.",
-  "expected_result": "A ${USERINFO_RESPONSE} containing the requested claim."
+  "expected_result": "A ${USERINFO_RESPONSE} containing the requested claim.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#ClaimsParameter"
+  ]
 }

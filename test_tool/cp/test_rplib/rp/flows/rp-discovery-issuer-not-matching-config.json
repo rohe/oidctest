@@ -4,7 +4,9 @@
     "DYN"
   ],
   "group": "Discovery",
-  "behavior": ["isso"],
+  "behavior": [
+    "isso"
+  ],
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [
@@ -18,6 +20,8 @@
   },
   "short_description": "Rejects discovered issuer not matching provider configuration issuer",
   "detailed_description": "Retrieve ${OPENID_CONFIGURATION_INFORMATION} for OpenID Provider from the .well-known/openid-configuration path. Verify that the issuer in the ${PROVIDER_CONFIGURATION}  matches the one returned by WebFinger.",
-  "expected_result": "Identify that the issuers are not matching and reject the provider configuration."
-
+  "expected_result": "Identify that the issuers are not matching and reject the provider configuration.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig"
+  ]
 }

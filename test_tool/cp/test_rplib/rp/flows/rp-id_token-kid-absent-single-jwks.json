@@ -7,7 +7,9 @@
     "CT",
     "CIT"
   ],
-  "behavior": ["nokid1jwks"],
+  "behavior": [
+    "nokid1jwks"
+  ],
   "group": "ID Token",
   "claims": "normal",
   "capabilities": {
@@ -25,5 +27,8 @@
   },
   "short_description": "Accepts ID Token without 'kid' claim in JOSE header if only one matching JWK is supplied in 'jwks_uri'",
   "detailed_description": "Request an ID token and verify its signature using a single matching key provided by the Issuer.",
-  "expected_result": "Use the single matching key out of the Issuer's published set to verify the ID Tokens signature and accept the ID Token after doing ${ID_TOKEN_VALIDATION}."
+  "expected_result": "Use the single matching key out of the Issuer's published set to verify the ID Tokens signature and accept the ID Token after doing ${ID_TOKEN_VALIDATION}.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#IDToken"
+  ]
 }

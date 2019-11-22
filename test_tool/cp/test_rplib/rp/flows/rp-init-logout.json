@@ -12,5 +12,8 @@
   },
   "short_description": "Does RP initiated Logout",
   "detailed_description": "Does an RP initiated logout.",
-  "expected_result": "That the Single Sign On session on the OP disappears."
+  "expected_result": "That the Single Sign On session on the OP disappears.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-session-1_0.html#RPLogout"
+  ]
 }

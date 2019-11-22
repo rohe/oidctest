@@ -8,7 +8,9 @@
     "CIT"
   ],
   "group": "nonce Request Parameter",
-  "behavior": ["nonce"],
+  "behavior": [
+    "nonce"
+  ],
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [
@@ -22,5 +24,9 @@
   },
   "short_description": "Rejects ID Token with invalid 'nonce' when valid 'nonce' sent",
   "detailed_description": "Pass a ${NONCE_IMPLEMENTATION} in the Authentication Request. Verify the 'nonce' value returned in the ${ID_TOKEN}.",
-  "expected_result": "Identify that the 'nonce' value in the ID Token is invalid and reject the ID Token."
+  "expected_result": "Identify that the 'nonce' value in the ID Token is invalid and reject the ID Token.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest",
+    "https://openid.net/specs/openid-connect-core-1_0.html#IDToken"
+  ]
 }

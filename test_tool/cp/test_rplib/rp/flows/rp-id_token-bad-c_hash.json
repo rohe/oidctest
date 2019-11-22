@@ -3,7 +3,9 @@
     "CI",
     "CIT"
   ],
-  "behavior": ["ch"],
+  "behavior": [
+    "ch"
+  ],
   "group": "ID Token",
   "claims": "normal",
   "capabilities": {
@@ -14,5 +16,11 @@
   },
   "short_description": "Rejects ID Token with incorrect 'c_hash' claim when hybrid flow is used",
   "detailed_description": "Retrieve Authorization Code and ID Token from the Authorization Endpoint, using ${HYBRID_FLOW}. Verify the ${C_HASH} value in the returned ID token. 'id_token_signed_response_alg' must NOT be 'none'",
-  "expected_result": "Identify the incorrect 'c_hash' value and reject the ID Token after doing ${AUTHORIZATION_CODE_VALIDATION}."
+  "expected_result": "Identify the incorrect 'c_hash' value and reject the ID Token after doing ${AUTHORIZATION_CODE_VALIDATION}.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#IDToken",
+    "https://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation",
+    "https://openid.net/specs/openid-connect-core-1_0.html#CodeValidation",
+    "https://openid.net/specs/openid-connect-core-1_0.html#HybridIDToken"
+  ]
 }

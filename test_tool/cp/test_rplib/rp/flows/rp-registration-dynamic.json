@@ -16,5 +16,8 @@
   },
   "short_description": "Uses dynamic registration",
   "detailed_description": "Use the ${CLIENT_REGISTRATION_ENDPOINT} in order to dynamically register the Relying Party.",
-  "expected_result": "Get a ${CLIENT_REGISTRATION_RESPONSE}."
+  "expected_result": "Get a ${CLIENT_REGISTRATION_RESPONSE}.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-registration-1_0.html#ClientRegistration"
+  ]
 }

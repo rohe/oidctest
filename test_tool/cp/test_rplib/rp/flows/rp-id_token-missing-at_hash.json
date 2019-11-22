@@ -3,7 +3,9 @@
     "IT",
     "CIT"
   ],
-  "behavior": ["math"],
+  "behavior": [
+    "math"
+  ],
   "group": "ID Token",
   "claims": "normal",
   "capabilities": {
@@ -14,5 +16,8 @@
   },
   "short_description": "Rejects ID Token with incorrect 'at_hash' claim when response_type='id_token token'",
   "detailed_description": "Make an authentication request using response_type='id_token token' for Implicit Flow or response_type='code id_token token' for Hybrid Flow. Verify the 'at_hash' presence in the returned ID Token.",
-  "expected_result": "Identify missing 'at_hash' value and reject the ID Token."
+  "expected_result": "Identify missing 'at_hash' value and reject the ID Token.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#IDToken"
+  ]
 }

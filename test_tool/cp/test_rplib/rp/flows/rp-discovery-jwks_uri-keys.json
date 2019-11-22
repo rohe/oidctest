@@ -17,5 +17,8 @@
   },
   "short_description": "Uses keys discovered with jwks_uri value",
   "detailed_description": "The Relying Party uses keys from the jwks_uri which has been obtained from the ${OPENID_PROVIDER_METADATA}.",
-  "expected_result": "Should be able to verify signed responses and/or encrypt requests using obtained keys."
+  "expected_result": "Should be able to verify signed responses and/or encrypt requests using obtained keys.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig"
+  ]
 }

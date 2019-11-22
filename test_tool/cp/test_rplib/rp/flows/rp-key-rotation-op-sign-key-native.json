@@ -4,7 +4,9 @@
     "DYN"
   ],
   "group": "Key Rotation",
-  "behavior": ["rotsig"],
+  "behavior": [
+    "rotsig"
+  ],
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [
@@ -18,5 +20,8 @@
   },
   "short_description": "Supports rotation of provider's asymmetric signing keys, variant for 'native' apps",
   "detailed_description": "Request an ID Token and verify its signature. Will have to retrieve new keys from the OP to be able to verify the ID Token",
-  "expected_result": "Successfully verify the ID Token signature, fetching the ${SIGNING_KEY_ROTATION} if the 'kid' claim in the JOSE header is unknown."
+  "expected_result": "Successfully verify the ID Token signature, fetching the ${SIGNING_KEY_ROTATION} if the 'kid' claim in the JOSE header is unknown.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys"
+  ]
 }

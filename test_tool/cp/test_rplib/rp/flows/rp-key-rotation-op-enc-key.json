@@ -1,5 +1,7 @@
 {
-  "behavior": ["rotenc"],
+  "behavior": [
+    "rotenc"
+  ],
   "group": "Key Rotation",
   "claims": "normal",
   "capabilities": {
@@ -14,5 +16,8 @@
   },
   "short_description": "Supports rotation of provider's asymmetric encryption keys",
   "detailed_description": "Fetch the issuer's keys from the 'jwks_uri' and make an ${ENCRYPTED_REQUEST} using the issuer's encryption keys. Fetch the issuer's keys from the jwks_uri again, and make a new encrypted request using the rotated encryption keys.",
-  "expected_result": "A successful authentication response to both authentication requests encrypted using rotated encryption keys."
+  "expected_result": "A successful authentication response to both authentication requests encrypted using rotated encryption keys.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#RotateEncKeys"
+  ]
 }

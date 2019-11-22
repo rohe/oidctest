@@ -11,7 +11,10 @@
       "code id_token token"
     ]
   },
-  "short_decription" : "Webfinger may return a response with to the client unknown members",
+  "short_decription": "Webfinger may return a response with to the client unknown members",
   "detailed_description": "The webfinger response will contain a member that the client doesn't recognize",
-  "expected_result": "An issuer location should be returned."
+  "expected_result": "An issuer location should be returned.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery"
+  ]
 }

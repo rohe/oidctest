@@ -13,5 +13,8 @@
   },
   "short_description": "Can request and use claims in ID Token using the 'claims' request parameter",
   "detailed_description": "Ask for the claim 'name' using the ${CLAIMS_REQUEST_PARAMETER}. Retrieve the claim from an ID Token, either by making a ${TOKEN_REQUEST} or by using ${IMPLICIT_FLOW}.",
-  "expected_result": "An ${ID_TOKEN} containing the requested claim."
+  "expected_result": "An ${ID_TOKEN} containing the requested claim.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#ClaimsParameter"
+  ]
 }

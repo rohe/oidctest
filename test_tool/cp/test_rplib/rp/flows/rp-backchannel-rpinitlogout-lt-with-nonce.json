@@ -13,5 +13,9 @@
   },
   "short_description": "Does RP initiated Logout, incorrect nonce in logout token",
   "detailed_description": "Does an RP initiated logout, incorrect nonce in logout token.",
-  "expected_result": "Error"
+  "expected_result": "Error",
+    "reference": [
+    "https://openid.net/specs/openid-connect-backchannel-1_0.html#BCRequest",
+    "https://openid.net/specs/openid-connect-session-1_0.html#RPLogout"
+  ]
 }

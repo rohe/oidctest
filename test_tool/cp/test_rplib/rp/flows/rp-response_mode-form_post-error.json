@@ -13,5 +13,8 @@
   },
   "short_description": "Can consume an authentication error response with response_mode='form_post'",
   "detailed_description": "Construct and send an Authentication Request with ${RESPONSE_MODE} set to ${FORM_POST}, max_age=0 and prompt=none which results in the test suite returning an error because the requested conditions cannot be met.",
-  "expected_result": "The HTML form post authorization error response is consumed, resulting in an error screen shown to the user."
+  "expected_result": "The HTML form post authorization error response is consumed, resulting in an error screen shown to the user.",
+  "reference": [
+    "https://openid.net/specs/oauth-v2-form-post-response-mode-1_0.html#FormPostResponseMode"
+  ]
 }

@@ -1,7 +1,12 @@
 {
-  "MTI": ["CNF", "DYN"],
+  "MTI": [
+    "CNF",
+    "DYN"
+  ],
   "group": "Key Rotation",
-  "behavior": ["rotsig"],
+  "behavior": [
+    "rotsig"
+  ],
   "claims": "normal",
   "capabilities": {
     "response_types_supported": [
@@ -15,5 +20,8 @@
   },
   "short_description": "Supports rotation of provider's asymmetric signing keys",
   "detailed_description": "Request an ID Token and verify its signature. Make a new authentication request and retrieve another ID Token and verify its signature.",
-  "expected_result": "Successfully verify both ID Token signatures, fetching the ${SIGNING_KEY_ROTATION} if the 'kid' claim in the JOSE header is unknown."
+  "expected_result": "Successfully verify both ID Token signatures, fetching the ${SIGNING_KEY_ROTATION} if the 'kid' claim in the JOSE header is unknown.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#RotateSigKeys"
+  ]
 }

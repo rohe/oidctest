@@ -1,5 +1,7 @@
 {
-  "behavior": ["idts"],
+  "behavior": [
+    "idts"
+  ],
   "claims": "normal",
   "group": "ID Token",
   "capabilities": {
@@ -17,5 +19,8 @@
   },
   "short_description": "Rejects ID Token with invalid symmetric 'HS256' signature",
   "detailed_description": "Request an ID token and verify its signature using the ${SYMMETRIC_SIGNATURES}.",
-  "expected_result": "Identify the invalid signature and reject the ID Token after doing ${ID_TOKEN_VALIDATION}."
+  "expected_result": "Identify the invalid signature and reject the ID Token after doing ${ID_TOKEN_VALIDATION}.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#IDToken"
+  ]
 }

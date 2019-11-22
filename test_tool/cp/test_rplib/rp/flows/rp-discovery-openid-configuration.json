@@ -17,5 +17,8 @@
   },
   "short_description": "Uses Provider Configuration Information",
   "detailed_description": "Retrieve and use the ${OPENID_CONFIGURATION_INFORMATION}.",
-  "expected_result": "Read and use the JSON object returned from the OpenID Connect Provider."
+  "expected_result": "Read and use the JSON object returned from the OpenID Connect Provider.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig"
+  ]
 }

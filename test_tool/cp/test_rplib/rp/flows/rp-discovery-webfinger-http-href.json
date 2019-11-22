@@ -11,7 +11,10 @@
       "code id_token token"
     ]
   },
-  "short_decription" : "Complain about href as http URL",
+  "short_decription": "Complain about href as http URL",
   "detailed_description": "href URLs must be HTTPS",
-  "expected_result": "Complain about return URL being http"
+  "expected_result": "Complain about return URL being http",
+  "reference": [
+    "https://openid.net/specs/openid-connect-discovery-1_0.html#IssuerDiscovery"
+  ]
 }

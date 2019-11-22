@@ -19,5 +19,9 @@
   },
   "short_description": "Can send Access Token in the HTTP Authorization request header",
   "detailed_description": "Pass the access token using the ${BEARER_AUTH_SCHEME} while doing the ${USERINFO_REQUEST}.",
-  "expected_result": "A ${USERINFO_RESPONSE}."
+  "expected_result": "A ${USERINFO_RESPONSE}.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#UserInfo",
+    "https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication"
+  ]
 }

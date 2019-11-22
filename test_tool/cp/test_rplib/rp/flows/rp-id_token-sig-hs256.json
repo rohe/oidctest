@@ -16,5 +16,8 @@
   },
   "short_description": "Accepts ID Token with valid symmetric 'HS256' signature",
   "detailed_description": "Accepts ID Token with valid symmetric 'HS256' signature. Verify the signature on the ID Token using the keys published by the Issuer.",
-  "expected_result": "Accept the ID Token after doing ${ID_TOKEN_VALIDATION}."
+  "expected_result": "Accept the ID Token after doing ${ID_TOKEN_VALIDATION}.",
+  "reference": [
+    "https://openid.net/specs/openid-connect-core-1_0.html#IDToken"
+  ]
 }
