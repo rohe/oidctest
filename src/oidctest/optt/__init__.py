@@ -38,7 +38,7 @@ def expected_response_mode(conv):
         response_mode = conv.req.req_args["response_mode"]
     except KeyError:
         if conv.req.req_args["response_type"] == [''] or conv.req.req_args[
-                "response_type"] == ['code']:
+            "response_type"] == ['code']:
             response_mode = 'query'
         else:
             response_mode = 'fragment'
@@ -250,6 +250,7 @@ class Main(object):
             resp = self.tester.async_response(self.webenv["conf"],
                                               response=kwargs)
         except cherrypy.HTTPRedirect:
+            # self.tester.flows.store_test_info(self)
             raise
         except Break:
             resp = False
@@ -326,9 +327,17 @@ class Main(object):
 
         # continue with next operation in the sequence
         self.sh["index"] += 1
+        item = self.sh["sequence"][self.sh["index"]]
+        if isinstance(item, tuple):
+            cls, _ = item
+        else:
+            cls = item
+        logger.debug('Next operation: %s (ref:%s)', cls.__name__, ref)
+
         try:
             resp = self.tester.handle_request(request, **kwargs)
         except cherrypy.HTTPRedirect:
+            self.tester.flows.store_test_info(self.tester)
             raise
         except (Break, OperationError) as err:
             resp = False
@@ -374,7 +383,7 @@ class Main(object):
                     self.opresult()
                 else:
                     return self._endpoint(ref='backchannel_logout',
-                                      request=_request)
+                                          request=_request)
             else:
                 _request_args = cherrypy.request.params
                 if not _request_args:
@@ -404,7 +413,7 @@ class Main(object):
             logger.debug('Not for me')
             self.opresult()
         else:
-            _args = dict([(k,v) for k,v in kwargs.items()
+            _args = dict([(k, v) for k, v in kwargs.items()
                           if k not in ['entity_id', 'sid']])
             return self._endpoint(ref='frontchannel_logout', **_args)
 
@@ -458,8 +467,8 @@ class Main(object):
                 self.opresult()
             else:  # display after_logout.html again
                 self.session_checks['changed'] += 1
-                logger.debug('{} session check'. format(self.session_checks[
-                                                            'changed']))
+                logger.debug('{} session check'.format(self.session_checks[
+                                                           'changed']))
                 self.tester.conv.events.store(
                     'SessionState',
                     'Session check {} returned: {}'.format(
