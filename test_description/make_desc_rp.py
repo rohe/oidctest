@@ -201,7 +201,7 @@ def do_groups(tests):
 FILE = "../src/oidctest/rp/provider.py"
 
 REPO = "https://github.com/rohe"
-OIDCTEST_BLOB = "a306ff8ccd02da456192b595cf48ab5dcfd3d15a"
+OIDCTEST_BLOB = "c2c666bbc0a59f26cfa677436ac7cc1ccd1a2b0a"
 
 CODE_URL = "{}/oidctest/blob/{}/src/oidctest/rp/provider.py".format(REPO, OIDCTEST_BLOB)
 
