@@ -13,10 +13,10 @@ ENV SUBDIR ${SRCDIR}/${INSTDIR}/oidc_cp_rplib
 
 WORKDIR ${SRCDIR}
 
-#ENV PYOIDC_VERSION=tags/v0.14.0
+#ENV PYOIDC_VERSION=b41e8d37780723a2f74025adff42d3ed84c21bfc
 #RUN git clone https://github.com/OpenIDC/pyoidc.git
 #RUN cd pyoidc && git fetch origin && git checkout ${PYOIDC_VERSION} -b temp
-#RUN cd pyoidc && git remote add upstream https://github.com/rohe/pyoidc.git && git fetch upstream && git checkout upstream/channel_logout
+##RUN cd pyoidc && git remote add upstream https://github.com/rohe/pyoidc.git && git fetch upstream && git checkout upstream/channel_logout
 #RUN cd pyoidc && python3 setup.py install
 
 RUN git clone https://github.com/openid-certification/otest.git
