@@ -182,24 +182,24 @@ def construct_desc(flowdir, testname, return_types, checks, funcs):
     href = testname.replace('-', '_')
 
     _in_flow_check = {}
-    for req in desc['sequence']:
-        if isinstance(req, str):
+    for operation in desc['sequence']:
+        if isinstance(operation, str):
             continue
         else:
             _check = []
-            _type = ''
-            for _type, _spec in req.items():
+            _oper = ''
+            for _oper, _spec in operation.items():
                 for attr, val in _spec.items():
                     if attr not in funcs:
                         funcs[attr] = get_func(attr)
-                        funcs[attr]['usage'] = [href+':'+_type]
+                        funcs[attr]['usage'] = [href + ':' + _oper]
                     else:
-                        funcs[attr]['usage'].append(href+':'+_type)
+                        funcs[attr]['usage'].append(href + ':' + _oper)
 
                     try:
-                        _in_flow_check[_type].append(attr)
+                        _in_flow_check[_oper].append(attr)
                     except KeyError:
-                        _in_flow_check[_type] = [attr]
+                        _in_flow_check[_oper] = [attr]
 
     try:
         ass = list(desc['assert'].keys())

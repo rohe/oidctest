@@ -77,7 +77,7 @@ def do_dlist(subject, items):
 
 
 def do_list(items):
-    res = ["<ul>"]
+    res = ['<ul style="list-style: none;">']
     for item in items:
         res.append("<li>" + item + "</li>")
     res.append("</ul>")
@@ -104,9 +104,10 @@ def do_modifier(name, spec, nr, base_url, sec):
         'id': name,
         "nr": nr,
         'doc': "<br>\n".join(spec["doc"]),
-        'links': do_dlist( "Links to code:",
-            ['<a href="{url}#L{line_nr}">code</a>'.format(url=base_url, line_nr=l) for l in
-                spec["line"]]),
+        'links': do_dlist("Links to code:",
+                          ['<a href="{url}#L{line_nr}">code</a>'.format(url=base_url, line_nr=l) for
+                           l in
+                           spec["line"]]),
         "usage": do_dlist("Used in tests:", spec["usage"]),
         "sec": sec
     }
@@ -173,13 +174,14 @@ def do_test(name, spec, nr, sec):
         "sec": sec
     }
     try:
-        kwargs["spec"] = do_list(spec["reference"])
+        kwargs["spec"] = do_list(
+            ['<a href="{}">{}</a>'.format(_url, _url) for _url in spec["reference"]])
     except KeyError:
         kwargs["spec"] = "MISSING"
 
     try:
         kwargs["modifiers"] = do_list(
-            ['<a href="#{}">{}</a>'.format(b,b) for b in spec["behavior"]])
+            ['<a href="#{}">{}</a>'.format(b, b) for b in spec["behavior"]])
     except KeyError:
         kwargs["modifiers"] = "NONE"
 
