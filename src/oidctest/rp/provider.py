@@ -251,6 +251,12 @@ class Provider(provider.Provider):
                               access_token=None, user_info=None):
         # self._update_client_keys(client_info["client_id"])
 
+        sid = self.sdb.access_token.get_key(sinfo["access_token"])
+
+        # if "backchannel_logout_session_required" in client_info and client_info[
+        #     "backchannel_logout_session_required"]:
+        sinfo["sid"] = sid
+
         return provider.Provider.sign_encrypt_id_token(
             self, sinfo, client_info, areq, code, access_token, user_info)
 
@@ -287,6 +293,12 @@ class Provider(provider.Provider):
         if "nokidmuljwks" in self.behavior_type:
             # Remove key ID from keys
             kwargs['keys'] = self.no_kid_keys()
+
+        if "sid" in session:
+            if extra_claims is None:
+                extra_claims = {"sid": session["sid"]}
+            else:
+                extra_claims.update({"sid": session["sid"]})
 
         _jws = provider.Provider.id_token_as_signed_jwt(
             self, session, loa=loa, alg=alg, code=code,
