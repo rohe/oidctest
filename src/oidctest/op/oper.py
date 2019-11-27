@@ -77,6 +77,10 @@ def include(url, test_id):
 
 
 class Webfinger(Operation):
+    """Performs a WebFinger request and parses the response.
+    It will only send the request if the configuration profile says that it should.
+    It will store the issuer specification from the response in self.conv.info["issuer"].
+    """
     def __init__(self, conv, inut, sh, **kwargs):
         Operation.__init__(self, conv, inut, sh, **kwargs)
         self.resource = ""
@@ -112,6 +116,12 @@ class Webfinger(Operation):
 
 
 class Discovery(Operation):
+    """
+    Performs OpenID Provider configuration discovery if the configuration profile
+    specifies that it should.
+    If dynamic discovery is not preformed the provider information is taken from the static
+    configuration.
+    """
     def __init__(self, conv, inut, sh, **kwargs):
         Operation.__init__(self, conv, inut, sh, **kwargs)
         self.dynamic = inut.profile_handler.discover(self.profile)
@@ -137,6 +147,12 @@ class Discovery(Operation):
 
 
 class Registration(Operation):
+    """
+    Performs dynamic client registration if the configuration demands so.
+    The registration response is stored.
+    If dynamic registration is not performed the client configuration is taken from static
+    configuration.
+    """
     def __init__(self, conv, inut, sh, **kwargs):
         Operation.__init__(self, conv, inut, sh, **kwargs)
         self.dynamic = inut.profile_handler.register(self.profile)
@@ -160,9 +176,9 @@ class Registration(Operation):
                 self.req_args['jwks_uri'] = self.conv.entity.jwks_uri
             # use the first mutually supported authentication method
             if self.conv.entity.provider_info[
-                "token_endpoint_auth_methods_supported"]:
-                for sam in self.conv.entity.provider_info[
                     "token_endpoint_auth_methods_supported"]:
+                for sam in self.conv.entity.provider_info[
+                        "token_endpoint_auth_methods_supported"]:
                     if sam in CLIENT_AUTHN_METHOD:
                         self.req_args['token_endpoint_auth_method'] = sam
                         break
@@ -203,6 +219,11 @@ class SyncAuthn(SyncGetRequest):
 
 
 class AsyncAuthn(AsyncGetRequest):
+    """
+    Performs an Authorization request and parses the response. This operation is expected to be
+    asynchronous which means that the method that preformes the request and the method that
+    parses the response are 2 separate methods.
+    """
     response_cls = "AuthorizationResponse"
     request_cls = "AuthorizationRequest"
 
@@ -221,6 +242,14 @@ class AsyncAuthn(AsyncGetRequest):
 
 
 class AccessToken(SyncPostRequest):
+    """
+    Performs an access token request and parses the response. This is a synchronous operation.
+    Does some conformance testing:
+    - If the signing algorithm is not HS256, there is no 'kid' specified in the JWS header and
+        there is more the one possible key to use then raise an exception.
+    - If issuer received through Webfinger or configuration is not the same as 'iss' in the
+        id_token then raise an exception.
+    """
     def __init__(self, conv, inut, sh, **kwargs):
         super(AccessToken, self).__init__(conv, inut, sh, **kwargs)
         self.op_args["state"] = conv.state
@@ -250,7 +279,7 @@ class AccessToken(SyncPostRequest):
                 # use the first mutually supported authn method
                 for am in _ent.client_authn_method.keys():
                     if am in _ent.provider_info[
-                        'token_endpoint_auth_methods_supported']:
+                           'token_endpoint_auth_methods_supported']:
                         self.op_args['authn_method'] = am
                         break
 
@@ -323,7 +352,7 @@ class RefreshToken(SyncPostRequest):
             except KeyError:
                 for am in _ent.client_authn_method.keys():
                     if am in _ent.provider_info[
-                        'token_endpoint_auth_methods_supported']:
+                         'token_endpoint_auth_methods_supported']:
                         self.op_args['authn_method'] = am
                         break
 
@@ -361,6 +390,12 @@ class RefreshToken(SyncPostRequest):
 
 
 class UserInfo(SyncGetRequest):
+    """
+    Get user information from the Userinfo endpoint. A synchronous GET request.
+    Will unpack aggregated claims and fetch distributed claims if needed.
+    Will verify that the 'sub' value returned among the user information is the same as the 'sub'
+    value in the IdToken.
+    """
     def __init__(self, conv, inut, sh, **kwargs):
         super(UserInfo, self).__init__(conv, inut, sh, **kwargs)
         self.op_args["state"] = conv.state
@@ -406,6 +441,9 @@ class DisplayUserInfo(Operation):
 
 
 class UpdateProviderKeys(Operation):
+    """
+    Will re-fetch the provider keys.
+    """
     def __call__(self, *args, **kwargs):
         keyjar = self.conv.entity.keyjar
         self.conv.entity.original_keyjar = keyjar.copy()
@@ -416,6 +454,9 @@ class UpdateProviderKeys(Operation):
 
 
 class RotateKey(Operation):
+    """
+    Will rotate (create new and demote old) own key.
+    """
     def __call__(self):
         keyjar = self.conv.entity.keyjar
         self.conv.entity.original_keyjar = keyjar.copy()
@@ -466,6 +507,11 @@ class RestoreKeyJar(Operation):
 
 
 class ReadRegistration(SyncGetRequest):
+    """
+    Read client registration information from the Provider.
+    Will use 'registration_client_uri' and 'registration_access_token' returned in the client
+    registration response.
+    """
     response_cls = 'RegistrationResponse'
     content_type = JSON_ENCODED
 
@@ -501,6 +547,9 @@ def _new_rsa_key(spec):
 
 
 class RotateKeys(Operation):
+    """
+    Will rotate (create new and demote old) own keys.
+    """
     def __init__(self, conv, inut, sh, **kwargs):
         Operation.__init__(self, conv, inut, sh, **kwargs)
         self.jwk_name = "export/jwk.json"
@@ -578,6 +627,10 @@ class Cache(Operation):
 
 
 class EndSession(AsyncRequest):
+    """
+    Will send a logout request to the OpenID Connect Provider using the endpoint specified in
+    the discovery response as 'end_ession_endpoint'.
+    """
     response_cls = "EndSessionResponse"
     request_cls = "EndSessionRequest"
     method = 'GET'
@@ -858,6 +911,12 @@ class AfterLogout(Notice):
 
 
 class SessionCheck(Notice):
+    """
+    Displays a page which contains a number of IFrames. One IFrame comes from the RP, the other
+    from the OP. The one from the OP is pulled from 'check_session_iframe' in the provider
+    information. The RP IFrame is build dynamically based on the rp_session_iframe.html
+    pattern.
+    """
     pre_html = "session_verify.html"
 
     def op_setup(self):

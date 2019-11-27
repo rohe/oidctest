@@ -38,7 +38,7 @@ def set_webfinger_resource(oper, args):
     Action:
         Specifies the webfinger resource. If the OP supports
         webfinger queries then the resource is set to the value of 'webfinger_url'
-        or 'webfinger_email' from the test instance configuration.
+        or 'webfinger_email' depending on the test instance configuration.
     Example:
         "set_webfinger_resource": null
 
