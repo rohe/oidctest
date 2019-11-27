@@ -829,6 +829,7 @@ class FrontChannelLogout(EndPoint):
 
 
 class PostLogout(EndPoint):
+    """This is where the OP should send you to after a it has started the logout process."""
     request_cls = "Message"
 
     def parse_request(self, message_factory, request=None, request_args=None):
@@ -899,6 +900,9 @@ class LogoutPage(Note):
 
 
 class AfterLogout(Notice):
+    """
+    A waiting place. Waits for the OP to signal that the logout has happened.
+    """
     pre_html = "after_logout.html"
 
     def op_setup(self):
