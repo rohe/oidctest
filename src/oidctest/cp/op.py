@@ -598,6 +598,31 @@ class Root(object):
         return '\n'.join(response)
 
 
+class PostLogoutPage(object):
+    def __init__(self, version=''):
+        self.version = version
+
+    @cherrypy.expose
+    def index(self):
+        response = """
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <title>Logout</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <style>
+    iframe{visibility:hidden;position:absolute;left:0;top:0;height:0;width:0;border:none}
+  </style>
+</head>
+<body>
+You have been successfully logged out from this server.
+</body>
+</html>
+"""
+        return response
+
+
 class Provider(Root):
     _cp_config = {'request.error_response': handle_error}
 
@@ -615,6 +640,7 @@ class Provider(Root):
         self.logout = Logout()
         self.reset = Reset(self.op_handler.com_args, self.op_handler.op_args)
         self.check_session_iframe = CheckSessionIframe()
+        self.post_logout_page = PostLogoutPage()
 
     def _cp_dispatch(self, vpath):
         # Only get here if vpath != None
@@ -660,6 +686,8 @@ class Provider(Root):
                         return self.logout
                     elif endpoint == 'check_session_iframe':
                         return self.check_session_iframe
+                    elif endpoint == 'post_logout_page':
+                        return self.post_logout_page
                     else:  # Shouldn't be any other
                         raise cherrypy.NotFound()
                 if len(vpath) == 2:

@@ -127,7 +127,7 @@ class OPHandler(object):
                                                   test_id)
 
         op.logout_verify_url = '{}/{}'.format(op.name, op.logout_path)
-
+        op.post_logout_page = "{}/{}".format(op.baseurl, "post_logout_page")
         _kj = op.keyjar.export_jwks(True, '')
         op.keyjar.import_jwks(_kj, op.name)
 
