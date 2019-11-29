@@ -10,7 +10,7 @@
     var client_id = "{client_id}";
     var session_state = "{session_state}";
     console.log("RP session state: " + session_state);
-    var targetOrigin = "{issuer}";
+    var targetOrigin = new URL("{issuer}").origin;
 
     var mes = client_id + " " + session_state;
 
