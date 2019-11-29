@@ -445,8 +445,8 @@ class Main(object):
                     _msg = self.tester.inut.pre_html['session_verify.html']
                     _csi = self.tester.conv.entity.provider_info[
                         'check_session_iframe']
-                    _msg.replace("{check_session_iframe}", _csi)
-                    return as_bytes(_msg)
+                    _mod_msg = _msg.replace("{check_session_iframe}", _csi)
+                    return as_bytes(_mod_msg)
 
     @cherrypy.expose
     def session_change(self, **kwargs):
@@ -482,8 +482,8 @@ class Main(object):
                     _msg = self.tester.inut.pre_html['after_logout.html']
                     _csi = self.tester.conv.entity.provider_info[
                         'check_session_iframe']
-                    _msg.replace("{check_session_iframe}", _csi)
-                    return as_bytes(_msg)
+                    _mod_msg = _msg.replace("{check_session_iframe}", _csi)
+                    return as_bytes(_mod_msg)
 
     def rp_iframe(self, status, service_url):
         _conv = self.tester.conv
