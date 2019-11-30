@@ -251,10 +251,11 @@ class Provider(provider.Provider):
                               access_token=None, user_info=None):
         # self._update_client_keys(client_info["client_id"])
 
-        sid = self.sdb.access_token.get_key(sinfo["access_token"])
+        try:
+            sid = self.sdb.access_token.get_key(sinfo["access_token"])
+        except KeyError:
+            sid = self.sdb.get("code", sinfo["code"])
 
-        # if "backchannel_logout_session_required" in client_info and client_info[
-        #     "backchannel_logout_session_required"]:
         sinfo["sid"] = sid
 
         return provider.Provider.sign_encrypt_id_token(

@@ -443,8 +443,7 @@ class Main(object):
                     return self.main_page()
                 else:
                     _msg = self.tester.inut.pre_html['session_verify.html']
-                    _csi = self.tester.conv.entity.provider_info[
-                        'check_session_iframe']
+                    _csi = self.tester.conv.entity.provider_info['check_session_iframe']
                     _mod_msg = _msg.replace("{check_session_iframe}", _csi)
                     return as_bytes(_mod_msg)
 
