@@ -603,7 +603,7 @@ class PostLogoutPage(object):
         self.version = version
 
     @cherrypy.expose
-    def index(self):
+    def index(self, **kwargs):
         response = """
 <!DOCTYPE html>
 <head>
