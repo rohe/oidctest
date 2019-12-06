@@ -32,13 +32,18 @@ fix it. If you have no idea, then please tell us at certification@oidf.org
 and we will help you figure it out.
 """
 
+LOGOUT_MAP = {
+    "FrontChannelLogout": "frontchannel_logout",
+    "BackChannelLogout": "backchannel_logout",
+    "PostLogout": "logout"
+}
 
 def expected_response_mode(conv):
     try:
         response_mode = conv.req.req_args["response_mode"]
     except KeyError:
         if conv.req.req_args["response_type"] == [''] or conv.req.req_args[
-            "response_type"] == ['code']:
+                "response_type"] == ['code']:
             response_mode = 'query'
         else:
             response_mode = 'fragment'
@@ -333,6 +338,10 @@ class Main(object):
         else:
             cls = item
         logger.debug('Next operation: %s (ref:%s)', cls.__name__, ref)
+        if LOGOUT_MAP[cls.__name__] != ref:
+            _conv.events.store(EV_FAULT, "Expected {} but got {}".format(cls.__name__, ref))
+            self.tester.store_result()
+            self.opresult()
 
         try:
             resp = self.tester.handle_request(request, **kwargs)
