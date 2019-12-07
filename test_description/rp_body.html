@@ -1,5 +1,6 @@
 <body>
-<h1>This document describes all the RP tests that the OpenID Connect test suite contains.</h1>
+<h1>This document describes all the RP tests that the OpenID Connect test suite
+    contains.</h1>
 <hr>
 <h1 class="np" id="toc">Table of Contents</h1>
 <ul class="toc">
@@ -9,7 +10,8 @@
             <li><a href="#json_behavior">1.1 behavior</a></li>
             <li><a href="#json_capabilities">1.2 capabilities</a></li>
             <li><a href="#json_claims">1.3 claims</a></li>
-            <li><a href="#json_detailed_description">1.4 detailed_description</a></li>
+            <li><a href="#json_detailed_description">1.4
+                detailed_description</a></li>
             <li><a href="#json_expected_result">1.5 expected_result</a></li>
             <li><a href="#json_group">1.6 group</a></li>
             <li><a href="#json_reference">1.7 reference</a></li>
@@ -34,7 +36,12 @@
 </ul>
 <h1 id="intro">1. Introduction</h1>
 <p>
-    <b>PLACEHOLDER</b>
+    The test tool is running as an OpenID Provider. This is implemented as
+    a core consisting of the <a
+        href="https://github.com/openidc/pyoidc">pyOIDC</a>
+    OP implementation and around that a shell that can modify incoming and
+    outgoing messages. The behavior or this shell is governed by the
+    <i>behavior</i> parameter in the test descriptions files.
 </p>
 <h1 id="syntax">2. Test description syntax</h1>
 <p>
@@ -54,41 +61,41 @@
 <p>These will be described one by one below.</p>
 <h2 id="json_behavior">2.1. behavior</h2>
 <p>
-This is a list of identifiers. Each of them used in the code to decide
-on actions. This is exclusively used to make responses or requests not
-standard compliant.
+    This is a list of identifiers. Each of them used in the code to decide
+    on actions. This is exclusively used to make responses or requests not
+    standard compliant.
 </p>
 <h2 id="json_capabilities">2.2. capabilities</h2>
 <p>
-This is used to decided what features the test tool (an OP) should support.
-Most commonly this is about which <b>response_types</b> that are supported.
+    This is used to decided what features the test tool (an OP) should support.
+    Most commonly this is about which <b>response_types</b> that are supported.
 </p>
 <h2 id="json_claims">2.3. claims</h2>
 <p>
-Denotes whether claims returned should only be normal claims or aggregated
-and/or distributed.
+    Denotes whether claims returned should only be normal claims or aggregated
+    and/or distributed.
 </p>
 <h2 id="json_detailed_description">2.4. detailed_description</h2>
 <p>
-A description aimied at the user of the test suite.
+    A description aimed at the user of the test suite.
 </p>
 <h2 id="json_expected_result">2.5. expected_result</h2>
 <p>
-A description of the expected result.
+    A description of the expected result.
 </p>
 <h2 id="json_group">2.6. group</h2>
 <p>
-Which group of tests the test belongs to.
-As of now the complete set is:
-{groups}
+    Which group of tests the test belongs to.
+    As of now the complete set is:
+    {groups}
 </p>
 <h2 id="json_reference">2.7. reference</h2>
 <p>
-A link to the part of the standard that is being tested..
+    A link to the part of the standard that is being tested..
 </p>
 <h2 id="json_short_description">2.8. short_description</h2>
 <p>
-Short description of what the test tries to test.
+    Short description of what the test tries to test.
 </p>
 <h1 id="test_description">3. Test description</h1>
 {test_desc}
