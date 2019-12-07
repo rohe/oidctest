@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RP library testing</title>
+</head>
+<body>
+<h2>Logout RP Profile</h2>
+<p>A set of Logout RP test is currently available in pilot phase. The tests
+    can be grouped into:</p>
+<dl>
+    <dt><code>rp-init-logout</code></dt>
+    <dd>Tests RP initiated logout as described in
+        <a href="https://openid.net/specs/openid-connect-session-1_0.html#RPLogout">RP-Initiated
+            Logout</a>.
+    </dd>
+    <dt><code>rp-backchannel-rpinitlogout</code></dt>
+    <dd>Tests RP initiated logout
+        together with
+        <a href="https://openid.net/specs/openid-connect-backchannel-1_0.html#Backchannel">Back-Channel
+            logout</a></dd>
+    <dt><code>rp-frontchannel-rpinitlogout</code></dt>
+    <dd>Tests RP initiated logout
+        together with
+        <a href="https://openid.net/specs/openid-connect-frontchannel-1_0.html#RPLogout">Front-Channel
+            logout</a></dd>
+</dl>
+<p>
+    As can be understood from the list above supporting RP initiated logout is a
+    prerequisite to do any of these tests.
+</p>
+<p>
+    Furthermore, support for provider information discovery and dynamic client
+    registration is also needed.
+</p>
+<p>
+    Running a test will consists of sending the following requests to the test
+    suite (==OP)
+<ol>
+    <li>provider info discovery</li>
+    <li>client registration</li>
+    <li>authorization</li>
+    <li>access token (depending on which response type is chosen)</li>
+    <li>end session</li>
+</ol>
+</p>
+<p>Please test this test and submit your results to <a
+        href="mailto:certification@oidf.org">certification@oidf.org</a> as
+    described in <a href="http://openid.net/certification/rp_submission/">Submission
+        of Results for RPs</a></p>
+</body>
+</html>
