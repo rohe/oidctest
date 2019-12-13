@@ -38,6 +38,7 @@ LOGOUT_MAP = {
     "PostLogout": "logout"
 }
 
+
 def expected_response_mode(conv):
     try:
         response_mode = conv.req.req_args["response_mode"]

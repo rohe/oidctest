@@ -54,7 +54,8 @@
         "OpenIDSchema"
       ],
       "status": 2
-    }
+    },
+    "verify-id_token-userinfo-same-sub": null
   },
   "reference": [
     "https://openid.net/specs/openid-connect-core-1_0.html#UserInfo"

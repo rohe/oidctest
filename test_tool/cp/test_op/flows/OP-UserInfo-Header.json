@@ -53,7 +53,8 @@
       "response_cls": [
         "OpenIDSchema"
       ]
-    }
+    },
+    "verify-id_token-userinfo-same-sub": null
   },
   "reference": [
     "https://openid.net/specs/openid-connect-core-1_0.html#UserInfoRequest"
