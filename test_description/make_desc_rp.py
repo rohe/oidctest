@@ -103,14 +103,21 @@ def do_modifier(name, spec, nr, base_url, sec):
         'link': name,
         'id': name,
         "nr": nr,
-        'doc': "<br>\n".join(spec["doc"]),
-        'links': do_dlist("Links to code:",
-                          ['<a href="{url}#L{line_nr}">code</a>'.format(url=base_url, line_nr=l) for
-                           l in
-                           spec["line"]]),
         "usage": do_dlist("Used in tests:", spec["usage"]),
         "sec": sec
     }
+
+    try:
+        args['doc'] = "<br>\n".join(spec["doc"])
+    except KeyError:
+        args['doc'] = ''
+
+    try:
+        args['links'] = do_dlist(
+            "Links to cod e:",
+            ['<a href="{url}#L{line_nr}">code</a>'.format(url=base_url, line_nr=l) for l in spec["line"]])
+    except KeyError:
+        args['links'] = ''
 
     return PATTERN.format(**args)
 
@@ -203,7 +210,7 @@ def do_groups(tests):
 FILE = "../src/oidctest/rp/provider.py"
 
 REPO = "https://github.com/rohe"
-OIDCTEST_BLOB = "af693cf48af2a82410a9bbb533eb5405c3f74090"
+OIDCTEST_BLOB = "91edad293d0fd55f02088b637b0130e26d2952e8"
 
 CODE_URL = "{}/oidctest/blob/{}/src/oidctest/rp/provider.py".format(REPO, OIDCTEST_BLOB)
 
