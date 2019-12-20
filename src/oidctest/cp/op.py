@@ -440,10 +440,12 @@ class Logout(object):
                 raise cherrypy.HTTPError(
                     message="Backchannel logout failed. No Frontchannel logout defined")
 
-            try:
-                _iframes = res['iframe']
-            except KeyError:
-                _iframes = []
+            _iframes = []
+            if res:
+                try:
+                    _iframes = res['iframe']
+                except (KeyError, TypeError):
+                    pass
 
             _body = LOGOUT_HTML_BODY.replace('{size}', str(len(_iframes)))
             _body = _body.replace('{frames}', ''.join(_iframes))
@@ -453,7 +455,7 @@ class Logout(object):
 
             try:
                 cookies = res['cookie']
-            except KeyError:
+            except (KeyError, TypeError):
                 pass
             else:
                 for tag, val in cookies:

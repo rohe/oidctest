@@ -81,7 +81,7 @@ class OPHandler(object):
             else:
                 _op = self.setup_op(oper_id, test_id, self.com_args,
                                     self.op_args, self.test_conf, events)
-                if test_id.startswith('rp-session'):
+                if test_id.startswith('rp-init-logout-session'):
                     _csi = self.check_session_iframe.replace(
                         '<PATH>', '{}/{}'.format(oper_id, test_id))
                     _op.capabilities['check_session_iframe'] = _csi

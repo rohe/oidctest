@@ -1,0 +1,22 @@
+{
+  "group": "Session Management",
+  "claims": "normal",
+  "behavior": [
+    "status_changed"
+  ],
+  "capabilities": {
+    "response_types_supported": [
+      "code",
+      "id_token token",
+      "code id_token",
+      "code token",
+      "code id_token token"
+    ]
+  },
+  "short_description": "Does RP initiated Logout, watch for status changed",
+  "detailed_description": "Does an RP initiated logout, watch for status changed.",
+  "expected_result": "The OP Iframe receives a status check request",
+  "reference": [
+    "https://openid.net/specs/openid-connect-session-1_0.html#RPLogout"
+  ]
+}

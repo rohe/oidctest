@@ -21,12 +21,16 @@
                 }
 
                 var opbs = getOPBrowserState(clientId);
+                console.log("OPBS: " + opbs);
                 var stat = 'changed';
 
                 if (opbs) {
                     var shaObj = new jsSHA('SHA-256', 'TEXT');
+                    console.log("client_id: " + clientId + " origin: " + origin + " state: " + opbs + " salt: " + salt);
                     shaObj.update(clientId + ' ' + origin + ' ' + opbs + (salt ? ' ' + salt : ''));
                     var expected = shaObj.getHash('HEX') + (salt ? ('.' + salt) : '');
+
+                    console.log("Calculated: " + expected + "Actual: " + actual);
 
                     if (actual === expected) {
                         stat = 'unchanged';
@@ -42,7 +46,7 @@
                         }
                     }, cb.bind(undefined, 'error'));
                 } else {
-                    cb(stat);
+                    cb('error');
                 }
             } catch (err) {
                 cb('error');
@@ -78,6 +82,7 @@
             if (typeof e.data !== 'string') {
                 return;
             }
+            console.log("Incoming message: " + e.data);
             var parts = e.data.split(' ');
             var clientId = parts[0];
             var actual = parts[1];
@@ -97,7 +102,12 @@
 
         function getOPBrowserState(clientId) {
             var cookie = readCookie('pyoic_session');
-            return cookie;
+            if (cookie == null) {
+                console.log("No cookie by the name: pyoic_session");
+                throw new Error("No cookie by the name: pyoic_session");
+            }
+            cp = cookie.split('|');
+            return cp[0];
         }
 
         function readCookie(name) {
@@ -105,6 +115,7 @@
             var ca = document.cookie.split(';');
             for (var i = 0; i < ca.length; i++) {
                 var c = ca[i];
+                console.log("Cookie: " + c);
                 while (c.charAt(0) === ' ') c = c.substring(1, c.length);
                 if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
             }
