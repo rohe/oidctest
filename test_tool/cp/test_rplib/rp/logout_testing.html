@@ -24,6 +24,13 @@
         together with
         <a href="https://openid.net/specs/openid-connect-frontchannel-1_0.html#RPLogout">Front-Channel
             logout</a></dd>
+    <dt><code>rp-init-logout-session</code></dt>
+    <dd>
+        Tests Session Status Change Notification as described in
+        <a href="https://openid.net/specs/openid-connect-session-1_0.html#ChangeNotification">
+            Session Status Change Notification
+        </a>
+    </dd>
 </dl>
 <p>
     As can be understood from the list above supporting RP initiated logout is a
@@ -44,6 +51,18 @@
     <li>end session</li>
 </ol>
 </p>
+<p>When it comes to doing the session status change notification test some
+extra steps needs to be added. The following steps would then need to be
+done:</p>
+<ol>
+    <li>provider info discovery</li>
+    <li>client registration</li>
+    <li>authorization</li>
+    <li>check session status - expect unchanged</li>
+    <li>access token (depending on which response type is chosen)</li>
+    <li>end session</li>
+    <li>check session status - expect changed</li>
+</ol>
 <p>Please test this test and submit your results to <a
         href="mailto:certification@oidf.org">certification@oidf.org</a> as
     described in <a href="http://openid.net/certification/rp_submission/">Submission

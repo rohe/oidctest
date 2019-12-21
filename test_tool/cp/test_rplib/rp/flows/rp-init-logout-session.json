@@ -13,10 +13,10 @@
       "code id_token token"
     ]
   },
-  "short_description": "Does RP initiated Logout, watch for status changed",
-  "detailed_description": "Does an RP initiated logout, watch for status changed.",
-  "expected_result": "The OP Iframe receives a status check request",
+  "short_description": "Does RP initiated Logout, watch for session status changed",
+  "detailed_description": "Does an RP initiated logout, watch for session status before and after the end session request.",
+  "expected_result": "That the session status before the end session request is unchanged, while it is changed after the end session request",
   "reference": [
-    "https://openid.net/specs/openid-connect-session-1_0.html#RPLogout"
+    "https://openid.net/specs/openid-connect-session-1_0.html#ChangeNotification"
   ]
 }
