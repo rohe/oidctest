@@ -52,7 +52,7 @@ POST_HTML = """
             <hr />
             <div class="pull-left">
                 <ul class="list-inline">
-                    <li>(C) 2017-2019 - <a href="https://openid.net/foundation">OpenID
+                    <li>(C) 2017-2020 - <a href="https://openid.net/foundation">OpenID
                             Foundation</a></li>
                     <li>E-mail: <a href="mailto:certification@oidf.org">certification@oidf.org</a></li>
                     <li>Issues: <a
