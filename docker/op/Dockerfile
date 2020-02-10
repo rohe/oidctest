@@ -15,7 +15,7 @@ ENV SUBDIR ${SRCDIR}/${INSTDIR}
 
 WORKDIR ${SRCDIR}
 
-ENV VERSION_NODE_OP   tags/v6.17.3
+ENV VERSION_NODE_OP   tags/v6.20.1
 
 RUN git clone https://github.com/panva/node-oidc-provider.git
 RUN cd node-oidc-provider && git checkout ${VERSION_NODE_OP} && cd -
