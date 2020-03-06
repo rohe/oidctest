@@ -90,7 +90,7 @@ def oidc_cp_rplib_setup(distroot):
             os.mkdir(_dir)
 
     _op_dir = os.path.join(distroot, 'test_tool', 'cp', 'test_rplib', 'rp')
-    for _dir in ['static', 'flows']:
+    for _dir in ['static', 'flows', 'templates']:
         _src = os.path.join(_op_dir, _dir)
         if os.path.isdir(_dir):
             shutil.rmtree(_dir)
