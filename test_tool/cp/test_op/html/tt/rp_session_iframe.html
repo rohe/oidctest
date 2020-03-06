@@ -18,7 +18,7 @@
 
     function checkSession() {
         var win = window.parent.document.getElementById("op_iframe").contentWindow;
-        win.postMessage(mes, targetOrigin);
+        win.postMessage(mes, "*");
     }
 
     function receiveMessage(e) {
