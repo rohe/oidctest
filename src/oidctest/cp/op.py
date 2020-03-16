@@ -1,5 +1,6 @@
 import json
 import logging
+from urllib.parse import urlencode
 
 import cherrypy
 import cherrypy_cors
@@ -447,11 +448,17 @@ class Logout(object):
                 except (KeyError, TypeError):
                     pass
 
+            _state = _info.get("state")
+            if _state:
+                _redirect_uri = "{}?{}".format(_info['redirect_uri'],
+                                               urlencode({"state":_info["state"]}))
+            else:
+                _redirect_uri = _info['redirect_uri']
+
             _body = LOGOUT_HTML_BODY.replace('{size}', str(len(_iframes)))
             _body = _body.replace('{frames}', ''.join(_iframes))
             _body = _body.replace('{timeout}', '30')
-            _body = _body.replace('{postLogoutRedirectUri}',
-                                  _info['redirect_uri'])
+            _body = _body.replace('{postLogoutRedirectUri}', _redirect_uri)
 
             try:
                 cookies = res['cookie']
