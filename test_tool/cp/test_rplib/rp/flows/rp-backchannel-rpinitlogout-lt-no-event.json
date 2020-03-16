@@ -13,7 +13,7 @@
   },
   "short_description": "Does RP initiated Logout, no event claim in the logout token",
   "detailed_description": "Does an RP initiated logout, no event claim in the logout token.",
-  "expected_result": "That the Single Sign On session on the OP disappears.",
+  "expected_result": "Error",
     "reference": [
     "https://openid.net/specs/openid-connect-backchannel-1_0.html#BCRequest",
     "https://openid.net/specs/openid-connect-session-1_0.html#RPLogout"
