@@ -20,7 +20,7 @@
   "MTI": [],
   "assert": {
     "verify-op-endpoints-use-https": null,
-    "verify-required-claims": {
+    "verify-required-claims-true": {
       "ProviderConfigurationResponse": [
         "backchannel_logout_supported",
         "backchannel_logout_session_supported"

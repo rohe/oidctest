@@ -2703,6 +2703,47 @@ class VerifyRequiredClaims(Error):
         return {}
 
 
+class VerifyRequiredClaimsTrue(Error):
+    """
+    Verify that required claims are actually present
+    """
+    cid = 'verify-required-claims-true'
+    _msg_pat = "The following required claims where not set to True: {}"
+    doc = """
+    Specifies which claims that was expected to be set to True.
+
+    Example:
+        "verify-required-claims-true": {
+          "ProviderConfigurationResponse": [
+            "backchannel_logout_supported",
+            "backchannel_logout_session_supported"
+          ]
+        }
+    """
+
+    def _func(self, conv):
+
+        missing = []
+        for resp_cls, claims in self._kwargs.items():
+            res = get_protocol_response(conv, MSG[resp_cls])
+            if res:
+                res = res[-1]
+            else:
+                missing.append(resp_cls)
+                continue
+
+            for claim in claims:
+                if claim not in res:
+                    missing.append('{}.{}'.format(resp_cls, claim))
+                else:
+                    if not res[claim]:
+                        missing.append('{}.{}'.format(resp_cls, claim))
+        if missing:
+            self._status = ERROR
+            self._message = self._msg_pat.format(missing)
+        return {}
+
+
 def factory(cid):
     for name, obj in inspect.getmembers(sys.modules[__name__]):
         if inspect.isclass(obj) and issubclass(obj, Check):
