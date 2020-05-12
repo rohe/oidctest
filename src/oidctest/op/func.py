@@ -808,10 +808,9 @@ def set_backchannel_logout_uri(oper, args):
         "set_backchannel_logout_uri": null
     """
     _base = get_base(oper.conv.entity.base_url)
-    entity_id = rndstr(24)
-    oper.conv.entity.entity_id = entity_id
-    oper.req_args['backchannel_logout_uri'] = "{}{}?entity_id={}".format(
-        _base, "backchannel_logout", entity_id)
+    # entity_id = rndstr(24)
+    # oper.conv.entity.entity_id = entity_id
+    oper.req_args['backchannel_logout_uri'] = "{}{}".format(_base, "backchannel_logout")
 
 
 def set_frontchannel_logout_uri(oper, args):
@@ -824,10 +823,9 @@ def set_frontchannel_logout_uri(oper, args):
         "set_frontchannel_logout_uri": null
     """
     _base = get_base(oper.conv.entity.base_url)
-    entity_id = rndstr(24)
-    oper.conv.entity.entity_id = entity_id
-    oper.req_args['frontchannel_logout_uri'] = "{}{}?entity_id={}".format(
-        _base, "frontchannel_logout", entity_id)
+    # entity_id = rndstr(24)
+    # oper.conv.entity.entity_id = entity_id
+    oper.req_args['frontchannel_logout_uri'] = "{}{}".format(_base, "frontchannel_logout")
 
 
 def factory(name):

@@ -387,28 +387,14 @@ class Main(object):
             _request = as_unicode(cherrypy.request.body.read())
             if _request:
                 logger.info('back_channel logout request: {}'.format(_request))
-                if kwargs['entity_id'] != self.tester.conv.entity.entity_id:
-                    self.sh['conv'].events.store(EV_FAULT, "Not for me!")
-                    logger.debug('Not for me')
-                    self.opresult()
-                else:
-                    return self._endpoint(ref='backchannel_logout',
-                                          request=_request)
+                return self._endpoint(ref='backchannel_logout', request=_request)
             else:
                 _request_args = cherrypy.request.params
                 if not _request_args:
                     raise cherrypy.HTTPError(
                         400, 'Missing Back channel Logout request body')
-
-                logger.info('back_channel logout request_args: {}'.format(
-                    _request_args))
-                if kwargs['entity_id'] != self.tester.conv.entity.entity_id:
-                    self.sh['conv'].events.store(EV_FAULT, "Not for me!")
-                    logger.debug('Not for me')
-                    self.opresult()
-                else:
-                    return self._endpoint(ref='backchannel_logout',
-                                          request_args=_request_args)
+                logger.info('back_channel logout request_args: {}'.format(_request_args))
+                return self._endpoint(ref='backchannel_logout', request_args=_request_args)
         else:
             raise cherrypy.HTTPError(
                 400, 'Missing Back channel Logout request body')
@@ -417,15 +403,8 @@ class Main(object):
     def frontchannel_logout(self, **kwargs):
         logger.debug('Front channel logout: {}'.format(kwargs))
         self.sh['conv'].events.store(EV_HTTP_REQUEST, kwargs)
-        if kwargs['entity_id'] != self.tester.conv.entity.entity_id:
-            logger.debug('Not for me')
-            self.sh['conv'].events.store(EV_FAULT, "Not for me!")
-            logger.debug('Not for me')
-            self.opresult()
-        else:
-            _args = dict([(k, v) for k, v in kwargs.items()
-                          if k not in ['entity_id', 'sid']])
-            return self._endpoint(ref='frontchannel_logout', **_args)
+        _args = dict([(k, v) for k, v in kwargs.items() if k not in ['sid']])
+        return self._endpoint(ref='frontchannel_logout', **_args)
 
     @cherrypy.expose
     def session_unchange(self, **kwargs):
