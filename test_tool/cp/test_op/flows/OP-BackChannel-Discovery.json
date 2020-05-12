@@ -4,7 +4,7 @@
     "back": true,
     "discover": true
   },
-  "desc": "Checks Front Channel related openid-configuration discovery information",
+  "desc": "Checks Back Channel related openid-configuration discovery information",
   "sequence": [
     {
       "Webfinger": {
