@@ -4,7 +4,7 @@
   "usage": {
     "rp_init": true
   },
-  "desc": "Sent post_logout_redirect_uri does not match a registered post_logout_redirect_uri",
+  "desc": "Sent post_logout_redirect_uri is completely different from the one that is resisted",
   "sequence": [
     {
       "Webfinger": {

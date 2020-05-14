@@ -3,7 +3,7 @@
   "usage": {
     "rp_init": true
   },
-  "desc": "Sent post_logout_redirect_uri does not match a registered post_logout_redirect_uri",
+  "desc": "Sent post_logout_redirect_uri is the same as one that is registered but has an unregistered query string",
   "note": "This test should result in the OpenID Provider displaying an error message in your user agent. You should ignore the status of this test in the test tool, since it will be incomplete. You must submit a screen shot of the error shown as part of your certification application.",
   "sequence": [
     {
